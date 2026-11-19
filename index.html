@@ -895,18 +895,20 @@
         </div>
 
         <form id="brag-upload-form" class="bg-slate-50 border border-slate-200 rounded-2xl p-4 space-y-3">
-          <div class="flex flex-wrap items-center gap-2">
-            <label class="cursor-pointer px-3 py-2 rounded-xl bg-white border border-slate-300 hover:bg-slate-100 text-slate-800 text-xs font-bold inline-flex items-center gap-1.5 whitespace-nowrap">
-              <span>🖼️ 사진 선택</span>
-              <input id="desk-photo-input" type="file" accept="image/*" class="hidden" />
-            </label>
-            <label class="cursor-pointer px-3 py-2 rounded-xl bg-slate-950 hover:bg-slate-800 text-white text-xs font-bold inline-flex items-center gap-1.5 whitespace-nowrap">
-              <span>📸 바로 촬영</span>
-              <input id="desk-camera-input" type="file" accept="image/*" capture="environment" class="hidden" />
-            </label>
-            <input id="brag-caption-input" type="text" maxlength="40" placeholder="한 줄 코멘트" class="flex-1 min-w-0 rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs" />
-            <button type="submit" class="px-4 py-2 rounded-xl bg-white border border-slate-950 hover:bg-slate-100 text-slate-950 text-xs font-black">올리기</button>
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div class="flex flex-wrap items-center gap-2">
+              <label class="cursor-pointer px-3 py-2 rounded-xl bg-white border border-slate-300 hover:bg-slate-100 text-slate-800 text-xs font-bold inline-flex items-center gap-1.5 whitespace-nowrap">
+                <span>🖼️ 사진 선택</span>
+                <input id="desk-photo-input" type="file" accept="image/*" class="hidden" />
+              </label>
+              <label class="cursor-pointer px-3 py-2 rounded-xl bg-slate-950 hover:bg-slate-800 text-white text-xs font-bold inline-flex items-center gap-1.5 whitespace-nowrap">
+                <span>📸 바로 촬영</span>
+                <input id="desk-camera-input" type="file" accept="image/*" capture="environment" class="hidden" />
+              </label>
+            </div>
+            <button type="submit" class="px-4 py-2 rounded-xl bg-white border border-slate-950 hover:bg-slate-100 text-slate-950 text-xs font-black whitespace-nowrap">올리기</button>
           </div>
+          <textarea id="brag-caption-input" rows="2" maxlength="300" placeholder="오늘 공부한 내용이나 코멘트를 자유롭게 적어보세요 (최대 300자)" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs leading-relaxed resize-y"></textarea>
           <div id="photo-preview-wrap" class="hidden">
             <img id="photo-preview-img" alt="미리보기" class="w-full max-h-48 object-cover rounded-xl border border-slate-300" />
           </div>
@@ -2549,6 +2551,11 @@
 
       function showFloatingLp(delta) {
         if (!delta || delta <= 0 || reduceMotion.matches || (focusInterval && !focusPaused)) return;
+        try {
+          if (typeof navigator !== 'undefined' && typeof navigator.vibrate === 'function') {
+            navigator.vibrate(delta >= 25 ? [28, 35, 45] : delta >= 10 ? [22, 28, 22] : 18);
+          }
+        } catch (e) {}
         const activeCnt = document.querySelectorAll('.lp-float-item').length;
         if (activeCnt >= 2) return;
         const el = document.createElement('div');
@@ -3093,7 +3100,7 @@
                       ${(prefs.adminMode || p.memberId === prefs.currentUserId) ? `<button type="button" data-del-photo="${p.id}" class="text-[11px] font-bold text-rose-600 hover:underline">${(prefs.adminMode && p.memberId !== prefs.currentUserId) ? '🛡️ 강제 삭제' : '삭제'}</button>` : ''}
                     </div>
                   </div>
-                  ${p.caption ? `<p class="text-xs text-slate-700">${escapeHtml(p.caption)}</p>` : ''}
+                  ${p.caption ? `<p class="text-xs text-slate-700 whitespace-pre-line break-words leading-relaxed">${escapeHtml(p.caption)}</p>` : ''}
                 </div>
               </div>
             `).join('')
