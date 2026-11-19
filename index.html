@@ -162,7 +162,7 @@
   </div>
 
   <!-- Google Auth & First-Time Member Onboarding Overlay -->
-  <div id="auth-overlay" class="fixed inset-0 bg-slate-950/75 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+  <div id="auth-overlay" class="fixed inset-0 bg-slate-950/75 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
     <div class="ed-card max-w-md w-full p-6 space-y-5 shadow-2xl">
       <div class="flex items-center gap-2.5">
         <div class="w-9 h-9 rounded-xl bg-slate-950 text-white flex items-center justify-center border border-slate-950 shadow-[2px_2px_0_var(--accent)] shrink-0">
@@ -339,6 +339,15 @@
             </div>
             <div id="my-period-chips" class="grid grid-cols-5 gap-1.5"></div>
           </div>
+          </div>
+
+          <div id="home-today-todos-card" class="pt-2 border-t border-slate-100 space-y-2">
+            <div class="flex items-center justify-between gap-2">
+              <span class="text-xs font-black text-slate-800">📝 오늘의 할 일</span>
+              <button type="button" id="btn-home-goto-planner" class="text-[11px] font-bold text-indigo-600 hover:underline whitespace-nowrap">플래너에서 편집 →</button>
+            </div>
+            <div id="home-today-todos-list" class="space-y-1.5"></div>
+          </div>
         </div>
 
         <!-- Clean Timetable Reference -->
@@ -355,9 +364,10 @@
     <!-- TAB 2: UNIFIED STUDY & RANKING HUB -->
     <div id="tab-members" class="tab-panel hidden space-y-3.5">
       <!-- Segmented Sub-Tab Switcher -->
-      <div class="grid grid-cols-2 gap-1.5 p-1 rounded-2xl bg-slate-100 border border-slate-200">
-        <button type="button" data-members-sub="live" class="members-sub-btn py-2 px-3 rounded-xl text-xs font-black bg-slate-950 text-white whitespace-nowrap transition">👥 스터디원 · 성적표</button>
-        <button type="button" data-members-sub="rank" class="members-sub-btn py-2 px-3 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-950 whitespace-nowrap transition">🏆 랭킹 · 티어 · 챌린지</button>
+      <div class="grid grid-cols-3 gap-1.5 p-1 rounded-2xl bg-slate-100 border border-slate-200">
+        <button type="button" data-members-sub="live" class="members-sub-btn py-2 px-2 rounded-xl text-[11px] sm:text-xs font-black bg-slate-950 text-white whitespace-nowrap transition">👥 스터디원 · 성적표</button>
+        <button type="button" data-members-sub="rank" class="members-sub-btn py-2 px-2 rounded-xl text-[11px] sm:text-xs font-bold text-slate-600 hover:text-slate-950 whitespace-nowrap transition">🏆 랭킹 · 챌린지</button>
+        <button type="button" data-members-sub="brag" class="members-sub-btn py-2 px-2 rounded-xl text-[11px] sm:text-xs font-bold text-slate-600 hover:text-slate-950 whitespace-nowrap transition">✨ 자랑하기</button>
       </div>
 
       <!-- Sub-Tab 1: Study Members & Weekly Report -->
@@ -444,11 +454,12 @@
       </div>
     
       </div>
-    </div>
 
-    <!-- TAB: BRAG (✨ 자랑하기 피드) -->
-    <div id="tab-brag" class="tab-panel hidden space-y-5">
-      <div class="ed-card p-5 sm:p-6 space-y-4">
+      <!-- Sub-Tab 3: Brag Feed (Study Members Only) -->
+      <div id="members-sub-brag" class="hidden space-y-4">
+        <div id="brag-locked-notice" class="hidden ed-card p-6 text-center text-xs font-bold text-slate-500">🔒 스터디에 참가한 멤버만 자랑하기 피드를 이용하고 볼 수 있습니다.</div>
+        <div id="brag-content-wrap">
+<div class="ed-card p-5 sm:p-6 space-y-4">
         <div class="flex flex-wrap items-center justify-between gap-2">
           <div>
             <h3 class="text-lg font-black text-slate-950">✨ 자랑하기 피드</h3>
@@ -472,6 +483,9 @@
         </form>
 
         <div id="photo-feed-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+      </div>
+    
+        </div>
       </div>
     </div>
 
@@ -572,6 +586,27 @@
             <button type="submit" class="px-4 py-2 rounded-xl bg-slate-950 hover:bg-slate-800 text-white text-xs sm:text-sm font-bold whitespace-nowrap shrink-0">저장</button>
           </div>
         </form>
+
+        <div id="profile-achievements-box" class="border-t border-slate-100 pt-4 space-y-3">
+          <div class="flex items-center justify-between gap-2 flex-wrap">
+            <span class="text-xs font-black text-slate-900">💎 현재 티어 & LP</span>
+            <div id="profile-tier-lp" class="flex items-center gap-1.5 flex-wrap"></div>
+          </div>
+          <div class="space-y-1.5">
+            <div class="flex items-center justify-between gap-2 flex-wrap">
+              <span class="text-xs font-black text-slate-900">👑 보유한 칭호</span>
+              <div class="flex items-center gap-1.5">
+                <span id="profile-equipped-title" class="text-[11px] font-bold text-indigo-600">장착 중: 없음</span>
+                <button type="button" id="btn-profile-unequip" class="hidden px-2 py-0.5 rounded-md bg-slate-100 hover:bg-rose-50 text-[10px] font-bold text-slate-600 hover:text-rose-600 border border-slate-200">장착 해제</button>
+              </div>
+            </div>
+            <div id="profile-titles-list" class="flex flex-wrap gap-1.5"></div>
+          </div>
+          <div class="space-y-1.5">
+            <span class="text-xs font-black text-slate-900 block">🏅 보유 뱃지</span>
+            <div id="profile-badges-list" class="flex flex-wrap gap-1.5"></div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -658,23 +693,24 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs leading-relaxed">
           <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
-            <h4 class="text-sm font-black text-slate-900">1. 내 별명 그대로 참가 · 프로필 · 대학 시간표</h4>
-            <p class="text-slate-700"><strong>내 별명 · 시간표</strong>에서 프로필 사진과 본인 별명, 대학 수업을 먼저 설정하세요(<strong>⚡ 충남대 전자과 시간표 불러오기</strong> 지원). 그다음 <strong>스터디 → 🙋 스터디 참가하기</strong>를 누르면 현재 사용 중인 내 별명 그대로 참여됩니다. 탈퇴하기 전까지 유지되며, 다시 참여할 때도 원래 별명 그대로 들어옵니다.</p>
+            <h4 class="text-sm font-black text-slate-900">1. Google 로그인 · 내 프로필 · 수업 시간표 · 참가</h4>
+            <p class="text-slate-700">Google 계정으로 로그인한 뒤 <strong>👤 내 프로필</strong>에서 사진·별명과 내 티어/LP·칭호·뱃지를 확인하세요. 대학 수업은 <strong>수업 시간표</strong>에서 등록할 수 있습니다(<strong>⚡ 충남대 전자과 시간표 불러오기</strong> 지원).</p>
+            <p class="text-slate-700">처음 가입 시에는 스터디에 자동 참가되지 않으니, 함께 공부하려면 <strong>스터디 · 랭킹 → 🙋 스터디 참가하기</strong>를 직접 눌러 참가해 주세요.</p>
           </div>
 
           <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
             <h4 class="text-sm font-black text-slate-900">2. 자율모드 vs 울트라집중모드</h4>
-            <p class="text-slate-700"><strong>자율모드</strong> : 교시 제한 없이 <code>자율 집중 중</code> 타이머로 자유롭게 공부하며 홈 배너 명언·배경 사진도 바꿀 수 있습니다.</p>
+            <p class="text-slate-700"><strong>자율모드</strong> : 처음 시작 시 기본 적용되며, 교시 제한 없이 <code>자율 집중 중</code> 타이머로 자유롭게 공부하고 홈 배너 명언·배경 사진도 바꿀 수 있습니다.</p>
             <p class="text-slate-700"><strong>울트라집중모드</strong> : 월~토 1~8교시 의무자습 + 9~10교시 <strong>선택자습</strong>(22:10~24:00)으로, 한 교시 안에 타이머를 최소 <strong>75% 이상</strong> 켜야 출석(+4 LP)이 인정되며 대학 수업 시간은 <code>수업면제</code>로 표시됩니다. 모드 변경은 <strong>내일 00:00</strong>부터 적용됩니다.</p>
           </div>
 
           <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
-            <h4 class="text-sm font-black text-slate-900">3. 탭 & 주요 기능 안내 (아이콘별 요약)</h4>
+            <h4 class="text-sm font-black text-slate-900">3. 주요 탭 & 뱃지·칭호 규칙</h4>
             <ul class="space-y-1.5 text-slate-700">
-              <li><strong>⏱️ 집중 시작하기</strong> : <code>00:00</code>부터 측정하며, 울트라집중모드에서는 타이머 아래 1~10교시 시간표와 달성률(%)이 한눈에 보입니다. (휴식 10분 초과 시 연속 집중만 초기화)</li>
-              <li><strong>📝 플래너</strong> : <code>✏️ 시간표 수정</code>으로 과목·할 일을 적고 10분 단위로 드래그해 계획하세요. (실제 공부 시간은 초록색 표시)</li>
-              <li><strong>📅 캘린더</strong> : 날짜별 공부 시간·출석·승급 기록을 한눈에 모아봅니다.</li>
-              <li><strong>✨ 자랑하기</strong> : 공부 인증 사진을 무제한으로 올리고 최신순 피드로 공유·삭제할 수 있습니다.</li>
+              <li><strong>⏱️ 집중 시작하기</strong> : <code>00:00</code>부터 측정하며, 휴식 10분 초과 시 연속 집중만 초기화됩니다(누적 시간 유지).</li>
+              <li><strong>📝 플래너 / 📅 캘린더</strong> : 10분 단위 계획 드래그(실제 공부 시간은 초록색 표시) 및 월간 공부·승급 기록 확인.</li>
+              <li><strong>🏅 뱃지 자동 표시</strong> : 획득한 모든 뱃지는 스터디원 카드와 주간 성적표, 내 프로필에 항상 표시됩니다. 단, <strong>🌅 얼리버드</strong>(08:00 전 공부 시작)는 <strong>그날 하루만</strong>, <strong>🦉 자정 돌파</strong>(심야 공부)는 <strong>다음 날 하루만</strong> 유지됩니다.</li>
+              <li><strong>👑 칭호 장착</strong> : 챌린지를 달성해 얻은 칭호는 <strong>👤 내 프로필</strong> 또는 <strong>랭킹</strong>에서 클릭해 대표 칭호로 달 수 있습니다.</li>
             </ul>
           </div>
 
@@ -682,23 +718,29 @@
             <h4 class="text-sm font-black text-slate-900">4. 티어 · LP 기준 · 승급전 · 소통</h4>
             <ul class="space-y-1.5 text-slate-700">
               <li><strong>💎 LP 기준</strong> : 울트라집중모드 교시 출석 <strong>+4 LP</strong>, 지각 <strong>+1 LP</strong>, 수업 면제 <strong>+2 LP</strong>, 리스펙 받기 <strong>+2 LP</strong>, 챌린지 달성 보상 (자율모드는 교시 LP 미적용, 감점 없음).</li>
-              <li><strong>⚔️ 승급전 · 연속출석</strong> : 다음 티어 <strong>15 LP 전부터</strong> 도전 가능(<strong>일요일 불가</strong>)하며, 실패해도 <strong>LP는 깎이지 않고 2일 뒤부터 재도전</strong>할 수 있습니다. 지각·미체크가 있어도 해당 일에 출석한 교시가 있으면 연속출석은 유지됩니다.</li>
-              <li><strong>🏆 랭킹</strong> : 아이언~챌린저 수직 티어표에서 <code>📍 현재 내 위치</code>와 챌린지·칭호를 확인합니다.</li>
-              <li><strong>👏 리스펙 / 🚨 신고하기</strong> : 무제한 응원 보내기 및 부적절한 활동 제보.</li>
+              <li><strong>⚔️ 승급전 · 연속출석</strong> : 다음 티어 <strong>15 LP 전부터</strong> 도전 가능(<strong>일요일 불가</strong>)하며, 실패해도 <strong>LP는 깎이지 않고 2일 뒤부터 재도전</strong>할 수 있습니다.</li>
+              <li><strong>👏 리스펙 / 🚨 신고하기</strong> : 다른 스터디원에게 응원(리스펙)을 보내거나 부적절한 활동을 제보할 수 있습니다. (모두에게 리스펙을 보내면 특별 챌린지 달성!)</li>
               <li><strong>🔥 불꽃 테두리</strong> : 오늘 누적 공부시간(1h→10h+)에 따라 카드 테두리 불꽃이 진화합니다.</li>
             </ul>
           </div>
 
-          <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2 md:col-span-2">
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
             <h4 class="text-sm font-black text-slate-900">5. 상단 아이콘 한눈에 보기</h4>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-slate-700">
-              <div><strong>🎨 컬러 점 3개</strong> : 앱 포인트 색상(블루·옐로우·코랄) 전환</div>
-              <div><strong>🌙 / ☀️</strong> : 눈이 편한 다크모드 / 라이트모드 전환</div>
-              <div><strong>💬 건의</strong> : 불편한 점이나 건의사항 바로 보내기</div>
-              <div><strong>🔔 / 🔕</strong> : 쉬는시간·교시 알림 켜기 / 끄기</div>
-              <div><strong>💌 우편함</strong> : 받은 리스펙·응원 및 다이렉트 메시지 확인</div>
-              <div><strong>🟢 실시간 ON</strong> : 스터디원 데이터 실시간 동기화 상태 확인</div>
+            <div class="space-y-1 text-slate-700">
+              <div><strong>💌 우편함</strong> : 받은 리스펙·응원 및 안내 메시지 확인 (새 메시지가 있으면 빨간 점 표시)</div>
+              <div><strong>🌙 / ☀️</strong> : 다크모드 / 라이트모드 전환</div>
+              <div><strong>⋯ 더보기</strong> : 포인트 컬러(블루·옐로우·코랄), 쉬는시간 알림, 건의하기, 로그아웃</div>
+              <div><strong>🟢 실시간</strong> : 스터디원 데이터 실시간 동기화 상태 확인</div>
             </div>
+          </div>
+
+          <div class="p-4 rounded-xl bg-rose-50 border border-rose-200 space-y-2">
+            <h4 class="text-sm font-black text-rose-900">6. ⚠️ 이용 시 주의사항</h4>
+            <ul class="space-y-1.5 text-rose-900">
+              <li><strong>단일 기기 로그인</strong> : 다른 기기(폰 ↔ 태블릿/PC 등)에서 <strong>같은 Google 계정으로 새로 로그인하면 기존 기기는 자동으로 로그아웃</strong>됩니다. (공부 시간 중복 측정 및 데이터 충돌 방지)</li>
+              <li><strong>새로고침 유지</strong> : 같은 기기·브라우저에서는 페이지를 새로고침해도 로그인이 유지됩니다.</li>
+              <li><strong>측정 중 탭 유지</strong> : 스톱워치를 켠 상태에서 브라우저 창을 완전히 닫으면 시간 측정이 중단되니 화면을 켜두거나 탭을 유지해 주세요.</li>
+            </ul>
           </div>
         </div>
       </div>
@@ -1137,6 +1179,19 @@
       let dbListenerAttached = false;
       let dbLoadedOnce = false;
       let currentAuthUser = null;
+      let sessionClaimed = false;
+      const SESSION_ID = (() => {
+        try {
+          let s = sessionStorage.getItem('iluvstudy_session_id');
+          if (!s) {
+            s = 'sess_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
+            sessionStorage.setItem('iluvstudy_session_id', s);
+          }
+          return s;
+        } catch (e) {
+          return 'sess_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
+        }
+      })();
 
       let activeChallengeCat = 'special';
       // Planner UI state
@@ -1150,11 +1205,68 @@
       function cleanupOldPhotos(maxDays = 99999) {
         return 0;
       }
+      let lastSyncedJson = {};
+      function snapshotSharedState(obj) {
+        const snap = {};
+        if (!obj) return snap;
+        const twoLevel = ['studyLogs', 'maxFocusLogs', 'periodStudySecs', 'studyBlocks', 'motemote', 'records', 'manualExempt', 'respectSentByDate'];
+        const oneLevel = ['classes', 'praises', 'directMessages', 'promoHistory', 'customBadges', 'memberChallenges'];
+        Object.keys(obj).forEach(k => {
+          if (twoLevel.includes(k) && obj[k] && typeof obj[k] === 'object') {
+            Object.keys(obj[k]).forEach(k1 => {
+              if (obj[k][k1] && typeof obj[k][k1] === 'object') {
+                Object.keys(obj[k][k1]).forEach(k2 => {
+                  snap[`${k}/${k1}/${k2}`] = JSON.stringify(obj[k][k1][k2]);
+                });
+              }
+            });
+          } else if (oneLevel.includes(k) && obj[k] && typeof obj[k] === 'object') {
+            Object.keys(obj[k]).forEach(k1 => {
+              snap[`${k}/${k1}`] = JSON.stringify(obj[k][k1]);
+            });
+          } else if (k === 'members' && Array.isArray(obj[k])) {
+            snap['members/__len'] = String(obj[k].length);
+            obj[k].forEach((m, idx) => { snap[`members/${idx}`] = JSON.stringify(m); });
+          } else {
+            snap[k] = JSON.stringify(obj[k]);
+          }
+        });
+        return snap;
+      }
+
       function saveSharedData() {
         cleanupOldPhotos(7);
         try { localStorage.setItem(LOCAL_DATA_KEY, JSON.stringify(shared)); } catch (e) {}
         if (dbRef && cloudConnected) {
-          try { dbRef.set(shared).catch(err => { cloudErrorMsg = err?.message || ''; updateCloudPill(); }); } catch (e) {}
+          try {
+            const curSnap = snapshotSharedState(shared);
+            const updates = {};
+            const lenChanged = curSnap['members/__len'] !== lastSyncedJson['members/__len'];
+            if (lenChanged) {
+              updates['members'] = shared.members;
+            }
+            Object.keys(curSnap).forEach(path => {
+              if (path === 'members/__len') return;
+              if (lenChanged && path.startsWith('members/')) return;
+              if (curSnap[path] !== lastSyncedJson[path]) {
+                const parts = path.split('/');
+                let val = shared;
+                for (const p of parts) val = val?.[p];
+                if (val !== undefined) updates[path] = val;
+              }
+            });
+            Object.keys(lastSyncedJson).forEach(path => {
+              if (path === 'members/__len' || (lenChanged && path.startsWith('members/'))) return;
+              if (!(path in curSnap)) {
+                const top = path.split('/')[0];
+                if (!updates[top]) updates[path] = null;
+              }
+            });
+            lastSyncedJson = curSnap;
+            if (Object.keys(updates).length > 0) {
+              dbRef.update(updates).catch(err => { cloudErrorMsg = err?.message || ''; updateCloudPill(); });
+            }
+          } catch (e) {}
         }
       }
 
@@ -1208,6 +1320,34 @@
         if (!user) return;
         const found = (shared.members || []).find(m => m.uid === user.uid);
         if (found) {
+          if (sessionClaimed && found.activeSessionId && found.activeSessionId !== SESSION_ID) {
+            sessionClaimed = false;
+            try {
+              if (typeof focusInterval !== 'undefined' && focusInterval && typeof syncFocusClock === 'function') {
+                syncFocusClock();
+                const tLogout = todayStr();
+                const logoutUpdates = {};
+                if (shared.studyLogs?.[tLogout]?.[found.id] !== undefined) logoutUpdates[`studyLogs/${tLogout}/${found.id}`] = shared.studyLogs[tLogout][found.id];
+                if (shared.maxFocusLogs?.[tLogout]?.[found.id] !== undefined) logoutUpdates[`maxFocusLogs/${tLogout}/${found.id}`] = shared.maxFocusLogs[tLogout][found.id];
+                if (shared.studyBlocks?.[tLogout]?.[found.id] !== undefined) logoutUpdates[`studyBlocks/${tLogout}/${found.id}`] = shared.studyBlocks[tLogout][found.id];
+                if (shared.periodStudySecs?.[tLogout]?.[found.id] !== undefined) logoutUpdates[`periodStudySecs/${tLogout}/${found.id}`] = shared.periodStudySecs[tLogout][found.id];
+                if (dbRef && Object.keys(logoutUpdates).length > 0) dbRef.update(logoutUpdates).catch(() => {});
+              }
+            } catch (e) {}
+            try { closeFocusOverlay(); } catch (e) {}
+            if (typeof firebase !== 'undefined' && typeof firebase.auth === 'function') {
+              firebase.auth().signOut().catch(() => {});
+            }
+            showAuthOverlay('login', '다른 기기에서 같은 Google 계정으로 로그인하여 현재 기기에서 자동 로그아웃되었습니다.');
+            return;
+          }
+          if (!sessionClaimed) {
+            sessionClaimed = true;
+            if (found.activeSessionId !== SESSION_ID) {
+              found.activeSessionId = SESSION_ID;
+              saveSharedData();
+            }
+          }
           prefs.currentUserId = found.id;
           prefs.joinedMemberId = found.inStudy !== false ? found.id : null;
           prefs.lastJoinedMemberId = found.id;
@@ -1262,6 +1402,7 @@
               records: v.records || {},
               photos: Array.isArray(v.photos) ? v.photos : (v.photos ? Object.values(v.photos) : [])
             };
+            lastSyncedJson = snapshotSharedState(shared);
             if (cleanupOldPhotos(7) > 0 || !v.lpCut30Migrated) saveSharedData();
             try { localStorage.setItem(LOCAL_DATA_KEY, JSON.stringify(shared)); } catch (e) {}
           } else {
@@ -1287,6 +1428,7 @@
           if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
           if (typeof firebase.auth === 'function') {
             const auth = firebase.auth();
+            auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(() => {});
             auth.getRedirectResult().catch(() => {});
             auth.onAuthStateChanged(user => {
               currentAuthUser = user || null;
@@ -1294,6 +1436,7 @@
                 attachRealtimeDb();
                 if (dbLoadedOnce) syncAuthUserMember(user);
               } else {
+                sessionClaimed = false;
                 dbLoadedOnce = false;
                 if (dbRef && dbListenerAttached) {
                   try { dbRef.off(); } catch (e) {}
@@ -1565,7 +1708,7 @@
 
       function getBadgesForMember(member, dateStr) {
         const b = [];
-        if (member.firstTime && toMins(member.firstTime) < toMins('08:00')) {
+        if (member.firstTime && (!member.firstTimeDate || member.firstTimeDate === dateStr) && toMins(member.firstTime) < toMins('08:00')) {
           b.push({ label: '🌅 얼리버드', customCls: BADGE_THEMES.neon });
         }
         const st = Number(member.streak) || 0;
@@ -1579,6 +1722,10 @@
         if (member.nightOwlDate === dateStr) {
           b.push({ label: '🦉 자정 돌파', customCls: BADGE_THEMES.royal });
         }
+        const customList = (shared.customBadges && shared.customBadges[member.id]) || [];
+        customList.forEach(cb => {
+          b.push({ label: cb.label, customCls: BADGE_THEMES[cb.theme || 'gold'] });
+        });
         return b;
       }
       function renderBadgePill(b) {
@@ -1898,6 +2045,30 @@
           const tag = item.type === 'study' ? '' : `<span class="text-[10px] text-slate-400">${item.mins}m</span>`;
           return `<div class="flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs ${cur ? 'bg-indigo-50 border border-indigo-200 font-bold text-indigo-900' : 'text-slate-600'}"><span class="flex items-center">${labelTxt}</span><div class="flex items-center gap-2">${tag}<span class="font-mono text-[11px]">${item.start}~${item.end}</span></div></div>`;
         }).join('');
+
+        const todoEl = document.getElementById('home-today-todos-list');
+        if (todoEl) {
+          const mmToday = getMemberMotemote(t, me.id);
+          const tList = mmToday.tasks || [];
+          const stStyles = {
+            V: 'bg-emerald-100 text-emerald-800 border-emerald-300',
+            '△': 'bg-amber-100 text-amber-800 border-amber-300',
+            X: 'bg-rose-100 text-rose-800 border-rose-300',
+            '': 'bg-white text-slate-400 border-slate-300'
+          };
+          todoEl.innerHTML = tList.length
+            ? tList.map(tk => `
+                <div class="flex items-center justify-between gap-2 rounded-xl border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-xs">
+                  <div class="flex items-center gap-1.5 min-w-0 flex-1">
+                    <span class="w-2.5 h-2.5 rounded-full shrink-0" style="background:${tk.color || '#6366f1'}"></span>
+                    <span class="px-1.5 py-0.5 rounded bg-white border border-slate-200 text-[10px] font-bold text-slate-700 shrink-0">${tk.subject}</span>
+                    <span class="font-medium text-slate-800 truncate ${tk.status === 'V' ? 'line-through opacity-60' : ''}">${tk.title}</span>
+                  </div>
+                  <button type="button" data-home-cycle-task="${tk.id}" class="w-7 h-7 rounded-lg border text-xs font-extrabold shrink-0 ${stStyles[tk.status || '']}" title="클릭해 V / △ / X 변경">${tk.status || '·'}</button>
+                </div>
+              `).join('')
+            : '<p class="text-[11px] text-slate-400">오늘 등록된 할 일이 없습니다. 플래너에서 추가해 보세요.</p>';
+        }
       }
 
       function getCurrentWeekDates() {
@@ -1929,18 +2100,24 @@
         }).sort((a, b) => b.weekMins - a.weekMins);
 
         document.getElementById('weekly-report-table').innerHTML = weeklyRanked.length
-          ? `<div class="space-y-1.5">${weeklyRanked.map((m, idx) => `
-              <div class="flex items-center justify-between gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs">
-                <div class="flex items-center gap-2 min-w-0">
+          ? `<div class="space-y-1">${weeklyRanked.map((m, idx) => {
+              const mBadges = getBadgesForMember(m, t);
+              const titleHtml = m.equippedTitle ? `<span class="px-1.5 py-0.5 rounded bg-slate-900 text-amber-300 text-[9px] font-black whitespace-nowrap shrink-0">${m.equippedTitle}</span>` : '';
+              const badgesHtml = mBadges.length ? mBadges.map(b => `<span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[9px] font-extrabold border whitespace-nowrap ${b.customCls || BADGE_THEMES.gold}">${b.label}</span>`).join('') : '';
+              return `
+              <div class="flex items-center justify-between gap-2 rounded-xl border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-xs">
+                <div class="flex items-center gap-1.5 flex-wrap min-w-0">
                   <span class="font-black text-slate-900 shrink-0">${idx + 1}위</span>
+                  ${titleHtml}
                   <span class="font-bold text-slate-900 truncate">${m.name}</span>
+                  ${badgesHtml}
                 </div>
-                <div class="flex items-center gap-2.5 shrink-0">
-                  <span class="text-[11px] font-semibold text-slate-500 whitespace-nowrap">출석 ${m.rate}%</span>
+                <div class="flex items-center gap-2 shrink-0">
+                  <span class="text-[10px] font-semibold text-slate-500 whitespace-nowrap">출석 ${m.rate}%</span>
                   <span class="font-mono font-black text-indigo-600 whitespace-nowrap">${formatStudyMins(m.weekMins)}</span>
                 </div>
-              </div>
-            `).join('')}</div>`
+              </div>`;
+            }).join('')}</div>`
           : '<p class="text-xs text-slate-400">참가 중인 스터디원이 없습니다.</p>';
 
         if (boardEl) {
@@ -1963,6 +2140,14 @@
       }
 
       function renderBragTab() {
+        const canBrag = prefs.adminMode || !!prefs.joinedMemberId;
+        const lockEl = document.getElementById('brag-locked-notice');
+        const wrapEl = document.getElementById('brag-content-wrap');
+        if (lockEl && wrapEl) {
+          lockEl.classList.toggle('hidden', canBrag);
+          wrapEl.classList.toggle('hidden', !canBrag);
+          if (!canBrag) return;
+        }
         document.getElementById('photo-preview-wrap').classList.toggle('hidden', !pendingPhoto);
         if (pendingPhoto) document.getElementById('photo-preview-img').src = pendingPhoto;
         const photos = (shared.photos || []).slice().sort((a, b) => (Number(String(b.id || '').replace(/\D/g, '')) || 0) - (Number(String(a.id || '').replace(/\D/g, '')) || 0));
@@ -2020,9 +2205,7 @@
           const todayTotalMins = (shared.studyLogs && shared.studyLogs[t] && shared.studyLogs[t][m.id]) || 0;
           const isStudying = (phase && phase.type === 'study' && (st === 'present' || st === 'late')) || fMins > 0;
           const allBadges = getBadgesForMember(m, t);
-          const badges = Array.isArray(m.pinnedBadges) && m.pinnedBadges.length
-            ? allBadges.filter(b => m.pinnedBadges.includes(b.label))
-            : allBadges.slice(0, 3);
+          const badges = allBadges;
           const tierObj = getMemberTier(m.lp || 0);
           const flameCls = todayTotalMins >= 600 ? 'flame-lv5' : todayTotalMins >= 420 ? 'flame-lv4' : todayTotalMins >= 300 ? 'flame-lv3' : todayTotalMins >= 180 ? 'flame-lv2' : todayTotalMins >= 60 ? 'flame-lv1' : '';
           const isPromoNow = m.promoActiveDate === t;
@@ -2034,7 +2217,7 @@
                   <div class="w-7 h-7 rounded-full bg-slate-200 border border-slate-300 overflow-hidden flex items-center justify-center text-[11px] font-black text-slate-600 shrink-0">${m.avatarUrl ? `<img src="${m.avatarUrl}" class="w-full h-full object-cover" alt="${m.name}" />` : m.name.slice(0, 1)}</div>
                   <div class="min-w-0">
                     <div class="flex items-center gap-1 min-w-0">
-                      <span class="font-extrabold text-xs sm:text-sm text-slate-900 truncate">${m.name}</span>
+                      ${m.equippedTitle ? `<span class="px-1.5 py-0.5 rounded bg-slate-900 text-amber-300 text-[9px] font-black whitespace-nowrap shrink-0">${m.equippedTitle}</span>` : ''}<span class="font-extrabold text-xs sm:text-sm text-slate-900 truncate">${m.name}</span>
                       ${isStudying ? '<span class="text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-600 text-white font-bold whitespace-nowrap shrink-0">공부중</span>' : ''}
                     </div>
                   </div>
@@ -2048,7 +2231,7 @@
                   ${prefs.adminMode && shared.members.length > 1 ? `<button data-del-member="${m.id}" class="text-[10px] px-1.5 py-0.5 rounded bg-rose-50 text-rose-600 font-bold border border-rose-200 whitespace-nowrap">삭제</button>` : ''}
                 </div>
               </div>
-              ${badges.length ? `<div class="flex flex-wrap gap-1">${badges.slice(0, 2).map(renderBadgePill).join('')}</div>` : ''}
+              ${badges.length ? `<div class="flex flex-wrap gap-1">${badges.map(renderBadgePill).join('')}</div>` : ''}
             </div>
           `;
         }).join('');
@@ -2259,6 +2442,31 @@
               ? 'px-2.5 py-1 rounded-full text-[11px] font-black bg-rose-100 text-rose-800 whitespace-nowrap'
               : 'px-2.5 py-1 rounded-full text-[11px] font-black bg-emerald-100 text-emerald-800 whitespace-nowrap';
           }
+          const tierEl = document.getElementById('profile-tier-lp');
+          if (tierEl) tierEl.innerHTML = renderTierPill(tm.lp || 0);
+          const eqEl = document.getElementById('profile-equipped-title');
+          if (eqEl) eqEl.textContent = `장착 중: ${tm.equippedTitle || '없음'}`;
+          const uneqBtn = document.getElementById('btn-profile-unequip');
+          if (uneqBtn) uneqBtn.classList.toggle('hidden', !tm.equippedTitle);
+          const titlesEl = document.getElementById('profile-titles-list');
+          if (titlesEl) {
+            const doneIds = (shared.memberChallenges && shared.memberChallenges[tm.id]) || [];
+            const unlockedChs = (shared.challenges || []).filter(c => doneIds.includes(c.id));
+            titlesEl.innerHTML = unlockedChs.length
+              ? unlockedChs.map(ch => {
+                  const cleanTitle = ch.title.replace(/^[^\s]+\s*/, '');
+                  const isEq = tm.equippedTitle === cleanTitle;
+                  return `<button type="button" data-profile-equip="${cleanTitle}" class="px-2.5 py-1 rounded-lg text-[11px] font-bold border transition ${isEq ? 'bg-slate-950 text-amber-300 border-slate-950' : 'bg-slate-50 text-slate-800 border-slate-300 hover:bg-slate-100'}">${ch.title} ${isEq ? '✓' : ''}</button>`;
+                }).join('')
+              : '<span class="text-xs text-slate-400">아직 획득한 칭호가 없습니다. 챌린지를 달성해 보세요!</span>';
+          }
+          const badgesEl = document.getElementById('profile-badges-list');
+          if (badgesEl) {
+            const allB = getBadgesForMember(tm, todayStr());
+            badgesEl.innerHTML = allB.length
+              ? allB.map(renderBadgePill).join('')
+              : '<span class="text-xs text-slate-400">아직 획득한 뱃지가 없습니다.</span>';
+          }
         }
       }
 
@@ -2360,7 +2568,7 @@
         }
         const rSort = activeMembers.map(m => ({ ...m, rate: calcAttendanceRate(m.id, t) })).sort((a, b) => b.rate - a.rate);
         document.getElementById('rank-rate-list').innerHTML = rSort.length ? rSort.map((m, i) => `<div class="flex justify-between bg-slate-50 rounded-xl px-3 py-2 text-xs"><span><strong>${i + 1}위</strong> ${m.name}</span><strong class="text-indigo-600">${m.rate}%</strong></div>`).join('') : '<p class="text-xs text-slate-400">참가 후 확인 가능</p>';
-        const fSort = activeMembers.filter(m => m.firstTime).sort((a, b) => toMins(a.firstTime) - toMins(b.firstTime));
+        const fSort = activeMembers.filter(m => m.firstTime && (!m.firstTimeDate || m.firstTimeDate === t)).sort((a, b) => toMins(a.firstTime) - toMins(b.firstTime));
         document.getElementById('rank-first-list').innerHTML = fSort.length ? fSort.map((m, i) => `<div class="flex justify-between bg-slate-50 rounded-xl px-3 py-2 text-xs"><span><strong>${i + 1}위</strong> ${m.name}</span><span class="font-mono font-bold">${m.firstTime}</span></div>`).join('') : '<p class="text-xs text-slate-400">기록 없음</p>';
         const lSort = activeMembers.filter(m => m.lastTime).sort((a, b) => toMins(b.lastTime) - toMins(a.lastTime));
         document.getElementById('rank-last-list').innerHTML = lSort.length ? lSort.map((m, i) => `<div class="flex justify-between bg-slate-50 rounded-xl px-3 py-2 text-xs"><span><strong>${i + 1}위</strong> ${m.name}</span><span class="font-mono font-bold">${m.lastTime}</span></div>`).join('') : '<p class="text-xs text-slate-400">기록 없음</p>';
@@ -2543,7 +2751,7 @@
         renderHeaderControls();
         renderLiveBanner();
         if (prefs.activeTab === 'dashboard') renderDashboard();
-        if (prefs.activeTab === 'members') { renderMembersTab(); renderWeeklyReportCards(); renderRankingsTab(); }
+        if (prefs.activeTab === 'members') { renderMembersTab(); renderWeeklyReportCards(); renderRankingsTab(); renderBragTab(); }
         if (prefs.activeTab === 'brag') renderBragTab();
         if (prefs.activeTab === 'planner') renderPlannerTab();
         if (prefs.activeTab === 'calendar') renderCalendarTab();
@@ -2574,13 +2782,15 @@
           const targetSub = sb.dataset.membersSub;
           document.getElementById('members-sub-live').classList.toggle('hidden', targetSub !== 'live');
           document.getElementById('members-sub-rank').classList.toggle('hidden', targetSub !== 'rank');
+          document.getElementById('members-sub-brag').classList.toggle('hidden', targetSub !== 'brag');
           document.querySelectorAll('[data-members-sub]').forEach(x => {
             const on = x.dataset.membersSub === targetSub;
             x.className = on
-              ? 'members-sub-btn py-2 px-3 rounded-xl text-xs font-black bg-slate-950 text-white whitespace-nowrap transition'
-              : 'members-sub-btn py-2 px-3 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-950 whitespace-nowrap transition';
+              ? 'members-sub-btn py-2 px-2 rounded-xl text-[11px] sm:text-xs font-black bg-slate-950 text-white whitespace-nowrap transition'
+              : 'members-sub-btn py-2 px-2 rounded-xl text-[11px] sm:text-xs font-bold text-slate-600 hover:text-slate-950 whitespace-nowrap transition';
           });
           if (targetSub === 'rank') renderRankingsTab();
+          if (targetSub === 'brag') renderBragTab();
         });
       });
       
@@ -2840,14 +3050,15 @@
         }
         if (!phase && now.totalMins >= 360 && now.totalMins < 480) {
           if (!pendingPhoto) pendingPhoto = makeSampleDeskImage(me.name, `${now.hhmm} 1교시`);
-          if (!me.firstTime || toMins(now.hhmm) < toMins(me.firstTime)) me.firstTime = now.hhmm;
+          if (me.firstTimeDate !== t || !me.firstTime || toMins(now.hhmm) < toMins(me.firstTime)) { me.firstTime = now.hhmm; me.firstTimeDate = t; }
           if (!shared.photos) shared.photos = [];
           shared.photos.push({ id: 'ph_' + Date.now(), memberId: me.id, memberName: me.name, periodId: 'p1', periodLabel: '1교시 등원', time: now.hhmm, date: t, dataUrl: pendingPhoto });
           pendingPhoto = null; setMemberDayStatus(me.id, t, 'p1', 'present'); showToast('이른 등원 완료!', 'success'); renderAll(); return;
         }
         if (!phase || phase.type !== 'study') return;
-        if (phase.id === 'p1' && (!me.firstTime || toMins(now.hhmm) < toMins(me.firstTime))) {
+        if (phase.id === 'p1' && (me.firstTimeDate !== t || !me.firstTime || toMins(now.hhmm) < toMins(me.firstTime))) {
           me.firstTime = now.hhmm;
+          me.firstTimeDate = t;
           saveSharedData();
         }
         const reqMins = Math.ceil(phase.mins * 0.75);
@@ -3050,7 +3261,15 @@
                 <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200"><div class="text-slate-400">오늘 받은 리스펙</div><div class="text-sm font-black text-slate-900 mt-0.5">👏 ${todayRespect}회</div></div>
               </div>
               <div>
-                <div class="font-bold text-slate-700 mb-1.5">보유 뱃지 (${allB.length}개)</div>
+                <div class="font-bold text-slate-700 mb-1.5">👑 보유 칭호</div>
+                <div class="flex flex-wrap gap-1">${(() => {
+                  const doneIds = (shared.memberChallenges && shared.memberChallenges[m.id]) || [];
+                  const chs = (shared.challenges || []).filter(c => doneIds.includes(c.id));
+                  return chs.length ? chs.map(c => `<span class="px-2 py-0.5 rounded-md bg-slate-100 border border-slate-200 text-[11px] font-bold text-slate-800">${c.title}</span>`).join('') : '<span class="text-slate-400">없음</span>';
+                })()}</div>
+              </div>
+              <div>
+                <div class="font-bold text-slate-700 mb-1.5">🏅 보유 뱃지 (${allB.length}개)</div>
                 <div class="flex flex-wrap gap-1">${allB.length ? allB.map(renderBadgePill).join('') : '<span class="text-slate-400">없음</span>'}</div>
               </div>
             </div>
@@ -3537,7 +3756,10 @@
       // Fullscreen Focus Stopwatch Logic (Counts up from 00:00)
       let focusPaused = false;
       let focusElapsedSecs = 0;
+      let focusAccumulatedSecs = 0;
+      let focusStartedAt = null;
       let focusInterval = null;
+      let syncFocusClock = null;
 
       function formatStopwatch(secs) {
         const h = Math.floor(secs / 3600);
@@ -3563,8 +3785,10 @@
         const now = getNowParts(), phase = getCurrentPhase(now.totalMins);
         const meFocus = shared.members.find(m => m.id === prefs.currentUserId);
         const isStrictFocus = getMemberMode(meFocus) === 'strict';
-        if (meFocus && now.totalMins < toMins('08:00') && (!meFocus.firstTime || toMins(now.hhmm) < toMins(meFocus.firstTime))) {
+        const tEarly = todayStr();
+        if (meFocus && now.totalMins < toMins('08:00') && (meFocus.firstTimeDate !== tEarly || !meFocus.firstTime || toMins(now.hhmm) < toMins(meFocus.firstTime))) {
           meFocus.firstTime = now.hhmm;
+          meFocus.firstTimeDate = tEarly;
           saveSharedData();
         }
 
@@ -3627,7 +3851,7 @@
           '잠깐의 몰입이 오늘의 실력을 만듭니다.'
         ];
 
-        function checkAutoAttendanceWhileStudying(incrementSec = false) {
+        function checkAutoAttendanceWhileStudying(addSecs = 0) {
           const meCur = shared.members.find(m => m.id === prefs.currentUserId);
           if (!meCur || getMemberMode(meCur) !== 'strict') {
             document.getElementById('focus-period-badge').textContent = '자율 집중 중';
@@ -3640,8 +3864,8 @@
             if (!shared.periodStudySecs) shared.periodStudySecs = {};
             if (!shared.periodStudySecs[t]) shared.periodStudySecs[t] = {};
             if (!shared.periodStudySecs[t][meCur.id]) shared.periodStudySecs[t][meCur.id] = {};
-            if (incrementSec) {
-              shared.periodStudySecs[t][meCur.id][ph.id] = (shared.periodStudySecs[t][meCur.id][ph.id] || 0) + 1;
+            if (addSecs > 0) {
+              shared.periodStudySecs[t][meCur.id][ph.id] = (shared.periodStudySecs[t][meCur.id][ph.id] || 0) + addSecs;
             }
             const curSecs = shared.periodStudySecs[t][meCur.id][ph.id] || 0;
             const reqSecs = Math.ceil(ph.mins * 60 * 0.75);
@@ -3668,62 +3892,79 @@
           renderFocusTimetable();
         }
 
-        if (!focusInterval) {
-          focusElapsedSecs = 0;
-          focusPaused = false;
-          document.getElementById('focus-cheer-msg').textContent = '';
-          checkAutoAttendanceWhileStudying();
-          focusInterval = setInterval(() => {
-            if (!focusPaused) {
-              focusElapsedSecs++;
-              updateFocusDisplay();
-              checkAutoAttendanceWhileStudying(true);
-              if (focusElapsedSecs % 30 === 0) { saveSharedData(); if (prefs.activeTab === 'dashboard') renderDashboard(); }
-              if (focusElapsedSecs % 60 === 0) {
-                checkAutoAttendanceWhileStudying();
-                const tNowStr = todayStr();
-                const nowP = getNowParts();
-                const meObj = shared.members.find(x => x.id === prefs.currentUserId);
-                if (meObj) {
-                  meObj.focusMins = Math.floor(focusElapsedSecs / 60);
-                  if (!shared.maxFocusLogs) shared.maxFocusLogs = {};
-                  if (!shared.maxFocusLogs[tNowStr]) shared.maxFocusLogs[tNowStr] = {};
-                  shared.maxFocusLogs[tNowStr][meObj.id] = Math.max(shared.maxFocusLogs[tNowStr][meObj.id] || 0, meObj.focusMins);
-                  if (!shared.studyLogs) shared.studyLogs = {};
-                  if (!shared.studyLogs[tNowStr]) shared.studyLogs[tNowStr] = {};
-                  shared.studyLogs[tNowStr][meObj.id] = (shared.studyLogs[tNowStr][meObj.id] || 0) + 1;
-                  // Paint current 10-min slot onto planner timetable
-                  if (nowP.h >= 0 && nowP.h < 5) {
-                    meObj.nightOwlDate = todayStr();
-                  } else if (nowP.h === 23 && nowP.m >= 50) {
-                    meObj.nightOwlDate = tomorrowStr();
-                  }
-                  const slotKey = `${String(nowP.h).padStart(2, '0')}_${Math.floor(nowP.m / 10)}`;
-                  if (!shared.studyBlocks) shared.studyBlocks = {};
-                  if (!shared.studyBlocks[tNowStr]) shared.studyBlocks[tNowStr] = {};
-                  if (!shared.studyBlocks[tNowStr][meObj.id]) shared.studyBlocks[tNowStr][meObj.id] = {};
-                  shared.studyBlocks[tNowStr][meObj.id][slotKey] = true;
-                  saveSharedData();
-                }
+        syncFocusClock = function () {
+          if (focusPaused || !focusStartedAt) return;
+          const targetSecs = focusAccumulatedSecs + Math.max(0, Math.floor((Date.now() - focusStartedAt) / 1000));
+          const deltaSecs = targetSecs - focusElapsedSecs;
+          if (deltaSecs <= 0) return;
+
+          const prevMins = Math.floor(focusElapsedSecs / 60);
+          const newMins = Math.floor(targetSecs / 60);
+          const deltaMins = newMins - prevMins;
+          const prevBucket30 = Math.floor(focusElapsedSecs / 30);
+          const newBucket30 = Math.floor(targetSecs / 30);
+
+          focusElapsedSecs = targetSecs;
+          updateFocusDisplay();
+          checkAutoAttendanceWhileStudying(deltaSecs);
+
+          if (deltaMins > 0) {
+            const tNowStr = todayStr();
+            const meObj = shared.members.find(x => x.id === prefs.currentUserId);
+            if (meObj) {
+              meObj.focusMins = newMins;
+              if (!shared.maxFocusLogs) shared.maxFocusLogs = {};
+              if (!shared.maxFocusLogs[tNowStr]) shared.maxFocusLogs[tNowStr] = {};
+              shared.maxFocusLogs[tNowStr][meObj.id] = Math.max(shared.maxFocusLogs[tNowStr][meObj.id] || 0, newMins);
+              if (!shared.studyLogs) shared.studyLogs = {};
+              if (!shared.studyLogs[tNowStr]) shared.studyLogs[tNowStr] = {};
+              shared.studyLogs[tNowStr][meObj.id] = (shared.studyLogs[tNowStr][meObj.id] || 0) + deltaMins;
+              if (!shared.studyBlocks) shared.studyBlocks = {};
+              if (!shared.studyBlocks[tNowStr]) shared.studyBlocks[tNowStr] = {};
+              if (!shared.studyBlocks[tNowStr][meObj.id]) shared.studyBlocks[tNowStr][meObj.id] = {};
+              const nowMs = Date.now();
+              for (let k = deltaMins - 1; k >= 0; k--) {
+                const dt = new Date(nowMs - k * 60000);
+                const dh = dt.getHours(), dm = dt.getMinutes();
+                if (dh >= 0 && dh < 5) meObj.nightOwlDate = todayStr();
+                else if (dh === 23 && dm >= 50) meObj.nightOwlDate = tomorrowStr();
+                const slotKey = `${String(dh).padStart(2, '0')}_${Math.floor(dm / 10)}`;
+                shared.studyBlocks[tNowStr][meObj.id][slotKey] = true;
               }
-              (shared.challenges || []).forEach(ch => {
-                if (ch.focusSecs && focusElapsedSecs === ch.focusSecs) {
-                  if (!shared.memberChallenges) shared.memberChallenges = {};
-                  if (!shared.memberChallenges[prefs.currentUserId]) shared.memberChallenges[prefs.currentUserId] = [];
-                  if (!shared.memberChallenges[prefs.currentUserId].includes(ch.id)) {
-                    shared.memberChallenges[prefs.currentUserId].push(ch.id);
-                    addMemberLp(prefs.currentUserId, ch.lp || 20);
-                    saveSharedData();
-                    pendingCelebrations.push(ch);
-                  }
-                }
-              });
-              if (focusElapsedSecs > 0 && focusElapsedSecs % 600 === 0) {
-                const minsDone = Math.floor(focusElapsedSecs / 60);
-                const msg = CHEER_MSGS[(Math.floor(minsDone / 10) - 1) % CHEER_MSGS.length];
-                document.getElementById('focus-cheer-msg').textContent = `${minsDone}분 경과 · ${msg}`;
+              saveSharedData();
+            }
+          } else if (newBucket30 > prevBucket30) {
+            saveSharedData();
+            if (prefs.activeTab === 'dashboard') renderDashboard();
+          }
+
+          (shared.challenges || []).forEach(ch => {
+            if (ch.focusSecs && focusElapsedSecs >= ch.focusSecs) {
+              if (!shared.memberChallenges) shared.memberChallenges = {};
+              if (!shared.memberChallenges[prefs.currentUserId]) shared.memberChallenges[prefs.currentUserId] = [];
+              if (!shared.memberChallenges[prefs.currentUserId].includes(ch.id)) {
+                shared.memberChallenges[prefs.currentUserId].push(ch.id);
+                addMemberLp(prefs.currentUserId, ch.lp || 20);
+                saveSharedData();
+                pendingCelebrations.push(ch);
               }
             }
+          });
+          if (newMins > 0 && Math.floor(newMins / 10) > Math.floor(prevMins / 10)) {
+            const msg = CHEER_MSGS[(Math.floor(newMins / 10) - 1) % CHEER_MSGS.length];
+            document.getElementById('focus-cheer-msg').textContent = `${newMins}분 경과 · ${msg}`;
+          }
+        };
+
+        if (!focusInterval) {
+          focusElapsedSecs = 0;
+          focusAccumulatedSecs = 0;
+          focusStartedAt = Date.now();
+          focusPaused = false;
+          document.getElementById('focus-cheer-msg').textContent = '';
+          checkAutoAttendanceWhileStudying(0);
+          focusInterval = setInterval(() => {
+            if (!focusPaused && syncFocusClock) syncFocusClock();
           }, 1000);
         }
         updateFocusDisplay();
@@ -3744,8 +3985,11 @@
       }
 
       function closeFocusOverlay() {
+        if (syncFocusClock && !focusPaused) syncFocusClock();
         if (focusInterval) { clearInterval(focusInterval); focusInterval = null; }
         focusElapsedSecs = 0;
+        focusAccumulatedSecs = 0;
+        focusStartedAt = null;
         if (!prefs.adminMode) {
           const meObj = shared.members.find(x => x.id === prefs.currentUserId);
           if (meObj && meObj.focusMins) { meObj.focusMins = 0; saveSharedData(); }
@@ -3802,19 +4046,24 @@
 
       let pauseStartedAt = null;
       document.getElementById('focus-pause-btn').addEventListener('click', () => {
+        if (!focusPaused && syncFocusClock) syncFocusClock();
         focusPaused = !focusPaused;
         if (focusPaused) {
+          focusAccumulatedSecs = focusElapsedSecs;
+          focusStartedAt = null;
           pauseStartedAt = Date.now();
           flushCelebrations();
-        } else if (pauseStartedAt) {
-          const pausedSecs = Math.floor((Date.now() - pauseStartedAt) / 1000);
+        } else {
+          const pausedSecs = pauseStartedAt ? Math.floor((Date.now() - pauseStartedAt) / 1000) : 0;
           pauseStartedAt = null;
           if (pausedSecs > 600) {
             focusElapsedSecs = 0;
+            focusAccumulatedSecs = 0;
             const meObj = shared.members.find(x => x.id === prefs.currentUserId);
             if (meObj) { meObj.focusMins = 0; saveSharedData(); }
             document.getElementById('focus-cheer-msg').textContent = '휴식 10분 초과로 연속 집중이 초기화되었습니다 (누적 시간 유지)';
           }
+          focusStartedAt = Date.now();
         }
         updateFocusDisplay();
       });
@@ -3899,6 +4148,7 @@
           const newMember = {
             id: 'm_' + currentAuthUser.uid.slice(0, 8) + '_' + Date.now(),
             uid: currentAuthUser.uid,
+            activeSessionId: SESSION_ID,
             email: currentAuthUser.email || '',
             name: nickname,
             avatarUrl: currentAuthUser.photoURL || '',
@@ -3917,6 +4167,7 @@
           prefs.joinedMemberId = null;
           prefs.lastJoinedMemberId = newMember.id;
         }
+        sessionClaimed = true;
         prefs.guideHintUnread = true;
         savePrefs();
         saveSharedData();
@@ -3933,6 +4184,7 @@
       });
 
       function handleHeaderAuthClick() {
+        sessionClaimed = false;
         if (currentAuthUser && typeof firebase !== 'undefined' && typeof firebase.auth === 'function') {
           firebase.auth().signOut().then(() => {
             showToast('로그아웃되었습니다.', 'info');
@@ -3943,6 +4195,51 @@
         }
       }
       document.getElementById('btn-google-logout').addEventListener('click', handleHeaderAuthClick);
+
+      document.getElementById('profile-titles-list').addEventListener('click', e => {
+        const b = e.target.closest('[data-profile-equip]');
+        if (!b) return;
+        const ps = document.getElementById('profile-member-select');
+        const mid = (prefs.adminMode && ps && ps.value) ? ps.value : prefs.currentUserId;
+        const tm = shared.members.find(m => m.id === mid);
+        if (!tm) return;
+        const tName = b.dataset.profileEquip;
+        tm.equippedTitle = tm.equippedTitle === tName ? '' : tName;
+        saveSharedData();
+        showToast(tm.equippedTitle ? `'${tm.equippedTitle}' 칭호를 장착했습니다!` : '칭호 장착을 해제했습니다.', 'success');
+        renderAll();
+      });
+
+      document.getElementById('btn-profile-unequip').addEventListener('click', () => {
+        const ps = document.getElementById('profile-member-select');
+        const mid = (prefs.adminMode && ps && ps.value) ? ps.value : prefs.currentUserId;
+        const tm = shared.members.find(m => m.id === mid);
+        if (!tm || !tm.equippedTitle) return;
+        tm.equippedTitle = '';
+        saveSharedData();
+        showToast('칭호 장착을 해제했습니다.', 'info');
+        renderAll();
+      });
+
+      document.addEventListener('visibilitychange', () => {
+        if (!document.hidden && focusInterval && !focusPaused && syncFocusClock) syncFocusClock();
+      });
+      window.addEventListener('focus', () => {
+        if (focusInterval && !focusPaused && syncFocusClock) syncFocusClock();
+      });
+
+      document.getElementById('btn-home-goto-planner').addEventListener('click', () => switchTab('planner'));
+      document.getElementById('home-today-todos-list').addEventListener('click', e => {
+        const b = e.target.closest('[data-home-cycle-task]');
+        if (!b) return;
+        const mmToday = getMemberMotemote(todayStr(), prefs.currentUserId);
+        const task = (mmToday.tasks || []).find(t => t.id === b.dataset.homeCycleTask);
+        if (!task) return;
+        const order = ['', 'V', '△', 'X'];
+        task.status = order[(order.indexOf(task.status || '') + 1) % order.length];
+        saveSharedData();
+        renderDashboard();
+      });
 
       initFirebase();
       switchTab(prefs.activeTab || 'dashboard');
