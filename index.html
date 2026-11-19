@@ -1258,6 +1258,7 @@
               })(),
               memberChallenges: v.memberChallenges || {},
               praises: v.praises || {},
+              respectSentByDate: v.respectSentByDate || {},
               records: v.records || {},
               photos: Array.isArray(v.photos) ? v.photos : (v.photos ? Object.values(v.photos) : [])
             };
@@ -2981,7 +2982,7 @@
           if (!shared.respectSentByDate[tStr][prefs.currentUserId]) shared.respectSentByDate[tStr][prefs.currentUserId] = {};
 
           shared.respectSentByDate[tStr][prefs.currentUserId][targetId] = true;
-          const otherIds = shared.members.filter(x => x.id !== prefs.currentUserId).map(x => x.id);
+          const otherIds = shared.members.filter(x => x.id !== prefs.currentUserId && x.inStudy !== false).map(x => x.id);
           if (otherIds.length > 0 && otherIds.every(oid => shared.respectSentByDate[tStr][prefs.currentUserId][oid])) {
             unlockChallengeFor(prefs.currentUserId, 'ch_all_resp', false);
           }
@@ -3902,7 +3903,7 @@
             name: nickname,
             avatarUrl: currentAuthUser.photoURL || '',
             mode: 'free',
-            inStudy: true,
+            inStudy: false,
             streak: 0,
             lp: 0,
             respectCount: 0,
@@ -3913,7 +3914,7 @@
           };
           shared.members.push(newMember);
           prefs.currentUserId = newMember.id;
-          prefs.joinedMemberId = newMember.id;
+          prefs.joinedMemberId = null;
           prefs.lastJoinedMemberId = newMember.id;
         }
         prefs.guideHintUnread = true;
