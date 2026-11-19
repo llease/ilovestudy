@@ -90,6 +90,18 @@
     body[data-dark="true"] input::placeholder, body[data-dark="true"] textarea::placeholder { color: #94a3b8 !important; opacity: 1 !important; }
     body[data-dark="true"] .tab-idle { color: #cbd5e1 !important; }
     body[data-dark="true"] .tab-active { background-color: #f8fafc !important; color: #0f172a !important; }
+    body[data-dark="true"] #focus-overlay, body[data-dark="true"] #modal-box { background-color: #0b1120 !important; color: #f1f5f9 !important; }
+    body[data-dark="true"] .bg-rose-50 { background-color: rgba(136, 19, 55, 0.28) !important; }
+    body[data-dark="true"] .bg-emerald-50 { background-color: rgba(6, 78, 59, 0.32) !important; }
+    body[data-dark="true"] .bg-amber-50, body[data-dark="true"] .bg-amber-50\/90 { background-color: rgba(120, 53, 15, 0.3) !important; }
+    body[data-dark="true"] .bg-indigo-50, body[data-dark="true"] .bg-sky-50\/70 { background-color: rgba(30, 58, 138, 0.28) !important; }
+    body[data-dark="true"] .text-rose-900, body[data-dark="true"] .text-rose-800, body[data-dark="true"] .text-rose-700 { color: #fda4af !important; }
+    body[data-dark="true"] .text-emerald-900, body[data-dark="true"] .text-emerald-800, body[data-dark="true"] .text-emerald-700 { color: #6ee7b7 !important; }
+    body[data-dark="true"] .text-amber-950, body[data-dark="true"] .text-amber-800 { color: #fde68a !important; }
+    body[data-dark="true"] .text-indigo-950, body[data-dark="true"] .text-indigo-900 { color: #c7d2fe !important; }
+    body[data-dark="true"] .border-rose-200 { border-color: rgba(244, 63, 94, 0.4) !important; }
+    body[data-dark="true"] .border-emerald-200 { border-color: rgba(16, 185, 129, 0.4) !important; }
+    body[data-dark="true"] .border-amber-200, body[data-dark="true"] .border-amber-400 { border-color: rgba(245, 158, 11, 0.45) !important; }
     body[data-promo="active"] .ed-banner { background: linear-gradient(135deg, #f59e0b 0%, #eab308 50%, #f97316 100%); color: #111111; border-color: #111111; box-shadow: 4px 4px 0 #111111; }
     body[data-promo="active"] .ed-card { border-color: #d97706; box-shadow: 0 0 18px rgba(245, 158, 11, 0.22); }
     body[data-promo="ready"] .ed-banner { border-width: 2px; border-color: #eab308; }
@@ -446,7 +458,7 @@
           <span id="my-equipped-title-pill" class="px-3 py-1 rounded-full text-xs font-black bg-slate-950 text-white">장착 칭호: 없음</span>
         </div>
         <div id="challenge-cat-tabs" class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1">
-          <button type="button" data-ch-cat="special" class="ch-cat-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-950 text-white whitespace-nowrap">🌟 출석 · 특수 (14)</button>
+          <button type="button" data-ch-cat="special" class="ch-cat-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-950 text-white whitespace-nowrap">🌟 출석 · 특수 (15)</button>
           <button type="button" data-ch-cat="focus_mid" class="ch-cat-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 whitespace-nowrap">🔥 연속 집중 (3h~12h)</button>
           <button type="button" data-ch-cat="focus_high" class="ch-cat-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 whitespace-nowrap">👑 극한 집중 (13h~24h)</button>
         </div>
@@ -463,16 +475,20 @@
         <div class="flex flex-wrap items-center justify-between gap-2">
           <div>
             <h3 class="text-lg font-black text-slate-950">✨ 자랑하기 피드</h3>
-            <p class="text-xs text-slate-500">오늘 공부한 책상, 노트, 간식 등 자랑하고 싶은 사진을 자유롭게 올려보세요. (무제한 저장)</p>
+            <p class="text-xs text-slate-500">오늘 공부한 책상, 노트, 간식 등 자랑하고 싶은 사진을 자유롭게 올려보세요.</p>
           </div>
           <span id="feed-count-badge" class="px-2.5 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-700">0건</span>
         </div>
 
         <form id="brag-upload-form" class="bg-slate-50 border border-slate-200 rounded-2xl p-4 space-y-3">
           <div class="flex flex-wrap items-center gap-2">
-            <label class="cursor-pointer px-3.5 py-2 rounded-xl bg-white border border-slate-300 hover:bg-slate-100 text-slate-800 text-xs font-bold inline-flex items-center gap-1.5">
-              <span>📷 사진 선택 / 촬영</span>
+            <label class="cursor-pointer px-3 py-2 rounded-xl bg-white border border-slate-300 hover:bg-slate-100 text-slate-800 text-xs font-bold inline-flex items-center gap-1.5 whitespace-nowrap">
+              <span>🖼️ 사진 선택</span>
               <input id="desk-photo-input" type="file" accept="image/*" class="hidden" />
+            </label>
+            <label class="cursor-pointer px-3 py-2 rounded-xl bg-slate-950 hover:bg-slate-800 text-white text-xs font-bold inline-flex items-center gap-1.5 whitespace-nowrap">
+              <span>📸 바로 촬영</span>
+              <input id="desk-camera-input" type="file" accept="image/*" capture="environment" class="hidden" />
             </label>
             <input id="brag-caption-input" type="text" maxlength="40" placeholder="한 줄 코멘트 (선택)" class="flex-1 min-w-[160px] rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs" />
             <button type="submit" class="px-4 py-2 rounded-xl bg-white border border-slate-950 hover:bg-slate-100 text-slate-950 text-xs font-black">올리기</button>
@@ -895,11 +911,9 @@
 
         <!-- Admin PIN & Cleanup -->
         <div class="border-t border-slate-200 pt-4 flex flex-wrap items-center justify-between gap-3">
-          <form id="admin-pin-form" class="flex items-center gap-2">
-            <span class="text-xs font-bold text-slate-700">🔐 관리자 비밀번호:</span>
-            <input id="admin-pin-input" type="password" maxlength="10" placeholder="새 비밀번호" class="w-28 rounded-xl border border-slate-300 px-3 py-1.5 text-xs font-semibold" required />
-            <button type="submit" class="px-3 py-1.5 rounded-xl bg-indigo-600 text-white text-xs font-bold">변경</button>
-          </form>
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-bold text-slate-700">🔐 관리자 전용 계정: <code class="text-indigo-600">donghyun060324@gmail.com</code></span>
+          </div>
           <div class="flex gap-2">
             <button id="btn-cleanup-7d" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold">🧹 7일 지난 사진 정리</button>
             <button id="btn-cleanup-old" class="px-3 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-bold border border-rose-200">어제 이전 사진 비우기</button>
@@ -948,6 +962,8 @@
       const PLANNER_COLORS = ['#6366f1', '#ec4899', '#10b981', '#f59e0b', '#0ea5e9', '#8b5cf6', '#ef4444', '#64748b'];
       const LOCAL_PREFS_KEY = 'iluvstudy_prefs_v2';
       const LOCAL_DATA_KEY = 'iluvstudy_data_v2';
+      const FOCUS_STATE_KEY = 'iluvstudy_focus_v1';
+      const ADMIN_EMAIL = 'donghyun060324@gmail.com';
 
       function toMins(hhmm) { const [h, m] = hhmm.split(':').map(Number); return h * 60 + m; }
       function todayStr() {
@@ -972,10 +988,33 @@
         return { type: 'ultra', mins: 0, desc: '울트라집중모드 1회 완주' };
       }
 
+      function syncDailyStreak(m) {
+        if (!m) return false;
+        const yest = addDaysStr(todayStr(), -1);
+        if (m.lastActiveStudyDate && m.lastActiveStudyDate < yest && (m.streak || 0) > 0) {
+          m.streak = 0;
+          return true;
+        }
+        return false;
+      }
+
+      function recordMemberActivityForStreak(m, dateKey) {
+        if (!m || !dateKey) return;
+        if (m.lastActiveStudyDate === dateKey) return;
+        const prevDay = addDaysStr(dateKey, -1);
+        if (m.lastActiveStudyDate === prevDay) {
+          m.streak = (Number(m.streak) || 0) + 1;
+        } else if (!m.lastActiveStudyDate || m.lastActiveStudyDate < prevDay) {
+          m.streak = 1;
+        }
+        m.lastActiveStudyDate = dateKey;
+      }
+
       function syncMemberPendingModes() {
         const t = todayStr();
         let changed = false;
         (shared.members || []).forEach(m => {
+          if (syncDailyStreak(m)) changed = true;
           if (m.pendingMode && m.pendingDate && t >= m.pendingDate) {
             m.mode = m.pendingMode;
             m.pendingMode = null;
@@ -1066,6 +1105,7 @@
             { id: 'ch_6am', cat: 'special', title: '🐓 새벽닭보다 빠른 자', desc: '아침 6시(06:00~06:59)에 0교시 출석 완료', lp: 30 },
             { id: 'ch_all_resp', cat: 'special', title: '💞 스터디 공식 인싸', desc: '모든 스터디원에게 리스펙 보내기', lp: 25 },
             { id: 'ch_promo_streak', cat: 'special', title: '🚀 연승의 화신', desc: '승급전 연속 성공하기', lp: 30 },
+            { id: 'ch_brag5', cat: 'special', title: '📸 오늘도 열공 인증러', desc: '자랑하기 피드에 사진 5개 올리기', lp: 20 },
             { id: 'ch_f180', cat: 'focus_mid', title: '🫠 의자랑 물아일체', desc: '3시간 연속 스톱워치 집중 달성', lp: 0, focusSecs: 10800 },
             { id: 'ch_f4h', title: '🧠 뇌 풀가동 레츠고', desc: '4시간 연속 스톱워치 집중 달성', lp: 0, focusSecs: 14400 },
             { id: 'ch_f5h', title: '☕ 카페인이 나를 지배한다', desc: '5시간 연속 스톱워치 집중 달성', lp: 5, focusSecs: 18000 },
@@ -1203,7 +1243,13 @@
 
       function savePrefs() { try { localStorage.setItem(LOCAL_PREFS_KEY, JSON.stringify(prefs)); } catch (e) {} }
       function cleanupOldPhotos(maxDays = 99999) {
-        return 0;
+        if (!Array.isArray(shared.photos) || shared.photos.length <= 1000) return 0;
+        const before = shared.photos.length;
+        shared.photos = shared.photos
+          .slice()
+          .sort((a, b) => (Number(String(b.id || '').replace(/\D/g, '')) || 0) - (Number(String(a.id || '').replace(/\D/g, '')) || 0))
+          .slice(0, 1000);
+        return before - shared.photos.length;
       }
       let lastSyncedJson = {};
       function snapshotSharedState(obj) {
@@ -1334,7 +1380,7 @@
                 if (dbRef && Object.keys(logoutUpdates).length > 0) dbRef.update(logoutUpdates).catch(() => {});
               }
             } catch (e) {}
-            try { closeFocusOverlay(); } catch (e) {}
+            try { clearFocusState(); closeFocusOverlay(); } catch (e) {}
             if (typeof firebase !== 'undefined' && typeof firebase.auth === 'function') {
               firebase.auth().signOut().catch(() => {});
             }
@@ -1354,6 +1400,7 @@
           savePrefs();
           hideAuthOverlay();
           renderAll();
+          restoreFocusStateIfNeeded(found.id);
         } else if (dbLoadedOnce || !cloudConnected) {
           showAuthOverlay('onboard');
         }
@@ -1526,6 +1573,9 @@
         if (status === 'none') delete shared.records[dateStr][memberId][pid];
         else shared.records[dateStr][memberId][pid] = status;
         const mObj = shared.members.find(x => x.id === memberId);
+        if (mObj && (status === 'present' || status === 'late')) {
+          recordMemberActivityForStreak(mObj, dateStr);
+        }
         if (mObj && getMemberMode(mObj) === 'strict') {
           if (status === 'present') addMemberLp(memberId, 4);
           else if (status === 'exempt') addMemberLp(memberId, 2);
@@ -1749,7 +1799,16 @@
         if (!shared.members.some(m => m.id === prefs.currentUserId) && shared.members.length) prefs.currentUserId = shared.members[0].id;
         const curMemObj = shared.members.find(m => m.id === prefs.currentUserId);
 
+        function isAdminUser() {
+          return !!(currentAuthUser && (currentAuthUser.email || '').toLowerCase() === ADMIN_EMAIL);
+        }
+        if (prefs.adminMode && !isAdminUser()) {
+          prefs.adminMode = false;
+          prefs.inspectingMember = false;
+          savePrefs();
+        }
         const adminBtn = document.getElementById('admin-toggle-btn');
+        if (adminBtn) adminBtn.classList.toggle('hidden', !isAdminUser());
         const repCnt = (shared.reports || []).length;
         if (adminBtn) {
           adminBtn.innerHTML = `<span>🛡️ ${prefs.adminMode ? '관리자 모드 ON' : '관리자 모드'}</span>${repCnt > 0 && prefs.adminMode ? `<span class="px-1.5 py-0.5 rounded-full bg-rose-600 text-white text-[10px] font-black">${repCnt}</span>` : ''}`;
@@ -2106,10 +2165,10 @@
               const badgesHtml = mBadges.length ? mBadges.map(b => `<span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[9px] font-extrabold border whitespace-nowrap ${b.customCls || BADGE_THEMES.gold}">${b.label}</span>`).join('') : '';
               return `
               <div class="flex items-center justify-between gap-2 rounded-xl border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-xs">
-                <div class="flex items-center gap-1.5 flex-wrap min-w-0">
+                <div class="flex items-center gap-1.5 min-w-0 flex-1 overflow-x-auto no-scrollbar">
                   <span class="font-black text-slate-900 shrink-0">${idx + 1}위</span>
                   ${titleHtml}
-                  <span class="font-bold text-slate-900 truncate">${m.name}</span>
+                  <span class="font-bold text-slate-900 whitespace-nowrap shrink-0">${m.name}</span>
                   ${badgesHtml}
                 </div>
                 <div class="flex items-center gap-2 shrink-0">
@@ -2947,6 +3006,10 @@
       });
 
       document.getElementById('admin-toggle-btn').addEventListener('click', () => {
+        if (!currentAuthUser || (currentAuthUser.email || '').toLowerCase() !== ADMIN_EMAIL) {
+          showToast('관리자 전용 Google 계정으로만 열 수 있습니다.', 'error');
+          return;
+        }
         if (prefs.adminMode) {
           prefs.adminMode = false; prefs.inspectingMember = false;
           const restoreId = prefs.joinedMemberId || prefs.adminOwnUserId;
@@ -2955,28 +3018,19 @@
           }
           savePrefs(); showToast('관리자 모드 OFF', 'info'); switchTab('dashboard'); return;
         }
-        openModal('🔐 관리자(방장) 인증', `
-          <form id="admin-login-form" class="space-y-3">
-            <p class="text-xs text-slate-600">방장 전용 비밀번호를 입력하세요.</p>
-            <input id="admin-login-pin" type="password" placeholder="비밀번호" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm" required autofocus />
-            <button type="submit" class="w-full py-2.5 rounded-xl bg-indigo-600 text-white text-sm font-bold">확인</button>
-          </form>
-        `);
-        document.getElementById('admin-login-form').addEventListener('submit', e => {
-          e.preventDefault();
-          if (document.getElementById('admin-login-pin').value.trim() === (shared.adminPin || '3456')) {
-            prefs.adminMode = true; prefs.inspectingMember = false; savePrefs(); closeModal();
-            const rCnt = (shared.reports || []).length; showToast(rCnt > 0 ? `관리자 모드 ON (🚨 미처리 신고 ${rCnt}건)` : '관리자 전용 화면으로 전환되었습니다.', rCnt > 0 ? 'warn' : 'success');
-            switchTab('admin');
-          } else showToast('비밀번호가 다릅니다.', 'error');
-        });
+        prefs.adminMode = true; prefs.inspectingMember = false; savePrefs();
+        const rCnt = (shared.reports || []).length;
+        showToast(rCnt > 0 ? `관리자 모드 ON (🚨 미처리 신고 ${rCnt}건)` : '관리자 전용 화면으로 전환되었습니다.', rCnt > 0 ? 'warn' : 'success');
+        switchTab('admin');
       });
 
       // Check-in & Photos
-      document.getElementById('desk-photo-input').addEventListener('change', e => {
+      function handleBragPhotoSelect(e) {
         const f = e.target.files[0]; if (!f) return;
         compressImageFile(f, '', url => { pendingPhoto = url; renderBragTab(); showToast('사진이 준비되었습니다. 올리기 버튼을 눌러주세요!', 'success'); });
-      });
+      }
+      document.getElementById('desk-photo-input').addEventListener('change', handleBragPhotoSelect);
+      document.getElementById('desk-camera-input').addEventListener('change', handleBragPhotoSelect);
 
       document.getElementById('brag-upload-form').addEventListener('submit', e => {
         e.preventDefault();
@@ -2987,6 +3041,9 @@
         const now = getNowParts(), t = todayStr();
         if (!shared.photos) shared.photos = [];
         shared.photos.push({ id: 'ph_' + Date.now(), memberId: me.id, memberName: me.name, periodLabel: '자랑하기', time: now.hhmm, date: t, caption: cap, dataUrl: pendingPhoto });
+        me.bragUploadCount = (me.bragUploadCount || 0) + 1;
+        const totalBrags = Math.max(me.bragUploadCount, shared.photos.filter(p => p.memberId === me.id).length);
+        if (totalBrags >= 5) unlockChallengeFor(me.id, 'ch_brag5', false);
         pendingPhoto = null;
         document.getElementById('brag-caption-input').value = '';
         saveSharedData();
@@ -2995,19 +3052,120 @@
       });
 
       document.getElementById('profile-avatar-input').addEventListener('change', e => {
-        const f = e.target.files[0]; if (!f) return;
+        const f = e.target.files[0];
+        e.target.value = '';
+        if (!f) return;
         const r = new FileReader();
         r.onload = ev => {
           const img = new Image();
           img.onload = () => {
-            const c = document.createElement('canvas'); c.width = 140; c.height = 140;
-            const ctx = c.getContext('2d');
-            const minSide = Math.min(img.width, img.height);
-            const sx = (img.width - minSide) / 2, sy = (img.height - minSide) / 2;
-            ctx.drawImage(img, sx, sy, minSide, minSide, 0, 0, 140, 140);
-            const mid = document.getElementById('profile-member-select').value || prefs.currentUserId;
-            const m = shared.members.find(x => x.id === mid);
-            if (m) { m.avatarUrl = c.toDataURL('image/jpeg', 0.7); saveSharedData(); showToast('프로필 사진이 변경되었습니다!', 'success'); renderAll(); }
+            openModal('📷 프로필 사진 원형 맞추기', `
+              <div class="space-y-3">
+                <p class="text-xs text-slate-500">사진을 드래그해서 위치를 옮기고, 아래 슬라이더로 크기를 맞추세요.</p>
+                <div class="flex justify-center">
+                  <canvas id="avatar-crop-canvas" width="240" height="240" class="rounded-2xl border border-slate-300 cursor-grab active:cursor-grabbing touch-none bg-slate-900"></canvas>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="text-[11px] font-bold text-slate-600 shrink-0">🔍 확대</span>
+                  <input id="avatar-crop-zoom" type="range" min="1" max="3" step="0.05" value="1" class="flex-1" />
+                </div>
+                <div class="flex justify-end gap-2 pt-1">
+                  <button id="btn-avatar-crop-cancel" type="button" class="px-3.5 py-2 rounded-xl bg-slate-100 text-xs font-bold text-slate-700">취소</button>
+                  <button id="btn-avatar-crop-save" type="button" class="px-4 py-2 rounded-xl ed-btn-accent text-xs font-black">적용하기</button>
+                </div>
+              </div>
+            `);
+            const cvs = document.getElementById('avatar-crop-canvas');
+            const ctx = cvs.getContext('2d');
+            const zoomInput = document.getElementById('avatar-crop-zoom');
+            const size = 240;
+            const baseScale = Math.max(size / img.width, size / img.height);
+            let zoom = 1;
+            let offsetX = 0, offsetY = 0;
+            let dragging = false, lastX = 0, lastY = 0;
+
+            function clampOffsets() {
+              const drawW = img.width * baseScale * zoom;
+              const drawH = img.height * baseScale * zoom;
+              const maxX = Math.max(0, (drawW - size) / 2);
+              const maxY = Math.max(0, (drawH - size) / 2);
+              offsetX = Math.max(-maxX, Math.min(maxX, offsetX));
+              offsetY = Math.max(-maxY, Math.min(maxY, offsetY));
+            }
+
+            function drawPreview() {
+              clampOffsets();
+              ctx.clearRect(0, 0, size, size);
+              const drawW = img.width * baseScale * zoom;
+              const drawH = img.height * baseScale * zoom;
+              const dx = (size - drawW) / 2 + offsetX;
+              const dy = (size - drawH) / 2 + offsetY;
+              ctx.drawImage(img, dx, dy, drawW, drawH);
+              // Darken outside circle
+              ctx.save();
+              ctx.fillStyle = 'rgba(15, 23, 42, 0.58)';
+              ctx.beginPath();
+              ctx.rect(0, 0, size, size);
+              ctx.arc(size / 2, size / 2, size / 2 - 4, 0, Math.PI * 2, true);
+              ctx.fill();
+              ctx.strokeStyle = '#ffffff';
+              ctx.lineWidth = 2;
+              ctx.beginPath();
+              ctx.arc(size / 2, size / 2, size / 2 - 4, 0, Math.PI * 2);
+              ctx.stroke();
+              ctx.restore();
+            }
+
+            drawPreview();
+            zoomInput.addEventListener('input', () => {
+              zoom = Number(zoomInput.value) || 1;
+              drawPreview();
+            });
+            cvs.addEventListener('mousedown', ev2 => { dragging = true; lastX = ev2.clientX; lastY = ev2.clientY; });
+            window.addEventListener('mousemove', ev2 => {
+              if (!dragging) return;
+              offsetX += ev2.clientX - lastX;
+              offsetY += ev2.clientY - lastY;
+              lastX = ev2.clientX; lastY = ev2.clientY;
+              drawPreview();
+            });
+            window.addEventListener('mouseup', () => { dragging = false; });
+            cvs.addEventListener('touchstart', ev2 => {
+              if (!ev2.touches[0]) return;
+              ev2.preventDefault();
+              dragging = true; lastX = ev2.touches[0].clientX; lastY = ev2.touches[0].clientY;
+            }, { passive: false });
+            cvs.addEventListener('touchmove', ev2 => {
+              if (!dragging || !ev2.touches[0]) return;
+              ev2.preventDefault();
+              offsetX += ev2.touches[0].clientX - lastX;
+              offsetY += ev2.touches[0].clientY - lastY;
+              lastX = ev2.touches[0].clientX; lastY = ev2.touches[0].clientY;
+              drawPreview();
+            }, { passive: false });
+            window.addEventListener('touchend', () => { dragging = false; });
+
+            document.getElementById('btn-avatar-crop-cancel').addEventListener('click', closeModal);
+            document.getElementById('btn-avatar-crop-save').addEventListener('click', () => {
+              const outC = document.createElement('canvas');
+              outC.width = 140; outC.height = 140;
+              const outCtx = outC.getContext('2d');
+              const drawW = img.width * baseScale * zoom;
+              const drawH = img.height * baseScale * zoom;
+              const dx = (size - drawW) / 2 + offsetX;
+              const dy = (size - drawH) / 2 + offsetY;
+              const ratio = 140 / size;
+              outCtx.drawImage(img, dx * ratio, dy * ratio, drawW * ratio, drawH * ratio);
+              const mid = document.getElementById('profile-member-select').value || prefs.currentUserId;
+              const m = shared.members.find(x => x.id === mid);
+              if (m) {
+                m.avatarUrl = outC.toDataURL('image/jpeg', 0.72);
+                saveSharedData();
+                showToast('프로필 사진이 변경되었습니다!', 'success');
+                renderAll();
+              }
+              closeModal();
+            });
           };
           img.src = ev.target.result;
         };
@@ -3632,11 +3790,7 @@
         const mid = document.getElementById('admin-badge-member').value;
         if (shared.customBadges && shared.customBadges[mid]) { shared.customBadges[mid] = shared.customBadges[mid].filter(x => x.id !== b.dataset.revokeBadge); saveSharedData(); renderAdminTab(); }
       });
-      document.getElementById('admin-pin-form').addEventListener('submit', e => {
-        e.preventDefault();
-        const np = document.getElementById('admin-pin-input').value.trim();
-        if (np) { shared.adminPin = np; saveSharedData(); document.getElementById('admin-pin-input').value = ''; showToast('비밀번호 변경됨', 'success'); }
-      });
+
       document.getElementById('btn-cleanup-7d').addEventListener('click', () => { const r = cleanupOldPhotos(7); saveSharedData(); showToast(`${r}건 정리됨`, 'info'); });
       document.getElementById('btn-cleanup-old').addEventListener('click', () => { const r = cleanupOldPhotos(1); saveSharedData(); showToast(`${r}건 정리됨`, 'info'); });
 
@@ -3760,6 +3914,51 @@
       let focusStartedAt = null;
       let focusInterval = null;
       let syncFocusClock = null;
+      let focusRestoredOnce = false;
+
+      function saveFocusState() {
+        try {
+          if (!focusInterval) return;
+          localStorage.setItem(FOCUS_STATE_KEY, JSON.stringify({
+            memberId: prefs.currentUserId,
+            date: todayStr(),
+            accumulatedSecs: focusAccumulatedSecs,
+            startedAt: focusStartedAt,
+            paused: focusPaused,
+            pauseStartedAt,
+            syncedSecs: focusElapsedSecs
+          }));
+        } catch (e) {}
+      }
+      function clearFocusState() {
+        try { localStorage.removeItem(FOCUS_STATE_KEY); } catch (e) {}
+      }
+      function restoreFocusStateIfNeeded(memberId) {
+        if (focusRestoredOnce || focusInterval || prefs.adminMode) return;
+        focusRestoredOnce = true;
+        try {
+          const raw = localStorage.getItem(FOCUS_STATE_KEY);
+          if (!raw) return;
+          const st = JSON.parse(raw);
+          const tToday = todayStr();
+          const tYesterday = addDaysStr(tToday, -1);
+          if (!st || st.memberId !== memberId || (st.date !== tToday && st.date !== tYesterday)) {
+            clearFocusState();
+            return;
+          }
+          focusAccumulatedSecs = Number(st.accumulatedSecs) || 0;
+          focusElapsedSecs = Number(st.syncedSecs) || 0;
+          focusPaused = !!st.paused;
+          pauseStartedAt = st.pauseStartedAt || null;
+          focusStartedAt = st.startedAt || null;
+          if (focusPaused && pauseStartedAt && Math.floor((Date.now() - pauseStartedAt) / 1000) > 600) {
+            focusAccumulatedSecs = 0;
+            focusElapsedSecs = 0;
+          }
+          openFocusOverlay(true);
+          if (!focusPaused && syncFocusClock) syncFocusClock();
+        } catch (e) {}
+      }
 
       function formatStopwatch(secs) {
         const h = Math.floor(secs / 3600);
@@ -3777,7 +3976,7 @@
         document.getElementById('focus-pause-btn').textContent = focusPaused ? '다시 시작' : '잠시 쉬기';
       }
 
-      function openFocusOverlay() {
+      function openFocusOverlay(isRestoring = false) {
         if (prefs.adminMode) {
           showToast('관리자 모드에서는 멤버 타이머 충돌 방지를 위해 스톱워치를 켤 수 없습니다.', 'warn');
           return;
@@ -3894,6 +4093,7 @@
 
         syncFocusClock = function () {
           if (focusPaused || !focusStartedAt) return;
+          syncMemberPendingModes();
           const targetSecs = focusAccumulatedSecs + Math.max(0, Math.floor((Date.now() - focusStartedAt) / 1000));
           const deltaSecs = targetSecs - focusElapsedSecs;
           if (deltaSecs <= 0) return;
@@ -3905,31 +4105,33 @@
           const newBucket30 = Math.floor(targetSecs / 30);
 
           focusElapsedSecs = targetSecs;
+          saveFocusState();
           updateFocusDisplay();
           checkAutoAttendanceWhileStudying(deltaSecs);
 
           if (deltaMins > 0) {
-            const tNowStr = todayStr();
             const meObj = shared.members.find(x => x.id === prefs.currentUserId);
             if (meObj) {
               meObj.focusMins = newMins;
               if (!shared.maxFocusLogs) shared.maxFocusLogs = {};
-              if (!shared.maxFocusLogs[tNowStr]) shared.maxFocusLogs[tNowStr] = {};
-              shared.maxFocusLogs[tNowStr][meObj.id] = Math.max(shared.maxFocusLogs[tNowStr][meObj.id] || 0, newMins);
               if (!shared.studyLogs) shared.studyLogs = {};
-              if (!shared.studyLogs[tNowStr]) shared.studyLogs[tNowStr] = {};
-              shared.studyLogs[tNowStr][meObj.id] = (shared.studyLogs[tNowStr][meObj.id] || 0) + deltaMins;
               if (!shared.studyBlocks) shared.studyBlocks = {};
-              if (!shared.studyBlocks[tNowStr]) shared.studyBlocks[tNowStr] = {};
-              if (!shared.studyBlocks[tNowStr][meObj.id]) shared.studyBlocks[tNowStr][meObj.id] = {};
               const nowMs = Date.now();
               for (let k = deltaMins - 1; k >= 0; k--) {
                 const dt = new Date(nowMs - k * 60000);
+                const dKey = `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}-${String(dt.getDate()).padStart(2, '0')}`;
                 const dh = dt.getHours(), dm = dt.getMinutes();
-                if (dh >= 0 && dh < 5) meObj.nightOwlDate = todayStr();
-                else if (dh === 23 && dm >= 50) meObj.nightOwlDate = tomorrowStr();
+                if (!shared.studyLogs[dKey]) shared.studyLogs[dKey] = {};
+                shared.studyLogs[dKey][meObj.id] = (shared.studyLogs[dKey][meObj.id] || 0) + 1;
+                recordMemberActivityForStreak(meObj, dKey);
+                if (!shared.maxFocusLogs[dKey]) shared.maxFocusLogs[dKey] = {};
+                shared.maxFocusLogs[dKey][meObj.id] = Math.max(shared.maxFocusLogs[dKey][meObj.id] || 0, newMins);
+                if (!shared.studyBlocks[dKey]) shared.studyBlocks[dKey] = {};
+                if (!shared.studyBlocks[dKey][meObj.id]) shared.studyBlocks[dKey][meObj.id] = {};
+                if (dh >= 0 && dh < 5) meObj.nightOwlDate = dKey;
+                else if (dh === 23 && dm >= 50) meObj.nightOwlDate = addDaysStr(dKey, 1);
                 const slotKey = `${String(dh).padStart(2, '0')}_${Math.floor(dm / 10)}`;
-                shared.studyBlocks[tNowStr][meObj.id][slotKey] = true;
+                shared.studyBlocks[dKey][meObj.id][slotKey] = true;
               }
               saveSharedData();
             }
@@ -3957,10 +4159,14 @@
         };
 
         if (!focusInterval) {
-          focusElapsedSecs = 0;
-          focusAccumulatedSecs = 0;
-          focusStartedAt = Date.now();
-          focusPaused = false;
+          if (isRestoring !== true) {
+            focusElapsedSecs = 0;
+            focusAccumulatedSecs = 0;
+            focusStartedAt = Date.now();
+            focusPaused = false;
+            pauseStartedAt = null;
+          }
+          saveFocusState();
           document.getElementById('focus-cheer-msg').textContent = '';
           checkAutoAttendanceWhileStudying(0);
           focusInterval = setInterval(() => {
@@ -3990,6 +4196,8 @@
         focusElapsedSecs = 0;
         focusAccumulatedSecs = 0;
         focusStartedAt = null;
+        pauseStartedAt = null;
+        clearFocusState();
         if (!prefs.adminMode) {
           const meObj = shared.members.find(x => x.id === prefs.currentUserId);
           if (meObj && meObj.focusMins) { meObj.focusMins = 0; saveSharedData(); }
@@ -4065,6 +4273,7 @@
           }
           focusStartedAt = Date.now();
         }
+        saveFocusState();
         updateFocusDisplay();
       });
 
@@ -4166,6 +4375,15 @@
           prefs.currentUserId = newMember.id;
           prefs.joinedMemberId = null;
           prefs.lastJoinedMemberId = newMember.id;
+          if (dbRef && cloudConnected) {
+            try {
+              dbRef.child('members').transaction(cur => {
+                const arr = Array.isArray(cur) ? cur : [];
+                if (!arr.some(x => x && x.uid === newMember.uid)) arr.push(newMember);
+                return arr;
+              }).catch(() => {});
+            } catch (err) {}
+          }
         }
         sessionClaimed = true;
         prefs.guideHintUnread = true;
