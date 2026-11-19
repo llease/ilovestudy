@@ -2876,31 +2876,33 @@
           const promoRing = isPromoNow ? 'ring-2 ring-amber-400' : '';
           return `
             <div data-member-detail="${m.id}" class="cursor-pointer rounded-2xl p-2.5 sm:p-3 bg-white flex flex-col justify-between gap-1.5 transition-all ${tierObj.frame} ${promoRing} ${flameCls} ${isStudying ? 'studying-live-card' : ''}">
-              <div class="space-y-1">
-                <div class="flex items-center justify-between gap-1.5">
-                  <div class="flex items-center gap-2 min-w-0">
-                    <div class="relative w-7 h-7 shrink-0" title="${isUltra ? '울트라집중모드' : ''}">
-                      ${isUltra ? '<span class="ultra-avatar-ring"></span>' : ''}
-                      <div class="relative z-[1] w-full h-full rounded-full bg-slate-200 ${isUltra ? 'border border-white' : 'border border-slate-300'} overflow-hidden flex items-center justify-center text-[11px] font-black text-slate-600">${m.avatarUrl ? `<img src="${escapeHtml(m.avatarUrl)}" class="w-full h-full object-cover" alt="${escapeHtml(m.name)}" />` : escapeHtml(m.name.slice(0, 1))}</div>
-                      ${isUltra ? '<span class="ultra-avatar-bolt" aria-label="울트라집중">⚡</span>' : ''}
-                    </div>
+              <div class="flex items-start justify-between gap-1.5">
+                <div class="flex items-center gap-2 min-w-0">
+                  <div class="relative w-7 h-7 shrink-0" title="${isUltra ? '울트라집중모드' : ''}">
+                    ${isUltra ? '<span class="ultra-avatar-ring"></span>' : ''}
+                    <div class="relative z-[1] w-full h-full rounded-full bg-slate-200 ${isUltra ? 'border border-white' : 'border border-slate-300'} overflow-hidden flex items-center justify-center text-[11px] font-black text-slate-600">${m.avatarUrl ? `<img src="${escapeHtml(m.avatarUrl)}" class="w-full h-full object-cover" alt="${escapeHtml(m.name)}" />` : escapeHtml(m.name.slice(0, 1))}</div>
+                    ${isUltra ? '<span class="ultra-avatar-bolt" aria-label="울트라집중">⚡</span>' : ''}
+                  </div>
+                  <div class="min-w-0 flex flex-col">
+                    ${m.equippedTitle ? `<span class="text-[10px] font-black text-indigo-600 leading-tight break-keep">👑 ${escapeHtml(m.equippedTitle)}</span>` : ''}
                     <span class="font-extrabold text-xs sm:text-sm text-slate-900 leading-tight break-keep">${escapeHtml(m.name)}</span>
                   </div>
-                  <span class="font-mono font-black text-xs text-slate-900 whitespace-nowrap shrink-0">${formatStudyMins(todayTotalMins)}</span>
                 </div>
-                ${(m.equippedTitle || isStudying) ? `<div class="flex items-center gap-1 flex-wrap">
-                  ${m.equippedTitle ? `<span class="px-1.5 py-0.5 rounded bg-slate-900 text-amber-300 text-[10px] font-black leading-tight break-keep">${escapeHtml(m.equippedTitle)}</span>` : ''}
-                  ${isStudying ? '<span class="inline-flex items-center gap-1 text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-600 text-white font-bold whitespace-nowrap shrink-0"><span class="relative flex h-1.5 w-1.5"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-200 opacity-75"></span><span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-white"></span></span>공부중</span>' : ''}
-                </div>` : ''}
-              </div>
-              <div class="flex items-center justify-between gap-1 flex-wrap">
-                <div class="flex items-center gap-1 flex-wrap min-w-0">${renderTierPill(m.lp || 0)}</div>
-                <div class="flex items-center gap-0.5 shrink-0">
-                  ${m.id !== prefs.currentUserId ? `<button data-respect-member="${m.id}" class="text-sm px-1 py-0.5 rounded hover:bg-slate-100 transition" title="리스펙 보내기">👏</button><button data-report-member="${m.id}" class="text-xs px-1 py-0.5 rounded hover:bg-rose-50 transition" title="신고하기">🚨</button>` : ''}
-                  ${prefs.adminMode && shared.members.length > 1 ? `<button data-del-member="${m.id}" class="text-[10px] px-1.5 py-0.5 rounded bg-rose-50 text-rose-600 font-bold border border-rose-200 whitespace-nowrap">삭제</button>` : ''}
+                <div class="flex flex-col items-end gap-0.5 shrink-0">
+                  <span class="font-mono font-black text-xs text-slate-900 whitespace-nowrap">${formatStudyMins(todayTotalMins)}</span>
+                  ${isStudying ? '<span class="inline-flex items-center gap-1 text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-600 text-white font-bold whitespace-nowrap"><span class="relative flex h-1.5 w-1.5"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-200 opacity-75"></span><span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-white"></span></span>공부중</span>' : ''}
                 </div>
               </div>
-              ${badges.length ? `<div class="flex flex-wrap gap-1">${badges.map(renderBadgePill).join('')}</div>` : ''}
+              <div class="space-y-1.5 pt-1 border-t border-slate-100">
+                <div class="flex items-center justify-between gap-1 flex-wrap">
+                  <div class="flex items-center gap-1 flex-wrap min-w-0">${renderTierPill(m.lp || 0)}</div>
+                  <div class="flex items-center gap-0.5 shrink-0">
+                    ${m.id !== prefs.currentUserId ? `<button data-respect-member="${m.id}" class="text-sm px-1 py-0.5 rounded hover:bg-slate-100 transition" title="리스펙 보내기">👏</button><button data-report-member="${m.id}" class="text-xs px-1 py-0.5 rounded hover:bg-rose-50 transition" title="신고하기">🚨</button>` : ''}
+                    ${prefs.adminMode && shared.members.length > 1 ? `<button data-del-member="${m.id}" class="text-[10px] px-1.5 py-0.5 rounded bg-rose-50 text-rose-600 font-bold border border-rose-200 whitespace-nowrap">삭제</button>` : ''}
+                  </div>
+                </div>
+                ${badges.length ? `<div class="flex flex-wrap gap-1">${badges.map(renderBadgePill).join('')}</div>` : ''}
+              </div>
             </div>
           `;
         }).join('');
