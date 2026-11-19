@@ -799,7 +799,7 @@
             <ul class="space-y-1 text-[10.5px] text-slate-600 list-disc pl-4">
               <li><strong>수집 항목</strong> : 실명, 활동 별명, Google 계정 식별 정보(UID·이메일), 가입 설문 응답(가입 경로·기대 기능·목표 공부시간)</li>
               <li><strong>수집·이용 목적</strong> : 스터디원 본인 확인, 부정 이용·보안 사고 예방 및 대응, 서비스 운영 관리 (목적 외 사용 및 제3자 제공 없음)</li>
-              <li><strong>보유·이용 기간</strong> : 회원 탈퇴 또는 관리자 삭제 시까지 (단, 보안 사고·분쟁 대응 필요 시 해당 조치 완료 시까지)</li>
+              <li><strong>보유·이용 기간 및 파기</strong> : 회원 탈퇴 시 즉시 파기되며(<strong>내 프로필 → 계정 탈퇴</strong>에서 직접 탈퇴 가능), 보안 사고·분쟁 대응이 필요한 경우 해당 조치 완료 시까지 보관합니다.</li>
               <li><strong>거부 권리 및 불이익</strong> : 개인정보 수집·이용 동의를 거부할 권리가 있으며, 필수 항목 동의 거부 시 서비스 가입 및 이용이 제한됩니다.</li>
             </ul>
             <label class="flex items-center gap-2 pt-1.5 border-t border-slate-200 font-bold text-slate-900 cursor-pointer">
@@ -1265,6 +1265,10 @@
               <button id="btn-edit-quote" type="button" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-800 whitespace-nowrap">✏️ 명언 설정</button>
               <button id="btn-edit-bg" type="button" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-800 whitespace-nowrap">🖼️ 배경 설정</button>
             </div>
+          </div>
+          <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+            <span class="text-[11px] text-slate-400">더 이상 이용하지 않으실 경우</span>
+            <button id="btn-delete-my-account" type="button" class="px-3 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 border border-rose-200 text-xs font-bold text-rose-600 whitespace-nowrap">⚠️ 계정 탈퇴 (데이터 삭제)</button>
           </div>
         </div>
       </div>
@@ -6180,8 +6184,8 @@
               <p>회원 탈퇴 또는 관리자 삭제 시 지체 없이 파기합니다. (단, 보안 사고·분쟁 대응이 필요한 경우 해당 조치 완료 시까지 보관)</p>
             </div>
             <div class="space-y-1">
-              <p class="font-black text-slate-900">5. 문의 및 삭제 요청</p>
-              <p>개인정보 열람·정정·삭제는 상단 더보기(⋯)의 <strong>💬 건의하기</strong> 또는 관리자(<code>donghyun060324@gmail.com</code>)를 통해 요청하실 수 있습니다.</p>
+              <p class="font-black text-slate-900">5. 이용자의 권리 (직접 탈퇴 및 삭제 요청)</p>
+              <p>언제든지 <strong>👤 내 프로필 → 계정 탈퇴</strong> 버튼을 통해 직접 계정을 탈퇴하고 모든 개인정보(실명·설문·기록)를 즉시 삭제할 수 있으며, 상단 더보기(⋯)의 <strong>💬 건의하기</strong> 또는 관리자(<code>donghyun060324@gmail.com</code>)에게도 열람·삭제를 요청할 수 있습니다.</p>
             </div>
           </div>
         `);
@@ -6201,6 +6205,92 @@
         }
       }
       document.getElementById('btn-google-logout').addEventListener('click', handleHeaderAuthClick);
+
+      document.getElementById('btn-delete-my-account')?.addEventListener('click', () => {
+        if (prefs.adminMode && prefs.inspectingMember) {
+          showToast('멤버 열람 중에는 계정 탈퇴를 누를 수 없습니다.', 'warn');
+          return;
+        }
+        const me = shared.members.find(m => m.id === prefs.currentUserId);
+        if (!me) return;
+        openModal('⚠️ 계정 탈퇴 확인', `
+          <form id="confirm-delete-account-form" class="space-y-3 text-xs">
+            <div class="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-900 space-y-1">
+              <p class="font-black">정말 계정을 탈퇴하시겠습니까?</p>
+              <p>탈퇴 시 <strong>실명·가입 설문·공부 시간·플래너·출석·티어(LP)·사진</strong> 등 모든 데이터가 즉시 삭제되며 복구할 수 없습니다.</p>
+            </div>
+            <div>
+              <label for="delete-account-confirm-input" class="block font-bold text-slate-700 mb-1">확인을 위해 아래에 <strong>탈퇴</strong> 라고 입력해 주세요.</label>
+              <input id="delete-account-confirm-input" type="text" placeholder="탈퇴" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm font-bold" required />
+            </div>
+            <div class="flex justify-end gap-2 pt-1">
+              <button type="button" id="cancel-delete-account" class="px-3.5 py-2 rounded-xl bg-slate-100 text-xs font-bold text-slate-700">취소</button>
+              <button type="submit" class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-black">영구 탈퇴하기</button>
+            </div>
+          </form>
+        `);
+        document.getElementById('cancel-delete-account').addEventListener('click', closeModal);
+        document.getElementById('confirm-delete-account-form').addEventListener('submit', async ev => {
+          ev.preventDefault();
+          if (document.getElementById('delete-account-confirm-input').value.trim() !== '탈퇴') {
+            showToast('"탈퇴" 두 글자를 정확히 입력해 주세요.', 'warn');
+            return;
+          }
+          const btn = ev.currentTarget.querySelector('button[type="submit"]');
+          btn.disabled = true;
+          btn.textContent = '삭제 중…';
+          const mid = me.id;
+          const uid = me.uid || (currentAuthUser && currentAuthUser.uid);
+          try {
+            if (focusInterval) closeFocusOverlay(true);
+            if (uid && typeof firebase !== 'undefined') {
+              try { await firebase.database().ref('privateData/' + uid).remove(); } catch (e) {}
+            }
+            shared.members = (shared.members || []).filter(m => m.id !== mid);
+            ['classes', 'manualExempt', 'customBadges', 'memberChallenges', 'praises', 'directMessages', 'lpHistory', 'promoHistory', 'respectLpRewarded'].forEach(k => {
+              if (shared[k]) delete shared[k][mid];
+            });
+            ['records', 'studyLogs', 'maxFocusLogs', 'periodStudySecs', 'studyBlocks', 'studySlotMins', 'hourlyLpGiven', 'motemote', 'periodLpRewarded', 'respectSentByDate'].forEach(k => {
+              if (shared[k]) {
+                Object.keys(shared[k]).forEach(d => {
+                  if (shared[k][d]) delete shared[k][d][mid];
+                });
+              }
+            });
+            if (Array.isArray(shared.photos)) {
+              shared.photos = shared.photos.filter(p => p.memberId !== mid);
+            }
+            if (dbRef && cloudConnected) {
+              const sent = snapshotSharedState(shared);
+              const patch = makeCloudPatch(lastSyncedJson, sent);
+              if (Object.keys(patch).length) await dbRef.update(patch);
+            }
+            try {
+              localStorage.removeItem(LOCAL_PREFS_KEY);
+              localStorage.removeItem(LOCAL_DATA_KEY);
+              localStorage.removeItem(FOCUS_STATE_KEY);
+            } catch (e) {}
+            sessionClaimed = false;
+            welcomePlayedForSession = false;
+            closeModal();
+            if (currentAuthUser && typeof currentAuthUser.delete === 'function') {
+              try {
+                await currentAuthUser.delete();
+              } catch (delErr) {
+                if (typeof firebase !== 'undefined' && typeof firebase.auth === 'function') {
+                  await firebase.auth().signOut().catch(() => {});
+                }
+              }
+            }
+            showToast('계정 탈퇴가 완료되었습니다. 모든 기록과 개인정보가 삭제되었습니다.', 'info');
+            showAuthOverlay('login');
+          } catch (err) {
+            btn.disabled = false;
+            btn.textContent = '영구 탈퇴하기';
+            showToast('탈퇴 처리 중 오류가 발생했습니다. 다시 로그인 후 시도해 주세요.', 'error');
+          }
+        });
+      });
 
       document.getElementById('profile-titles-list').addEventListener('click', e => {
         const b = e.target.closest('[data-profile-equip]');
