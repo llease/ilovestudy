@@ -1,0 +1,1508 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GOSSO STUDY · 재수 루틴 스터디 출석부</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
+    .tab-active { background-color: #1e293b; color: #ffffff; }
+    .tab-idle { background-color: #f1f5f9; color: #475569; }
+    .tab-idle:hover { background-color: #e2e8f0; }
+    .scrollbar-thin::-webkit-scrollbar { height: 6px; width: 6px; }
+    .scrollbar-thin::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen antialiased">
+  <!-- Toast Container -->
+  <div id="toast-container" class="fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none px-4 sm:px-0"></div>
+
+  <!-- Modal Container -->
+  <div id="modal-overlay" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40 hidden items-center justify-center p-4">
+    <div id="modal-box" class="bg-white rounded-2xl shadow-xl max-w-lg w-full p-5 sm:p-6 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between mb-4">
+        <h3 id="modal-title" class="text-lg font-bold text-slate-900">알림</h3>
+        <button id="modal-close" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg">✕</button>
+      </div>
+      <div id="modal-body" class="text-sm text-slate-700 space-y-3"></div>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-30">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-2.5">
+        <div class="w-9 h-9 rounded-xl bg-slate-900 text-white flex items-center justify-center font-extrabold text-xs">GOSSO</div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-base sm:text-lg font-bold tracking-tight text-slate-900 leading-tight">GOSSO STUDY 출석부</h1>
+            <span id="cloud-status-pill" class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-100 text-amber-800">연결 확인 중...</span>
+          </div>
+          <p class="text-xs text-slate-500">10명 미만 소규모 · 5분 출석 · 하루 3회 책상 인증</p>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-2">
+        <!-- Active User Selector -->
+        <div class="flex items-center gap-1.5 bg-slate-100 px-2.5 py-1.5 rounded-xl">
+          <span class="text-xs font-medium text-slate-500">접속자</span>
+          <select id="current-user-select" class="bg-transparent text-xs sm:text-sm font-semibold text-slate-900 focus:outline-none cursor-pointer"></select>
+        </div>
+
+        <!-- Admin Mode Toggle -->
+        <button id="admin-toggle-btn" class="px-3 py-1.5 rounded-xl text-xs font-semibold border transition flex items-center gap-1.5 bg-white border-slate-300 text-slate-700 hover:bg-slate-50">
+          <span>🛡️</span>
+          <span id="admin-toggle-label">관리자 OFF</span>
+        </button>
+
+        <!-- Sound / Alert Toggle -->
+        <button id="alert-toggle-btn" class="px-2.5 py-1.5 rounded-xl text-xs font-semibold border border-slate-200 bg-white text-slate-600 hover:bg-slate-50" title="쉬는시간 알림 켜기/끄기">
+          🔔 알림 ON
+        </button>
+
+        <!-- Sync Info Button -->
+        <button id="sync-info-btn" class="px-2.5 py-1.5 rounded-xl text-xs font-semibold bg-indigo-50 text-indigo-700 hover:bg-indigo-100">
+          연동 상태
+        </button>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <div class="max-w-6xl mx-auto px-4 pb-2.5 flex items-center gap-1.5 overflow-x-auto scrollbar-thin">
+      <button data-tab="dashboard" class="nav-tab tab-active px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold whitespace-nowrap transition">현황 & 출석</button>
+      <button data-tab="timetable" class="nav-tab tab-idle px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold whitespace-nowrap transition">내 별명 · 대학 시간표</button>
+      <button data-tab="rankings" class="nav-tab tab-idle px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold whitespace-nowrap transition">랭킹 · 뱃지 · 주간성적</button>
+      <button data-tab="admin" id="nav-tab-admin" class="nav-tab tab-idle px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold whitespace-nowrap transition hidden">🛡️ 관리자 출석처리</button>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-4 py-5 space-y-5">
+    <!-- Live Status & Simulator Banner -->
+    <section class="bg-slate-900 text-white rounded-2xl p-4 sm:p-5 shadow-sm">
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+        <div class="space-y-1.5">
+          <div class="flex flex-wrap items-center gap-2">
+            <span id="live-phase-badge" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500 text-white">공부시간</span>
+            <span id="live-date-label" class="text-xs text-slate-300"></span>
+            <span id="sim-active-badge" class="hidden px-2 py-0.5 rounded-full text-[11px] font-semibold bg-amber-500/20 text-amber-300 border border-amber-400/40">테스트 시각 적용 중</span>
+          </div>
+          <div class="flex items-baseline gap-3 flex-wrap">
+            <h2 id="live-period-title" class="text-xl sm:text-2xl font-extrabold tracking-tight">1교시 (08:00 ~ 08:50)</h2>
+            <span id="live-clock-text" class="text-lg sm:text-xl font-mono font-bold text-indigo-300">08:02:15</span>
+          </div>
+          <p id="live-sub-desc" class="text-xs sm:text-sm text-slate-300">출석 가능 시간입니다. 시작 후 5분 안에 출석 버튼을 눌러주세요.</p>
+        </div>
+
+        <!-- Quick Time Simulator Controls -->
+        <div class="bg-slate-800/80 border border-slate-700 rounded-xl p-3 space-y-2">
+          <div class="flex items-center justify-between gap-2">
+            <span class="text-xs font-semibold text-slate-300">⏱️ 시각 테스트 (규칙 바로 체험)</span>
+            <button id="sim-reset-btn" class="text-[11px] px-2 py-0.5 rounded bg-slate-700 hover:bg-slate-600 text-slate-200">실제 시각으로</button>
+          </div>
+          <div class="flex flex-wrap gap-1.5">
+            <button data-sim="07:55" class="sim-preset px-2 py-1 rounded-lg text-[11px] font-medium bg-slate-700 hover:bg-indigo-600 text-slate-100">07:55 입실전</button>
+            <button data-sim="08:02" class="sim-preset px-2 py-1 rounded-lg text-[11px] font-medium bg-slate-700 hover:bg-indigo-600 text-slate-100">08:02 1교시(출석)</button>
+            <button data-sim="08:15" class="sim-preset px-2 py-1 rounded-lg text-[11px] font-medium bg-slate-700 hover:bg-indigo-600 text-slate-100">08:15 1교시(지각)</button>
+            <button data-sim="13:32" class="sim-preset px-2 py-1 rounded-lg text-[11px] font-medium bg-slate-700 hover:bg-indigo-600 text-slate-100">13:32 4교시(사진)</button>
+            <button data-sim="15:15" class="sim-preset px-2 py-1 rounded-lg text-[11px] font-medium bg-slate-700 hover:bg-indigo-600 text-slate-100">15:15 쉬는시간</button>
+            <button data-sim="18:32" class="sim-preset px-2 py-1 rounded-lg text-[11px] font-medium bg-slate-700 hover:bg-indigo-600 text-slate-100">18:32 7교시(사진)</button>
+            <button data-sim="22:05" class="sim-preset px-2 py-1 rounded-lg text-[11px] font-medium bg-slate-700 hover:bg-indigo-600 text-slate-100">22:05 귀가</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 1: DASHBOARD -->
+    <div id="tab-dashboard" class="tab-panel space-y-5">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+        <!-- Left Column: My Check-in & Photo Verification -->
+        <div class="lg:col-span-5 space-y-5">
+          <!-- Check-in Action Card -->
+          <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-4">
+            <div class="flex items-center justify-between">
+              <div>
+                <span class="text-xs font-semibold text-indigo-600">내 출석 컨트롤</span>
+                <h3 id="my-card-name" class="text-lg font-bold text-slate-900">나 (방장)</h3>
+              </div>
+              <span id="my-current-status-pill" class="px-3 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-700">대기중</span>
+            </div>
+
+            <!-- Photo Verification Box (Shown for 1, 4, 7교시) -->
+            <div id="photo-verify-box" class="hidden bg-amber-50 border border-amber-200 rounded-xl p-3.5 space-y-2.5">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-amber-900">📸 책상 사진 인증 필수 교시 (하루 3회)</span>
+                <span id="photo-ready-badge" class="text-[11px] font-semibold text-amber-700">미촬영</span>
+              </div>
+              <p class="text-xs text-amber-800">1교시(등원), 4교시(점심 후), 7교시(저녁 후)에는 카메라로 공부할 책상을 찍어 올리면 자동 압축·타임스탬프와 함께 저장됩니다.</p>
+              <div class="flex flex-wrap gap-2">
+                <label class="cursor-pointer px-3 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold inline-flex items-center gap-1.5">
+                  <span>📷 카메라 촬영</span>
+                  <input id="desk-photo-input" type="file" accept="image/*" capture="environment" class="hidden" />
+                </label>
+                <button id="sample-photo-btn" class="px-3 py-1.5 rounded-lg bg-white border border-amber-300 hover:bg-amber-100 text-amber-900 text-xs font-semibold">
+                  테스트용 책상 사진 생성
+                </button>
+              </div>
+              <div id="photo-preview-wrap" class="hidden pt-1">
+                <img id="photo-preview-img" alt="인증 책상 미리보기" class="w-full h-36 object-cover rounded-lg border border-amber-300" />
+              </div>
+            </div>
+
+            <!-- Primary Action Buttons -->
+            <div class="grid grid-cols-2 gap-2.5">
+              <button id="btn-checkin" class="col-span-2 py-3 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-200 disabled:text-slate-400 text-white font-bold text-sm transition shadow-sm">
+                출석 체크하기
+              </button>
+              <button id="btn-early-leave" class="py-2.5 px-3 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-900 font-semibold text-xs sm:text-sm transition">
+                조퇴 처리
+              </button>
+              <button id="btn-go-home" class="py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-900 text-white font-semibold text-xs sm:text-sm transition">
+                귀가 완료
+              </button>
+            </div>
+
+            <!-- Late Night Study Toggle (at 22:00) -->
+            <div id="late-night-box" class="flex items-center justify-between bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5">
+              <div>
+                <p class="text-xs font-bold text-slate-800">심야 자습 (9~10교시 · 선택)</p>
+                <p class="text-[11px] text-slate-500">22:00 이후 귀가 대신 심야 자습 연장 시 체크</p>
+              </div>
+              <button id="btn-toggle-latenight" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-white border border-slate-300 text-slate-700 hover:bg-slate-100">
+                신청 안함
+              </button>
+            </div>
+
+            <!-- Today's Personal Timeline -->
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <h4 class="text-xs font-bold text-slate-700">오늘 내 교시별 상태</h4>
+                <span id="my-today-rate" class="text-xs font-bold text-indigo-600">출석률 0%</span>
+              </div>
+              <div id="my-period-chips" class="grid grid-cols-5 gap-1.5"></div>
+            </div>
+          </div>
+
+          <!-- Full Timetable Reference Card -->
+          <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="text-sm font-bold text-slate-900">확정 학습시간표</h3>
+              <span class="text-[11px] text-slate-500">월~토 의무(1~8) · 일 선택</span>
+            </div>
+            <div id="schedule-list-wrap" class="space-y-1 max-h-80 overflow-y-auto scrollbar-thin pr-1"></div>
+          </div>
+        </div>
+
+        <!-- Right Column: Live Group Board & Photo Feed -->
+        <div class="lg:col-span-7 space-y-5">
+          <!-- Group Live Status -->
+          <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+              <div>
+                <h3 class="text-base font-bold text-slate-900">스터디원 실시간 현황</h3>
+                <p class="text-xs text-slate-500">현재 교시 기준 출석, 지각, 무단이탈, 수업면제 상태를 실시간으로 확인합니다.</p>
+              </div>
+              <button id="add-member-btn" class="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-semibold">
+                + 스터디원 추가
+              </button>
+            </div>
+            <div id="group-status-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+          </div>
+
+          <!-- Live Desk Photo Feed -->
+          <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+            <div class="flex items-center justify-between mb-3">
+              <div>
+                <h3 class="text-base font-bold text-slate-900">실시간 책상 인증 피드</h3>
+                <p class="text-xs text-slate-500">등원(1교시) · 점심 후(4교시) · 저녁 후(7교시) 사진이 올라오며 7일 후 자동 정리됩니다.</p>
+              </div>
+              <span id="feed-count-badge" class="px-2.5 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-700">0건</span>
+            </div>
+            <div id="photo-feed-list" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: PERSONAL PROFILE & UNIVERSITY TIMETABLE EXEMPTIONS -->
+    <div id="tab-timetable" class="tab-panel hidden space-y-5">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+        <div class="lg:col-span-5 space-y-5">
+          <!-- Nickname Editor Card -->
+          <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-3">
+            <div>
+              <h3 class="text-base font-bold text-slate-900">내 별명(프로필) 설정</h3>
+              <p class="text-xs text-slate-500 mt-0.5">스터디원별 별명을 등록하거나 변경하면 현황판과 랭킹에 즉시 반영됩니다.</p>
+            </div>
+            <form id="nickname-form" class="space-y-2.5">
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">대상 멤버</label>
+                <select id="profile-member-select" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm"></select>
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">새 별명</label>
+                <div class="flex gap-2">
+                  <input id="profile-nickname-input" type="text" placeholder="별명을 입력하세요" class="flex-1 rounded-xl border border-slate-300 px-3 py-2 text-sm" required />
+                  <button type="submit" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs sm:text-sm font-bold whitespace-nowrap">저장</button>
+                </div>
+              </div>
+            </form>
+          </div>
+
+          <!-- Class Registration Card -->
+          <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-4">
+            <div>
+              <h3 class="text-base font-bold text-slate-900">대학생 수업 시간표 등록</h3>
+              <p class="text-xs text-slate-500 mt-1">수업이 겹치는 교시와, 쉬는시간에 애매하게 끝나 바로 들어가기 어려운 <strong>다음 교시까지 자동으로 출석 면제</strong> 처리됩니다.</p>
+            </div>
+
+            <form id="class-form" class="space-y-3">
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">대상 멤버</label>
+                <select id="class-member-select" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm"></select>
+              </div>
+              <div class="grid grid-cols-2 gap-2.5">
+                <div>
+                  <label class="block text-xs font-semibold text-slate-700 mb-1">요일</label>
+                  <select id="class-day-select" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm">
+                    <option value="1">월요일</option>
+                    <option value="2">화요일</option>
+                    <option value="3">수요일</option>
+                    <option value="4">목요일</option>
+                    <option value="5">금요일</option>
+                    <option value="6">토요일</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-slate-700 mb-1">수업명</label>
+                  <input id="class-name-input" type="text" placeholder="예: 자료구조론" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm" required />
+                </div>
+              </div>
+              <div class="grid grid-cols-2 gap-2.5">
+                <div>
+                  <label class="block text-xs font-semibold text-slate-700 mb-1">시작 시각</label>
+                  <input id="class-start-input" type="time" value="10:30" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm" required />
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-slate-700 mb-1">종료 시각</label>
+                  <input id="class-end-input" type="time" value="12:15" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm" required />
+                </div>
+              </div>
+              <button type="submit" class="w-full py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-sm font-bold transition">
+                수업 등록 & 면제 교시 자동 계산
+              </button>
+            </form>
+
+            <div class="border-t border-slate-200 pt-3">
+              <h4 class="text-xs font-bold text-slate-700 mb-2">등록된 수업 목록</h4>
+              <div id="registered-classes-list" class="space-y-2 max-h-60 overflow-y-auto scrollbar-thin"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="lg:col-span-7 bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+          <div class="flex items-center justify-between mb-3">
+            <div>
+              <h3 class="text-base font-bold text-slate-900">요일별 자동 면제 미리보기</h3>
+              <p class="text-xs text-slate-500">선택한 멤버의 주간 자습 의무 / 수업 면제 현황입니다.</p>
+            </div>
+          </div>
+          <div id="weekly-exemption-grid" class="overflow-x-auto"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: RANKINGS, BADGES, WEEKLY REPORT -->
+    <div id="tab-rankings" class="tab-panel hidden space-y-5">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <!-- Attendance Rate Ranking -->
+        <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-sm font-bold text-slate-900">📊 의무 교시 출석률 랭킹</h3>
+            <span class="text-[11px] text-slate-500">면제 교시 제외</span>
+          </div>
+          <div id="rank-rate-list" class="space-y-2.5"></div>
+        </div>
+
+        <!-- Earliest Check-in Ranking -->
+        <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-sm font-bold text-slate-900">🌅 오늘의 최초 입실자</h3>
+            <span class="text-[11px] text-slate-500">1교시 사진인증 기준</span>
+          </div>
+          <div id="rank-first-list" class="space-y-2.5"></div>
+        </div>
+
+        <!-- Latest Checkout Ranking -->
+        <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-sm font-bold text-slate-900">🌙 오늘의 마지막 퇴실자</h3>
+            <span class="text-[11px] text-slate-500">귀가 버튼 기준</span>
+          </div>
+          <div id="rank-last-list" class="space-y-2.5"></div>
+        </div>
+      </div>
+
+      <!-- Badges & Weekly Report -->
+      <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+          <div>
+            <h3 class="text-base font-bold text-slate-900">🏅 주간 성적표 & 연속 출석(스트릭) 뱃지</h3>
+            <p class="text-xs text-slate-500">무단이탈 시 연속 출석 일수가 0일로 초기화됩니다.</p>
+          </div>
+        </div>
+        <div id="weekly-report-table" class="overflow-x-auto"></div>
+      </div>
+    </div>
+
+    <!-- TAB 4: ADMIN PANEL (Past / Future Override + Photo Cleanup) -->
+    <div id="tab-admin" class="tab-panel hidden space-y-5">
+      <div class="bg-white rounded-2xl border-2 border-indigo-200 p-5 shadow-sm space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <span class="px-2 py-0.5 rounded bg-indigo-100 text-indigo-800 text-[11px] font-bold">관리자 전용 권한</span>
+            <h3 class="text-lg font-bold text-slate-900 mt-1">과거 · 오늘 · 미래 시간표 출석 직접 처리</h3>
+            <p class="text-xs text-slate-500">원하는 날짜와 멤버를 선택한 뒤, 각 교시 칸을 눌러 출석/지각/무단이탈/수업면제/조퇴 상태를 즉시 수정·동기화할 수 있습니다.</p>
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <input id="admin-date-input" type="date" class="rounded-xl border border-slate-300 px-3 py-1.5 text-sm font-semibold" />
+            <select id="admin-member-filter" class="rounded-xl border border-slate-300 px-3 py-1.5 text-sm font-semibold"></select>
+          </div>
+        </div>
+
+        <!-- Bulk Status Selector -->
+        <div class="flex flex-wrap items-center gap-2 bg-slate-50 p-3 rounded-xl border border-slate-200">
+          <span class="text-xs font-bold text-slate-700 mr-1">클릭 시 적용할 상태:</span>
+          <button data-admin-brush="present" class="admin-brush px-2.5 py-1 rounded-lg text-xs font-bold bg-emerald-600 text-white ring-2 ring-indigo-500">출석</button>
+          <button data-admin-brush="late" class="admin-brush px-2.5 py-1 rounded-lg text-xs font-bold bg-amber-100 text-amber-900">지각</button>
+          <button data-admin-brush="awol" class="admin-brush px-2.5 py-1 rounded-lg text-xs font-bold bg-rose-100 text-rose-900">무단이탈</button>
+          <button data-admin-brush="exempt" class="admin-brush px-2.5 py-1 rounded-lg text-xs font-bold bg-sky-100 text-sky-900">수업면제</button>
+          <button data-admin-brush="early" class="admin-brush px-2.5 py-1 rounded-lg text-xs font-bold bg-purple-100 text-purple-900">조퇴</button>
+          <button data-admin-brush="none" class="admin-brush px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-200 text-slate-700">초기화(미체크)</button>
+        </div>
+
+        <div id="admin-grid-wrap" class="overflow-x-auto"></div>
+
+        <!-- Photo Storage Cleanup Bar -->
+        <div class="border-t border-slate-200 pt-4 flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h4 class="text-sm font-bold text-slate-900">🧹 클라우드 사진 용량 관리</h4>
+            <p class="text-xs text-slate-500">7일 지난 사진은 자동 정리되며, 필요 시 수동으로 이전 사진을 바로 비울 수 있습니다.</p>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <button id="btn-cleanup-7d" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold">7일 지난 사진 정리</button>
+            <button id="btn-cleanup-old" class="px-3 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-bold border border-rose-200">어제 이전 사진 비우기</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    (function () {
+      // 1. Firebase Configuration (User's GOSSO STUDY project)
+      const firebaseConfig = {
+        apiKey: "AIzaSyBSyr2LZDux-bN753S50nYf0hMWoTugFig",
+        authDomain: "gosso-study.firebaseapp.com",
+        databaseURL: "https://gosso-study-default-rtdb.firebaseio.com",
+        projectId: "gosso-study",
+        storageBucket: "gosso-study.firebasestorage.app",
+        messagingSenderId: "640579656691",
+        appId: "1:640579656691:web:e1d6937e82d8a730111086",
+        measurementId: "G-Y9794M1CDJ"
+      };
+
+      // 2. Timetable Specification
+      const TIMELINE = [
+        { id: 'p1', label: '1교시', type: 'study', start: '08:00', end: '08:50', mins: 50, photoReq: true, mandatory: true },
+        { id: 'b1', label: '쉬는시간', type: 'break', start: '08:50', end: '09:00', mins: 10 },
+        { id: 'p2', label: '2교시', type: 'study', start: '09:00', end: '10:20', mins: 80, photoReq: false, mandatory: true },
+        { id: 'b2', label: '쉬는시간', type: 'break', start: '10:20', end: '10:40', mins: 20 },
+        { id: 'p3', label: '3교시', type: 'study', start: '10:40', end: '12:20', mins: 100, photoReq: false, mandatory: true },
+        { id: 'lunch', label: '점심식사', type: 'meal', start: '12:20', end: '13:30', mins: 70 },
+        { id: 'p4', label: '4교시', type: 'study', start: '13:30', end: '13:55', mins: 25, photoReq: true, mandatory: true },
+        { id: 'b4', label: '쉬는시간', type: 'break', start: '13:55', end: '14:00', mins: 5 },
+        { id: 'p5', label: '5교시', type: 'study', start: '14:00', end: '15:10', mins: 70, photoReq: false, mandatory: true },
+        { id: 'b5', label: '쉬는시간', type: 'break', start: '15:10', end: '15:50', mins: 40 },
+        { id: 'p6', label: '6교시', type: 'study', start: '15:50', end: '17:20', mins: 90, photoReq: false, mandatory: true },
+        { id: 'dinner', label: '저녁식사', type: 'meal', start: '17:20', end: '18:30', mins: 70 },
+        { id: 'p7', label: '7교시', type: 'study', start: '18:30', end: '20:00', mins: 90, photoReq: true, mandatory: true },
+        { id: 'b7', label: '쉬는시간', type: 'break', start: '20:00', end: '20:20', mins: 20 },
+        { id: 'p8', label: '8교시', type: 'study', start: '20:20', end: '22:00', mins: 100, photoReq: false, mandatory: true },
+        { id: 'home', label: '귀가시간', type: 'home', start: '22:00', end: '22:10', mins: 10 },
+        { id: 'p9', label: '9교시(심야)', type: 'study', start: '22:10', end: '23:00', mins: 50, photoReq: false, mandatory: false },
+        { id: 'b9', label: '쉬는시간', type: 'break', start: '23:00', end: '23:10', mins: 10 },
+        { id: 'p10', label: '10교시(심야)', type: 'study', start: '23:10', end: '24:00', mins: 50, photoReq: false, mandatory: false }
+      ];
+
+      const STUDY_PERIODS = TIMELINE.filter(t => t.type === 'study');
+      const LOCAL_PREFS_KEY = 'gosso_study_prefs_v1';
+      const LOCAL_DATA_KEY = 'gosso_study_data_v1';
+
+      function toMins(hhmm) {
+        const [h, m] = hhmm.split(':').map(Number);
+        return h * 60 + m;
+      }
+
+      function todayStr() {
+        const d = new Date();
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return `${y}-${m}-${day}`;
+      }
+
+      function daysDiff(dateStrA, dateStrB) {
+        const a = new Date(dateStrA + 'T00:00:00');
+        const b = new Date(dateStrB + 'T00:00:00');
+        return Math.floor((b - a) / (1000 * 60 * 60 * 24));
+      }
+
+      function makeSampleDeskImage(memberName, labelText) {
+        const canvas = document.createElement('canvas');
+        canvas.width = 480;
+        canvas.height = 300;
+        const ctx = canvas.getContext('2d');
+        const grad = ctx.createLinearGradient(0, 0, 480, 300);
+        grad.addColorStop(0, '#f8fafc');
+        grad.addColorStop(1, '#e2e8f0');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, 480, 300);
+        ctx.fillStyle = '#d6b88d';
+        ctx.fillRect(0, 190, 480, 110);
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(110, 140, 160, 110);
+        ctx.strokeStyle = '#94a3b8';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(110, 140, 160, 110);
+        ctx.strokeStyle = '#cbd5e1';
+        for (let y = 162; y < 235; y += 16) {
+          ctx.beginPath();
+          ctx.moveTo(125, y);
+          ctx.lineTo(255, y);
+          ctx.stroke();
+        }
+        ctx.fillStyle = '#1e293b';
+        ctx.fillRect(285, 160, 10, 80);
+        ctx.fillStyle = '#334155';
+        ctx.fillRect(340, 155, 50, 55);
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.78)';
+        ctx.fillRect(12, 12, 260, 34);
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 14px Inter, sans-serif';
+        ctx.fillText(`📸 ${memberName} · ${labelText}`, 22, 34);
+        return canvas.toDataURL('image/jpeg', 0.7);
+      }
+
+      function compressImageFile(file, labelText, callback) {
+        const reader = new FileReader();
+        reader.onload = ev => {
+          const img = new Image();
+          img.onload = () => {
+            const maxW = 480;
+            const scale = img.width > maxW ? maxW / img.width : 1;
+            const w = Math.round(img.width * scale);
+            const h = Math.round(img.height * scale);
+            const canvas = document.createElement('canvas');
+            canvas.width = w;
+            canvas.height = h;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, w, h);
+            ctx.fillStyle = 'rgba(15, 23, 42, 0.75)';
+            ctx.fillRect(8, 8, Math.min(w - 16, 260), 28);
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 12px Inter, sans-serif';
+            ctx.fillText(labelText, 16, 26);
+            callback(canvas.toDataURL('image/jpeg', 0.65));
+          };
+          img.src = ev.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+
+      function buildDefaultSharedData() {
+        const t = todayStr();
+        return {
+          members: [
+            { id: 'm1', name: '나 (방장)', role: 'admin', streak: 4, lateNight: false, firstTime: '07:52', lastTime: null },
+            { id: 'm2', name: '지훈', role: 'member', streak: 6, lateNight: true, firstTime: '07:48', lastTime: '23:50' },
+            { id: 'm3', name: '서연', role: 'member', streak: 5, lateNight: false, firstTime: '07:56', lastTime: '22:04' },
+            { id: 'm4', name: '민수', role: 'member', streak: 2, lateNight: false, firstTime: '08:11', lastTime: '22:02' },
+            { id: 'm5', name: '하은', role: 'member', streak: 7, lateNight: true, firstTime: '07:45', lastTime: '23:55' }
+          ],
+          classes: {
+            m1: [{ id: 'c1', day: new Date().getDay() || 1, name: '전공 세미나', start: '10:30', end: '12:10' }],
+            m3: [{ id: 'c2', day: new Date().getDay() || 1, name: '통계학', start: '13:30', end: '15:00' }]
+          },
+          records: {
+            [t]: {
+              m1: { p1: 'present', p2: 'present', p3: 'exempt' },
+              m2: { p1: 'present', p2: 'present', p3: 'present' },
+              m3: { p1: 'present', p2: 'present', p3: 'present', p4: 'exempt', p5: 'exempt' },
+              m4: { p1: 'late', p2: 'present', p3: 'present' },
+              m5: { p1: 'present', p2: 'present', p3: 'present' }
+            }
+          },
+          photos: [
+            {
+              id: 'ph1',
+              memberId: 'm5',
+              memberName: '하은',
+              periodLabel: '1교시 등원',
+              time: '07:45',
+              date: t,
+              dataUrl: makeSampleDeskImage('하은', '07:45 · 1교시 등원')
+            },
+            {
+              id: 'ph2',
+              memberId: 'm2',
+              memberName: '지훈',
+              periodLabel: '1교시 등원',
+              time: '07:48',
+              date: t,
+              dataUrl: makeSampleDeskImage('지훈', '07:48 · 1교시 등원')
+            }
+          ]
+        };
+      }
+
+      function loadPrefs() {
+        try {
+          const raw = localStorage.getItem(LOCAL_PREFS_KEY);
+          if (raw) return JSON.parse(raw);
+        } catch (e) {}
+        return {
+          currentUserId: 'm1',
+          adminMode: false,
+          alertEnabled: true,
+          simTime: null,
+          adminBrush: 'present',
+          activeTab: 'dashboard'
+        };
+      }
+
+      function loadLocalData() {
+        try {
+          const raw = localStorage.getItem(LOCAL_DATA_KEY);
+          if (raw) return JSON.parse(raw);
+        } catch (e) {}
+        return buildDefaultSharedData();
+      }
+
+      const prefs = loadPrefs();
+      let shared = loadLocalData();
+      let pendingPhoto = null;
+      let lastNotifiedPhaseId = null;
+      let cloudConnected = false;
+      let cloudErrorMsg = '';
+      let dbRef = null;
+
+      function savePrefs() {
+        try { localStorage.setItem(LOCAL_PREFS_KEY, JSON.stringify(prefs)); } catch (e) {}
+      }
+
+      function cleanupOldPhotos(maxAgeDays = 7) {
+        const t = todayStr();
+        const before = (shared.photos || []).length;
+        shared.photos = (shared.photos || []).filter(p => !p.date || daysDiff(p.date, t) < maxAgeDays);
+        return before - shared.photos.length;
+      }
+
+      function saveSharedData() {
+        cleanupOldPhotos(7);
+        try { localStorage.setItem(LOCAL_DATA_KEY, JSON.stringify(shared)); } catch (e) {}
+        if (dbRef && cloudConnected) {
+          try {
+            dbRef.set(shared).catch(err => {
+              cloudErrorMsg = err?.message || 'Firebase 쓰기 권한을 확인하세요.';
+              updateCloudPill();
+            });
+          } catch (e) {}
+        }
+      }
+
+      function updateCloudPill() {
+        const pill = document.getElementById('cloud-status-pill');
+        if (cloudConnected) {
+          pill.textContent = '🟢 실시간 동기화 ON';
+          pill.className = 'px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800';
+        } else {
+          pill.textContent = '🟡 로컬 모드';
+          pill.className = 'px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-100 text-amber-800';
+        }
+      }
+
+      // Initialize Firebase Realtime Database
+      function initFirebase() {
+        try {
+          if (typeof firebase === 'undefined') {
+            cloudErrorMsg = 'Firebase SDK를 불러오지 못해 로컬 모드로 동작 중입니다.';
+            updateCloudPill();
+            return;
+          }
+          if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+          }
+          const db = firebase.database();
+          dbRef = db.ref('studyData');
+          dbRef.on('value', snapshot => {
+            cloudConnected = true;
+            cloudErrorMsg = '';
+            const val = snapshot.val();
+            if (val && Array.isArray(val.members)) {
+              shared = {
+                members: val.members || [],
+                classes: val.classes || {},
+                records: val.records || {},
+                photos: Array.isArray(val.photos) ? val.photos : (val.photos ? Object.values(val.photos) : [])
+              };
+              const removed = cleanupOldPhotos(7);
+              if (removed > 0) saveSharedData();
+              try { localStorage.setItem(LOCAL_DATA_KEY, JSON.stringify(shared)); } catch (e) {}
+            } else {
+              // Seed initial data into empty Firebase DB
+              dbRef.set(shared).catch(() => {});
+            }
+            updateCloudPill();
+            renderAll();
+          }, err => {
+            cloudConnected = false;
+            cloudErrorMsg = err?.message || 'Realtime Database 규칙(Rules)에서 읽기/쓰기 권한을 확인해 주세요.';
+            updateCloudPill();
+          });
+        } catch (e) {
+          cloudConnected = false;
+          cloudErrorMsg = e?.message || 'Firebase 초기화 오류';
+          updateCloudPill();
+        }
+      }
+
+      // Toast & Modal
+      function showToast(msg, type = 'info') {
+        const container = document.getElementById('toast-container');
+        const colors = {
+          info: 'bg-slate-900 text-white',
+          success: 'bg-emerald-600 text-white',
+          warn: 'bg-amber-500 text-white',
+          error: 'bg-rose-600 text-white'
+        };
+        const el = document.createElement('div');
+        el.className = `pointer-events-auto px-4 py-3 rounded-xl shadow-lg text-xs sm:text-sm font-semibold transition-all ${colors[type] || colors.info}`;
+        el.textContent = msg;
+        container.appendChild(el);
+        setTimeout(() => {
+          el.classList.add('opacity-0');
+          setTimeout(() => el.remove(), 300);
+        }, 3200);
+      }
+
+      function openModal(title, htmlContent) {
+        document.getElementById('modal-title').textContent = title;
+        document.getElementById('modal-body').innerHTML = htmlContent;
+        const overlay = document.getElementById('modal-overlay');
+        overlay.classList.remove('hidden');
+        overlay.classList.add('flex');
+      }
+
+      function closeModal() {
+        const overlay = document.getElementById('modal-overlay');
+        overlay.classList.add('hidden');
+        overlay.classList.remove('flex');
+      }
+
+      // Time & Phase Helpers
+      function getNowParts() {
+        const now = new Date();
+        if (prefs.simTime) {
+          const [h, m] = prefs.simTime.split(':').map(Number);
+          return { h, m, s: 0, totalMins: h * 60 + m, hhmm: prefs.simTime, day: now.getDay() };
+        }
+        const h = now.getHours();
+        const m = now.getMinutes();
+        const s = now.getSeconds();
+        const hhmm = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+        return { h, m, s, totalMins: h * 60 + m, hhmm, day: now.getDay() };
+      }
+
+      function getCurrentPhase(totalMins) {
+        for (const item of TIMELINE) {
+          const st = toMins(item.start);
+          const en = toMins(item.end);
+          if (totalMins >= st && totalMins < en) {
+            return { ...item, startMins: st, endMins: en };
+          }
+        }
+        return null;
+      }
+
+      function getExemptPeriodIds(memberId, dayOfWeek) {
+        const exempt = new Set();
+        const list = ((shared.classes && shared.classes[memberId]) || []).filter(c => Number(c.day) === Number(dayOfWeek));
+        for (const cls of list) {
+          const cStart = toMins(cls.start);
+          const cEnd = toMins(cls.end);
+          for (let i = 0; i < STUDY_PERIODS.length; i++) {
+            const p = STUDY_PERIODS[i];
+            const pStart = toMins(p.start);
+            const pEnd = toMins(p.end);
+            if (cStart < pEnd && cEnd > pStart) {
+              exempt.add(p.id);
+              if (cEnd > pStart && i + 1 < STUDY_PERIODS.length) {
+                const nextP = STUDY_PERIODS[i + 1];
+                if (toMins(nextP.start) - cEnd <= 25) exempt.add(nextP.id);
+              }
+            } else if (cEnd <= pStart && pStart - cEnd <= 20) {
+              exempt.add(p.id);
+            }
+          }
+        }
+        return exempt;
+      }
+
+      function getMemberDayStatus(memberId, dateStr, periodId) {
+        const dayRec = (shared.records && shared.records[dateStr] && shared.records[dateStr][memberId]) || {};
+        if (dayRec[periodId]) return dayRec[periodId];
+        const d = new Date(dateStr + 'T12:00:00');
+        if (getExemptPeriodIds(memberId, d.getDay()).has(periodId)) return 'exempt';
+        return 'none';
+      }
+
+      function setMemberDayStatus(memberId, dateStr, periodId, status) {
+        if (!shared.records) shared.records = {};
+        if (!shared.records[dateStr]) shared.records[dateStr] = {};
+        if (!shared.records[dateStr][memberId]) shared.records[dateStr][memberId] = {};
+        if (status === 'none') {
+          delete shared.records[dateStr][memberId][periodId];
+        } else {
+          shared.records[dateStr][memberId][periodId] = status;
+        }
+        if (status === 'awol') {
+          const m = shared.members.find(x => x.id === memberId);
+          if (m) m.streak = 0;
+        }
+        saveSharedData();
+      }
+
+      function calcAttendanceRate(memberId, dateStr) {
+        let mandatoryCount = 0;
+        let score = 0;
+        for (const p of STUDY_PERIODS) {
+          if (!p.mandatory) continue;
+          const st = getMemberDayStatus(memberId, dateStr, p.id);
+          if (st === 'exempt') continue;
+          mandatoryCount++;
+          if (st === 'present') score += 1;
+          else if (st === 'late') score += 0.5;
+        }
+        if (mandatoryCount === 0) return 100;
+        return Math.round((score / mandatoryCount) * 100);
+      }
+
+      function getStatusMeta(status) {
+        const map = {
+          present: { text: '출석', cls: 'bg-emerald-100 text-emerald-800 border-emerald-200' },
+          late: { text: '지각', cls: 'bg-amber-100 text-amber-800 border-amber-200' },
+          awol: { text: '무단이탈', cls: 'bg-rose-100 text-rose-800 border-rose-200' },
+          exempt: { text: '수업면제', cls: 'bg-sky-100 text-sky-800 border-sky-200' },
+          early: { text: '조퇴', cls: 'bg-purple-100 text-purple-800 border-purple-200' },
+          home: { text: '귀가', cls: 'bg-slate-200 text-slate-700 border-slate-300' },
+          none: { text: '미체크', cls: 'bg-slate-100 text-slate-500 border-slate-200' }
+        };
+        return map[status] || map.none;
+      }
+
+      function getBadgesForMember(member, dateStr) {
+        const badges = [];
+        if (member.streak >= 3) badges.push('🔥 3일+ 연속출석');
+        if (member.streak >= 7) badges.push('👑 7일 개근왕');
+        if (member.firstTime && toMins(member.firstTime) <= toMins('07:55')) badges.push('🌅 얼리버드');
+        if (getMemberDayStatus(member.id, dateStr, 'p10') === 'present') badges.push('🌙 심야 완주');
+        if ((shared.photos || []).some(ph => ph.memberId === member.id && ph.date === dateStr)) badges.push('📸 책상 인증');
+        return badges;
+      }
+
+      // Renderers
+      function renderHeaderControls() {
+        const userSelect = document.getElementById('current-user-select');
+        if (!shared.members.some(m => m.id === prefs.currentUserId) && shared.members.length) {
+          prefs.currentUserId = shared.members[0].id;
+        }
+        userSelect.innerHTML = shared.members.map(m =>
+          `<option value="${m.id}" ${m.id === prefs.currentUserId ? 'selected' : ''}>${m.name}</option>`
+        ).join('');
+
+        const adminBtn = document.getElementById('admin-toggle-btn');
+        const adminLabel = document.getElementById('admin-toggle-label');
+        const adminNavTab = document.getElementById('nav-tab-admin');
+        if (prefs.adminMode) {
+          adminBtn.className = 'px-3 py-1.5 rounded-xl text-xs font-semibold border transition flex items-center gap-1.5 bg-indigo-600 border-indigo-600 text-white';
+          adminLabel.textContent = '관리자 ON';
+          adminNavTab.classList.remove('hidden');
+        } else {
+          adminBtn.className = 'px-3 py-1.5 rounded-xl text-xs font-semibold border transition flex items-center gap-1.5 bg-white border-slate-300 text-slate-700 hover:bg-slate-50';
+          adminLabel.textContent = '관리자 OFF';
+          adminNavTab.classList.add('hidden');
+          if (prefs.activeTab === 'admin') switchTab('dashboard');
+        }
+
+        document.getElementById('alert-toggle-btn').textContent = prefs.alertEnabled ? '🔔 알림 ON' : '🔕 알림 OFF';
+      }
+
+      function renderLiveBanner() {
+        const now = getNowParts();
+        const phase = getCurrentPhase(now.totalMins);
+        const days = ['일', '월', '화', '수', '목', '금', '토'];
+        document.getElementById('live-date-label').textContent = `${todayStr()} (${days[now.day]})`;
+        document.getElementById('live-clock-text').textContent =
+          `${String(now.h).padStart(2, '0')}:${String(now.m).padStart(2, '0')}:${String(now.s).padStart(2, '0')}`;
+
+        document.getElementById('sim-active-badge').classList.toggle('hidden', !prefs.simTime);
+
+        const badgeEl = document.getElementById('live-phase-badge');
+        const titleEl = document.getElementById('live-period-title');
+        const descEl = document.getElementById('live-sub-desc');
+
+        if (!phase) {
+          badgeEl.textContent = now.totalMins < 480 ? '입실 대기' : '자습 종료';
+          badgeEl.className = 'px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-600 text-white';
+          titleEl.textContent = now.totalMins < 480 ? '아침 등원 준비 시간 (08:00 시작)' : '오늘 자습 일정 종료';
+          descEl.textContent = now.totalMins < 480 ? '07:30~08:00 사이에 책상 사진을 찍으면 최초 입실자 랭킹에 기록됩니다.' : '수고하셨습니다! 24:00 이후는 심야 자습이 마감됩니다.';
+          return;
+        }
+
+        if (phase.type === 'break' && lastNotifiedPhaseId !== phase.id) {
+          lastNotifiedPhaseId = phase.id;
+          if (prefs.alertEnabled) {
+            showToast(`☕ ${phase.start} 쉬는시간이 시작되었습니다! (${phase.mins}분 휴식)`, 'info');
+          }
+        } else if (phase.type !== 'break') {
+          lastNotifiedPhaseId = phase.id;
+        }
+
+        if (phase.type === 'study') {
+          const elapsed = now.totalMins - phase.startMins;
+          const isWindow = elapsed <= 5;
+          badgeEl.textContent = isWindow ? '공부시간 · 출석 가능' : '공부시간';
+          badgeEl.className = isWindow
+            ? 'px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500 text-white'
+            : 'px-2.5 py-0.5 rounded-full text-xs font-bold bg-indigo-500 text-white';
+          titleEl.textContent = `${phase.label} (${phase.start} ~ ${phase.end})`;
+          if (isWindow) {
+            descEl.textContent = `시작 ${elapsed}분 경과 · 5분 이내(${5 - elapsed}분 남음) 출석 버튼을 눌러주세요!`;
+          } else if (phase.id === 'p1') {
+            descEl.textContent = '1교시 5분 경과: 지금 출석 시 "아침 지각" 처리됩니다. (2교시부터는 무단이탈)';
+          } else {
+            descEl.textContent = '출석 체크 5분이 지났습니다. 미출석 시 무단이탈로 기록됩니다.';
+          }
+        } else if (phase.type === 'break') {
+          badgeEl.textContent = '쉬는시간';
+          badgeEl.className = 'px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-500 text-white';
+          titleEl.textContent = `쉬는시간 (${phase.start} ~ ${phase.end}, ${phase.mins}분)`;
+          descEl.textContent = '잠시 휴식하세요! 다음 교시 시작 5분 안에 다시 출석 체크해야 합니다.';
+        } else if (phase.type === 'meal') {
+          badgeEl.textContent = '식사시간';
+          badgeEl.className = 'px-2.5 py-0.5 rounded-full text-xs font-bold bg-sky-500 text-white';
+          titleEl.textContent = `${phase.label} (${phase.start} ~ ${phase.end})`;
+          descEl.textContent = '맛있게 식사하시고 다음 블록 시작 시 책상 사진 인증을 준비해 주세요.';
+        } else if (phase.type === 'home') {
+          badgeEl.textContent = '귀가시간';
+          badgeEl.className = 'px-2.5 py-0.5 rounded-full text-xs font-bold bg-purple-500 text-white';
+          titleEl.textContent = `귀가 체크 (${phase.start} ~ ${phase.end})`;
+          descEl.textContent = '8교시 의무자습이 끝났습니다. 귀가 완료를 누르거나 심야 자습을 선택하세요.';
+        }
+      }
+
+      function renderDashboard() {
+        const now = getNowParts();
+        const t = todayStr();
+        const phase = getCurrentPhase(now.totalMins);
+        const me = shared.members.find(m => m.id === prefs.currentUserId) || shared.members[0];
+        if (!me) return;
+
+        document.getElementById('my-card-name').textContent = me.name;
+
+        const activePeriodId = phase && phase.type === 'study' ? phase.id : 'p1';
+        const curStatus = getMemberDayStatus(me.id, t, activePeriodId);
+        const curMeta = getStatusMeta(curStatus);
+        const pill = document.getElementById('my-current-status-pill');
+        pill.textContent = phase && phase.type === 'study' ? `${phase.label}: ${curMeta.text}` : `연속 ${me.streak}일째`;
+        pill.className = `px-3 py-1 rounded-full text-xs font-bold border ${curMeta.cls}`;
+
+        const photoBox = document.getElementById('photo-verify-box');
+        const needsPhoto = phase && phase.type === 'study' && phase.photoReq;
+        const alreadyPhoto = (shared.photos || []).some(p => p.memberId === me.id && p.date === t && p.periodId === phase?.id);
+        photoBox.classList.toggle('hidden', !(needsPhoto && !alreadyPhoto));
+
+        const photoBadge = document.getElementById('photo-ready-badge');
+        if (pendingPhoto) {
+          photoBadge.textContent = '촬영 완료 ✓';
+          photoBadge.className = 'text-[11px] font-bold text-emerald-700';
+          document.getElementById('photo-preview-wrap').classList.remove('hidden');
+          document.getElementById('photo-preview-img').src = pendingPhoto;
+        } else {
+          photoBadge.textContent = '미촬영';
+          photoBadge.className = 'text-[11px] font-semibold text-amber-700';
+          document.getElementById('photo-preview-wrap').classList.add('hidden');
+        }
+
+        const btnCheckin = document.getElementById('btn-checkin');
+        if (!phase || phase.type !== 'study') {
+          if (now.totalMins >= toMins('07:30') && now.totalMins < toMins('08:00')) {
+            btnCheckin.disabled = false;
+            btnCheckin.textContent = '🌅 이른 등원(1교시 사전 출석) 체크';
+          } else {
+            btnCheckin.disabled = true;
+            btnCheckin.textContent = phase ? `${phase.label} 중 (공부시간에 출석 가능)` : '현재 출석 가능 시간이 아닙니다';
+          }
+        } else if (curStatus === 'exempt') {
+          btnCheckin.disabled = true;
+          btnCheckin.textContent = `${phase.label} 수업 면제 교시`;
+        } else if (curStatus === 'present' || curStatus === 'late') {
+          btnCheckin.disabled = true;
+          btnCheckin.textContent = `${phase.label} ${curMeta.text} 완료 ✓`;
+        } else {
+          btnCheckin.disabled = false;
+          btnCheckin.textContent = `${phase.label} 출석 체크하기`;
+        }
+
+        const lnBtn = document.getElementById('btn-toggle-latenight');
+        if (me.lateNight) {
+          lnBtn.textContent = '심야 연장 ON';
+          lnBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-bold bg-indigo-600 text-white';
+        } else {
+          lnBtn.textContent = '신청 안함';
+          lnBtn.className = 'px-3 py-1.5 rounded-lg text-xs font-bold bg-white border border-slate-300 text-slate-700 hover:bg-slate-100';
+        }
+
+        document.getElementById('my-today-rate').textContent = `출석률 ${calcAttendanceRate(me.id, t)}%`;
+        document.getElementById('my-period-chips').innerHTML = STUDY_PERIODS.map(p => {
+          const st = getMemberDayStatus(me.id, t, p.id);
+          const meta = getStatusMeta(st);
+          return `
+            <div class="rounded-lg border px-2 py-1.5 text-center ${meta.cls}">
+              <div class="text-[11px] font-bold">${p.label.replace('(심야)', '')}</div>
+              <div class="text-[10px]">${meta.text}</div>
+            </div>
+          `;
+        }).join('');
+
+        document.getElementById('schedule-list-wrap').innerHTML = TIMELINE.map(item => {
+          const isCurrent = phase && phase.id === item.id;
+          const badge = item.type === 'study'
+            ? (item.photoReq ? '<span class="text-[10px] px-1.5 py-0.5 rounded bg-amber-100 text-amber-800 font-bold">📸인증</span>' : '')
+            : `<span class="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-600">${item.mins}분</span>`;
+          return `
+            <div class="flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs ${isCurrent ? 'bg-indigo-50 border border-indigo-200 font-bold text-indigo-900' : 'text-slate-700'}">
+              <span>${item.label}</span>
+              <div class="flex items-center gap-2">
+                ${badge}
+                <span class="font-mono text-[11px] text-slate-500">${item.start}~${item.end}</span>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        document.getElementById('group-status-grid').innerHTML = shared.members.map(m => {
+          const rate = calcAttendanceRate(m.id, t);
+          const st = phase && phase.type === 'study' ? getMemberDayStatus(m.id, t, phase.id) : getMemberDayStatus(m.id, t, 'p1');
+          const meta = getStatusMeta(st);
+          return `
+            <div class="border border-slate-200 rounded-xl p-3.5 bg-slate-50/50 flex flex-col justify-between gap-2">
+              <div class="flex items-start justify-between gap-2">
+                <div>
+                  <div class="flex items-center gap-1.5">
+                    <span class="font-bold text-sm text-slate-900">${m.name}</span>
+                    ${m.lateNight ? '<span class="text-[10px] px-1.5 py-0.5 rounded bg-indigo-100 text-indigo-700 font-semibold">심야</span>' : ''}
+                  </div>
+                  <p class="text-[11px] text-slate-500 mt-0.5">연속 ${m.streak}일 · 출석률 ${rate}%</p>
+                </div>
+                <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold border ${meta.cls}">${meta.text}</span>
+              </div>
+              <div class="flex gap-1">
+                ${STUDY_PERIODS.slice(0, 8).map(p => {
+                  const pst = getMemberDayStatus(m.id, t, p.id);
+                  const dotColor = pst === 'present' ? 'bg-emerald-500' : pst === 'late' ? 'bg-amber-400' : pst === 'awol' ? 'bg-rose-500' : pst === 'exempt' ? 'bg-sky-400' : pst === 'early' ? 'bg-purple-400' : 'bg-slate-200';
+                  return `<div class="h-1.5 flex-1 rounded-full ${dotColor}" title="${p.label}: ${getStatusMeta(pst).text}"></div>`;
+                }).join('')}
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        const todayPhotos = (shared.photos || []).filter(p => p.date === t).slice().reverse();
+        document.getElementById('feed-count-badge').textContent = `${todayPhotos.length}건`;
+        document.getElementById('photo-feed-list').innerHTML = todayPhotos.length
+          ? todayPhotos.map(p => `
+              <div class="border border-slate-200 rounded-xl overflow-hidden bg-white">
+                <img src="${p.dataUrl}" alt="${p.memberName} 책상 인증" class="w-full h-36 object-cover" />
+                <div class="p-2.5 flex items-center justify-between text-xs">
+                  <span class="font-bold text-slate-800">${p.memberName}</span>
+                  <span class="text-slate-500">${p.periodLabel} · ${p.time}</span>
+                </div>
+              </div>
+            `).join('')
+          : '<p class="text-xs text-slate-400 col-span-2 py-6 text-center">오늘 올라온 책상 인증 사진이 아직 없습니다.</p>';
+      }
+
+      function renderTimetableTab() {
+        const profSelect = document.getElementById('profile-member-select');
+        const memSelect = document.getElementById('class-member-select');
+        const selectedId = memSelect.value || profSelect.value || prefs.currentUserId;
+
+        const opts = shared.members.map(m =>
+          `<option value="${m.id}" ${m.id === selectedId ? 'selected' : ''}>${m.name}</option>`
+        ).join('');
+        profSelect.innerHTML = opts;
+        memSelect.innerHTML = opts;
+
+        const targetMember = shared.members.find(m => m.id === selectedId);
+        if (targetMember) {
+          document.getElementById('profile-nickname-input').value = targetMember.name;
+        }
+
+        const classes = (shared.classes && shared.classes[selectedId]) || [];
+        const dayNames = ['', '월', '화', '수', '목', '금', '토'];
+        document.getElementById('registered-classes-list').innerHTML = classes.length
+          ? classes.map(c => `
+              <div class="flex items-center justify-between bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs">
+                <div>
+                  <span class="font-bold text-slate-800">[${dayNames[c.day]}] ${c.name}</span>
+                  <span class="text-slate-500 ml-1.5 font-mono">${c.start}~${c.end}</span>
+                </div>
+                <button data-del-class="${c.id}" class="text-rose-500 hover:text-rose-700 font-bold px-1.5">삭제</button>
+              </div>
+            `).join('')
+          : '<p class="text-xs text-slate-400 py-3">등록된 대학 수업이 없습니다.</p>';
+
+        let html = '<table class="w-full text-xs border-collapse"><thead><tr class="bg-slate-100 text-slate-600"><th class="p-2 text-left rounded-tl-lg">교시</th>';
+        for (let d = 1; d <= 6; d++) html += `<th class="p-2 text-center">${dayNames[d]}</th>`;
+        html += '</tr></thead><tbody>';
+        for (const p of STUDY_PERIODS.slice(0, 8)) {
+          html += `<tr class="border-b border-slate-100"><td class="p-2 font-semibold text-slate-700">${p.label}<div class="text-[10px] text-slate-400 font-normal">${p.start}</div></td>`;
+          for (let d = 1; d <= 6; d++) {
+            const exempt = getExemptPeriodIds(selectedId, d).has(p.id);
+            html += `<td class="p-2 text-center">${exempt ? '<span class="px-2 py-0.5 rounded bg-sky-100 text-sky-800 font-bold">수업면제</span>' : '<span class="text-slate-400">의무</span>'}</td>`;
+          }
+          html += '</tr>';
+        }
+        html += '</tbody></table>';
+        document.getElementById('weekly-exemption-grid').innerHTML = html;
+      }
+
+      function renderRankingsTab() {
+        const t = todayStr();
+        const rateSorted = shared.members
+          .map(m => ({ ...m, rate: calcAttendanceRate(m.id, t) }))
+          .sort((a, b) => b.rate - a.rate);
+        document.getElementById('rank-rate-list').innerHTML = rateSorted.map((m, idx) => `
+          <div class="flex items-center justify-between bg-slate-50 rounded-xl px-3 py-2 text-xs">
+            <div class="flex items-center gap-2">
+              <span class="font-extrabold ${idx === 0 ? 'text-indigo-600' : 'text-slate-400'}">${idx + 1}위</span>
+              <span class="font-bold text-slate-800">${m.name}</span>
+            </div>
+            <span class="font-extrabold text-indigo-700">${m.rate}%</span>
+          </div>
+        `).join('');
+
+        const firstSorted = shared.members.filter(m => m.firstTime).sort((a, b) => toMins(a.firstTime) - toMins(b.firstTime));
+        document.getElementById('rank-first-list').innerHTML = firstSorted.length
+          ? firstSorted.map((m, idx) => `
+              <div class="flex items-center justify-between bg-slate-50 rounded-xl px-3 py-2 text-xs">
+                <div class="flex items-center gap-2">
+                  <span class="font-extrabold ${idx === 0 ? 'text-amber-600' : 'text-slate-400'}">${idx + 1}위</span>
+                  <span class="font-bold text-slate-800">${m.name}</span>
+                </div>
+                <span class="font-mono font-bold text-slate-700">${m.firstTime}</span>
+              </div>
+            `).join('')
+          : '<p class="text-xs text-slate-400">아직 입실 기록이 없습니다.</p>';
+
+        const lastSorted = shared.members.filter(m => m.lastTime).sort((a, b) => toMins(b.lastTime) - toMins(a.lastTime));
+        document.getElementById('rank-last-list').innerHTML = lastSorted.length
+          ? lastSorted.map((m, idx) => `
+              <div class="flex items-center justify-between bg-slate-50 rounded-xl px-3 py-2 text-xs">
+                <div class="flex items-center gap-2">
+                  <span class="font-extrabold ${idx === 0 ? 'text-indigo-600' : 'text-slate-400'}">${idx + 1}위</span>
+                  <span class="font-bold text-slate-800">${m.name}</span>
+                </div>
+                <span class="font-mono font-bold text-slate-700">${m.lastTime}</span>
+              </div>
+            `).join('')
+          : '<p class="text-xs text-slate-400">아직 귀가 체크 기록이 없습니다.</p>';
+
+        let tbl = '<table class="w-full text-xs border-collapse"><thead><tr class="bg-slate-100 text-slate-600"><th class="p-2.5 text-left">스터디원</th><th class="p-2.5 text-center">연속 출석</th><th class="p-2.5 text-center">오늘 출석률</th><th class="p-2.5 text-left">획득 뱃지</th></tr></thead><tbody>';
+        for (const m of shared.members) {
+          const badges = getBadgesForMember(m, t);
+          tbl += `<tr class="border-b border-slate-100">
+            <td class="p-2.5 font-bold text-slate-800">${m.name}</td>
+            <td class="p-2.5 text-center font-bold ${m.streak >= 3 ? 'text-orange-600' : 'text-slate-600'}">${m.streak}일</td>
+            <td class="p-2.5 text-center font-bold text-indigo-600">${calcAttendanceRate(m.id, t)}%</td>
+            <td class="p-2.5 flex flex-wrap gap-1">${badges.length ? badges.map(b => `<span class="px-2 py-0.5 rounded-full bg-amber-50 border border-amber-200 text-amber-800 font-semibold">${b}</span>`).join('') : '<span class="text-slate-400">도전 중</span>'}</td>
+          </tr>`;
+        }
+        tbl += '</tbody></table>';
+        document.getElementById('weekly-report-table').innerHTML = tbl;
+      }
+
+      function renderAdminTab() {
+        const dateInput = document.getElementById('admin-date-input');
+        if (!dateInput.value) dateInput.value = todayStr();
+        const targetDate = dateInput.value;
+
+        const filterSelect = document.getElementById('admin-member-filter');
+        const curFilter = filterSelect.value || 'all';
+        filterSelect.innerHTML = '<option value="all">전체 멤버</option>' + shared.members.map(m =>
+          `<option value="${m.id}" ${m.id === curFilter ? 'selected' : ''}>${m.name}</option>`
+        ).join('');
+
+        const targets = curFilter === 'all' ? shared.members : shared.members.filter(m => m.id === curFilter);
+        let html = '<table class="w-full text-xs border-collapse"><thead><tr class="bg-slate-100 text-slate-700"><th class="p-2 text-left">멤버</th>';
+        for (const p of STUDY_PERIODS) {
+          html += `<th class="p-2 text-center whitespace-nowrap">${p.label.replace('(심야)', '')}</th>`;
+        }
+        html += '</tr></thead><tbody>';
+        for (const m of targets) {
+          html += `<tr class="border-b border-slate-100"><td class="p-2 font-bold text-slate-800 whitespace-nowrap">${m.name}</td>`;
+          for (const p of STUDY_PERIODS) {
+            const st = getMemberDayStatus(m.id, targetDate, p.id);
+            const meta = getStatusMeta(st);
+            html += `<td class="p-1.5 text-center"><button data-admin-cell="${m.id}|${targetDate}|${p.id}" class="w-full px-2 py-1.5 rounded-lg border font-bold text-[11px] hover:opacity-80 transition ${meta.cls}">${meta.text}</button></td>`;
+          }
+          html += '</tr>';
+        }
+        html += '</tbody></table>';
+        document.getElementById('admin-grid-wrap').innerHTML = html;
+      }
+
+      function renderAll() {
+        renderHeaderControls();
+        renderLiveBanner();
+        if (prefs.activeTab === 'dashboard') renderDashboard();
+        if (prefs.activeTab === 'timetable') renderTimetableTab();
+        if (prefs.activeTab === 'rankings') renderRankingsTab();
+        if (prefs.activeTab === 'admin') renderAdminTab();
+      }
+
+      function switchTab(tabName) {
+        prefs.activeTab = tabName;
+        document.querySelectorAll('.nav-tab').forEach(btn => {
+          if (btn.dataset.tab === tabName) {
+            btn.classList.remove('tab-idle');
+            btn.classList.add('tab-active');
+          } else {
+            btn.classList.remove('tab-active');
+            btn.classList.add('tab-idle');
+          }
+        });
+        document.querySelectorAll('.tab-panel').forEach(panel => {
+          panel.classList.toggle('hidden', panel.id !== `tab-${tabName}`);
+        });
+        savePrefs();
+        renderAll();
+      }
+
+      // Event Listeners
+      document.querySelectorAll('.nav-tab').forEach(btn => {
+        btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+      });
+
+      document.getElementById('current-user-select').addEventListener('change', e => {
+        prefs.currentUserId = e.target.value;
+        pendingPhoto = null;
+        savePrefs();
+        renderAll();
+      });
+
+      document.getElementById('admin-toggle-btn').addEventListener('click', () => {
+        prefs.adminMode = !prefs.adminMode;
+        savePrefs();
+        showToast(prefs.adminMode ? '관리자 권한이 켜졌습니다. 과거/미래 출석 처리가 가능합니다.' : '관리자 권한이 꺼졌습니다.', 'info');
+        renderAll();
+      });
+
+      document.getElementById('alert-toggle-btn').addEventListener('click', () => {
+        prefs.alertEnabled = !prefs.alertEnabled;
+        savePrefs();
+        renderHeaderControls();
+      });
+
+      document.getElementById('sync-info-btn').addEventListener('click', () => {
+        openModal('GOSSO STUDY · Firebase 실시간 연동 상태', `
+          <p><strong>연결 대상 DB:</strong> <code>${firebaseConfig.databaseURL}</code></p>
+          <p><strong>현재 상태:</strong> ${cloudConnected ? '<span class="text-emerald-600 font-bold">🟢 실시간 동기화 연결됨</span>' : '<span class="text-amber-600 font-bold">🟡 로컬 모드 (연결 대기/권한 확인)</span>'}</p>
+          ${cloudErrorMsg ? `<p class="text-xs text-rose-600 bg-rose-50 p-2 rounded-lg">참고: ${cloudErrorMsg}</p>` : ''}
+          <p class="text-xs text-slate-500">Firebase 콘솔의 <strong>Realtime Database &gt; 규칙</strong>에서 <code>.read</code>와 <code>.write</code>가 <code>true</code>로 게시되어 있으면 모든 친구의 기기가 실시간으로 동기화됩니다.</p>
+        `);
+      });
+
+      document.getElementById('modal-close').addEventListener('click', closeModal);
+      document.getElementById('modal-overlay').addEventListener('click', e => {
+        if (e.target.id === 'modal-overlay') closeModal();
+      });
+
+      document.querySelectorAll('.sim-preset').forEach(btn => {
+        btn.addEventListener('click', () => {
+          prefs.simTime = btn.dataset.sim;
+          savePrefs();
+          renderAll();
+        });
+      });
+
+      document.getElementById('sim-reset-btn').addEventListener('click', () => {
+        prefs.simTime = null;
+        savePrefs();
+        renderAll();
+      });
+
+      document.getElementById('desk-photo-input').addEventListener('change', e => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const me = shared.members.find(m => m.id === prefs.currentUserId) || shared.members[0];
+        const now = getNowParts();
+        compressImageFile(file, `📸 ${me.name} · ${now.hhmm}`, dataUrl => {
+          pendingPhoto = dataUrl;
+          renderDashboard();
+          showToast('책상 사진이 압축·준비되었습니다. 출석 체크 버튼을 눌러주세요!', 'success');
+        });
+      });
+
+      document.getElementById('sample-photo-btn').addEventListener('click', () => {
+        const me = shared.members.find(m => m.id === prefs.currentUserId) || shared.members[0];
+        const now = getNowParts();
+        pendingPhoto = makeSampleDeskImage(me.name, `${now.hhmm} 인증`);
+        renderDashboard();
+        showToast('테스트용 책상 사진이 생성되었습니다.', 'success');
+      });
+
+      document.getElementById('btn-checkin').addEventListener('click', () => {
+        const now = getNowParts();
+        const t = todayStr();
+        const me = shared.members.find(m => m.id === prefs.currentUserId) || shared.members[0];
+        const phase = getCurrentPhase(now.totalMins);
+
+        if (!phase && now.totalMins >= toMins('07:30') && now.totalMins < toMins('08:00')) {
+          if (!pendingPhoto) pendingPhoto = makeSampleDeskImage(me.name, `${now.hhmm} 1교시 등원`);
+          if (!me.firstTime || toMins(now.hhmm) < toMins(me.firstTime)) me.firstTime = now.hhmm;
+          if (!shared.photos) shared.photos = [];
+          shared.photos.push({
+            id: 'ph_' + Date.now(),
+            memberId: me.id,
+            memberName: me.name,
+            periodId: 'p1',
+            periodLabel: '1교시 등원',
+            time: now.hhmm,
+            date: t,
+            dataUrl: pendingPhoto
+          });
+          pendingPhoto = null;
+          setMemberDayStatus(me.id, t, 'p1', 'present');
+          showToast(`${me.name}님 이른 등원 출석 완료! (${now.hhmm})`, 'success');
+          renderAll();
+          return;
+        }
+
+        if (!phase || phase.type !== 'study') return;
+
+        if (phase.photoReq && !pendingPhoto) {
+          showToast('이 교시는 책상 사진 인증이 필수입니다. 먼저 사진을 촬영해 주세요!', 'warn');
+          return;
+        }
+
+        const elapsed = now.totalMins - phase.startMins;
+        let finalStatus = 'present';
+        if (elapsed > 5) {
+          if (phase.id === 'p1') {
+            finalStatus = 'late';
+            showToast(`5분 초과로 '아침 지각' 처리되었습니다.`, 'warn');
+          } else {
+            finalStatus = 'awol';
+            showToast(`5분 초과로 '무단이탈' 처리되었습니다. 연속 출석이 초기화됩니다.`, 'error');
+          }
+        } else {
+          showToast(`${phase.label} 출석 완료!`, 'success');
+        }
+
+        if (phase.id === 'p1' && (!me.firstTime || toMins(now.hhmm) < toMins(me.firstTime))) {
+          me.firstTime = now.hhmm;
+        }
+
+        if (phase.photoReq && pendingPhoto) {
+          if (!shared.photos) shared.photos = [];
+          shared.photos.push({
+            id: 'ph_' + Date.now(),
+            memberId: me.id,
+            memberName: me.name,
+            periodId: phase.id,
+            periodLabel: phase.label,
+            time: now.hhmm,
+            date: t,
+            dataUrl: pendingPhoto
+          });
+          pendingPhoto = null;
+        }
+
+        setMemberDayStatus(me.id, t, phase.id, finalStatus);
+        renderAll();
+      });
+
+      document.getElementById('btn-early-leave').addEventListener('click', () => {
+        const now = getNowParts();
+        const t = todayStr();
+        const me = shared.members.find(m => m.id === prefs.currentUserId) || shared.members[0];
+        const phase = getCurrentPhase(now.totalMins);
+        const targetId = (phase && phase.type === 'study') ? phase.id : 'p1';
+        setMemberDayStatus(me.id, t, targetId, 'early');
+        showToast(`${me.name}님 조퇴 처리되었습니다.`, 'info');
+        renderAll();
+      });
+
+      document.getElementById('btn-go-home').addEventListener('click', () => {
+        const now = getNowParts();
+        const me = shared.members.find(m => m.id === prefs.currentUserId) || shared.members[0];
+        me.lastTime = now.hhmm;
+        saveSharedData();
+        showToast(`${me.name}님 귀가 체크 완료 (${now.hhmm})`, 'success');
+        renderAll();
+      });
+
+      document.getElementById('btn-toggle-latenight').addEventListener('click', () => {
+        const me = shared.members.find(m => m.id === prefs.currentUserId) || shared.members[0];
+        me.lateNight = !me.lateNight;
+        saveSharedData();
+        showToast(me.lateNight ? '심야 자습(9~10교시) 연장이 신청되었습니다.' : '심야 자습 신청이 해제되었습니다.', 'info');
+        renderAll();
+      });
+
+      document.getElementById('add-member-btn').addEventListener('click', () => {
+        openModal('스터디원 추가 (최대 9명)', `
+          <form id="new-member-form" class="space-y-3">
+            <input id="new-member-name" type="text" placeholder="별명 (예: 태현)" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm" required />
+            <button type="submit" class="w-full py-2.5 rounded-xl bg-indigo-600 text-white text-sm font-bold">추가하기</button>
+          </form>
+        `);
+        document.getElementById('new-member-form').addEventListener('submit', e => {
+          e.preventDefault();
+          const name = document.getElementById('new-member-name').value.trim();
+          if (!name) return;
+          if (shared.members.length >= 9) {
+            showToast('소규모 스터디 원칙상 10명 미만(최대 9명)까지만 추가됩니다.', 'warn');
+            closeModal();
+            return;
+          }
+          shared.members.push({ id: 'm_' + Date.now(), name, role: 'member', streak: 0, lateNight: false, firstTime: null, lastTime: null });
+          saveSharedData();
+          closeModal();
+          showToast(`${name}님이 스터디에 합류했습니다!`, 'success');
+          renderAll();
+        });
+      });
+
+      // Profile Nickname & Class Timetable Listeners
+      document.getElementById('profile-member-select').addEventListener('change', e => {
+        document.getElementById('class-member-select').value = e.target.value;
+        renderTimetableTab();
+      });
+      document.getElementById('class-member-select').addEventListener('change', e => {
+        document.getElementById('profile-member-select').value = e.target.value;
+        renderTimetableTab();
+      });
+
+      document.getElementById('nickname-form').addEventListener('submit', e => {
+        e.preventDefault();
+        const memId = document.getElementById('profile-member-select').value;
+        const newName = document.getElementById('profile-nickname-input').value.trim();
+        if (!newName) return;
+        const m = shared.members.find(x => x.id === memId);
+        if (m) {
+          m.name = newName;
+          if (shared.photos) {
+            shared.photos.forEach(p => { if (p.memberId === memId) p.memberName = newName; });
+          }
+          saveSharedData();
+          showToast(`별명이 '${newName}'(으)로 저장되었습니다!`, 'success');
+          renderAll();
+        }
+      });
+
+      document.getElementById('class-form').addEventListener('submit', e => {
+        e.preventDefault();
+        const memId = document.getElementById('class-member-select').value;
+        const day = document.getElementById('class-day-select').value;
+        const name = document.getElementById('class-name-input').value.trim();
+        const start = document.getElementById('class-start-input').value;
+        const end = document.getElementById('class-end-input').value;
+        if (!name || toMins(start) >= toMins(end)) {
+          showToast('수업명과 시작/종료 시각을 올바르게 입력해 주세요.', 'warn');
+          return;
+        }
+        if (!shared.classes) shared.classes = {};
+        if (!shared.classes[memId]) shared.classes[memId] = [];
+        shared.classes[memId].push({ id: 'c_' + Date.now(), day: Number(day), name, start, end });
+        saveSharedData();
+        document.getElementById('class-name-input').value = '';
+        showToast('수업이 등록되어 면제 교시가 자동 반영되었습니다.', 'success');
+        renderTimetableTab();
+      });
+
+      document.getElementById('registered-classes-list').addEventListener('click', e => {
+        const delId = e.target.dataset.delClass;
+        if (!delId) return;
+        const memId = document.getElementById('class-member-select').value;
+        if (shared.classes && shared.classes[memId]) {
+          shared.classes[memId] = shared.classes[memId].filter(c => c.id !== delId);
+          saveSharedData();
+          renderTimetableTab();
+        }
+      });
+
+      // Admin Controls
+      document.getElementById('admin-date-input').addEventListener('change', renderAdminTab);
+      document.getElementById('admin-member-filter').addEventListener('change', renderAdminTab);
+
+      document.querySelectorAll('.admin-brush').forEach(btn => {
+        btn.addEventListener('click', () => {
+          prefs.adminBrush = btn.dataset.adminBrush;
+          document.querySelectorAll('.admin-brush').forEach(b => b.classList.remove('ring-2', 'ring-indigo-500'));
+          btn.classList.add('ring-2', 'ring-indigo-500');
+          savePrefs();
+        });
+      });
+
+      document.getElementById('admin-grid-wrap').addEventListener('click', e => {
+        const cell = e.target.closest('[data-admin-cell]');
+        if (!cell) return;
+        const [memId, dateStr, periodId] = cell.dataset.adminCell.split('|');
+        setMemberDayStatus(memId, dateStr, periodId, prefs.adminBrush);
+        showToast(`${dateStr} ${periodId.toUpperCase()} → '${getStatusMeta(prefs.adminBrush).text}' 처리됨`, 'success');
+        renderAdminTab();
+      });
+
+      document.getElementById('btn-cleanup-7d').addEventListener('click', () => {
+        const removed = cleanupOldPhotos(7);
+        saveSharedData();
+        showToast(removed > 0 ? `7일 지난 사진 ${removed}건을 정리했습니다.` : '정리할 7일 지난 사진이 없습니다.', 'info');
+        renderAll();
+      });
+
+      document.getElementById('btn-cleanup-old').addEventListener('click', () => {
+        const removed = cleanupOldPhotos(1);
+        saveSharedData();
+        showToast(removed > 0 ? `어제 이전 사진 ${removed}건을 비웠습니다.` : '오늘 외에 비울 사진이 없습니다.', 'info');
+        renderAll();
+      });
+
+      // Init
+      initFirebase();
+      switchTab(prefs.activeTab || 'dashboard');
+      setInterval(() => {
+        if (!prefs.simTime) renderLiveBanner();
+      }, 1000);
+    })();
+  </script>
+</body>
+</html>
