@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>I LOVE STUDY · 재수 루틴 스터디</title>
+  <title>I LOVE STUDY · 최신식 공부 시스템</title>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
@@ -162,7 +162,7 @@
   </div>
 
   <!-- Google Auth & First-Time Member Onboarding Overlay -->
-  <div id="auth-overlay" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+  <div id="auth-overlay" class="fixed inset-0 bg-slate-950/75 backdrop-blur-sm z-50 flex items-center justify-center p-4">
     <div class="ed-card max-w-md w-full p-6 space-y-5 shadow-2xl">
       <div class="flex items-center gap-2.5">
         <div class="w-9 h-9 rounded-xl bg-slate-950 text-white flex items-center justify-center border border-slate-950 shadow-[2px_2px_0_var(--accent)] shrink-0">
@@ -174,7 +174,7 @@
         </div>
         <div>
           <h2 class="text-base font-black text-slate-950 tracking-tight">I LOVE STUDY</h2>
-          <p class="text-[11px] font-semibold text-slate-500">재수 루틴 스터디 · 실시간 동기화</p>
+          <p class="text-[11px] font-semibold text-slate-500">최신식 공부 시스템을 직접 체험해보세요</p>
         </div>
       </div>
 
@@ -185,26 +185,18 @@
           <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17Z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.11-6.72-4.96H1.29v3.14C3.26 21.3 7.31 24 12 24Z"/><path fill="#FBBC05" d="M5.28 14.24c-.24-.72-.38-1.49-.38-2.24s.14-1.52.38-2.24V6.62H1.29C.47 8.24 0 10.06 0 12s.47 3.76 1.29 5.38l3.99-3.14Z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.62l3.99 3.14c.95-2.85 3.6-4.96 6.72-4.96Z"/></svg>
           <span>Google로 로그인하기</span>
         </button>
-        <button id="btn-auth-local-preview" type="button" class="w-full py-2 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-bold">로그인 없이 로컬 체험하기</button>
       </div>
 
       <form id="auth-onboard-step" class="hidden space-y-3.5">
         <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-900 space-y-0.5">
-          <p class="font-black">환영합니다! 처음 오셨네요 👋</p>
+          <p class="font-black">환영합니다! 바로 시작해 볼까요? 👋</p>
           <p id="onboard-google-email" class="text-[11px] opacity-80"></p>
         </div>
         <div>
           <label class="block text-xs font-bold text-slate-700 mb-1">스터디에서 사용할 별명</label>
-          <input id="onboard-nickname-input" type="text" maxlength="16" placeholder="예: 열공하는 재수생" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm font-bold" required />
+          <input id="onboard-nickname-input" type="text" maxlength="16" placeholder="예: 열공하는 스터디원" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm font-bold" required />
         </div>
-        <div>
-          <label class="block text-xs font-bold text-slate-700 mb-1">시작 공부 모드</label>
-          <select id="onboard-mode-select" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-xs font-bold bg-white">
-            <option value="free">자율모드 (자유 시간 측정 · 추천)</option>
-            <option value="strict">울트라집중모드 (월~토 교시 출석)</option>
-          </select>
-        </div>
-        <button type="submit" class="w-full py-3 px-4 rounded-xl ed-btn-accent font-black text-sm">내 멤버 만들고 시작하기</button>
+        <button type="submit" class="w-full py-3 px-4 rounded-xl ed-btn-accent font-black text-sm">시작하기</button>
         <button id="btn-onboard-logout" type="button" class="w-full text-center text-xs font-bold text-slate-500 hover:text-slate-800 underline underline-offset-4">다른 Google 계정으로 로그인</button>
       </form>
     </div>
@@ -227,9 +219,8 @@
       </div>
 
       <div class="flex items-center gap-1 shrink-0 relative">
-        <button id="mailbox-btn" class="relative h-7 px-2 rounded-lg text-xs font-bold text-slate-700 hover:bg-slate-100 border border-slate-200 flex items-center justify-center shrink-0 whitespace-nowrap" title="우편함">💌<span id="mailbox-badge" class="hidden ml-0.5 px-1 rounded-full text-[9px] bg-rose-500 text-white font-black">0</span></button>
+        <button id="mailbox-btn" class="relative w-7 h-7 rounded-lg text-xs font-bold text-slate-700 hover:bg-slate-100 border border-slate-200 flex items-center justify-center shrink-0 overflow-hidden" title="우편함">💌<span id="mailbox-badge" class="hidden absolute top-1 right-1 w-2 h-2 rounded-full bg-rose-500 ring-1 ring-white pointer-events-none"></span></button>
         <button id="dark-toggle-btn" type="button" class="w-7 h-7 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 flex items-center justify-center shrink-0 text-xs" title="다크모드 전환">🌙</button>
-        <button id="btn-header-logout" type="button" class="h-7 px-2 rounded-lg border border-slate-200 bg-white hover:bg-rose-50 text-[11px] font-bold text-slate-700 hover:text-rose-600 flex items-center justify-center shrink-0 whitespace-nowrap" title="로그아웃 / 계정 전환">로그아웃</button>
         <button id="header-more-btn" type="button" class="w-7 h-7 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 flex items-center justify-center shrink-0 font-black text-sm" title="테마 · 알림 · 건의 · 관리자">⋯</button>
 
         <!-- Compact Popover Menu (replaces cramped horizontal icon strip) -->
@@ -253,15 +244,16 @@
       </div>
     </div>
 
-    <!-- Zero-Swipe Clean 4-Column Mobile Grid Navigation -->
-    <nav class="max-w-5xl mx-auto px-2.5 py-1 grid grid-cols-3 sm:flex sm:items-center gap-1 border-t border-slate-100">
-      <button data-tab="dashboard" class="nav-tab tab-active px-1.5 sm:px-3 py-1 rounded-lg text-[11px] sm:text-xs font-semibold whitespace-nowrap text-center transition">홈</button>
-      <button data-tab="members" class="nav-tab tab-idle px-1.5 sm:px-3 py-1 rounded-lg text-[11px] sm:text-xs font-semibold whitespace-nowrap text-center transition">스터디 · 랭킹</button>
-      <button data-tab="planner" class="nav-tab tab-idle px-1.5 sm:px-3 py-1 rounded-lg text-[11px] sm:text-xs font-semibold whitespace-nowrap text-center transition">📝 플래너</button>
-      <button data-tab="calendar" class="nav-tab tab-idle px-1.5 sm:px-3 py-1 rounded-lg text-[11px] sm:text-xs font-semibold whitespace-nowrap text-center transition">📅 캘린더</button>
-      <button data-tab="timetable" class="nav-tab tab-idle px-1.5 sm:px-3 py-1 rounded-lg text-[11px] sm:text-xs font-semibold whitespace-nowrap text-center transition">내 시간표</button>
-      <button data-tab="guide" class="nav-tab tab-idle px-1.5 sm:px-3 py-1 rounded-lg text-[11px] sm:text-xs font-semibold whitespace-nowrap text-center transition">📖 사용법</button>
-      <button data-tab="admin" id="nav-tab-admin" class="nav-tab tab-idle px-1.5 sm:px-3 py-1 rounded-lg text-[11px] sm:text-xs font-semibold whitespace-nowrap text-center transition hidden">🛡️ 관리자</button>
+    <!-- Sleek Single-Row Horizontal Scroll Navigation -->
+    <nav class="max-w-5xl mx-auto px-2.5 py-1 flex items-center gap-1 overflow-x-auto no-scrollbar border-t border-slate-100">
+      <button data-tab="dashboard" class="nav-tab shrink-0 tab-active px-1.5 sm:px-3 py-1 rounded-lg text-[11px] sm:text-xs font-semibold whitespace-nowrap text-center transition">홈</button>
+      <button data-tab="members" class="nav-tab shrink-0 tab-idle px-1.5 sm:px-3 py-1 rounded-lg text-[11px] sm:text-xs font-semibold whitespace-nowrap text-center transition">스터디 · 랭킹</button>
+      <button data-tab="planner" class="nav-tab shrink-0 tab-idle px-1.5 sm:px-3 py-1 rounded-lg text-[11px] sm:text-xs font-semibold whitespace-nowrap text-center transition">📝 플래너</button>
+      <button data-tab="calendar" class="nav-tab shrink-0 tab-idle px-1.5 sm:px-3 py-1 rounded-lg text-[11px] sm:text-xs font-semibold whitespace-nowrap text-center transition">📅 캘린더</button>
+      <button data-tab="timetable" class="nav-tab shrink-0 tab-idle px-1.5 sm:px-3 py-1 rounded-lg text-[11px] sm:text-xs font-semibold whitespace-nowrap text-center transition">수업 시간표</button>
+      <button data-tab="profile" class="nav-tab shrink-0 tab-idle px-1.5 sm:px-3 py-1 rounded-lg text-[11px] sm:text-xs font-semibold whitespace-nowrap text-center transition">👤 내 프로필</button>
+      <button data-tab="guide" id="nav-tab-guide" class="nav-tab shrink-0 tab-idle relative px-1.5 sm:px-3 py-1 rounded-lg text-[11px] sm:text-xs font-semibold whitespace-nowrap text-center transition">📖 사용법<span id="guide-hint-badge" class="hidden ml-1 px-1.5 py-0.5 rounded-full bg-rose-500 text-white text-[9px] font-black animate-pulse">필독</span></button>
+      <button data-tab="admin" id="nav-tab-admin" class="nav-tab shrink-0 tab-idle px-1.5 sm:px-3 py-1 rounded-lg text-[11px] sm:text-xs font-semibold whitespace-nowrap text-center transition hidden">🛡️ 관리자</button>
     </nav>
   </header>
 
@@ -553,31 +545,40 @@
       </div>
     </div>
 
-    <!-- TAB 4: PROFILE NICKNAME & UNIVERSITY TIMETABLE -->
+    <!-- TAB: MY PROFILE -->
+    <div id="tab-profile" class="tab-panel hidden space-y-5">
+      <div class="ed-card max-w-xl mx-auto p-5 sm:p-6 space-y-4">
+        <div class="flex items-center justify-between gap-2 pb-3 border-b border-slate-100">
+          <div>
+            <h3 class="text-base sm:text-lg font-black text-slate-900">👤 내 프로필</h3>
+            <p id="profile-account-email" class="text-xs text-slate-500 mt-0.5">별명과 프로필 사진을 설정할 수 있습니다.</p>
+          </div>
+          <span id="profile-mode-pill" class="px-2.5 py-1 rounded-full text-[11px] font-black bg-emerald-100 text-emerald-800 whitespace-nowrap">자율모드</span>
+        </div>
+        <div class="flex items-center gap-4">
+          <div id="profile-avatar-preview" class="w-14 h-14 rounded-full bg-slate-200 border border-slate-300 overflow-hidden flex items-center justify-center text-base font-black text-slate-600 shrink-0"></div>
+          <label class="cursor-pointer px-3 py-2 rounded-xl bg-white border border-slate-300 hover:bg-slate-50 text-xs font-bold text-slate-800 whitespace-nowrap">
+            📷 프로필 사진 변경
+            <input id="profile-avatar-input" type="file" accept="image/*" class="hidden" />
+          </label>
+        </div>
+        <form id="nickname-form" class="space-y-3">
+          <div id="profile-admin-select-wrap" class="hidden">
+            <label class="block text-[11px] font-semibold text-slate-600 mb-1">대상 멤버 (관리자 전용)</label>
+            <select id="profile-member-select" class="w-full rounded-xl border border-slate-300 px-2.5 py-1.5 text-xs bg-white"></select>
+          </div>
+          <div class="flex gap-2">
+            <input id="profile-nickname-input" type="text" placeholder="별명을 입력하세요" class="flex-1 min-w-0 rounded-xl border border-slate-300 px-3 py-2 text-xs sm:text-sm" required />
+            <button type="submit" class="px-4 py-2 rounded-xl bg-slate-950 hover:bg-slate-800 text-white text-xs sm:text-sm font-bold whitespace-nowrap shrink-0">저장</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- TAB 4: UNIVERSITY TIMETABLE -->
     <div id="tab-timetable" class="tab-panel hidden space-y-6">
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <div class="lg:col-span-5 space-y-5">
-          <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm space-y-3">
-            <h3 class="text-sm font-black text-slate-900">내 프로필 · 별명 설정</h3>
-            <div class="flex items-center gap-3">
-              <div id="profile-avatar-preview" class="w-10 h-10 rounded-full bg-slate-200 border border-slate-300 overflow-hidden flex items-center justify-center text-xs font-black text-slate-600 shrink-0"></div>
-              <label class="cursor-pointer px-2.5 py-1.5 rounded-xl bg-white border border-slate-300 hover:bg-slate-50 text-[11px] font-bold text-slate-800 whitespace-nowrap">
-                📷 프로필 사진 변경
-                <input id="profile-avatar-input" type="file" accept="image/*" class="hidden" />
-              </label>
-            </div>
-            <form id="nickname-form" class="space-y-2">
-              <div id="profile-admin-select-wrap" class="hidden">
-                <label class="block text-[11px] font-semibold text-slate-600 mb-1">대상 멤버 (관리자 전용)</label>
-                <select id="profile-member-select" class="w-full rounded-xl border border-slate-300 px-2.5 py-1.5 text-xs bg-white"></select>
-              </div>
-              <div class="flex gap-2">
-                <input id="profile-nickname-input" type="text" placeholder="별명을 입력하세요" class="flex-1 min-w-0 rounded-xl border border-slate-300 px-3 py-1.5 text-xs" required />
-                <button type="submit" class="px-3 py-1.5 rounded-lg bg-slate-950 hover:bg-slate-800 text-white text-xs font-bold whitespace-nowrap shrink-0">저장</button>
-              </div>
-            </form>
-          </div>
-
           <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm space-y-3">
             <div>
               <h3 class="text-sm font-black text-slate-900">대학 수업 시간 등록</h3>
@@ -1136,7 +1137,6 @@
       let dbListenerAttached = false;
       let dbLoadedOnce = false;
       let currentAuthUser = null;
-      let localPreviewMode = false;
 
       let activeChallengeCat = 'special';
       // Planner UI state
@@ -1290,7 +1290,6 @@
             auth.onAuthStateChanged(user => {
               currentAuthUser = user || null;
               if (user) {
-                localPreviewMode = false;
                 attachRealtimeDb();
                 if (dbLoadedOnce) syncAuthUserMember(user);
               } else {
@@ -1301,7 +1300,7 @@
                 }
                 cloudConnected = false;
                 updateCloudPill();
-                if (!localPreviewMode) showAuthOverlay('login');
+                showAuthOverlay('login');
               }
               renderHeaderControls();
             });
@@ -1624,7 +1623,7 @@
             tb.classList.toggle('hidden', !prefs.adminMode);
           } else if (pureAdmin) {
             // Pure Admin sees 스터디, 자랑하기, 랭킹, 사용법, 관리자 (hides personal 홈/플래너/캘린더/내시간표)
-            const hideInAdmin = ['dashboard', 'planner', 'calendar', 'timetable'].includes(tName);
+            const hideInAdmin = ['dashboard', 'planner', 'calendar', 'timetable', 'profile'].includes(tName);
             tb.classList.toggle('hidden', hideInAdmin);
           } else {
             tb.classList.remove('hidden');
@@ -1717,21 +1716,20 @@
         const myDms = (shared.directMessages && shared.directMessages[prefs.currentUserId]) || [];
         const unreadCnt = myPraises.filter(p => !p.read).length + myDms.filter(d => !d.read).length;
         const mbBadge = document.getElementById('mailbox-badge');
-        mbBadge.textContent = unreadCnt;
         mbBadge.classList.toggle('hidden', unreadCnt === 0);
+        const guideBadge = document.getElementById('guide-hint-badge');
+        const guideBtn = document.getElementById('nav-tab-guide');
+        if (guideBadge && guideBtn) {
+          const showHint = !!prefs.guideHintUnread;
+          guideBadge.classList.toggle('hidden', !showHint);
+          guideBtn.classList.toggle('ring-2', showHint);
+          guideBtn.classList.toggle('ring-rose-400', showHint);
+        }
         const accEl = document.getElementById('auth-account-info');
         const logoutBtn = document.getElementById('btn-google-logout');
-        const hdrLogoutBtn = document.getElementById('btn-header-logout');
         if (accEl && logoutBtn) {
-          if (currentAuthUser) {
-            accEl.textContent = currentAuthUser.email || currentAuthUser.displayName || 'Google 로그인됨';
-            logoutBtn.textContent = '🚪 로그아웃 / 계정 전환';
-            if (hdrLogoutBtn) hdrLogoutBtn.textContent = '로그아웃';
-          } else {
-            accEl.textContent = '로컬 체험 중';
-            logoutBtn.textContent = '🔑 Google 로그인하기';
-            if (hdrLogoutBtn) hdrLogoutBtn.textContent = '로그인';
-          }
+          accEl.textContent = currentAuthUser ? (currentAuthUser.email || currentAuthUser.displayName || 'Google 로그인됨') : '로그인 필요';
+          logoutBtn.textContent = '🚪 로그아웃 / 계정 전환';
         }
       }
 
@@ -1743,14 +1741,22 @@
         document.getElementById('live-clock-text').textContent = formatStudyMins(todayStudyM);
         document.getElementById('sim-active-badge').classList.toggle('hidden', !prefs.simTime);
 
-        // Studying count in banner
-        const activePid = phase && phase.type === 'study' ? phase.id : 'p1';
-        const t = todayStr();
-        const studyingNowCnt = shared.members.filter(m => {
-          const st = getMemberDayStatus(m.id, t, activePid);
-          return st === 'present' || st === 'late';
-        }).length;
-        document.getElementById('live-studying-mini').textContent = `🔥 현재 ${studyingNowCnt}명 공부 중`;
+        // Studying count in banner (only visible to joined study members or admin)
+        const miniEl = document.getElementById('live-studying-mini');
+        const canSeeStudying = prefs.adminMode || !!prefs.joinedMemberId;
+        if (canSeeStudying) {
+          const activePid = phase && phase.type === 'study' ? phase.id : 'p1';
+          const t = todayStr();
+          const studyingNowCnt = shared.members.filter(m => {
+            if (m.inStudy === false) return false;
+            const st = getMemberDayStatus(m.id, t, activePid);
+            return st === 'present' || st === 'late';
+          }).length;
+          miniEl.textContent = `🔥 현재 ${studyingNowCnt}명 공부 중`;
+          miniEl.classList.remove('hidden');
+        } else {
+          miniEl.classList.add('hidden');
+        }
 
         const badgeEl = document.getElementById('live-phase-badge'), titleEl = document.getElementById('live-period-title'), descEl = document.getElementById('live-sub-desc');
         const DAILY_QUOTES = [
@@ -2229,6 +2235,32 @@
         return true;
       }
 
+      function renderProfileTab() {
+        const ps = document.getElementById('profile-member-select');
+        const list = prefs.adminMode ? shared.members : shared.members.filter(m => m.id === prefs.currentUserId);
+        let selId = ps.value || prefs.currentUserId;
+        if (!prefs.adminMode) selId = prefs.currentUserId;
+        ps.innerHTML = list.map(m => `<option value="${m.id}" ${m.id === selId ? 'selected' : ''}>${m.name}</option>`).join('');
+        document.getElementById('profile-admin-select-wrap').classList.toggle('hidden', !prefs.adminMode);
+        ps.disabled = !prefs.adminMode;
+        const tm = shared.members.find(m => m.id === selId);
+        if (tm) {
+          document.getElementById('profile-nickname-input').value = tm.name;
+          const avEl = document.getElementById('profile-avatar-preview');
+          avEl.innerHTML = tm.avatarUrl ? `<img src="${tm.avatarUrl}" class="w-full h-full object-cover" alt="${tm.name}" />` : tm.name.slice(0, 1);
+          const emailEl = document.getElementById('profile-account-email');
+          if (emailEl) emailEl.textContent = tm.email ? `연결된 계정: ${tm.email}` : '별명과 프로필 사진을 설정할 수 있습니다.';
+          const modePill = document.getElementById('profile-mode-pill');
+          if (modePill) {
+            const isStrict = getMemberMode(tm) === 'strict';
+            modePill.textContent = isStrict ? '울트라집중모드' : '자율모드';
+            modePill.className = isStrict
+              ? 'px-2.5 py-1 rounded-full text-[11px] font-black bg-rose-100 text-rose-800 whitespace-nowrap'
+              : 'px-2.5 py-1 rounded-full text-[11px] font-black bg-emerald-100 text-emerald-800 whitespace-nowrap';
+          }
+        }
+      }
+
       function renderTimetableTab() {
         const ps = document.getElementById('profile-member-select'), ms = document.getElementById('class-member-select');
         const list = prefs.adminMode ? shared.members : shared.members.filter(m => m.id === prefs.currentUserId);
@@ -2514,12 +2546,16 @@
         if (prefs.activeTab === 'brag') renderBragTab();
         if (prefs.activeTab === 'planner') renderPlannerTab();
         if (prefs.activeTab === 'calendar') renderCalendarTab();
+        if (prefs.activeTab === 'profile') renderProfileTab();
         if (prefs.activeTab === 'timetable') renderTimetableTab();
         if (prefs.activeTab === 'rankings') { prefs.activeTab = 'members'; }
         if (prefs.activeTab === 'admin') renderAdminTab();
       }
 
       function switchTab(tab) {
+        if (tab === 'guide' && prefs.guideHintUnread) {
+          prefs.guideHintUnread = false;
+        }
         prefs.activeTab = tab;
         document.querySelectorAll('.nav-tab').forEach(b => {
           b.classList.toggle('tab-active', b.dataset.tab === tab);
@@ -2579,7 +2615,7 @@
               </div>
               <div class="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-900 space-y-1">
                 <p class="font-black">1. 대학 시간표(수업 면제) 사전 확인</p>
-                <p>전환 전까지 <strong>내 시간표</strong> 탭에서 본인 대학 수업을 등록해 주세요. 기존에 등록한 시간표가 있다면 자동으로 유지·적용됩니다.</p>
+                <p>전환 전까지 <strong>수업 시간표</strong> 탭에서 본인 대학 수업을 등록해 주세요. 기존에 등록한 시간표가 있다면 자동으로 유지·적용됩니다.</p>
               </div>
               <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
                 <p class="font-black text-slate-900">2. 교시 시간표 및 선택자습 안내</p>
@@ -3846,17 +3882,10 @@
         });
       });
 
-      document.getElementById('btn-auth-local-preview').addEventListener('click', () => {
-        localPreviewMode = true;
-        hideAuthOverlay();
-        renderAll();
-      });
-
       document.getElementById('auth-onboard-step').addEventListener('submit', e => {
         e.preventDefault();
         if (!currentAuthUser) return;
         const nickname = document.getElementById('onboard-nickname-input').value.trim();
-        const mode = document.getElementById('onboard-mode-select').value || 'free';
         if (!nickname) { showToast('사용할 별명을 입력해 주세요.', 'warn'); return; }
         if (!Array.isArray(shared.members)) shared.members = [];
         const existing = shared.members.find(m => m.uid === currentAuthUser.uid);
@@ -3872,7 +3901,7 @@
             email: currentAuthUser.email || '',
             name: nickname,
             avatarUrl: currentAuthUser.photoURL || '',
-            mode,
+            mode: 'free',
             inStudy: true,
             streak: 0,
             lp: 0,
@@ -3887,11 +3916,12 @@
           prefs.joinedMemberId = newMember.id;
           prefs.lastJoinedMemberId = newMember.id;
         }
+        prefs.guideHintUnread = true;
         savePrefs();
         saveSharedData();
         hideAuthOverlay();
-        showToast(`${nickname}님, 멤버가 생성되었습니다!`, 'success');
-        renderAll();
+        showToast(`${nickname}님, 환영합니다! 상단의 📖 사용법도 꼭 확인해 보세요.`, 'success');
+        switchTab('profile');
       });
 
       document.getElementById('btn-onboard-logout').addEventListener('click', () => {
@@ -3908,12 +3938,10 @@
             showAuthOverlay('login');
           }).catch(() => {});
         } else {
-          localPreviewMode = false;
           showAuthOverlay('login');
         }
       }
       document.getElementById('btn-google-logout').addEventListener('click', handleHeaderAuthClick);
-      document.getElementById('btn-header-logout').addEventListener('click', handleHeaderAuthClick);
 
       initFirebase();
       switchTab(prefs.activeTab || 'dashboard');
