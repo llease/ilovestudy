@@ -143,38 +143,50 @@
       0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.35); }
       50% { box-shadow: 0 0 0 5px rgba(16, 185, 129, 0.12); }
     }
-    @keyframes focusCalmRipple {
-      0% { opacity: 0.28; transform: scale(0.96); }
-      70% { opacity: 0.08; transform: scale(1.06); }
-      100% { opacity: 0; transform: scale(1.1); }
-    }
-    @keyframes touchWaterRipple {
-      0% { opacity: 0.35; transform: translate(-50%, -50%) scale(0); }
+    @keyframes touchWaterRing {
+      0% { opacity: 0.42; transform: translate(-50%, -50%) scale(0.08); }
+      60% { opacity: 0.16; }
       100% { opacity: 0; transform: translate(-50%, -50%) scale(1); }
     }
-    .focus-ripple-ring {
-      position: absolute;
-      inset: -4px;
-      border-radius: 1.5rem;
-      border: 1.5px solid var(--accent);
+    @keyframes touchWaterSheen {
+      0% { opacity: 0.18; transform: translate(-50%, -50%) scale(0.05); }
+      100% { opacity: 0; transform: translate(-50%, -50%) scale(0.85); }
+    }
+    .touch-water-ring {
+      position: fixed;
+      width: 240px;
+      height: 240px;
+      border-radius: 9999px;
+      border: 1.5px solid rgba(51, 65, 85, 0.28);
+      box-shadow: 0 0 12px rgba(91, 181, 246, 0.12);
       pointer-events: none;
-      animation: focusCalmRipple 4.4s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+      z-index: 60;
+      animation: touchWaterRing 1.15s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
-    .focus-ripple-ring.delay-2 {
-      animation-delay: 2.2s;
-    }
-    .focus-ripple-paused .focus-ripple-ring {
-      animation: none;
+    .touch-water-ring.inner {
+      width: 175px;
+      height: 175px;
+      border-width: 1px;
+      border-color: rgba(91, 181, 246, 0.38);
+      animation: touchWaterRing 1.05s cubic-bezier(0.16, 1, 0.3, 1) 0.11s forwards;
       opacity: 0;
     }
-    .touch-ripple-dot {
-      position: absolute;
-      width: 180px;
-      height: 180px;
+    .touch-water-sheen {
+      position: fixed;
+      width: 160px;
+      height: 160px;
       border-radius: 9999px;
-      background: radial-gradient(circle, rgba(255,255,255,0.45) 0%, rgba(91,181,246,0.18) 45%, transparent 72%);
+      background: radial-gradient(circle, rgba(91, 181, 246, 0.14) 0%, transparent 68%);
       pointer-events: none;
-      animation: touchWaterRipple 0.95s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      z-index: 59;
+      animation: touchWaterSheen 0.85s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    body[data-dark="true"] .touch-water-ring {
+      border-color: rgba(226, 232, 240, 0.3);
+      box-shadow: 0 0 14px rgba(125, 211, 252, 0.16);
+    }
+    body[data-dark="true"] .touch-water-ring.inner {
+      border-color: rgba(125, 211, 252, 0.42);
     }
     .studying-live-card {
       animation: liveStudyingPulse 2s ease-in-out infinite;
@@ -213,8 +225,6 @@
         <p id="focus-period-range" class="text-sm font-bold text-slate-500">스톱워치</p>
       </div>
       <div id="focus-timer-box" class="relative overflow-hidden py-6 rounded-3xl ed-banner select-none">
-        <span class="focus-ripple-ring"></span>
-        <span class="focus-ripple-ring delay-2"></span>
         <div id="focus-timer-display" class="text-6xl sm:text-7xl font-mono font-black tracking-tighter">00:00</div>
         <p id="focus-pause-label" class="hidden text-xs font-bold mt-2">잠시 쉬는 중 · 10분 초과 휴식 시 연속 집중이 초기화됩니다</p>
         <p id="focus-cheer-msg" class="text-xs font-bold mt-2 opacity-80 transition-opacity duration-500 min-h-[1rem]"></p>
@@ -4858,17 +4868,20 @@
       if (fOverlayEl) {
         fOverlayEl.addEventListener('pointerdown', e => {
           if (e.target.closest('button') || e.target.closest('#focus-timetable-wrap')) return;
-          const rect = fOverlayEl.getBoundingClientRect();
-          const dot = document.createElement('span');
-          dot.className = 'touch-ripple-dot';
-          dot.style.position = 'fixed';
-          dot.style.width = '220px';
-          dot.style.height = '220px';
-          dot.style.zIndex = '5';
-          dot.style.left = `${e.clientX}px`;
-          dot.style.top = `${e.clientY}px`;
-          fOverlayEl.appendChild(dot);
-          setTimeout(() => dot.remove(), 1000);
+          const x = e.clientX, y = e.clientY;
+          const r1 = document.createElement('span');
+          r1.className = 'touch-water-ring';
+          r1.style.left = `${x}px`; r1.style.top = `${y}px`;
+          const r2 = document.createElement('span');
+          r2.className = 'touch-water-ring inner';
+          r2.style.left = `${x}px`; r2.style.top = `${y}px`;
+          const sh = document.createElement('span');
+          sh.className = 'touch-water-sheen';
+          sh.style.left = `${x}px`; sh.style.top = `${y}px`;
+          fOverlayEl.appendChild(sh);
+          fOverlayEl.appendChild(r1);
+          fOverlayEl.appendChild(r2);
+          setTimeout(() => { sh.remove(); r1.remove(); r2.remove(); }, 1300);
         });
       }
 
