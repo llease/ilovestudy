@@ -67,20 +67,37 @@
       background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
       animation: flameShimmer 3.6s ease-in-out infinite;
     }
-    .ultra-member-card {
-      background-image: repeating-linear-gradient(-45deg, rgba(239, 68, 68, 0.035) 0 6px, transparent 6px 12px);
+    @keyframes ultraRingSpin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
-    @keyframes ultraBoltPulse {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.72; transform: scale(1.12); }
+    .ultra-avatar-ring {
+      position: absolute;
+      inset: -2.5px;
+      border-radius: 9999px;
+      background: conic-gradient(from 0deg, #ef4444, #f97316, #fde047, #ef4444);
+      animation: ultraRingSpin 3s linear infinite;
+      pointer-events: none;
     }
-    .ultra-tag-pill {
-      background: linear-gradient(90deg, #111827, #4c0519, #111827);
+    .ultra-avatar-bolt {
+      position: absolute;
+      right: -3px;
+      bottom: -3px;
+      width: 14px;
+      height: 14px;
+      border-radius: 9999px;
+      background: #0f172a;
       color: #fde047;
-      border: 1px solid rgba(244, 63, 94, 0.75);
-      box-shadow: 0 0 8px rgba(244, 63, 94, 0.35);
+      border: 1px solid #ef4444;
+      font-size: 8px;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 6px rgba(239, 68, 68, 0.65);
+      pointer-events: none;
+      z-index: 2;
     }
-    .ultra-tag-bolt { display: inline-block; animation: ultraBoltPulse 1.6s ease-in-out infinite; }
     body[data-mode="strict"] { background-color: #f8fafc; }
     body[data-mode="strict"] header { background-color: #0f172a; color: #ffffff; border-bottom-color: #ef4444; }
     body[data-mode="strict"] header h1, body[data-mode="strict"] header .tab-idle { color: #e2e8f0; }
@@ -2858,19 +2875,23 @@
           const isUltra = getMemberMode(m) === 'strict';
           const promoRing = isPromoNow ? 'ring-2 ring-amber-400' : '';
           return `
-            <div data-member-detail="${m.id}" class="cursor-pointer rounded-2xl p-2.5 sm:p-3 bg-white flex flex-col justify-between gap-1.5 transition-all ${tierObj.frame} ${promoRing} ${flameCls} ${isUltra ? 'ultra-member-card' : ''} ${isStudying ? 'studying-live-card' : ''}">
-              <div class="flex items-center justify-between gap-1.5">
-                <div class="flex items-center gap-1.5 min-w-0">
-                  <div class="w-7 h-7 rounded-full bg-slate-200 border border-slate-300 overflow-hidden flex items-center justify-center text-[11px] font-black text-slate-600 shrink-0">${m.avatarUrl ? `<img src="${escapeHtml(m.avatarUrl)}" class="w-full h-full object-cover" alt="${escapeHtml(m.name)}" />` : m.name.slice(0, 1)}</div>
-                  <div class="min-w-0">
-                    <div class="flex items-center gap-1 min-w-0">
-                      ${m.equippedTitle ? `<span class="px-1.5 py-0.5 rounded bg-slate-900 text-amber-300 text-[10px] font-black truncate">${escapeHtml(m.equippedTitle)}</span>` : `<span class="font-extrabold text-xs sm:text-sm text-slate-900 truncate">${escapeHtml(m.name)}</span>`}
-                      ${isUltra ? '<span class="ultra-tag-pill inline-flex items-center gap-0.5 text-[9px] px-1.5 py-0.5 rounded-md font-black tracking-tight whitespace-nowrap shrink-0"><span class="ultra-tag-bolt">⚡</span>ULTRA</span>' : ''}
-                      ${isStudying ? '<span class="inline-flex items-center gap-1 text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-600 text-white font-bold whitespace-nowrap shrink-0"><span class="relative flex h-1.5 w-1.5"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-200 opacity-75"></span><span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-white"></span></span>공부중</span>' : ''}
+            <div data-member-detail="${m.id}" class="cursor-pointer rounded-2xl p-2.5 sm:p-3 bg-white flex flex-col justify-between gap-1.5 transition-all ${tierObj.frame} ${promoRing} ${flameCls} ${isStudying ? 'studying-live-card' : ''}">
+              <div class="space-y-1">
+                <div class="flex items-center justify-between gap-1.5">
+                  <div class="flex items-center gap-2 min-w-0">
+                    <div class="relative w-7 h-7 shrink-0" title="${isUltra ? '울트라집중모드' : ''}">
+                      ${isUltra ? '<span class="ultra-avatar-ring"></span>' : ''}
+                      <div class="relative z-[1] w-full h-full rounded-full bg-slate-200 ${isUltra ? 'border border-white' : 'border border-slate-300'} overflow-hidden flex items-center justify-center text-[11px] font-black text-slate-600">${m.avatarUrl ? `<img src="${escapeHtml(m.avatarUrl)}" class="w-full h-full object-cover" alt="${escapeHtml(m.name)}" />` : escapeHtml(m.name.slice(0, 1))}</div>
+                      ${isUltra ? '<span class="ultra-avatar-bolt" aria-label="울트라집중">⚡</span>' : ''}
                     </div>
+                    <span class="font-extrabold text-xs sm:text-sm text-slate-900 leading-tight break-keep">${escapeHtml(m.name)}</span>
                   </div>
+                  <span class="font-mono font-black text-xs text-slate-900 whitespace-nowrap shrink-0">${formatStudyMins(todayTotalMins)}</span>
                 </div>
-                <span class="font-mono font-black text-xs text-slate-900 whitespace-nowrap shrink-0">${formatStudyMins(todayTotalMins)}</span>
+                ${(m.equippedTitle || isStudying) ? `<div class="flex items-center gap-1 flex-wrap">
+                  ${m.equippedTitle ? `<span class="px-1.5 py-0.5 rounded bg-slate-900 text-amber-300 text-[10px] font-black leading-tight break-keep">${escapeHtml(m.equippedTitle)}</span>` : ''}
+                  ${isStudying ? '<span class="inline-flex items-center gap-1 text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-600 text-white font-bold whitespace-nowrap shrink-0"><span class="relative flex h-1.5 w-1.5"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-200 opacity-75"></span><span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-white"></span></span>공부중</span>' : ''}
+                </div>` : ''}
               </div>
               <div class="flex items-center justify-between gap-1 flex-wrap">
                 <div class="flex items-center gap-1 flex-wrap min-w-0">${renderTierPill(m.lp || 0)}</div>
