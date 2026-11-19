@@ -32,7 +32,8 @@
     .tab-idle:hover { border-color: #111111; color: #111111; }
     .scrollbar-thin::-webkit-scrollbar { height: 5px; width: 5px; }
     .scrollbar-thin::-webkit-scrollbar-thumb { background: #111111; border-radius: 9999px; }
-    .time-cell { touch-action: none; user-select: none; -webkit-user-select: none; }
+    .time-cell { touch-action: pan-y; }
+    #planner-grid.is-editing .time-cell { touch-action: none; user-select: none; -webkit-user-select: none; cursor: crosshair; }
     #group-status-grid [data-member-detail] { position: relative; overflow: hidden; }
     #group-status-grid [data-member-detail] > * { position: relative; z-index: 1; }
     .flame-lv1::before, .flame-lv2::before, .flame-lv3::before, .flame-lv4::before, .flame-lv5::before {
@@ -3715,11 +3716,13 @@
             }
             else if (task) { bgStyle = `background:${task.color};`; extraCls = ''; }
             else if (cls) { bgStyle = 'background:#e0f2fe;'; extraCls = ''; }
-            gridHtml += `<div data-time-cell="${key}" class="time-cell h-6 border-r last:border-r-0 border-slate-100 cursor-crosshair transition-colors ${extraCls}" style="${bgStyle}" title="${hStr}:${slot}0 ${isStudied ? '· [실제 공부]' : (task ? '· ' + task.subject : (cls ? '· [수업] ' + cls.name : ''))}"></div>`;
+            gridHtml += `<div data-time-cell="${key}" class="time-cell h-6 border-r last:border-r-0 border-slate-100 transition-colors ${extraCls}" style="${bgStyle}" title="${hStr}:${slot}0 ${isStudied ? '· [실제 공부]' : (task ? '· ' + task.subject : (cls ? '· [수업] ' + cls.name : ''))}"></div>`;
           }
           gridHtml += '</div></div>';
         }
-        document.getElementById('planner-grid').innerHTML = gridHtml;
+        const plannerGridEl = document.getElementById('planner-grid');
+        plannerGridEl.classList.toggle('is-editing', plannerEditMode);
+        plannerGridEl.innerHTML = gridHtml;
       }
 
       function paintTimeCell(key) {
