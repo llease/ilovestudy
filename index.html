@@ -363,9 +363,7 @@
               집중 시작하기
             </button>
           </div>
-          <div class="flex justify-end">
-            <button id="btn-home-encourage" type="button" class="px-3 py-1.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 text-indigo-800 text-xs font-bold whitespace-nowrap">💪 격려해주세요</button>
-          </div>
+
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <div class="flex items-center justify-between bg-slate-50 border border-slate-200/70 rounded-xl px-3.5 py-2 text-xs">
@@ -619,7 +617,7 @@
             <h3 class="text-base sm:text-lg font-black text-slate-900">👤 내 프로필</h3>
             <p id="profile-account-email" class="text-xs text-slate-500 mt-0.5">별명과 프로필 사진을 설정할 수 있습니다.</p>
           </div>
-          <span id="profile-mode-pill" class="px-2.5 py-1 rounded-full text-[11px] font-black bg-emerald-100 text-emerald-800 whitespace-nowrap">자율모드</span>
+          <button id="profile-mode-pill" type="button" title="클릭하여 공부 모드 전환 (내일부터 적용)" class="px-2.5 py-1 rounded-full text-[11px] font-black bg-emerald-100 text-emerald-800 whitespace-nowrap cursor-pointer hover:opacity-80 transition">자율모드</button>
         </div>
         <div class="flex items-center gap-4">
           <div id="profile-avatar-preview" class="w-14 h-14 rounded-full bg-slate-200 border border-slate-300 overflow-hidden flex items-center justify-center text-base font-black text-slate-600 shrink-0"></div>
@@ -742,70 +740,91 @@
       </div>
     </div>
 
-    <!-- TAB: GUIDE (전체 사용법) -->
+    <!-- TAB: GUIDE (전체 설명서) -->
     <div id="tab-guide" class="tab-panel hidden space-y-5">
       <div class="ed-card p-5 sm:p-6 space-y-5">
-        <div>
-          <h3 class="text-lg font-black text-slate-950">📖 I LOVE STUDY 전체 사용법</h3>
-          <p class="text-xs text-slate-500 mt-1">처음 접속한 스터디원도 한눈에 따라 할 수 있도록 모든 규칙과 기능을 정리했습니다.</p>
+        <div class="border-b border-slate-100 pb-3">
+          <h3 class="text-lg font-black text-slate-950">📖 I LOVE STUDY 설명서</h3>
+          <p class="text-xs text-slate-500 mt-1">핵심 규칙과 기능을 번호별로 한눈에 볼 수 있게 정리했습니다.</p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs leading-relaxed">
-          <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
-            <h4 class="text-sm font-black text-slate-900">1. Google 로그인 · 내 프로필 · 수업 시간표 · 참가</h4>
-            <p class="text-slate-700">Google 계정으로 로그인한 뒤 <strong>👤 내 프로필</strong>에서 사진·별명과 내 티어/LP·칭호·뱃지를 확인하세요. 대학 수업은 <strong>수업 시간표</strong>에서 등록할 수 있습니다(<strong>⚡ 충남대 전자과 시간표 불러오기</strong> 지원).</p>
-            <p class="text-slate-700">처음 가입 시에는 스터디에 자동 참가되지 않으며 <strong>혼자 조용히 공부</strong>할 수 있습니다(참가하지 않으면 다른 사람은 내 정보를 전혀 볼 수 없습니다). 함께 <strong>랭킹전에 참여</strong>하고 싶다면 <strong>스터디 · 랭킹 → 🙋 스터디 참가하기</strong>를 직접 눌러 참가해 주세요.</p>
-          </div>
-
-          <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
-            <h4 class="text-sm font-black text-slate-900">2. 자율모드 vs 울트라집중모드</h4>
-            <p class="text-slate-700"><strong>자율모드</strong> : 처음 시작 시 기본 적용되며, 교시 제한 없이 <code>자율 집중 중</code> 타이머로 자유롭게 공부하고 홈 배너 명언·배경 사진도 바꿀 수 있습니다.</p>
-            <p class="text-slate-700"><strong>울트라집중모드</strong> : 월~토 1~8교시 의무자습 + 9~10교시 <strong>선택자습</strong>(22:10~24:00)으로, 한 교시 안에 타이머를 최소 <strong>75% 이상</strong> 켜야 출석(+4 LP)이 인정되며 대학 수업 시간은 <code>수업면제</code>로 표시됩니다. 모드 변경은 <strong>내일 00:00</strong>부터 적용됩니다.</p>
-          </div>
-
-          <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
-            <h4 class="text-sm font-black text-slate-900">3. 주요 탭 & 뱃지·칭호 규칙</h4>
-            <ul class="space-y-1.5 text-slate-700">
-              <li><strong>⏱️ 집중 시작하기</strong> : <code>00:00</code>부터 측정하며, 휴식 10분 초과 시 연속 집중만 초기화됩니다(누적 시간 유지).</li>
-              <li><strong>📝 플래너 / 📅 캘린더</strong> : 10분 단위 계획 드래그(실제 공부 시간은 초록색 표시) 및 월간 공부·주간 요약·승급 기록 확인.</li>
-              <li><strong>✨ 자랑하기</strong> : 스터디 참가자 전용 피드로 공부 인증 사진을 올리고 공유·삭제할 수 있습니다.</li>
-              <li><strong>🏅 뱃지 자동 표시</strong> : 획득한 모든 뱃지는 스터디원 카드와 주간 성적표, 내 프로필에 항상 표시됩니다. 단, <strong>🌅 얼리버드</strong>(08:00 전 공부 시작)는 <strong>그날 하루만</strong>, <strong>🦉 자정 돌파</strong>(심야 공부)는 <strong>다음 날 하루만</strong> 유지됩니다.</li>
-              <li><strong>👑 칭호 장착</strong> : 챌린지를 달성해 얻은 칭호는 <strong>👤 내 프로필</strong> 또는 <strong>랭킹</strong>에서 클릭해 대표 칭호로 달 수 있습니다.</li>
-            </ul>
-          </div>
-
-          <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
-            <h4 class="text-sm font-black text-slate-900">4. 티어 · LP 기준 · 승급전 · 소통</h4>
-            <ul class="space-y-1.5 text-slate-700">
-              <li><strong>💎 LP 기준</strong> : 울트라집중 교시 출석 <strong>+4 LP</strong>(지각 +1, 면제 +2) · 자율모드 일일 출석 <strong>+5 LP</strong> · 연속 출석 <strong>+3 LP</strong>(5일마다 +15 LP) · 공부 <strong>1시간당 +3 LP</strong>(일 최대 8시간) · 리스펙 받기 <strong>+2 LP</strong> · 챌린지 보상.</li>
-              <li><strong>⚔️ 승급전 · 연속출석</strong> : 다음 티어 <strong>15 LP 전부터</strong> 도전 가능(<strong>일요일 불가</strong>)하며, 실패해도 <strong>LP는 깎이지 않고 2일 뒤부터 재도전</strong>할 수 있으며, 승급전 대기·진행 중 모은 LP는 승급 시 자동으로 합산됩니다. 지각·미체크가 있어도 해당 일에 출석한 교시가 있으면 연속출석은 유지됩니다.</li>
-              <li><strong>👏 리스펙 / 🚨 신고하기</strong> : 다른 스터디원에게 응원(리스펙)을 보내거나 부적절한 활동을 제보할 수 있습니다.</li>
-              <li><strong>🔥 불꽃 테두리</strong> : 오늘 누적 공부시간(1h→10h+)에 따라 카드 테두리 불꽃이 진화합니다.</li>
-            </ul>
-          </div>
-
-          <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
-            <h4 class="text-sm font-black text-slate-900">5. 상단 아이콘 한눈에 보기</h4>
-            <div class="space-y-1 text-slate-700">
-              <div><strong>💌 우편함</strong> : 받은 리스펙·응원 및 안내 메시지 확인 (새 메시지가 있으면 빨간 점 표시)</div>
-              <div><strong>🌙 / ☀️</strong> : 다크모드 / 라이트모드 전환</div>
-              <div><strong>⋯ 더보기</strong> : 포인트 컬러(블루·옐로우·코랄), 쉬는시간 알림, 건의하기, 로그아웃</div>
-              <div><strong>🟢 실시간</strong> : 스터디원 데이터 실시간 동기화 상태 확인</div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5 text-xs leading-relaxed">
+          <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded-md bg-slate-950 text-white text-[10px] font-black">01</span>
+              <h4 class="text-sm font-black text-slate-900">시작 · 프로필 · 수업 시간표 · 스터디 참가</h4>
             </div>
+            <ul class="space-y-1.5 text-slate-700">
+              <li><strong>👤 내 프로필</strong> : 별명, 사진(핀치 줌 원형 크롭 · 기본 프로필 복원), 내 LP 기록·칭호·뱃지 확인 및 <strong>모드 배지 클릭 전환</strong>이 가능합니다.</li>
+              <li><strong>수업 시간표</strong> : 대학 수업을 등록하거나 <strong>⚡ 충남대 전자과 시간표 불러오기</strong>를 이용할 수 있습니다.</li>
+              <li><strong>🙋 스터디 참가하기</strong> : 처음에는 혼자 조용히 공부할 수 있고(타인에게 비공개), 원할 때만 스터디·랭킹에 참가합니다. 나가더라도 기존 공부 기록·시간표·사진은 그대로 보존됩니다.</li>
+            </ul>
           </div>
 
-          <div class="p-4 rounded-xl bg-rose-50 border border-rose-200 space-y-2">
-            <h4 class="text-sm font-black text-rose-900">6. ⚠️ 이용 시 주의사항</h4>
+          <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded-md bg-slate-950 text-white text-[10px] font-black">02</span>
+              <h4 class="text-sm font-black text-slate-900">자율모드 vs 울트라집중모드</h4>
+            </div>
+            <ul class="space-y-1.5 text-slate-700">
+              <li><strong>자율모드</strong> : 기본 적용 모드입니다. 교시 제한 없이 <code>자율 집중 중</code> 스톱워치로 공부하며 홈 배너 명언·배경 사진을 꾸밀 수 있습니다.</li>
+              <li><strong>울트라집중모드</strong> : 월~토 1~8교시 의무자습 + 9~10교시 <strong>선택자습</strong>(22:10~24:00)으로 운영됩니다. 한 교시 안에 타이머를 최소 <strong>75% 이상</strong> 켜야 출석이 인정되며, 등록한 대학 수업 시간은 자동 <code>수업면제</code> 처리됩니다.</li>
+              <li><strong>전환 안내</strong> : 상단 모드 배지 또는 <strong>👤 내 프로필</strong>의 모드 버튼을 눌러 변경할 수 있으며, 공정성을 위해 <strong>내일 00:00부터</strong> 적용됩니다.</li>
+            </ul>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded-md bg-slate-950 text-white text-[10px] font-black">03</span>
+              <h4 class="text-sm font-black text-slate-900">스톱워치 · 플래너 · 캘린더 · 자랑하기</h4>
+            </div>
+            <ul class="space-y-1.5 text-slate-700">
+              <li><strong>⏱️ 집중 시작하기</strong> : <code>00:00</code>부터 측정하며, 휴식이 10분을 넘기면 연속 집중만 초기화되고 누적 시간은 유지됩니다.</li>
+              <li><strong>📝 플래너</strong> : 파스텔 색상으로 시간표 계획을 칠하고, 실제 공부 시간은 상단 <strong>1분 단위 누적 배지</strong>와 10분 칸 초록색 게이지로 정밀하게 확인합니다.</li>
+              <li><strong>📅 캘린더</strong> : 월간 공부·승급 기록과 <strong>이번 주 요일별 공부 요약</strong>을 한눈에 봅니다.</li>
+              <li><strong>✨ 자랑하기</strong> : <code>스터디 · 랭킹</code>의 3번째 탭에서 공부 인증 사진을 올리고 공유·삭제할 수 있습니다.</li>
+            </ul>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded-md bg-slate-950 text-white text-[10px] font-black">04</span>
+              <h4 class="text-sm font-black text-slate-900">티어 · LP 기준 · 승급전 · 뱃지</h4>
+            </div>
+            <ul class="space-y-1.5 text-slate-700">
+              <li><strong>💎 LP 기준</strong> : 울트라집중 교시 출석 <strong>+4</strong>(지각 +1, 면제 +2) · 자율모드 일일 출석 <strong>+5</strong> · 연속 출석 <strong>+3</strong>(5일마다 +15) · 공부 <strong>1시간당 +3</strong>(일 최대 8시간) · 리스펙 받기 <strong>+2</strong>(보낸 사람당 1회) · 챌린지 보상 (감점 없음).</li>
+              <li><strong>⚔️ 승급전</strong> : 다음 티어 <strong>15 LP 전부터</strong> 도전 가능하며(<strong>일요일 불가</strong>), 실패해도 LP는 깎이지 않고 2일 뒤 재도전할 수 있습니다. 대기·진행 중 모은 LP는 승급 시 자동 합산됩니다.</li>
+              <li><strong>🏅 뱃지 · 연속출석</strong> : <strong>🌅 얼리버드</strong>(08:00 전, 당일 유지), <strong>🦉 자정 돌파</strong>(심야 공부, 다음 날 유지), <strong>🔥 연속출석</strong>(지각·미체크가 있어도 출석 교시가 있으면 유지), <strong>⚡ 울트라집중</strong>이 자동 표시됩니다.</li>
+            </ul>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded-md bg-slate-950 text-white text-[10px] font-black">05</span>
+              <h4 class="text-sm font-black text-slate-900">상단 아이콘 · 소통 기능</h4>
+            </div>
+            <ul class="space-y-1.5 text-slate-700">
+              <li><strong>💌 우편함</strong> : 받은 리스펙·격려 답장·메시지 확인 (새 메시지 도착 시 빨간 점 표시)</li>
+              <li><strong>🌙 / ☀️</strong> : 다크모드 / 라이트모드 전환</li>
+              <li><strong>⋯ 더보기</strong> : 포인트 컬러, 쉬는시간 알림, <strong>💪 격려해주세요</strong>(공부자극·멘탈케어 요청), <strong>💬 건의하기</strong>, 로그아웃</li>
+              <li><strong>👏 리스펙 / 🚨 신고하기</strong> : 스터디원 카드에서 응원 보내기 및 부적절한 활동 제보</li>
+            </ul>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-rose-50 border border-rose-200 space-y-2">
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded-md bg-rose-600 text-white text-[10px] font-black">06</span>
+              <h4 class="text-sm font-black text-rose-900">⚠️ 이용 시 주의사항</h4>
+            </div>
             <ul class="space-y-1.5 text-rose-900">
-              <li><strong>단일 기기 로그인</strong> : 다른 기기(폰 ↔ 태블릿/PC 등)에서 <strong>같은 Google 계정으로 새로 로그인하면 기존 기기는 자동으로 로그아웃</strong>됩니다. (공부 시간 중복 측정 및 데이터 충돌 방지)</li>
-              <li><strong>새로고침 유지</strong> : 같은 기기·브라우저에서는 페이지를 새로고침해도 로그인이 유지됩니다.</li>
-              <li><strong>측정 중 탭 유지 (화면 꺼짐 가능)</strong> : 스톱워치를 켠 상태에서 브라우저 창이나 탭만 닫지 않고 유지하면, <strong>기기 화면을 꺼두어도 시간이 계속 측정</strong>되어 다시 켜는 순간 자동 반영됩니다.</li>
+              <li><strong>단일 기기 로그인</strong> : 다른 기기(폰 ↔ 태블릿/PC)에서 같은 Google 계정으로 새로 로그인하면 기존 기기는 자동 로그아웃됩니다.</li>
+              <li><strong>새로고침 유지</strong> : 같은 기기·브라우저에서는 새로고침해도 로그인이 유지됩니다.</li>
+              <li><strong>화면 꺼짐 측정</strong> : 스톱워치를 켠 채 브라우저 탭만 닫지 않고 유지하면, 기기 화면을 꺼두어도 시간이 계속 측정되어 다시 켤 때 자동 반영됩니다.</li>
             </ul>
           </div>
         </div>
       </div>
     </div>
-
     <!-- TAB 6: ADMIN PANEL -->
     <div id="tab-admin" class="tab-panel hidden space-y-4">
       <div id="admin-report-alert-banner" class="hidden rounded-2xl border-2 border-rose-500 bg-rose-50 px-4 py-3 flex items-center justify-between gap-2">
@@ -2679,10 +2698,11 @@
           const modePill = document.getElementById('profile-mode-pill');
           if (modePill) {
             const isStrict = getMemberMode(tm) === 'strict';
-            modePill.textContent = isStrict ? '울트라집중모드' : '자율모드';
+            const pendP = tm.pendingMode ? (tm.pendingMode === 'strict' ? ' → 내일 울트라집중' : ' → 내일 자율') : '';
+            modePill.textContent = (isStrict ? '울트라집중모드' : '자율모드') + pendP;
             modePill.className = isStrict
-              ? 'px-2.5 py-1 rounded-full text-[11px] font-black bg-rose-100 text-rose-800 whitespace-nowrap'
-              : 'px-2.5 py-1 rounded-full text-[11px] font-black bg-emerald-100 text-emerald-800 whitespace-nowrap';
+              ? 'px-2.5 py-1 rounded-full text-[11px] font-black bg-rose-100 text-rose-800 whitespace-nowrap cursor-pointer hover:opacity-80 transition'
+              : 'px-2.5 py-1 rounded-full text-[11px] font-black bg-emerald-100 text-emerald-800 whitespace-nowrap cursor-pointer hover:opacity-80 transition';
           }
           const tierEl = document.getElementById('profile-tier-lp');
           if (tierEl) tierEl.innerHTML = renderTierPill(tm.lp || 0);
@@ -3073,6 +3093,7 @@
         });
       });
       
+      document.getElementById('profile-mode-pill').addEventListener('click', () => document.getElementById('study-mode-btn').click());
       document.getElementById('study-mode-btn').addEventListener('click', () => {
         const me = shared.members.find(m => m.id === prefs.currentUserId);
         if (!me) return;
@@ -3344,14 +3365,16 @@
               drawPreview();
             }, { passive: false });
             cvs.addEventListener('mousedown', ev2 => { dragging = true; lastX = ev2.clientX; lastY = ev2.clientY; });
-            window.addEventListener('mousemove', ev2 => {
+            const onCropMove = ev2 => {
               if (!dragging) return;
               offsetX += ev2.clientX - lastX;
               offsetY += ev2.clientY - lastY;
               lastX = ev2.clientX; lastY = ev2.clientY;
               drawPreview();
-            });
-            window.addEventListener('mouseup', () => { dragging = false; });
+            };
+            const onCropUp = () => { dragging = false; };
+            window.addEventListener('mousemove', onCropMove);
+            window.addEventListener('mouseup', onCropUp);
             cvs.addEventListener('touchstart', ev2 => {
               ev2.preventDefault();
               if (ev2.touches.length === 2) {
@@ -3389,7 +3412,7 @@
               }
             });
 
-            document.getElementById('btn-avatar-crop-cancel').addEventListener('click', closeModal);
+            document.getElementById('btn-avatar-crop-cancel').addEventListener('click', () => { window.removeEventListener('mousemove', onCropMove); window.removeEventListener('mouseup', onCropUp); closeModal(); });
             document.getElementById('btn-avatar-crop-save').addEventListener('click', () => {
               const outC = document.createElement('canvas');
               outC.width = 140; outC.height = 140;
@@ -3408,6 +3431,7 @@
                 showToast('프로필 사진이 변경되었습니다!', 'success');
                 renderAll();
               }
+              window.removeEventListener('mousemove', onCropMove); window.removeEventListener('mouseup', onCropUp);
               closeModal();
             });
           };
@@ -3575,7 +3599,6 @@
         });
       }
       document.getElementById('encourage-menu-btn').addEventListener('click', openEncourageModal);
-      document.getElementById('btn-home-encourage').addEventListener('click', openEncourageModal);
 
       document.getElementById('admin-encouragements-list').addEventListener('click', e => {
         const delB = e.target.closest('[data-del-enc]');
