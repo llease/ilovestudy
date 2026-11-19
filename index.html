@@ -4261,21 +4261,21 @@
           const allB = getBadgesForMember(m, t);
           openModal(`${m.equippedTitle ? `[${escapeHtml(m.equippedTitle)}] ` : ''}${escapeHtml(m.name)} 상세 기록`, `
             <div class="space-y-3 text-xs">
-              <div class="flex flex-wrap items-center gap-1.5">${renderTierPill(m.lp || 0)} <span class="px-2 py-0.5 rounded bg-slate-100 font-bold">${getMemberMode(m) === 'strict' ? '울트라집중모드' : '자율모드'}</span></div>
+              <div class="flex flex-wrap items-center gap-1.5">${renderTierPill(m.lp || 0)} ${getMemberMode(m) === 'strict' ? '<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-black text-amber-300 border border-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.45)]" style="background:linear-gradient(90deg,#0f172a,#7f1d1d,#0f172a)"><span class="inline-block animate-pulse">⚡</span>울트라집중모드</span>' : '<span class="px-2 py-0.5 rounded bg-slate-100 font-bold">자율모드</span>'}</div>
               <div class="grid grid-cols-2 gap-2">
                 <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200"><div class="text-slate-400">오늘 누적 공부</div><div class="text-sm font-black text-slate-900 mt-0.5">${formatStudyMins(todayTotalMins)}</div></div>
                 <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200"><div class="text-slate-400">오늘 최장 연속</div><div class="text-sm font-black text-slate-900 mt-0.5">${maxF}분</div></div>
                 <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200"><div class="text-slate-400">연속 출석</div><div class="text-sm font-black text-slate-900 mt-0.5">${m.streak}일</div></div>
                 <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200"><div class="text-slate-400">오늘 받은 리스펙</div><div class="text-sm font-black text-slate-900 mt-0.5">👏 ${todayRespect}회</div></div>
               </div>
-              <div>
+              ${m.id === prefs.currentUserId ? `<div>
                 <div class="font-bold text-slate-700 mb-1.5">👑 보유 칭호</div>
                 <div class="flex flex-wrap gap-1">${(() => {
                   const doneIds = (shared.memberChallenges && shared.memberChallenges[m.id]) || [];
                   const chs = (shared.challenges || []).filter(c => doneIds.includes(c.id));
                   return chs.length ? chs.map(c => `<span class="px-2 py-0.5 rounded-md bg-slate-100 border border-slate-200 text-[11px] font-bold text-slate-800">${c.title}</span>`).join('') : '<span class="text-slate-400">없음</span>';
                 })()}</div>
-              </div>
+              </div>` : ''}
               <div>
                 <div class="font-bold text-slate-700 mb-1.5">🏅 보유 뱃지 (${allB.length}개)</div>
                 <div class="flex flex-wrap gap-1">${allB.length ? allB.map(renderBadgePill).join('') : '<span class="text-slate-400">없음</span>'}</div>
