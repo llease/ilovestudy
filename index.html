@@ -196,6 +196,16 @@
     }
     body[data-theme="yellow"] { --accent:#f5ca64; --primary:#8b530a; --primary-hover:#713e03; --tint:#fff0d7; --link:#784500; --focus-ring:#a26716; }
     body[data-theme="coral"] { --accent:#ffa58f; --primary:#a63828; --primary-hover:#882b1e; --tint:#ffede8; --link:#963423; --focus-ring:#b64735; }
+    body[data-theme="iron"] { --accent:#94a3b8; --primary:#475569; --primary-hover:#334155; --tint:#eef2f7; --link:#334155; --focus-ring:#64748b; }
+    body[data-theme="bronze"] { --accent:#c2845e; --primary:#8c4a27; --primary-hover:#70391b; --tint:#f7ece4; --link:#7c3f1e; --focus-ring:#a86038; }
+    body[data-theme="silver"] { --accent:#a8b8d0; --primary:#495d7a; --primary-hover:#36465e; --tint:#edf2f8; --link:#3b4d68; --focus-ring:#5f7699; }
+    body[data-theme="gold"] { --accent:#e2b64b; --primary:#8a6209; --primary-hover:#6f4d05; --tint:#fcf3dc; --link:#7a5506; --focus-ring:#b08114; }
+    body[data-theme="platinum"] { --accent:#4db8b0; --primary:#0f766e; --primary-hover:#0d5f59; --tint:#e1f6f4; --link:#0f6b64; --focus-ring:#14948a; }
+    body[data-theme="emerald"] { --accent:#34b888; --primary:#137954; --primary-hover:#0e5f41; --tint:#e3f7ef; --link:#106b4a; --focus-ring:#1d966a; }
+    body[data-theme="diamond"] { --accent:#55b2f6; --primary:#1864ab; --primary-hover:#124e87; --tint:#e5f3ff; --link:#165896; --focus-ring:#287bc7; }
+    body[data-theme="master"] { --accent:#a074f5; --primary:#6b21a8; --primary-hover:#541887; --tint:#f3ebff; --link:#5e1d94; --focus-ring:#8438c7; }
+    body[data-theme="grandmaster"] { --accent:#e65b6e; --primary:#ab1d35; --primary-hover:#8a1529; --tint:#ffe9ed; --link:#96182e; --focus-ring:#c92a45; }
+    body[data-theme="challenger"] { --accent:#f5ca64; --primary:#1d4ed8; --primary-hover:#1e40af; --tint:#ebf3ff; --link:#1d4ed8; --focus-ring:#3b82f6; }
     body[data-dark="true"] {
       color-scheme:dark; --page:#0d1626; --surface:#152237; --soft:#1b2a41; --line:#30425e;
       --ink:#eef4ff; --muted:#b3c3dd; --primary:#8db1ff; --primary-hover:#b2ccff;
@@ -204,6 +214,16 @@
     }
     body[data-dark="true"][data-theme="yellow"] { --primary:#f5ca64; --primary-hover:#ffe1a0; --on-primary:#332100; --tint:#3e3220; --link:#f7d78d; --focus-ring:#f5ca64; }
     body[data-dark="true"][data-theme="coral"] { --primary:#ffa58f; --primary-hover:#ffc2b1; --on-primary:#41190e; --tint:#482e30; --link:#ffb7a4; --focus-ring:#ffa58f; }
+    body[data-dark="true"][data-theme="iron"] { --primary:#cbd5e1; --primary-hover:#e2e8f0; --on-primary:#0f172a; --tint:#273244; --link:#cbd5e1; --focus-ring:#94a3b8; }
+    body[data-dark="true"][data-theme="bronze"] { --primary:#e0a882; --primary-hover:#f0c4a6; --on-primary:#2b1508; --tint:#3b271c; --link:#ebb998; --focus-ring:#e0a882; }
+    body[data-dark="true"][data-theme="silver"] { --primary:#c9d6e8; --primary-hover:#e2ebf6; --on-primary:#162033; --tint:#263449; --link:#d3dff0; --focus-ring:#a8b8d0; }
+    body[data-dark="true"][data-theme="gold"] { --primary:#f3cf6e; --primary-hover:#fae19b; --on-primary:#2e2002; --tint:#3b3016; --link:#f7da88; --focus-ring:#e2b64b; }
+    body[data-dark="true"][data-theme="platinum"] { --primary:#5eead4; --primary-hover:#99f6e4; --on-primary:#062c29; --tint:#17383a; --link:#7cf0de; --focus-ring:#4db8b0; }
+    body[data-dark="true"][data-theme="emerald"] { --primary:#6ee7b7; --primary-hover:#a7f3d0; --on-primary:#052e1e; --tint:#16382d; --link:#86efca; --focus-ring:#34b888; }
+    body[data-dark="true"][data-theme="diamond"] { --primary:#7cc4fa; --primary-hover:#bae6fd; --on-primary:#082645; --tint:#193554; --link:#93d0fc; --focus-ring:#55b2f6; }
+    body[data-dark="true"][data-theme="master"] { --primary:#c4b5fd; --primary-hover:#ddd6fe; --on-primary:#250f47; --tint:#2e224d; --link:#d3c7fe; --focus-ring:#a074f5; }
+    body[data-dark="true"][data-theme="grandmaster"] { --primary:#fda4af; --primary-hover:#fecdd3; --on-primary:#3d0a16; --tint:#451f2b; --link:#feb8c1; --focus-ring:#e65b6e; }
+    body[data-dark="true"][data-theme="challenger"] { --primary:#93c5fd; --primary-hover:#bfdbfe; --on-primary:#0c1e42; --tint:#1f355e; --link:#f5ca64; --focus-ring:#f5ca64; }
     body {
       margin:0; color:var(--ink)!important; background:var(--page)!important;
       font-family:Pretendard,'Noto Sans KR',system-ui,'Malgun Gothic','Apple SD Gothic Neo',sans-serif;
@@ -238,7 +258,7 @@
     #header-tools > button:hover, #header-tools > button[aria-expanded="true"] {border-color:var(--focus-ring)!important;background:var(--tint)!important}
     #header-more-menu {top:calc(100% + .5rem);width:min(17rem,calc(100vw - 2rem));background:var(--surface)!important;color:var(--ink)!important;border-color:var(--line)!important}
     #header-more-menu button:not([data-set-theme]) {min-height:42px;font-size:.83rem}
-    #header-more-menu [data-set-theme] {width:30px;height:30px;box-shadow:inset 0 0 0 2px var(--surface);border:1px solid var(--line)}
+    #header-more-menu [data-set-theme] {width:25px;height:25px;box-shadow:inset 0 0 0 2px var(--surface);border:1px solid var(--line);position:relative}
     #study-nav {gap:.3rem;border-color:var(--line);padding-block:.4rem;scroll-padding-inline:1rem;scrollbar-width:thin;scrollbar-color:var(--line) transparent}
     #study-nav::-webkit-scrollbar {display:block;height:4px}
     #study-nav::-webkit-scrollbar-thumb {background:var(--line);border-radius:1em}
@@ -519,12 +539,25 @@
 
         <!-- Compact Popover Menu (replaces cramped horizontal icon strip) -->
         <div id="header-more-menu" class="hidden absolute right-0 top-9 w-56 rounded-2xl bg-white border border-slate-200 shadow-xl p-2.5 space-y-2 z-50">
-          <div class="flex items-center justify-between px-2 py-1 rounded-xl bg-slate-50">
-            <span class="text-[11px] font-bold text-slate-600 whitespace-nowrap">포인트 컬러</span>
-            <div class="flex items-center gap-1.5">
-              <button type="button" data-set-theme="blue" class="w-4 h-4 rounded-full border border-slate-950" style="background:#5BB5F6" title="스카이 블루"></button>
-              <button type="button" data-set-theme="yellow" class="w-4 h-4 rounded-full border border-slate-950" style="background:#FACC15" title="머스타드 옐로우"></button>
-              <button type="button" data-set-theme="coral" class="w-4 h-4 rounded-full border border-slate-950" style="background:#EE6D52" title="코랄 오렌지"></button>
+          <div class="px-2 py-2 rounded-xl bg-slate-50 space-y-1.5">
+            <div class="flex items-center justify-between">
+              <span class="text-[11px] font-bold text-slate-600 whitespace-nowrap">포인트 컬러</span>
+              <span class="text-[10px] font-semibold text-slate-400">티어별 해금</span>
+            </div>
+            <div id="theme-swatch-list" class="flex flex-wrap items-center gap-1.5">
+              <button type="button" data-set-theme="blue" data-min-lp="0" class="w-5 h-5 rounded-full border border-slate-950" style="background:#5BB5F6" title="스카이 블루 (기본)"></button>
+              <button type="button" data-set-theme="yellow" data-min-lp="0" class="w-5 h-5 rounded-full border border-slate-950" style="background:#FACC15" title="머스타드 옐로우 (기본)"></button>
+              <button type="button" data-set-theme="coral" data-min-lp="0" class="w-5 h-5 rounded-full border border-slate-950" style="background:#EE6D52" title="코랄 오렌지 (기본)"></button>
+              <button type="button" data-set-theme="iron" data-min-lp="0" data-tier-name="아이언" class="w-5 h-5 rounded-full border border-slate-950" style="background:#94a3b8" title="아이언 스틸 (아이언 0 LP)"></button>
+              <button type="button" data-set-theme="bronze" data-min-lp="80" data-tier-name="브론즈" class="w-5 h-5 rounded-full border border-slate-950" style="background:#c2845e" title="브론즈 코퍼 (브론즈 80 LP)"></button>
+              <button type="button" data-set-theme="silver" data-min-lp="170" data-tier-name="실버" class="w-5 h-5 rounded-full border border-slate-950" style="background:#a8b8d0" title="실버 미스트 (실버 170 LP)"></button>
+              <button type="button" data-set-theme="gold" data-min-lp="270" data-tier-name="골드" class="w-5 h-5 rounded-full border border-slate-950" style="background:#e2b64b" title="골드 앰버 (골드 270 LP)"></button>
+              <button type="button" data-set-theme="platinum" data-min-lp="380" data-tier-name="플래티넘" class="w-5 h-5 rounded-full border border-slate-950" style="background:#4db8b0" title="플래티넘 틸 (플래티넘 380 LP)"></button>
+              <button type="button" data-set-theme="emerald" data-min-lp="500" data-tier-name="에메랄드" class="w-5 h-5 rounded-full border border-slate-950" style="background:#34b888" title="에메랄드 포레스트 (에메랄드 500 LP)"></button>
+              <button type="button" data-set-theme="diamond" data-min-lp="630" data-tier-name="다이아몬드" class="w-5 h-5 rounded-full border border-slate-950" style="background:#55b2f6" title="다이아 사파이어 (다이아몬드 630 LP)"></button>
+              <button type="button" data-set-theme="master" data-min-lp="770" data-tier-name="마스터" class="w-5 h-5 rounded-full border border-slate-950" style="background:#a074f5" title="마스터 바이올렛 (마스터 770 LP)"></button>
+              <button type="button" data-set-theme="grandmaster" data-min-lp="930" data-tier-name="그랜드마스터" class="w-5 h-5 rounded-full border border-slate-950" style="background:#e65b6e" title="그랜드마스터 크림슨 (그랜드마스터 930 LP)"></button>
+              <button type="button" data-set-theme="challenger" data-min-lp="1200" data-tier-name="챌린저" class="w-5 h-5 rounded-full border border-slate-950" style="background:linear-gradient(135deg,#f5ca64,#68a6ff)" title="챌린저 오로라 (챌린저 1200 LP)"></button>
             </div>
           </div>
           <button id="alert-toggle-btn" type="button" class="w-full flex items-center justify-between px-2.5 py-2 rounded-xl hover:bg-slate-100 text-xs font-bold text-slate-700 whitespace-nowrap">🔔 쉬는시간 알림 켜짐</button>
@@ -2546,6 +2579,14 @@
           guideBtn.classList.toggle('ring-2', showHint);
           guideBtn.classList.toggle('ring-rose-400', showHint);
         }
+        const myLpNow = meHdr ? (Number(meHdr.lp) || 0) : 0;
+        document.querySelectorAll('[data-set-theme]').forEach(btn => {
+          const minLp = Number(btn.dataset.minLp || 0);
+          const unlocked = prefs.adminMode || myLpNow >= minLp;
+          btn.dataset.locked = unlocked ? 'false' : 'true';
+          btn.style.opacity = unlocked ? '1' : '0.28';
+          btn.setAttribute('aria-pressed', String(btn.dataset.setTheme === (prefs.theme || 'blue')));
+        });
         const accEl = document.getElementById('auth-account-info');
         const logoutBtn = document.getElementById('btn-google-logout');
         if (accEl && logoutBtn) {
@@ -2884,7 +2925,7 @@
           return `
             <div class="relative pt-2.5 flex flex-col">
               ${m.equippedTitle ? `<div class="absolute top-0 left-3 z-10 max-w-[calc(100%-24px)] px-2 py-0.5 rounded-t-lg rounded-b-sm bg-slate-100 border border-slate-300 text-[10px] font-bold text-slate-600 whitespace-nowrap truncate leading-none shadow-sm" title="${escapeHtml(m.equippedTitle)}"><span class="opacity-65">👑</span> ${escapeHtml(m.equippedTitle)}</div>` : ''}
-              <div data-member-detail="${m.id}" class="flex-1 cursor-pointer rounded-2xl p-2.5 sm:p-3 bg-white flex flex-col justify-between gap-2 transition-all ${tierObj.frame} ${promoRing} ${flameCls} ${isStudying ? 'studying-live-card' : ''}">
+              <div data-member-detail="${m.id}" class="flex-1 cursor-pointer rounded-2xl p-2.5 sm:p-3 bg-white flex flex-col justify-start gap-2 transition-all ${tierObj.frame} ${promoRing} ${flameCls} ${isStudying ? 'studying-live-card' : ''}">
                 <div class="space-y-1.5">
                   <div class="flex items-center justify-between gap-1.5 min-h-[28px]">
                     <div class="flex items-center gap-2 min-w-0">
@@ -4881,7 +4922,12 @@
       document.querySelectorAll('[data-set-theme]').forEach(btn => {
         btn.setAttribute('aria-pressed', String(btn.dataset.setTheme === (prefs.theme || 'blue')));
         btn.setAttribute('aria-label', btn.title);
-        btn.addEventListener('click', () => {
+        btn.addEventListener('click', ev => {
+          if (btn.dataset.locked === 'true') {
+            ev.stopPropagation();
+            showToast(`🔒 ${btn.dataset.tierName || ''} 티어 (${btn.dataset.minLp} LP) 달성 시 해금됩니다!`, 'warn');
+            return;
+          }
           prefs.theme = btn.dataset.setTheme;
           document.body.setAttribute('data-theme', prefs.theme);
           document.querySelectorAll('[data-set-theme]').forEach(el => el.setAttribute('aria-pressed', String(el.dataset.setTheme === prefs.theme)));
