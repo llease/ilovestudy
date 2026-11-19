@@ -31,8 +31,8 @@
     .scrollbar-thin::-webkit-scrollbar { height: 5px; width: 5px; }
     .scrollbar-thin::-webkit-scrollbar-thumb { background: #111111; border-radius: 9999px; }
     .time-cell { touch-action: none; user-select: none; -webkit-user-select: none; }
-    #group-status-grid > [data-member-detail] { position: relative; overflow: hidden; }
-    #group-status-grid > [data-member-detail] > * { position: relative; z-index: 1; }
+    #group-status-grid [data-member-detail] { position: relative; overflow: hidden; }
+    #group-status-grid [data-member-detail] > * { position: relative; z-index: 1; }
     .flame-lv1::before, .flame-lv2::before, .flame-lv3::before, .flame-lv4::before, .flame-lv5::before {
       content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 0;
     }
@@ -2874,39 +2874,45 @@
           const isPromoNow = m.promoActiveDate === t;
           const isUltra = getMemberMode(m) === 'strict';
           const inClassNow = ((shared.classes && shared.classes[m.id]) || []).some(c => Number(c.day) === now.day && toMins(c.start) <= now.totalMins && now.totalMins < toMins(c.end));
-          const showStudyingBadge = isStudying || inClassNow;
           const promoRing = isPromoNow ? 'ring-2 ring-amber-400' : '';
           const hasMenu = (m.id !== prefs.currentUserId) || (prefs.adminMode && shared.members.length > 1);
+          const statusBadgeHtml = isStudying
+            ? '<span class="inline-flex items-center gap-1 text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-600 text-white font-bold whitespace-nowrap shrink-0"><span class="relative flex h-1.5 w-1.5"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-200 opacity-75"></span><span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-white"></span></span>공부중</span>'
+            : (inClassNow
+              ? '<span class="inline-flex items-center gap-1 text-[9px] px-1.5 py-0.5 rounded-full bg-sky-100 text-sky-800 border border-sky-200 font-bold whitespace-nowrap shrink-0">수업중</span>'
+              : '<span class="text-[10px] font-semibold text-slate-400 whitespace-nowrap">휴식중</span>');
           return `
-            <div data-member-detail="${m.id}" class="cursor-pointer rounded-2xl p-2.5 sm:p-3 bg-white flex flex-col justify-between gap-2 transition-all ${tierObj.frame} ${promoRing} ${flameCls} ${showStudyingBadge ? 'studying-live-card' : ''}">
-              <div class="space-y-1.5">
-                <div class="flex items-center justify-between gap-1.5 min-h-[28px]">
-                  <div class="flex items-center gap-2 min-w-0">
-                    <div class="relative w-7 h-7 shrink-0" title="${isUltra ? '울트라집중모드' : ''}">
-                      ${isUltra ? '<span class="ultra-avatar-ring"></span>' : ''}
-                      <div class="relative z-[1] w-full h-full rounded-full bg-slate-200 ${isUltra ? 'border border-white' : 'border border-slate-300'} overflow-hidden flex items-center justify-center text-[11px] font-black text-slate-600">${m.avatarUrl ? `<img src="${escapeHtml(m.avatarUrl)}" class="w-full h-full object-cover" alt="${escapeHtml(m.name)}" />` : escapeHtml(m.name.slice(0, 1))}</div>
-                      ${isUltra ? '<span class="ultra-avatar-bolt" aria-label="울트라집중">⚡</span>' : ''}
+            <div class="relative pt-2.5 flex flex-col">
+              ${m.equippedTitle ? `<div class="absolute top-0 left-3 z-10 max-w-[calc(100%-24px)] px-2 py-0.5 rounded-t-lg rounded-b-sm bg-slate-100 border border-slate-300 text-[10px] font-bold text-slate-600 whitespace-nowrap truncate leading-none shadow-sm" title="${escapeHtml(m.equippedTitle)}"><span class="opacity-65">👑</span> ${escapeHtml(m.equippedTitle)}</div>` : ''}
+              <div data-member-detail="${m.id}" class="flex-1 cursor-pointer rounded-2xl p-2.5 sm:p-3 bg-white flex flex-col justify-between gap-2 transition-all ${tierObj.frame} ${promoRing} ${flameCls} ${isStudying ? 'studying-live-card' : ''}">
+                <div class="space-y-1.5">
+                  <div class="flex items-center justify-between gap-1.5 min-h-[28px]">
+                    <div class="flex items-center gap-2 min-w-0">
+                      <div class="relative w-7 h-7 shrink-0" title="${isUltra ? '울트라집중모드' : ''}">
+                        ${isUltra ? '<span class="ultra-avatar-ring"></span>' : ''}
+                        <div class="relative z-[1] w-full h-full rounded-full bg-slate-200 ${isUltra ? 'border border-white' : 'border border-slate-300'} overflow-hidden flex items-center justify-center text-[11px] font-black text-slate-600">${m.avatarUrl ? `<img src="${escapeHtml(m.avatarUrl)}" class="w-full h-full object-cover" alt="${escapeHtml(m.name)}" />` : escapeHtml(m.name.slice(0, 1))}</div>
+                        ${isUltra ? '<span class="ultra-avatar-bolt" aria-label="울트라집중">⚡</span>' : ''}
+                      </div>
+                      <span class="font-extrabold text-xs sm:text-sm text-slate-900 leading-tight truncate">${escapeHtml(m.name)}</span>
                     </div>
-                    <span class="font-extrabold text-xs sm:text-sm text-slate-900 leading-tight truncate">${escapeHtml(m.name)}</span>
+                    ${hasMenu ? `<div class="relative shrink-0">
+                      <button type="button" data-card-menu-btn="${m.id}" aria-label="스터디원 더보기" class="w-6 h-6 rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-900 flex items-center justify-center text-xs font-black">⋯</button>
+                      <div data-card-menu-box="${m.id}" class="hidden absolute right-0 top-7 z-20 w-32 rounded-xl bg-white border border-slate-200 shadow-lg p-1 space-y-0.5 text-left">
+                        ${m.id !== prefs.currentUserId ? `<button type="button" data-respect-member="${m.id}" class="w-full flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg hover:bg-slate-100 text-[11px] font-bold text-slate-800 whitespace-nowrap">👏 리스펙 보내기</button>
+                        <button type="button" data-report-member="${m.id}" class="w-full flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg hover:bg-rose-50 text-[11px] font-bold text-rose-600 whitespace-nowrap">🚨 신고하기</button>` : ''}
+                        ${prefs.adminMode && shared.members.length > 1 ? `<button type="button" data-del-member="${m.id}" class="w-full flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg hover:bg-rose-50 text-[11px] font-bold text-rose-600 whitespace-nowrap">🗑️ 삭제하기</button>` : ''}
+                      </div>
+                    </div>` : ''}
                   </div>
-                  ${hasMenu ? `<div class="relative shrink-0">
-                    <button type="button" data-card-menu-btn="${m.id}" aria-label="스터디원 더보기" class="w-6 h-6 rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-900 flex items-center justify-center text-xs font-black">⋯</button>
-                    <div data-card-menu-box="${m.id}" class="hidden absolute right-0 top-7 z-20 w-32 rounded-xl bg-white border border-slate-200 shadow-lg p-1 space-y-0.5 text-left">
-                      ${m.id !== prefs.currentUserId ? `<button type="button" data-respect-member="${m.id}" class="w-full flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg hover:bg-slate-100 text-[11px] font-bold text-slate-800 whitespace-nowrap">👏 리스펙 보내기</button>
-                      <button type="button" data-report-member="${m.id}" class="w-full flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg hover:bg-rose-50 text-[11px] font-bold text-rose-600 whitespace-nowrap">🚨 신고하기</button>` : ''}
-                      ${prefs.adminMode && shared.members.length > 1 ? `<button type="button" data-del-member="${m.id}" class="w-full flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg hover:bg-rose-50 text-[11px] font-bold text-rose-600 whitespace-nowrap">🗑️ 삭제하기</button>` : ''}
-                    </div>
-                  </div>` : ''}
+                  <div class="flex items-center justify-between gap-1.5 rounded-xl bg-slate-50 border border-slate-100 px-2.5 py-1.5">
+                    <span class="font-mono font-black text-xs sm:text-sm text-slate-900 whitespace-nowrap">⏱️ ${formatStudyMins(todayTotalMins)}</span>
+                    ${statusBadgeHtml}
+                  </div>
                 </div>
-                <div class="flex items-center justify-between gap-1.5 rounded-xl bg-slate-50 border border-slate-100 px-2.5 py-1.5">
-                  <span class="font-mono font-black text-xs sm:text-sm text-slate-900 whitespace-nowrap">⏱️ ${formatStudyMins(todayTotalMins)}</span>
-                  ${showStudyingBadge ? '<span class="inline-flex items-center gap-1 text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-600 text-white font-bold whitespace-nowrap shrink-0"><span class="relative flex h-1.5 w-1.5"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-200 opacity-75"></span><span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-white"></span></span>공부중</span>' : '<span class="text-[10px] font-semibold text-slate-400 whitespace-nowrap">휴식중</span>'}
+                <div class="space-y-1.5">
+                  <div class="flex items-center gap-1 flex-wrap min-w-0">${renderTierPill(m.lp || 0)}</div>
+                  ${badges.length ? `<div class="flex flex-wrap gap-1">${badges.map(renderBadgePill).join('')}</div>` : ''}
                 </div>
-                ${m.equippedTitle ? `<div class="text-[10px] font-bold text-slate-400 whitespace-nowrap truncate leading-tight px-0.5" title="${escapeHtml(m.equippedTitle)}"><span class="opacity-65">👑</span> ${escapeHtml(m.equippedTitle)}</div>` : ''}
-              </div>
-              <div class="space-y-1.5">
-                <div class="flex items-center gap-1 flex-wrap min-w-0">${renderTierPill(m.lp || 0)}</div>
-                ${badges.length ? `<div class="flex flex-wrap gap-1">${badges.map(renderBadgePill).join('')}</div>` : ''}
               </div>
             </div>
           `;
