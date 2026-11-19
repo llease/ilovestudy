@@ -1225,7 +1225,7 @@
               </li>
               <li class="space-y-0.5">
                 <div class="font-black text-slate-900">🏅 뱃지 · 카드 이펙트</div>
-                <p><strong>🌅 얼리버드</strong>(08시 전), <strong>🦉 자정 돌파</strong>(심야 공부), <strong>🌱~👑 연속출석</strong>(2일~10일+ 진화) 뱃지와 함께, 울트라집중 <strong>⚡ 회전 링</strong> 및 누적 공부량(1h~10h+)에 따른 <strong>카드 불꽃 오라</strong>가 표시됩니다.</p>
+                <p><strong>🌅 얼리버드</strong>(08시 전 · 당일 유지), <strong>🦉 심야 올빼미</strong>(자정~04:59 공부 · 당일 유지), <strong>🌱~👑 연속출석</strong>(2일~10일+ 진화) 뱃지와 함께, 울트라집중 <strong>⚡ 회전 링</strong> 및 누적 공부량(1h~10h+)에 따른 <strong>카드 불꽃 오라</strong>가 표시됩니다.</p>
               </li>
             </ul>
           </section>
@@ -2617,7 +2617,7 @@
 
       function getBadgesForMember(member, dateStr) {
         const b = [];
-        if (member.firstTime && (!member.firstTimeDate || member.firstTimeDate === dateStr) && toMins(member.firstTime) < toMins('08:00')) {
+        if (member.firstTime && member.firstTimeDate === dateStr && toMins(member.firstTime) < toMins('08:00')) {
           b.push({ label: '🌅 얼리버드', customCls: BADGE_THEMES.neon });
         }
         const st = Number(member.streak) || 0;
@@ -2627,7 +2627,7 @@
         }
 
         if (member.nightOwlDate === dateStr) {
-          b.push({ label: '🦉 자정 돌파', customCls: BADGE_THEMES.royal });
+          b.push({ label: '🦉 심야 올빼미', customCls: BADGE_THEMES.royal });
         }
         const customList = (shared.customBadges && shared.customBadges[member.id]) || [];
         customList.forEach(cb => {
@@ -4645,17 +4645,21 @@
         const chId = b.dataset.toggleCh;
         const mid = document.getElementById('admin-challenge-member').value;
         const ch = (shared.challenges || []).find(c => c.id === chId);
-        if (!mid || !ch) return;
+        const targetMem = shared.members.find(m => m.id === mid);
+        if (!mid || !ch || !targetMem) return;
         if (!shared.memberChallenges) shared.memberChallenges = {};
         if (!shared.memberChallenges[mid]) shared.memberChallenges[mid] = [];
+        const lpAmt = Number(ch.lp) || 0;
         const idx = shared.memberChallenges[mid].indexOf(chId);
         if (idx >= 0) {
           shared.memberChallenges[mid].splice(idx, 1);
-          addMemberLp(mid, -ch.lp);
+          addMemberLp(mid, -lpAmt, `챌린지 취소: ${ch.title}`);
+          showToast(`${targetMem.name}님 챌린지 취소 (-${lpAmt} LP)`, 'info');
         } else {
           shared.memberChallenges[mid].push(chId);
-          addMemberLp(mid, ch.lp);
-          triggerChallengeCelebration(ch);
+          addMemberLp(mid, lpAmt, `챌린지 달성: ${ch.title}`);
+          if (mid === prefs.currentUserId) triggerChallengeCelebration(ch);
+          else showToast(`${targetMem.name}님 챌린지 달성 처리 (+${lpAmt} LP)`, 'success');
         }
         saveSharedData();
         renderAdminTab();
@@ -5266,7 +5270,6 @@
         maxima[id] = Math.max(maxima[id] || 0, continuousMins);
         if (hours === 4) unlockChallengeFor(id, 'ch_4am', false);
         if (hours < 5) member.nightOwlDate = day;
-        else if (hours === 23 && mins >= 50) member.nightOwlDate = addDaysStr(day, 1);
         const slot = `${String(hours).padStart(2, '0')}_${Math.floor(mins / 10)}`;
         const blocks = ((shared.studyBlocks[day] ||= {})[id] ||= {});
         const slotMinutes = ((shared.studySlotMins[day] ||= {})[id] ||= {});
