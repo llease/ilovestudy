@@ -496,31 +496,76 @@
     }
     #welcome-cheer-title { font-size:clamp(1.15rem,3.4vw,1.45rem); font-weight:900; color:var(--ink); letter-spacing:-.03em; margin:0; }
     #welcome-cheer-sub { font-size:.84rem; font-weight:600; color:var(--muted); margin:.3rem 0 0; }
-    /* First-Time Join Reconstruction Animation */
+    /* First-Time Join Reconstruction Animation (3x slower, richer heart assembly) */
+    #login-welcome-overlay.is-reconstruct {
+      transition:opacity 1000ms cubic-bezier(.16,1,.3,1), background-color 1000ms ease;
+    }
+    #login-welcome-overlay.is-reconstruct #welcome-logo-fly {
+      position:relative;
+      transition:transform 1100ms cubic-bezier(.16,1,.3,1), opacity 750ms ease, box-shadow 1200ms ease;
+    }
+    #login-welcome-overlay.is-reconstruct.is-flying #welcome-logo-fly {
+      transition:transform 1650ms cubic-bezier(.16,1,.3,1), opacity 600ms ease;
+    }
+    #login-welcome-overlay.is-reconstruct #welcome-text-wrap {
+      transition:opacity 750ms ease 250ms, transform 850ms cubic-bezier(.16,1,.3,1) 250ms;
+    }
+    #login-welcome-overlay.is-reconstruct.is-flying #welcome-text-wrap {
+      transition:opacity 600ms ease, transform 600ms ease;
+    }
+    #login-welcome-overlay.is-reconstruct #welcome-logo-fly::after {
+      content:''; position:absolute; inset:-14px; border-radius:36px;
+      border:2px solid var(--accent); opacity:0; pointer-events:none;
+      animation:welcomeHeartHalo 1800ms cubic-bezier(.16,1,.3,1) 2750ms both;
+    }
     #login-welcome-overlay.is-reconstruct #welcome-logo-fly svg .book-left {
       transform-origin:12px 12px;
-      animation:bookLeftIn 680ms cubic-bezier(.22,1.18,.36,1) both;
+      animation:bookLeftIn 1400ms cubic-bezier(.16,1,.3,1) 350ms both;
     }
     #login-welcome-overlay.is-reconstruct #welcome-logo-fly svg .book-right {
       transform-origin:12px 12px;
-      animation:bookRightIn 680ms cubic-bezier(.22,1.18,.36,1) both;
+      animation:bookRightIn 1400ms cubic-bezier(.16,1,.3,1) 350ms both;
     }
     #login-welcome-overlay.is-reconstruct #welcome-logo-fly svg .book-heart {
       transform-origin:12px 10.5px;
-      animation:heartAssemble 720ms cubic-bezier(.22,1.28,.36,1) 240ms both;
+      opacity:0;
+      animation:heartAssemble 1900ms cubic-bezier(.22,1.24,.36,1) 2100ms both;
     }
     @keyframes bookLeftIn {
-      0% { opacity:0; transform:translate(-10px, 4px) rotate(-18deg) scale(.75); }
+      0% { opacity:0; transform:translate(-14px, 5px) rotate(-22deg) scale(.68); }
       100% { opacity:1; transform:translate(0, 0) rotate(0deg) scale(1); }
     }
     @keyframes bookRightIn {
-      0% { opacity:0; transform:translate(10px, 4px) rotate(18deg) scale(.75); }
+      0% { opacity:0; transform:translate(14px, 5px) rotate(22deg) scale(.68); }
       100% { opacity:1; transform:translate(0, 0) rotate(0deg) scale(1); }
     }
     @keyframes heartAssemble {
-      0% { opacity:0; transform:scale(.15) translateY(6px); }
-      65% { opacity:1; transform:scale(1.22) translateY(-1px); }
-      100% { opacity:1; transform:scale(1) translateY(0); }
+      0% { opacity:0; transform:translateY(-14px) scale(.1) rotate(-18deg); filter:drop-shadow(0 0 0 transparent); }
+      45% { opacity:1; transform:translateY(2px) scale(1.32) rotate(6deg); filter:drop-shadow(0 0 8px var(--accent)); }
+      72% { opacity:1; transform:translateY(-2px) scale(.94) rotate(-2deg); filter:drop-shadow(0 0 12px var(--accent)); }
+      88% { opacity:1; transform:translateY(0) scale(1.08) rotate(0deg); filter:drop-shadow(0 0 6px var(--accent)); }
+      100% { opacity:1; transform:translateY(0) scale(1) rotate(0deg); filter:drop-shadow(0 0 0 transparent); }
+    }
+    @keyframes welcomeHeartHalo {
+      0% { opacity:0; transform:scale(.78); }
+      35% { opacity:.75; transform:scale(1.06); }
+      100% { opacity:0; transform:scale(1.42); }
+    }
+    /* Friendly Onboarding Wizard */
+    @keyframes onboardStepIn {
+      0% { opacity:0; transform:translateX(14px) scale(.985); }
+      100% { opacity:1; transform:translateX(0) scale(1); }
+    }
+    .onboard-step-pane:not(.hidden) {
+      animation:onboardStepIn 320ms cubic-bezier(.22,1,.36,1) both;
+    }
+    .onboard-choice-card {
+      transition:transform 140ms, border-color 140ms, background-color 140ms, box-shadow 140ms;
+    }
+    .onboard-choice-card:hover { transform:translateY(-1px); }
+    .onboard-choice-card[aria-pressed="true"] {
+      background:var(--tint)!important; border-color:var(--primary)!important; color:var(--link)!important;
+      box-shadow:0 4px 12px rgba(36,83,204,.12);
     }
   </style>
 </head>
@@ -617,61 +662,109 @@
         </button>
       </div>
 
-      <form id="auth-onboard-step" class="hidden space-y-3">
-        <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-900 space-y-0.5">
-          <p class="font-black">환영합니다! 가입 설정을 완료해 주세요 👋</p>
-          <p id="onboard-google-email" class="text-[11px] opacity-80"></p>
-        </div>
-        <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 text-[11px] text-slate-700 leading-relaxed space-y-1">
-          <p class="font-black text-slate-900">🔒 Google 보안 인프라로 안전하게 보호됩니다</p>
-          <p>입력하신 모든 정보는 <strong>Google Firebase Authentication</strong> 및 <strong>HTTPS/TLS 암호화 통신</strong>을 기반으로 안전하게 보호·저장됩니다. 실명과 설문 응답은 다른 스터디원에게 절대 노출되지 않으며, 모든 앱 활동은 <strong>별명</strong>으로만 이루어집니다.</p>
-        </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-          <div>
-            <label for="onboard-realname-input" class="block text-xs font-bold text-slate-700 mb-1">실명 <span class="text-rose-600">(본인 이름 필수)</span></label>
-            <input id="onboard-realname-input" type="text" maxlength="16" placeholder="반드시 본인 실명 입력" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-xs sm:text-sm font-bold" required />
+      <form id="auth-onboard-step" class="hidden space-y-3.5" novalidate>
+        <!-- Progress Header -->
+        <div class="space-y-1.5">
+          <div class="flex items-center justify-between text-[11px] font-bold">
+            <span id="onboard-step-label" class="text-indigo-600">1단계 · 기본 정보</span>
+            <span id="onboard-step-counter" class="font-mono text-slate-400">1 / 4</span>
           </div>
-          <div>
-            <label for="onboard-nickname-input" class="block text-xs font-bold text-slate-700 mb-1">사용할 별명 <span class="text-slate-400 font-normal">(공개)</span></label>
-            <input id="onboard-nickname-input" type="text" maxlength="16" placeholder="예: 열공하는 스터디원" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-xs sm:text-sm font-bold" required />
+          <div class="h-1.5 w-full rounded-full bg-slate-100 overflow-hidden">
+            <div id="onboard-progress-bar" class="h-full rounded-full bg-indigo-600 transition-all duration-300" style="width:25%"></div>
           </div>
         </div>
-        <div class="p-3 rounded-xl bg-indigo-50/50 border border-indigo-200/80 space-y-2.5 text-xs">
-          <p class="text-[11px] font-black text-indigo-950">📋 간단한 가입 설문 <span class="font-semibold text-slate-500">(관리자만 열람 · 목적 외 사용 없음)</span></p>
-          <div>
-            <label for="onboard-survey-source" class="block text-[11px] font-bold text-slate-700 mb-1">1. 어느 경로로 앱에 가입하게 되셨나요?</label>
-            <select id="onboard-survey-source" class="w-full rounded-xl border border-slate-300 bg-white px-2.5 py-2 text-xs font-semibold" required>
-              <option value="">선택해 주세요</option>
-              <option value="지인 추천">1. 지인의 추천을 받아서</option>
-              <option value="궁금해서">2. 어떤 앱인지 궁금해서</option>
-              <option value="주변 권유(반강제)">3. 주변에서 같이 하자고 해서 (반강제 가입)</option>
-              <option value="재밌어 보여서">4. 재밌고 유용해 보여서</option>
-            </select>
+
+        <!-- Step 1: Security & Name -->
+        <div data-onboard-pane="1" class="onboard-step-pane space-y-3">
+          <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-900 space-y-0.5">
+            <p class="font-black">반가워요! 딱 1분이면 준비 끝나요 👋</p>
+            <p id="onboard-google-email" class="text-[11px] opacity-80"></p>
           </div>
-          <div>
-            <label for="onboard-survey-feature" class="block text-[11px] font-bold text-slate-700 mb-1">2. 가장 기대되는 기능은 무엇인가요?</label>
-            <select id="onboard-survey-feature" class="w-full rounded-xl border border-slate-300 bg-white px-2.5 py-2 text-xs font-semibold" required>
-              <option value="">선택해 주세요</option>
-              <option value="스톱워치">⏱️ 집중 스톱워치</option>
-              <option value="플래너">📝 스터디 플래너</option>
-              <option value="랭킹·티어">🏆 랭킹 · 티어 시스템</option>
-              <option value="소통">💌 소통 (리스펙 · 우편함)</option>
-              <option value="울트라집중모드">⚡ 울트라집중모드</option>
-            </select>
+          <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 text-[11px] text-slate-700 leading-relaxed space-y-1">
+            <p class="font-black text-slate-900">🔒 Google 보안 인프라로 안전하게 보호됩니다</p>
+            <p>모든 정보는 <strong>Google Firebase Authentication</strong>과 <strong>HTTPS/TLS 암호화 통신</strong>으로 안전하게 지켜집니다. 실명은 관리자 확인용으로만 쓰이며 타인에게 절대 보이지 않고, 모든 활동은 <strong>별명</strong>으로만 이루어져요.</p>
           </div>
+          <div class="space-y-2.5">
+            <div>
+              <label for="onboard-realname-input" class="block text-xs font-bold text-slate-700 mb-1">본인 실명 <span class="text-rose-600">(가입 후 변경 불가)</span></label>
+              <input id="onboard-realname-input" type="text" maxlength="16" placeholder="반드시 본인 실명을 적어주세요" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm font-bold" />
+            </div>
+            <div>
+              <label for="onboard-nickname-input" class="block text-xs font-bold text-slate-700 mb-1">활동할 별명 <span class="text-slate-400 font-normal">(스터디원에게 표시됨)</span></label>
+              <input id="onboard-nickname-input" type="text" maxlength="16" placeholder="예: 열공하는 스터디원" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm font-bold" />
+            </div>
+          </div>
+          <button type="button" data-onboard-next="2" class="w-full py-3 px-4 rounded-xl ed-btn-accent font-black text-sm">다음으로 →</button>
+        </div>
+
+        <!-- Step 2: Join Source -->
+        <div data-onboard-pane="2" class="onboard-step-pane hidden space-y-3">
           <div>
-            <label for="onboard-survey-goal-hours" class="block text-[11px] font-bold text-slate-700 mb-1">3. 하루 목표 공부시간은 몇 시간인가요?</label>
+            <p class="text-sm font-black text-slate-900">어느 경로로 찾아오셨나요? 👀</p>
+            <p class="text-[11px] text-slate-500 mt-0.5">관리자만 참고용으로 확인하며 다른 곳에 쓰이지 않아요.</p>
+          </div>
+          <input id="onboard-survey-source" type="hidden" value="" />
+          <div id="onboard-source-cards" class="grid grid-cols-1 gap-2">
+            <button type="button" data-source-val="지인 추천" aria-pressed="false" class="onboard-choice-card text-left px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs font-bold text-slate-800">🤝 지인의 추천을 받아서</button>
+            <button type="button" data-source-val="궁금해서" aria-pressed="false" class="onboard-choice-card text-left px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs font-bold text-slate-800">🔍 어떤 앱인지 궁금해서</button>
+            <button type="button" data-source-val="주변 권유(반강제)" aria-pressed="false" class="onboard-choice-card text-left px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs font-bold text-slate-800">😅 주변에서 같이 하자고 해서 (반강제 가입)</button>
+            <button type="button" data-source-val="재밌어 보여서" aria-pressed="false" class="onboard-choice-card text-left px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs font-bold text-slate-800">✨ 재밌고 유용해 보여서</button>
+          </div>
+          <div class="grid grid-cols-3 gap-2 pt-1">
+            <button type="button" data-onboard-prev="1" class="py-2.5 rounded-xl bg-slate-100 text-xs font-bold text-slate-700">← 이전</button>
+            <button type="button" data-onboard-next="3" class="col-span-2 py-2.5 rounded-xl ed-btn-accent font-black text-sm">다음으로 →</button>
+          </div>
+        </div>
+
+        <!-- Step 3: Expected Feature & Daily Goal -->
+        <div data-onboard-pane="3" class="onboard-step-pane hidden space-y-3.5">
+          <div class="space-y-2">
+            <p class="text-sm font-black text-slate-900">가장 기대되는 기능은 뭔가요? ✨</p>
+            <input id="onboard-survey-feature" type="hidden" value="" />
+            <div id="onboard-feature-cards" class="flex flex-wrap gap-1.5">
+              <button type="button" data-feature-val="스톱워치" aria-pressed="false" class="onboard-choice-card px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-xs font-bold text-slate-800">⏱️ 스톱워치</button>
+              <button type="button" data-feature-val="플래너" aria-pressed="false" class="onboard-choice-card px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-xs font-bold text-slate-800">📝 플래너</button>
+              <button type="button" data-feature-val="랭킹·티어" aria-pressed="false" class="onboard-choice-card px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-xs font-bold text-slate-800">🏆 랭킹 · 티어</button>
+              <button type="button" data-feature-val="소통" aria-pressed="false" class="onboard-choice-card px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-xs font-bold text-slate-800">💌 소통</button>
+              <button type="button" data-feature-val="울트라집중모드" aria-pressed="false" class="onboard-choice-card px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-xs font-bold text-slate-800">⚡ 울트라집중모드</button>
+            </div>
+          </div>
+          <div class="space-y-2">
+            <p class="text-sm font-black text-slate-900">하루 목표 공부시간은 몇 시간인가요? 🎯</p>
+            <div class="flex flex-wrap gap-1.5">
+              <button type="button" data-goal-preset="3" class="px-2.5 py-1.5 rounded-lg border border-slate-200 bg-slate-50 hover:bg-slate-100 text-xs font-bold">3시간</button>
+              <button type="button" data-goal-preset="5" class="px-2.5 py-1.5 rounded-lg border border-slate-200 bg-slate-50 hover:bg-slate-100 text-xs font-bold">5시간</button>
+              <button type="button" data-goal-preset="6" class="px-2.5 py-1.5 rounded-lg border border-slate-200 bg-slate-50 hover:bg-slate-100 text-xs font-bold">6시간</button>
+              <button type="button" data-goal-preset="8" class="px-2.5 py-1.5 rounded-lg border border-slate-200 bg-slate-50 hover:bg-slate-100 text-xs font-bold">8시간</button>
+              <button type="button" data-goal-preset="10" class="px-2.5 py-1.5 rounded-lg border border-slate-200 bg-slate-50 hover:bg-slate-100 text-xs font-bold">10시간</button>
+            </div>
             <div class="flex items-center gap-2">
-              <input id="onboard-survey-goal-hours" type="number" min="0.5" max="24" step="0.5" placeholder="예: 6" class="w-24 rounded-xl border border-slate-300 bg-white px-3 py-1.5 text-xs font-bold" required />
+              <input id="onboard-survey-goal-hours" type="number" min="0.5" max="24" step="0.5" placeholder="직접 입력 (예: 6)" class="w-36 rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs font-bold" />
               <span class="text-xs font-bold text-slate-600">시간</span>
             </div>
           </div>
+          <div class="grid grid-cols-3 gap-2 pt-1">
+            <button type="button" data-onboard-prev="2" class="py-2.5 rounded-xl bg-slate-100 text-xs font-bold text-slate-700">← 이전</button>
+            <button type="button" data-onboard-next="4" class="col-span-2 py-2.5 rounded-xl ed-btn-accent font-black text-sm">마지막 단계로 →</button>
+          </div>
         </div>
-        <label class="flex items-start gap-2 p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-[11px] text-slate-700 cursor-pointer">
-          <input id="onboard-privacy-agree" type="checkbox" class="mt-0.5 shrink-0" required />
-          <span><strong>[필수] 개인정보 수집·이용 동의</strong> : 스터디원 본인 확인 및 서비스 보안·운영을 위해 실명과 가입 설문 응답, Google 계정 식별 정보를 수집·이용하며, 타인에게 공개하거나 목적 외로 사용하지 않고 탈퇴·삭제 시까지 보관함에 동의합니다.</span>
-        </label>
-        <button type="submit" class="w-full py-3 px-4 rounded-xl ed-btn-accent font-black text-sm">설정 완료하고 시작하기</button>
+
+        <!-- Step 4: Consent & Launch -->
+        <div data-onboard-pane="4" class="onboard-step-pane hidden space-y-3">
+          <div class="p-3 rounded-xl bg-indigo-50/60 border border-indigo-200 text-xs space-y-1">
+            <p class="font-black text-indigo-950">🎉 거의 다 끝났어요!</p>
+            <p id="onboard-summary-line" class="text-[11px] text-indigo-900 font-semibold"></p>
+          </div>
+          <label class="flex items-start gap-2.5 p-3 rounded-xl bg-slate-50 border border-slate-200 text-[11px] text-slate-700 cursor-pointer leading-relaxed">
+            <input id="onboard-privacy-agree" type="checkbox" class="mt-0.5 shrink-0" />
+            <span><strong>[필수] 개인정보 수집·이용 동의</strong> : 스터디원 본인 확인 및 서비스 보안·운영을 위해 실명과 가입 설문 응답, Google 계정 식별 정보를 수집·이용하며, 타인에게 공개하거나 목적 외로 사용하지 않고 탈퇴·삭제 시까지 보관함에 동의합니다.</span>
+          </label>
+          <div class="grid grid-cols-3 gap-2 pt-1">
+            <button type="button" data-onboard-prev="3" class="py-3 rounded-xl bg-slate-100 text-xs font-bold text-slate-700">← 이전</button>
+            <button type="submit" class="col-span-2 py-3 px-4 rounded-xl ed-btn-accent font-black text-sm">설정 완료하고 시작하기</button>
+          </div>
+        </div>
+
         <button id="btn-onboard-logout" type="button" class="w-full text-center text-xs font-bold text-slate-500 hover:text-slate-800 underline underline-offset-4">다른 Google 계정으로 로그인</button>
       </form>
     </div>
@@ -1088,19 +1181,9 @@
             <label class="block text-[11px] font-semibold text-slate-600 mb-1">대상 멤버 (관리자 전용)</label>
             <select id="profile-member-select" class="w-full rounded-xl border border-slate-300 px-2.5 py-1.5 text-xs bg-white"></select>
           </div>
-          <div class="space-y-1">
-            <label for="profile-nickname-input" class="block text-[11px] font-bold text-slate-600">활동 별명 <span class="font-normal text-slate-400">(다른 스터디원에게 표시됨)</span></label>
-            <div class="flex gap-2">
-              <input id="profile-nickname-input" type="text" placeholder="별명을 입력하세요" class="flex-1 min-w-0 rounded-xl border border-slate-300 px-3 py-2 text-xs sm:text-sm" required />
-              <button type="submit" class="px-4 py-2 rounded-xl bg-slate-950 hover:bg-slate-800 text-white text-xs sm:text-sm font-bold whitespace-nowrap shrink-0">저장</button>
-            </div>
-          </div>
-        </form>
-        <form id="realname-form" class="space-y-1 pt-1">
-          <label for="profile-realname-input" class="block text-[11px] font-bold text-slate-600">실명 <span class="font-normal text-slate-400">(비공개 · 타인에게 노출되지 않음)</span></label>
           <div class="flex gap-2">
-            <input id="profile-realname-input" type="text" maxlength="16" placeholder="본인 실명을 입력하세요" class="flex-1 min-w-0 rounded-xl border border-slate-300 px-3 py-2 text-xs sm:text-sm" required />
-            <button type="submit" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-300 text-slate-800 text-xs sm:text-sm font-bold whitespace-nowrap shrink-0">실명 변경</button>
+            <input id="profile-nickname-input" type="text" placeholder="별명을 입력하세요" class="flex-1 min-w-0 rounded-xl border border-slate-300 px-3 py-2 text-xs sm:text-sm" required />
+            <button type="submit" class="px-4 py-2 rounded-xl bg-slate-950 hover:bg-slate-800 text-white text-xs sm:text-sm font-bold whitespace-nowrap shrink-0">저장</button>
           </div>
         </form>
 
@@ -1877,6 +1960,11 @@
       let cloudConnected = false;
       let cloudErrorMsg = '';
       let dbRef = null;
+      let privateRef = null;
+      let allPrivateRef = null;
+      let myPrivateData = { realName: '', onboardingSurvey: null, motemote: {} };
+      let allPrivateData = {};
+      let lastPrivateMotemoteJson = '{}';
       let dbListenerAttached = false;
       let dbLoadedOnce = false;
       let currentAuthUser = null;
@@ -2066,9 +2154,18 @@
         queueCloudWrite();
       }
 
+      function syncPrivateMotemote() {
+        if (!privateRef || !currentAuthUser || prefs.inspectingMember) return;
+        const curJson = JSON.stringify(myPrivateData.motemote || {});
+        if (curJson === lastPrivateMotemoteJson) return;
+        lastPrivateMotemoteJson = curJson;
+        privateRef.child('motemote').set(myPrivateData.motemote || {}).catch(() => {});
+      }
+
       function saveSharedData() {
         if (focusWriteBatch) return;
         try { localStorage.setItem(LOCAL_DATA_KEY, JSON.stringify(shared)); } catch (err) { /* Cloud saving can continue if browser storage is full. */ }
+        syncPrivateMotemote();
         if (!dbRef || !cloudConnected) return;
         syncDirty = true;
         updateCloudPill();
@@ -2167,10 +2264,10 @@
         }, 980);
       }
 
-      function playFirstJoinWelcome(realName) {
+      function playFirstJoinWelcome(nickname) {
         welcomePlayedForSession = true;
         if (reduceMotion.matches) {
-          showToast(`모든 설정이 완료되었습니다. ${realName}님, 이제 시작해보세요!`, 'success');
+          showToast(`모든 설정이 완료되었습니다. ${nickname}님, 이제 시작해보세요!`, 'success');
           return;
         }
         const ov = document.getElementById('login-welcome-overlay');
@@ -2180,7 +2277,7 @@
         const targetLogo = document.querySelector('#study-header .study-logo');
         if (!ov || !fly || !targetLogo) return;
         if (titleEl) titleEl.textContent = '모든 설정이 완료되었습니다.';
-        if (sub) sub.textContent = `${realName ? realName + '님, ' : ''}이제 시작해보세요!`;
+        if (sub) sub.textContent = `${nickname ? nickname + '님, ' : ''}환영합니다!`;
         targetLogo.style.opacity = '0';
         fly.style.transform = '';
         ov.classList.remove('is-entered', 'is-flying', 'is-fading', 'is-reconstruct');
@@ -2192,8 +2289,8 @@
         });
         setTimeout(() => {
           if (titleEl) titleEl.textContent = '이제 시작해보세요!';
-          if (sub) sub.textContent = `${realName ? realName + '님, ' : ''}오늘 하루도 파이팅해봐요!`;
-        }, 1050);
+          if (sub) sub.textContent = `${nickname ? nickname + '님, ' : ''}오늘 하루도 파이팅해봐요!`;
+        }, 2900);
         setTimeout(() => {
           const fromR = fly.getBoundingClientRect();
           const toR = targetLogo.getBoundingClientRect();
@@ -2210,8 +2307,8 @@
             targetLogo.style.opacity = '';
             ov.classList.remove('is-active', 'is-entered', 'is-flying', 'is-fading', 'is-reconstruct');
             fly.style.transform = '';
-          }, 680);
-        }, 2150);
+          }, 1700);
+        }, 6500);
       }
 
       function hideAuthOverlay() {
@@ -2251,9 +2348,9 @@
           if (pendingFirstJoinWelcome) {
             const info = pendingFirstJoinWelcome;
             pendingFirstJoinWelcome = null;
-            playFirstJoinWelcome(info.realName || found.realName || found.name);
+            playFirstJoinWelcome(info.nickname || found.name);
           } else {
-            playLoginWelcome(found.realName || found.name);
+            playLoginWelcome(found.name);
           }
           restoreFocusStateIfNeeded(found.id);
         } else if (dbLoadedOnce || !cloudConnected) {
@@ -2261,9 +2358,43 @@
         }
       }
 
+      function attachPrivateDb(user) {
+        if (!user || typeof firebase === 'undefined') return;
+        const database = firebase.database();
+        if (!privateRef) {
+          privateRef = database.ref('privateData/' + user.uid);
+          privateRef.on('value', snap => {
+            const pv = snap.val() || {};
+            myPrivateData = {
+              realName: pv.realName || '',
+              onboardingSurvey: pv.onboardingSurvey || null,
+              motemote: pv.motemote || {}
+            };
+            lastPrivateMotemoteJson = JSON.stringify(myPrivateData.motemote || {});
+            renderAll();
+          }, () => {});
+        }
+        if ((user.email || '').toLowerCase() === ADMIN_EMAIL && !allPrivateRef) {
+          allPrivateRef = database.ref('privateData');
+          allPrivateRef.on('value', snap => {
+            allPrivateData = snap.val() || {};
+            if (prefs.activeTab === 'admin') renderAdminTab();
+          }, () => {});
+        }
+      }
+
+      function detachPrivateDb() {
+        if (privateRef) { try { privateRef.off(); } catch (e) {} privateRef = null; }
+        if (allPrivateRef) { try { allPrivateRef.off(); } catch (e) {} allPrivateRef = null; }
+        myPrivateData = { realName: '', onboardingSurvey: null, motemote: {} };
+        allPrivateData = {};
+        lastPrivateMotemoteJson = '{}';
+      }
+
       function attachRealtimeDb() {
         if (dbListenerAttached) return;
         dbListenerAttached = true;
+        if (currentAuthUser) attachPrivateDb(currentAuthUser);
         const database = firebase.database();
         dbRef = database.ref('studyData');
         connectionRef = database.ref('.info/connected');
@@ -2379,6 +2510,7 @@
                 sessionClaimed = false;
                 welcomePlayedForSession = false;
                 dbLoadedOnce = false;
+                detachPrivateDb();
                 if (dbRef && dbListenerAttached) {
                   try { dbRef.off(); } catch (e) {}
                   dbListenerAttached = false;
@@ -2797,8 +2929,26 @@
         return `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-extrabold border ${b.customCls || BADGE_THEMES.gold}">${escapeHtml(b.label)}</span>`;
       }
 
-      // Motemote Planner Helpers
+      // Motemote Planner Helpers (isolated in privateData per UID when signed in)
       function getMemberMotemote(dateStr, memId) {
+        const targetM = (shared.members || []).find(m => m.id === memId);
+        if (currentAuthUser && targetM && targetM.uid === currentAuthUser.uid && privateRef) {
+          if (!myPrivateData.motemote) myPrivateData.motemote = {};
+          if (!myPrivateData.motemote[dateStr]) {
+            const legacy = shared.motemote && shared.motemote[dateStr] && shared.motemote[dateStr][memId];
+            if (legacy && ((legacy.tasks && legacy.tasks.length) || (legacy.blocks && Object.keys(legacy.blocks).length))) {
+              myPrivateData.motemote[dateStr] = JSON.parse(JSON.stringify(legacy));
+              syncPrivateMotemote();
+            } else {
+              myPrivateData.motemote[dateStr] = { tasks: [], blocks: {} };
+            }
+          }
+          return myPrivateData.motemote[dateStr];
+        }
+        if (prefs.adminMode && targetM && targetM.uid && allPrivateData[targetM.uid] && allPrivateData[targetM.uid].motemote) {
+          if (!allPrivateData[targetM.uid].motemote[dateStr]) allPrivateData[targetM.uid].motemote[dateStr] = { tasks: [], blocks: {} };
+          return allPrivateData[targetM.uid].motemote[dateStr];
+        }
         if (!shared.motemote) shared.motemote = {};
         if (!shared.motemote[dateStr]) shared.motemote[dateStr] = {};
         if (!shared.motemote[dateStr][memId]) shared.motemote[dateStr][memId] = { tasks: [], blocks: {} };
@@ -3538,8 +3688,6 @@
         const tm = shared.members.find(m => m.id === selId);
         if (tm) {
           document.getElementById('profile-nickname-input').value = tm.name;
-          const rnEl = document.getElementById('profile-realname-input');
-          if (rnEl) rnEl.value = tm.realName || '';
           const avEl = document.getElementById('profile-avatar-preview');
           avEl.innerHTML = tm.avatarUrl ? `<img src="${escapeHtml(tm.avatarUrl)}" class="w-full h-full object-cover" alt="${escapeHtml(tm.name)}" />` : escapeHtml(tm.name.slice(0, 1));
           const emailEl = document.getElementById('profile-account-email');
@@ -3896,19 +4044,24 @@
 
         const obListEl = document.getElementById('admin-onboarding-list');
         if (obListEl) {
-          const obMembers = (shared.members || []).filter(m => m.realName || m.onboardingSurvey);
-          obListEl.innerHTML = obMembers.length
-            ? obMembers.map(m => {
-                const sv = m.onboardingSurvey || {};
+          const obRows = (shared.members || []).map(m => {
+            const pRec = (m.uid && allPrivateData[m.uid]) ? allPrivateData[m.uid] : {};
+            const realName = pRec.realName || m.realName || '';
+            const survey = pRec.onboardingSurvey || m.onboardingSurvey || null;
+            return { m, realName, survey };
+          }).filter(item => item.realName || item.survey);
+          obListEl.innerHTML = obRows.length
+            ? obRows.map(({ m, realName, survey }) => {
+                const sv = survey || {};
                 return `<div class="rounded-xl border border-slate-200 bg-slate-50 p-2.5 text-xs space-y-1.5">
                   <div class="flex items-center justify-between gap-2">
                     <div class="flex items-center gap-1.5 min-w-0">
-                      <span class="px-2 py-0.5 rounded-md bg-slate-950 text-white text-[10px] font-black shrink-0">실명: ${escapeHtml(m.realName || '미등록')}</span>
+                      <span class="px-2 py-0.5 rounded-md bg-slate-950 text-white text-[10px] font-black shrink-0">실명: ${escapeHtml(realName || '미등록')}</span>
                       <span class="font-bold text-slate-800 truncate">별명: ${escapeHtml(m.name)}</span>
                     </div>
                     ${sv.agreedAt ? `<span class="text-[10px] text-slate-400 shrink-0">${escapeHtml(sv.agreedAt)}</span>` : ''}
                   </div>
-                  ${m.onboardingSurvey ? `<div class="flex flex-wrap gap-1">
+                  ${survey ? `<div class="flex flex-wrap gap-1">
                     <span class="px-2 py-0.5 rounded-md bg-white border border-slate-200 text-[10px] font-semibold">경로: ${escapeHtml(sv.source || '-')}</span>
                     <span class="px-2 py-0.5 rounded-md bg-white border border-slate-200 text-[10px] font-semibold">기대: ${escapeHtml(sv.feature || '-')}</span>
                     <span class="px-2 py-0.5 rounded-md bg-white border border-slate-200 text-[10px] font-semibold">목표: ${escapeHtml(sv.goalHours || '-')}시간</span>
@@ -4968,18 +5121,7 @@
         const m = shared.members.find(x => x.id === mid);
         if (m && nm) { m.name = nm; if (shared.photos) shared.photos.forEach(p => { if (p.memberId === mid) p.memberName = nm; }); if (shared.reports) shared.reports.forEach(r => { if (r.targetId === mid) r.targetName = nm; }); saveSharedData(); showToast('별명 저장됨', 'success'); renderAll(); renderMembersTab(); renderWeeklyReportCards(); }
       });
-      document.getElementById('realname-form').addEventListener('submit', e => {
-        e.preventDefault();
-        const mid = document.getElementById('profile-member-select').value || prefs.currentUserId;
-        const rn = document.getElementById('profile-realname-input').value.trim();
-        const m = shared.members.find(x => x.id === mid);
-        if (m && rn) {
-          m.realName = rn;
-          saveSharedData();
-          showToast('실명이 변경되었습니다. (타인에게 노출되지 않습니다)', 'success');
-          renderProfileTab();
-        }
-      });
+
       document.getElementById('class-form').addEventListener('submit', e => {
         e.preventDefault();
         const mid = document.getElementById('class-member-select').value, d = document.getElementById('class-day-select').value, n = document.getElementById('class-name-input').value.trim(), s = document.getElementById('class-start-input').value, en = document.getElementById('class-end-input').value;
@@ -5813,6 +5955,61 @@
         });
       });
 
+      function setOnboardStep(stepNum) {
+        const labels = {
+          1: '1단계 · 기본 정보',
+          2: '2단계 · 가입 경로',
+          3: '3단계 · 기대 기능 & 목표',
+          4: '4단계 · 동의 및 완료'
+        };
+        document.querySelectorAll('[data-onboard-pane]').forEach(p => {
+          p.classList.toggle('hidden', Number(p.dataset.onboardPane) !== stepNum);
+        });
+        document.getElementById('onboard-step-label').textContent = labels[stepNum] || '';
+        document.getElementById('onboard-step-counter').textContent = `${stepNum} / 4`;
+        document.getElementById('onboard-progress-bar').style.width = `${stepNum * 25}%`;
+        if (stepNum === 4) {
+          const nick = document.getElementById('onboard-nickname-input').value.trim();
+          const goal = document.getElementById('onboard-survey-goal-hours').value.trim();
+          const feat = document.getElementById('onboard-survey-feature').value;
+          document.getElementById('onboard-summary-line').textContent = `${nick}님 · 기대 기능: ${feat} · 하루 목표 ${goal}시간`;
+        }
+      }
+      document.getElementById('onboard-source-cards').addEventListener('click', e => {
+        const b = e.target.closest('[data-source-val]'); if (!b) return;
+        document.getElementById('onboard-survey-source').value = b.dataset.sourceVal;
+        document.querySelectorAll('[data-source-val]').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+      });
+      document.getElementById('onboard-feature-cards').addEventListener('click', e => {
+        const b = e.target.closest('[data-feature-val]'); if (!b) return;
+        document.getElementById('onboard-survey-feature').value = b.dataset.featureVal;
+        document.querySelectorAll('[data-feature-val]').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+      });
+      document.querySelectorAll('[data-goal-preset]').forEach(b => {
+        b.addEventListener('click', () => {
+          document.getElementById('onboard-survey-goal-hours').value = b.dataset.goalPreset;
+        });
+      });
+      document.getElementById('auth-onboard-step').addEventListener('click', e => {
+        const nextB = e.target.closest('[data-onboard-next]');
+        if (nextB) {
+          const targetStep = Number(nextB.dataset.onboardNext);
+          if (targetStep === 2) {
+            if (!document.getElementById('onboard-realname-input').value.trim()) { showToast('본인의 실명을 반드시 입력해 주세요.', 'warn'); return; }
+            if (!document.getElementById('onboard-nickname-input').value.trim()) { showToast('사용할 별명을 입력해 주세요.', 'warn'); return; }
+          } else if (targetStep === 3) {
+            if (!document.getElementById('onboard-survey-source').value) { showToast('가입 경로를 선택해 주세요.', 'warn'); return; }
+          } else if (targetStep === 4) {
+            if (!document.getElementById('onboard-survey-feature').value) { showToast('가장 기대되는 기능을 선택해 주세요.', 'warn'); return; }
+            if (!document.getElementById('onboard-survey-goal-hours').value.trim()) { showToast('하루 목표 공부시간을 입력해 주세요.', 'warn'); return; }
+          }
+          setOnboardStep(targetStep);
+          return;
+        }
+        const prevB = e.target.closest('[data-onboard-prev]');
+        if (prevB) setOnboardStep(Number(prevB.dataset.onboardPrev));
+      });
+
       document.getElementById('auth-onboard-step').addEventListener('submit', async e => {
         e.preventDefault();
         const user = currentAuthUser;
@@ -5829,10 +6026,10 @@
         if (!agreed) { showToast('개인정보 수집·이용 동의에 체크해 주세요.', 'warn'); return; }
         if (!dbRef || !cloudConnected || cloudLinkLive === false) { showToast('연결된 뒤에 다시 시작하기를 눌러 주세요.', 'warn'); return; }
         const button = e.currentTarget.querySelector('button[type="submit"]');
+        const onboardingSurvey = { source, feature, goalHours: Number(goalHours), agreedAt: `${todayStr()} ${getNowParts().hhmm}` };
         const newMember = {
           id:'m_' + user.uid.slice(0,8) + '_' + Date.now(), uid:user.uid, activeSessionId:SESSION_ID,
-          realName, name:nickname, avatarUrl:user.photoURL || '', mode:'free', inStudy:false,
-          onboardingSurvey: { source, feature, goalHours: Number(goalHours), agreedAt: `${todayStr()} ${getNowParts().hhmm}` },
+          name:nickname, avatarUrl:user.photoURL || '', mode:'free', inStudy:false,
           streak:0, lp:0, respectCount:0, equippedTitle:'', lateNight:false, firstTime:null, lastTime:null
         };
         pendingFirstJoinWelcome = { realName, nickname };
@@ -5840,6 +6037,12 @@
         button.disabled = true;
         button.textContent = '기록 준비 중…';
         try {
+          await firebase.database().ref('privateData/' + user.uid).set({
+            realName,
+            nickname,
+            onboardingSurvey,
+            motemote: {}
+          });
           const result = await dbRef.child('members').transaction(cur => {
             const members = (Array.isArray(cur) ? cur : Object.values(cur || {})).filter(Boolean);
             if (!members.some(m => m.uid === user.uid)) members.push(newMember);
