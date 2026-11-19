@@ -139,6 +139,46 @@
     .lp-tier-soft { animation: lpFloatSoft 1.35s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
     .lp-tier-mid { animation: lpFloatMid 1.75s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
     .lp-tier-grand { animation: lpFloatGrand 2.15s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+    @keyframes liveStudyingPulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.35); }
+      50% { box-shadow: 0 0 0 5px rgba(16, 185, 129, 0.12); }
+    }
+    @keyframes focusCalmRipple {
+      0% { opacity: 0.28; transform: scale(0.96); }
+      70% { opacity: 0.08; transform: scale(1.06); }
+      100% { opacity: 0; transform: scale(1.1); }
+    }
+    @keyframes touchWaterRipple {
+      0% { opacity: 0.35; transform: translate(-50%, -50%) scale(0); }
+      100% { opacity: 0; transform: translate(-50%, -50%) scale(1); }
+    }
+    .focus-ripple-ring {
+      position: absolute;
+      inset: -4px;
+      border-radius: 1.5rem;
+      border: 1.5px solid var(--accent);
+      pointer-events: none;
+      animation: focusCalmRipple 4.4s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+    }
+    .focus-ripple-ring.delay-2 {
+      animation-delay: 2.2s;
+    }
+    .focus-ripple-paused .focus-ripple-ring {
+      animation: none;
+      opacity: 0;
+    }
+    .touch-ripple-dot {
+      position: absolute;
+      width: 180px;
+      height: 180px;
+      border-radius: 9999px;
+      background: radial-gradient(circle, rgba(255,255,255,0.45) 0%, rgba(91,181,246,0.18) 45%, transparent 72%);
+      pointer-events: none;
+      animation: touchWaterRipple 0.95s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    .studying-live-card {
+      animation: liveStudyingPulse 2s ease-in-out infinite;
+    }
     .lp-halo-ring {
       position: absolute;
       inset: -6px;
@@ -172,7 +212,9 @@
         <span id="focus-period-badge" class="inline-block px-3.5 py-1 rounded-full text-xs font-black bg-slate-950 text-white">집중 중</span>
         <p id="focus-period-range" class="text-sm font-bold text-slate-500">스톱워치</p>
       </div>
-      <div class="py-6 rounded-3xl ed-banner">
+      <div id="focus-timer-box" class="relative overflow-hidden py-6 rounded-3xl ed-banner select-none">
+        <span class="focus-ripple-ring"></span>
+        <span class="focus-ripple-ring delay-2"></span>
         <div id="focus-timer-display" class="text-6xl sm:text-7xl font-mono font-black tracking-tighter">00:00</div>
         <p id="focus-pause-label" class="hidden text-xs font-bold mt-2">잠시 쉬는 중 · 10분 초과 휴식 시 연속 집중이 초기화됩니다</p>
         <p id="focus-cheer-msg" class="text-xs font-bold mt-2 opacity-80 transition-opacity duration-500 min-h-[1rem]"></p>
@@ -316,7 +358,8 @@
         <h2 id="live-period-title" class="text-base sm:text-xl font-black tracking-tight">1교시 (08:00 ~ 08:50)</h2>
         <div class="flex items-center gap-2 flex-wrap">
           <p id="live-sub-desc" class="text-xs font-medium opacity-85">시작 후 5분 이내에 출석 버튼을 눌러주세요.</p>
-          <button id="btn-edit-quote" type="button" class="hidden px-2 py-0.5 rounded-md bg-slate-950/15 hover:bg-slate-950/25 text-[11px] font-bold whitespace-nowrap">✏️ 명언 설정</button>
+          <button id="btn-edit-quote" type="button" class="hidden px-2 py-0.5 rounded-md bg-slate-950/15 hover:bg-slate-950/25 text-[11px] font-bold whitespace-nowrap">✏️ 명언</button>
+          <button id="btn-edit-bg" type="button" class="hidden px-2 py-0.5 rounded-md bg-slate-950/15 hover:bg-slate-950/25 text-[11px] font-bold whitespace-nowrap">🖼️ 배경</button>
         </div>
       </div>
       <div class="flex sm:flex-col items-baseline sm:items-end justify-between border-t sm:border-t-0 border-slate-950/10 pt-2 sm:pt-0 shrink-0">
@@ -2152,11 +2195,7 @@
         if (canSeeStudying) {
           const activePid = phase && phase.type === 'study' ? phase.id : 'p1';
           const t = todayStr();
-          const studyingNowCnt = shared.members.filter(m => {
-            if (m.inStudy === false) return false;
-            const st = getMemberDayStatus(m.id, t, activePid);
-            return st === 'present' || st === 'late';
-          }).length;
+          const studyingNowCnt = shared.members.filter(m => m.inStudy !== false && !!m.isFocusing).length;
           miniEl.textContent = `🔥 현재 ${studyingNowCnt}명 공부 중`;
           miniEl.classList.remove('hidden');
         } else {
@@ -2186,14 +2225,17 @@
         }
         const isFreeBanner = getMemberMode(meBanner) === 'free';
         document.getElementById('btn-edit-quote').classList.toggle('hidden', !isFreeBanner);
+        document.getElementById('btn-edit-bg').classList.toggle('hidden', !isFreeBanner);
         if (isFreeBanner) {
           badgeEl.textContent = '자율모드 · 오늘의 한마디';
           badgeEl.className = 'px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500 text-white';
           const dayIdx = Math.floor(Date.now() / 86400000) % DAILY_QUOTES.length;
           titleEl.textContent = prefs.customQuote ? `"${prefs.customQuote}"` : `"${DAILY_QUOTES[dayIdx]}"`;
-          descEl.textContent = '스톱워치로 나만의 집중 시간을 자유롭게 쌓아보세요.';
+          descEl.textContent = '';
+          descEl.classList.add('hidden');
           return;
         }
+        descEl.classList.remove('hidden');
         if (!phase) {
           badgeEl.textContent = now.totalMins < 480 ? '입실 대기' : '자습 종료';
           badgeEl.className = 'px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-slate-600 text-white';
@@ -2435,8 +2477,7 @@
         const activePid = phase && phase.type === 'study' ? phase.id : 'p1';
         let studying = 0;
         shared.members.filter(m => m.inStudy !== false).forEach(m => {
-          const st = getMemberDayStatus(m.id, t, activePid);
-          if (st === 'present' || st === 'late' || (m.focusMins || 0) > 0) studying++;
+          if (m.isFocusing) studying++;
         });
         document.getElementById('group-live-summary').innerHTML = `
           <span class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 whitespace-nowrap">🔥 공부 중 ${studying}명</span>
@@ -2453,7 +2494,7 @@
           const st = rawSt === 'exempt' ? 'none' : rawSt;
           const fMins = Number(m.focusMins) || 0;
           const todayTotalMins = (shared.studyLogs && shared.studyLogs[t] && shared.studyLogs[t][m.id]) || 0;
-          const isStudying = (phase && phase.type === 'study' && (st === 'present' || st === 'late')) || fMins > 0;
+          const isStudying = !!m.isFocusing;
           const allBadges = getBadgesForMember(m, t);
           const badges = allBadges;
           const tierObj = getMemberTier(m.lp || 0);
@@ -2461,14 +2502,14 @@
           const isPromoNow = m.promoActiveDate === t;
           const promoRing = isPromoNow ? 'ring-2 ring-amber-400' : '';
           return `
-            <div data-member-detail="${m.id}" class="cursor-pointer rounded-2xl p-2.5 sm:p-3 bg-white flex flex-col justify-between gap-1.5 transition-all ${tierObj.frame} ${promoRing} ${flameCls}">
+            <div data-member-detail="${m.id}" class="cursor-pointer rounded-2xl p-2.5 sm:p-3 bg-white flex flex-col justify-between gap-1.5 transition-all ${tierObj.frame} ${promoRing} ${flameCls} ${isStudying ? 'studying-live-card' : ''}">
               <div class="flex items-center justify-between gap-1.5">
                 <div class="flex items-center gap-1.5 min-w-0">
                   <div class="w-7 h-7 rounded-full bg-slate-200 border border-slate-300 overflow-hidden flex items-center justify-center text-[11px] font-black text-slate-600 shrink-0">${m.avatarUrl ? `<img src="${m.avatarUrl}" class="w-full h-full object-cover" alt="${escapeHtml(m.name)}" />` : m.name.slice(0, 1)}</div>
                   <div class="min-w-0">
                     <div class="flex items-center gap-1 min-w-0">
-                      ${m.equippedTitle ? `<span class="px-1.5 py-0.5 rounded bg-slate-900 text-amber-300 text-[9px] font-black whitespace-nowrap shrink-0">${escapeHtml(m.equippedTitle)}</span>` : ''}<span class="font-extrabold text-xs sm:text-sm text-slate-900 truncate">${escapeHtml(m.name)}</span>
-                      ${isStudying ? '<span class="text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-600 text-white font-bold whitespace-nowrap shrink-0">공부중</span>' : ''}
+                      ${m.equippedTitle ? `<span class="px-1.5 py-0.5 rounded bg-slate-900 text-amber-300 text-[10px] font-black truncate">${escapeHtml(m.equippedTitle)}</span>` : `<span class="font-extrabold text-xs sm:text-sm text-slate-900 truncate">${escapeHtml(m.name)}</span>`}
+                      ${isStudying ? '<span class="inline-flex items-center gap-1 text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-600 text-white font-bold whitespace-nowrap shrink-0"><span class="relative flex h-1.5 w-1.5"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-200 opacity-75"></span><span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-white"></span></span>공부중</span>' : ''}
                     </div>
                   </div>
                 </div>
@@ -2716,7 +2757,7 @@
             const unlockedChs = (shared.challenges || []).filter(c => doneIds.includes(c.id));
             titlesEl.innerHTML = unlockedChs.length
               ? unlockedChs.map(ch => {
-                  const cleanTitle = ch.title.replace(/^[^\s]+\s*/, '');
+                  const cleanTitle = (ch.title.replace(/^[^\w가-힣A-Za-z0-9]+\s*/, '').trim() || ch.title.trim());
                   const isEq = tm.equippedTitle === cleanTitle;
                   return `<button type="button" data-profile-equip="${cleanTitle}" class="px-2.5 py-1 rounded-lg text-[11px] font-bold border transition ${isEq ? 'bg-slate-950 text-amber-300 border-slate-950' : 'bg-slate-50 text-slate-800 border-slate-300 hover:bg-slate-100'}">${escapeHtml(ch.title)} ${isEq ? '✓' : ''}</button>`;
                 }).join('')
@@ -2912,7 +2953,7 @@
         if (focusNoteEl) focusNoteEl.classList.toggle('hidden', activeChallengeCat === 'special');
         document.getElementById('challenges-grid').innerHTML = filteredChs.map(ch => {
           const unlocked = myDoneIds.includes(ch.id);
-          const cleanTitle = ch.title.replace(/^[^\s]+\s*/, '');
+          const cleanTitle = (ch.title.replace(/^[^\w가-힣A-Za-z0-9]+\s*/, '').trim() || ch.title.trim());
           const isEquipped = me.equippedTitle === cleanTitle;
           return `
             <div class="rounded-xl border p-3.5 flex flex-col justify-between gap-2 ${unlocked ? 'border-slate-950 bg-amber-50/40' : 'border-slate-200 bg-slate-50/60'}">
@@ -2998,7 +3039,7 @@
         bms.innerHTML = shared.members.map(m => `<option value="${m.id}" ${m.id === cbm ? 'selected' : ''}>${escapeHtml(m.name)}</option>`).join('');
         document.getElementById('admin-preset-badges').innerHTML = PRESET_ADMIN_BADGES.map((pb, idx) => `<button type="button" data-grant-preset="${idx}" class="fancy-badge px-2.5 py-1 rounded-full text-[11px] font-extrabold border ${BADGE_THEMES[pb.theme]}">${pb.label}</button>`).join('');
         const cList = (shared.customBadges && shared.customBadges[cbm]) || [];
-        document.getElementById('admin-member-badges-list').innerHTML = cList.length ? cList.map(cb => `<button type="button" data-revoke-badge="${cb.id}" class="px-2.5 py-0.5 rounded-full text-[11px] font-extrabold border ${BADGE_THEMES[cb.theme || 'gold']}">${escapeHtml(cb.label)} ✕</button>`).join('') : '<span class="text-xs text-slate-400">없음</span>';
+        document.getElementById('admin-member-badges-list').innerHTML = cList.length ? cList.map(cb => `<div class="inline-flex items-center gap-1 rounded-full border pl-2.5 pr-1.5 py-0.5 text-[11px] font-extrabold ${BADGE_THEMES[cb.theme || 'gold']}"><span>${escapeHtml(cb.label)}</span><button type="button" data-edit-badge="${cb.id}" class="px-1 hover:opacity-75" title="뱃지 이름 수정">✏️</button><button type="button" data-revoke-badge="${cb.id}" class="px-1 hover:text-rose-600" title="회수">✕</button></div>`).join('') : '<span class="text-xs text-slate-400">없음</span>';
 
         const dmTargetSel = document.getElementById('admin-dm-target');
         if (dmTargetSel) {
@@ -3837,10 +3878,11 @@
             ev.preventDefault();
             const nt = document.getElementById('modal-edit-ch-input').value.trim();
             if (!nt) return;
-            const oldClean = ch.title.replace(/^[^\s]+\s*/, '');
-            const newClean = nt.replace(/^[^\s]+\s*/, '');
+            const oldRaw = ch.title;
+            const oldClean = oldRaw.replace(/^[^\w가-힣A-Za-z0-9]+\s*/, '').trim() || oldRaw.trim();
+            const newClean = nt.replace(/^[^\w가-힣A-Za-z0-9]+\s*/, '').trim() || nt.trim();
             ch.title = nt;
-            (shared.members || []).forEach(m => { if (m.equippedTitle === oldClean) m.equippedTitle = newClean; });
+            (shared.members || []).forEach(m => { if (m.equippedTitle === oldClean || m.equippedTitle === oldRaw) m.equippedTitle = newClean; });
             saveSharedData(); closeModal(); showToast('칭호 이름이 수정되었습니다.', 'success'); renderAll();
           });
           return;
@@ -3868,14 +3910,16 @@
         const newTitle = document.getElementById('admin-edit-ch-title-input').value.trim();
         const ch = (shared.challenges || []).find(c => c.id === chId);
         if (!ch || !newTitle) return;
-        const oldClean = ch.title.replace(/^[^\s]+\s*/, '');
-        const newClean = newTitle.replace(/^[^\s]+\s*/, '');
+        const oldRaw = ch.title;
+        const oldClean = oldRaw.replace(/^[^\w가-힣A-Za-z0-9]+\s*/, '').trim() || oldRaw.trim();
+        const newClean = newTitle.replace(/^[^\w가-힣A-Za-z0-9]+\s*/, '').trim() || newTitle.trim();
         ch.title = newTitle;
-        (shared.members || []).forEach(m => { if (m.equippedTitle === oldClean) m.equippedTitle = newClean; });
+        (shared.members || []).forEach(m => { if (m.equippedTitle === oldClean || m.equippedTitle === oldRaw) m.equippedTitle = newClean; });
         saveSharedData();
         showToast('챌린지 칭호 텍스트가 수정되었습니다.', 'success');
         renderAdminTab();
         renderAll();
+        renderMembersTab();
       });
       document.getElementById('admin-challenge-toggles').addEventListener('click', e => {
         const b = e.target.closest('[data-toggle-ch]');
@@ -4190,9 +4234,42 @@
         document.getElementById('custom-badge-label').value = ''; showToast('뱃지 수여 완료', 'success'); renderAdminTab();
       });
       document.getElementById('admin-member-badges-list').addEventListener('click', e => {
-        const b = e.target.closest('[data-revoke-badge]'); if (!b) return;
         const mid = document.getElementById('admin-badge-member').value;
-        if (shared.customBadges && shared.customBadges[mid]) { shared.customBadges[mid] = shared.customBadges[mid].filter(x => x.id !== b.dataset.revokeBadge); saveSharedData(); renderAdminTab(); }
+        const eb = e.target.closest('[data-edit-badge]');
+        if (eb && shared.customBadges && shared.customBadges[mid]) {
+          const targetCb = shared.customBadges[mid].find(x => x.id === eb.dataset.editBadge);
+          if (!targetCb) return;
+          openModal('✏️ 뱃지 이름 수정', `
+            <form id="modal-edit-badge-form" class="space-y-3 text-xs">
+              <input id="modal-edit-badge-input" type="text" value="${escapeHtml(targetCb.label)}" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm font-bold" required />
+              <label class="flex items-center gap-2 text-slate-600 font-semibold">
+                <input id="modal-edit-badge-all" type="checkbox" checked />
+                <span>같은 뱃지를 가진 다른 스터디원도 함께 변경</span>
+              </label>
+              <button type="submit" class="w-full py-2.5 rounded-xl bg-slate-950 text-white text-sm font-bold">저장하기</button>
+            </form>
+          `);
+          document.getElementById('modal-edit-badge-form').addEventListener('submit', ev => {
+            ev.preventDefault();
+            const newLbl = document.getElementById('modal-edit-badge-input').value.trim();
+            const applyAll = document.getElementById('modal-edit-badge-all').checked;
+            if (!newLbl) return;
+            const oldLbl = targetCb.label;
+            if (applyAll) {
+              Object.values(shared.customBadges || {}).forEach(arr => {
+                if (Array.isArray(arr)) arr.forEach(item => { if (item && item.label === oldLbl) item.label = newLbl; });
+              });
+            } else {
+              targetCb.label = newLbl;
+            }
+            saveSharedData(); closeModal();
+            showToast('뱃지 이름이 수정되었습니다.', 'success');
+            renderAdminTab(); renderAll(); renderMembersTab();
+          });
+          return;
+        }
+        const b = e.target.closest('[data-revoke-badge]'); if (!b) return;
+        if (shared.customBadges && shared.customBadges[mid]) { shared.customBadges[mid] = shared.customBadges[mid].filter(x => x.id !== b.dataset.revokeBadge); saveSharedData(); renderAdminTab(); renderAll(); }
       });
 
       document.getElementById('btn-cleanup-7d').addEventListener('click', () => { const r = cleanupOldPhotos(3); saveSharedData(); showToast(`${r}건 정리됨`, 'info'); });
@@ -4380,7 +4457,9 @@
         document.getElementById('focus-mini-time').textContent = formatted;
         document.getElementById('focus-pause-label').classList.toggle('hidden', !focusPaused);
         document.getElementById('focus-min-btn').classList.toggle('hidden', !focusPaused);
-        document.getElementById('focus-pause-btn').textContent = focusPaused ? '다시 시작' : '잠시 쉬기';
+        document.getElementById('focus-pause-btn').textContent = focusPaused ? '공부 다시 시작하기' : '잠시 쉬기';
+        const tb = document.getElementById('focus-timer-box');
+        if (tb) tb.classList.toggle('focus-ripple-paused', focusPaused);
       }
 
       function openFocusOverlay(isRestoring = false) {
@@ -4584,6 +4663,10 @@
             focusPaused = false;
             pauseStartedAt = null;
           }
+          if (meFocus && meFocus.isFocusing !== !focusPaused) {
+            meFocus.isFocusing = !focusPaused;
+            saveSharedData();
+          }
           saveFocusState();
           document.getElementById('focus-cheer-msg').textContent = '';
           checkAutoAttendanceWhileStudying(0);
@@ -4618,7 +4701,7 @@
         clearFocusState();
         if (!prefs.adminMode) {
           const meObj = shared.members.find(x => x.id === prefs.currentUserId);
-          if (meObj && meObj.focusMins) { meObj.focusMins = 0; saveSharedData(); }
+          if (meObj && (meObj.focusMins || meObj.isFocusing)) { meObj.focusMins = 0; meObj.isFocusing = false; saveSharedData(); }
         }
         const ov = document.getElementById('focus-overlay');
         ov.classList.add('hidden');
@@ -4674,6 +4757,8 @@
       document.getElementById('focus-pause-btn').addEventListener('click', () => {
         if (!focusPaused && syncFocusClock) syncFocusClock();
         focusPaused = !focusPaused;
+        const meP = shared.members.find(x => x.id === prefs.currentUserId);
+        if (meP) { meP.isFocusing = !focusPaused; saveSharedData(); }
         if (focusPaused) {
           focusAccumulatedSecs = focusElapsedSecs;
           focusStartedAt = null;
@@ -4698,34 +4783,53 @@
 
 
       document.getElementById('btn-edit-quote').addEventListener('click', () => {
-        openModal('✏️ 오늘의 명언 & 배경 사진 설정', `
+        openModal('✏️ 오늘의 명언 설정', `
           <form id="quote-edit-form" class="space-y-3">
-            <input id="quote-edit-input" type="text" value="${prefs.customQuote || ''}" placeholder="나만의 명언 입력 (비우면 매일 자동 변경)" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm" />
-            <div class="space-y-1.5">
-              <label class="block text-xs font-bold text-slate-700">배경 사진 선택 (선택)</label>
-              <div class="flex gap-2 items-center">
-                <input id="quote-bg-input" type="file" accept="image/*" class="text-xs flex-1" />
-                <button id="quote-bg-reset" type="button" class="px-2.5 py-1 rounded-lg bg-slate-100 text-xs font-bold">기본 배경</button>
-              </div>
+            <input id="quote-edit-input" type="text" value="${escapeHtml(prefs.customQuote || '')}" placeholder="나만의 명언 입력 (비우면 매일 자동 변경)" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm" />
+            <div class="flex gap-2">
+              <button id="quote-reset-btn" type="button" class="px-3.5 py-2.5 rounded-xl bg-slate-100 text-slate-700 text-xs font-bold whitespace-nowrap">기본 명언</button>
+              <button type="submit" class="flex-1 py-2.5 rounded-xl bg-slate-950 text-white text-sm font-bold">저장</button>
             </div>
-            <button type="submit" class="w-full py-2.5 rounded-xl bg-slate-950 text-white text-sm font-bold">저장</button>
           </form>
         `);
-        document.getElementById('quote-bg-reset').addEventListener('click', () => {
-          prefs.bannerBgImg = '';
-          savePrefs();
-          renderLiveBanner();
-          showToast('기본 배경으로 돌아갔습니다.', 'info');
-        });
-        document.getElementById('quote-bg-input').addEventListener('change', ev => {
-          const f = ev.target.files[0]; if (!f) return;
-          compressImageFile(f, '', url => { prefs.bannerBgImg = url; savePrefs(); renderLiveBanner(); showToast('배경 사진이 적용되었습니다!', 'success'); });
+        document.getElementById('quote-reset-btn').addEventListener('click', () => {
+          prefs.customQuote = '';
+          savePrefs(); closeModal(); renderLiveBanner();
+          showToast('오늘의 기본 명언으로 돌아갔습니다.', 'info');
         });
         document.getElementById('quote-edit-form').addEventListener('submit', ev => {
           ev.preventDefault();
           prefs.customQuote = document.getElementById('quote-edit-input').value.trim();
           if (prefs.customQuote) { unlockChallengeFor(prefs.currentUserId, 'ch_quote', false); saveSharedData(); }
           savePrefs(); closeModal(); renderLiveBanner();
+        });
+      });
+
+      document.getElementById('btn-edit-bg').addEventListener('click', () => {
+        openModal('🖼️ 홈 배너 배경 설정', `
+          <div class="space-y-3 text-xs">
+            <p class="text-slate-600">원하는 사진을 골라 홈 배너 배경으로 쓰거나, 기본 배경으로 되돌릴 수 있습니다.</p>
+            <div class="flex flex-wrap items-center gap-2">
+              <label class="flex-1 cursor-pointer text-center py-2.5 px-3 rounded-xl bg-slate-950 text-white font-bold">
+                📷 사진 선택하기
+                <input id="quote-bg-input" type="file" accept="image/*" class="hidden" />
+              </label>
+              <button id="quote-bg-reset" type="button" class="py-2.5 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold whitespace-nowrap">기본 배경으로 변경</button>
+            </div>
+          </div>
+        `);
+        document.getElementById('quote-bg-reset').addEventListener('click', () => {
+          prefs.bannerBgImg = '';
+          savePrefs(); closeModal(); renderLiveBanner();
+          showToast('기본 배경으로 변경되었습니다.', 'info');
+        });
+        document.getElementById('quote-bg-input').addEventListener('change', ev => {
+          const f = ev.target.files[0]; if (!f) return;
+          compressImageFile(f, '', url => {
+            prefs.bannerBgImg = url;
+            savePrefs(); closeModal(); renderLiveBanner();
+            showToast('배경 사진이 적용되었습니다!', 'success');
+          });
         });
       });
 
@@ -4742,6 +4846,18 @@
       document.getElementById('focus-min-btn').addEventListener('click', minimizeFocusOverlay);
       document.getElementById('focus-mini-expand').addEventListener('click', openFocusOverlay);
       document.getElementById('focus-end-btn').addEventListener('click', () => { closeFocusOverlay(); flushCelebrations(); });
+      const ftBox = document.getElementById('focus-timer-box');
+      if (ftBox) {
+        ftBox.addEventListener('pointerdown', e => {
+          const rect = ftBox.getBoundingClientRect();
+          const dot = document.createElement('span');
+          dot.className = 'touch-ripple-dot';
+          dot.style.left = `${e.clientX - rect.left}px`;
+          dot.style.top = `${e.clientY - rect.top}px`;
+          ftBox.appendChild(dot);
+          setTimeout(() => dot.remove(), 1000);
+        });
+      }
 
       document.getElementById('btn-google-login').addEventListener('click', () => {
         if (typeof firebase === 'undefined' || typeof firebase.auth !== 'function') {
