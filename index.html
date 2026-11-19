@@ -224,7 +224,7 @@
     #schedule-list-wrap {max-height:32rem;scrollbar-color:var(--line) transparent}
     #schedule-list-wrap > div {margin-top:.38rem;min-height:36px}
     #promo-action-bar {border-radius:16px}
-    #tab-members [data-members-sub] {min-height:43px;white-space:normal;word-break:keep-all}
+    #tab-members [data-members-sub] {min-height:43px;white-space:nowrap;word-break:keep-all}
     #tab-members [data-members-sub][aria-pressed="true"] {background:var(--primary);color:var(--on-primary)}
     #brag-post-btn,.study-primary {min-height:44px}
     #tab-planner .time-cell {min-width:0}
@@ -282,7 +282,7 @@
     @media(max-width:390px) {
       #btn-open-focus,#btn-checkin {flex:1 1 100%}
       #my-period-chips {grid-template-columns:repeat(4,minmax(0,1fr))}
-      #tab-members [data-members-sub] {font-size:.72rem;padding-inline:.3rem}
+      #tab-members [data-members-sub] {font-size:.66rem;padding-inline:.25rem}
     }
     @media(prefers-reduced-motion:reduce) {
       *,*::before,*::after {animation:none!important;transition:none!important;scroll-behavior:auto!important}
@@ -707,7 +707,7 @@
               <span>📸 바로 촬영</span>
               <input id="desk-camera-input" type="file" accept="image/*" capture="environment" class="hidden" />
             </label>
-            <input id="brag-caption-input" type="text" maxlength="40" placeholder="한 줄 코멘트 (선택)" class="flex-1 min-w-[160px] rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs" />
+            <input id="brag-caption-input" type="text" maxlength="40" placeholder="한 줄 코멘트" class="flex-1 min-w-0 rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs" />
             <button type="submit" class="px-4 py-2 rounded-xl bg-white border border-slate-950 hover:bg-slate-100 text-slate-950 text-xs font-black">올리기</button>
           </div>
           <div id="photo-preview-wrap" class="hidden">
@@ -747,9 +747,9 @@
                   <button type="submit" class="px-3.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold whitespace-nowrap shrink-0">추가</button>
                 </div>
                 <textarea id="ptask-title" rows="2" placeholder="할 일" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs resize-none" required></textarea>
-                <div class="flex items-center gap-2">
-                  <span class="text-[11px] font-semibold text-slate-500">색상:</span>
-                  <div id="ptask-color-picker" class="flex items-center gap-1.5"></div>
+                <div class="flex items-center gap-2 min-w-0">
+                  <span class="text-[11px] font-semibold text-slate-500 whitespace-nowrap shrink-0">색상:</span>
+                  <div id="ptask-color-picker" class="flex flex-wrap items-center gap-1.5 min-w-0"></div>
                 </div>
               </form>
 
@@ -940,10 +940,10 @@
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5 text-xs leading-relaxed">
-          <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+          <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2 break-keep">
             <div class="flex items-center gap-2">
-              <span class="px-2 py-0.5 rounded-md bg-slate-950 text-white text-[10px] font-black">01</span>
-              <h4 class="text-sm font-black text-slate-900">시작 · 프로필 · 수업 시간표 · 스터디 참가</h4>
+              <span class="px-2 py-0.5 rounded-md bg-slate-950 text-white text-[10px] font-black shrink-0">01</span>
+              <h4 class="text-xs sm:text-sm font-black text-slate-900 whitespace-nowrap">시작 · 프로필 · 수업 시간표 · 스터디 참가</h4>
             </div>
             <ul class="space-y-1.5 text-slate-700">
               <li><strong>👤 내 프로필</strong> : 별명, 사진(핀치 줌 원형 크롭 · 기본 프로필 복원), 내 LP 기록·칭호·뱃지 확인 및 <strong>모드 배지 클릭 전환</strong>이 가능합니다.</li>
@@ -1544,6 +1544,8 @@
       let eraserMode = false;
       let isPainting = false;
       let plannerEditMode = false;
+      let plannerEditSnapshot = null;
+      let plannerEditDateStr = null;
 
       function savePrefs() { try { localStorage.setItem(LOCAL_PREFS_KEY, JSON.stringify(prefs)); } catch (e) {} }
       const PHOTO_CLEANUP_DAYS = 7;
@@ -3411,8 +3413,52 @@
         if (prefs.activeTab === 'admin') renderAdminTab();
       }
 
-      function switchTab(tab) {
+      function promptPlannerSave(onProceed) {
+        openModal('📝 시간표 저장 확인', `
+          <div class="space-y-4 text-center py-1">
+            <p class="text-sm font-black text-slate-900">시간표 저장하시겠습니까?</p>
+            <p class="text-xs text-slate-500">수정 중인 시간표 내용을 저장하고 이동할지 선택해 주세요.</p>
+            <div class="flex flex-wrap justify-center gap-2 pt-1">
+              <button id="planner-leave-cancel" type="button" class="px-3.5 py-2 rounded-xl bg-slate-100 text-xs font-bold text-slate-700">계속 수정</button>
+              <button id="planner-leave-discard" type="button" class="px-3.5 py-2 rounded-xl bg-rose-50 text-rose-700 border border-rose-200 text-xs font-bold">저장 안 함</button>
+              <button id="planner-leave-save" type="button" class="px-4 py-2 rounded-xl bg-emerald-600 text-white text-xs font-black">저장하기</button>
+            </div>
+          </div>
+        `);
+        document.getElementById('planner-leave-cancel').addEventListener('click', closeModal);
+        document.getElementById('planner-leave-discard').addEventListener('click', () => {
+          if (plannerEditSnapshot && plannerEditDateStr) {
+            try {
+              const restored = JSON.parse(plannerEditSnapshot);
+              if (!shared.motemote) shared.motemote = {};
+              if (!shared.motemote[plannerEditDateStr]) shared.motemote[plannerEditDateStr] = {};
+              shared.motemote[plannerEditDateStr][prefs.currentUserId] = restored;
+              saveSharedData();
+            } catch (e) {}
+          }
+          plannerEditMode = false;
+          plannerEditSnapshot = null;
+          plannerEditDateStr = null;
+          closeModal();
+          onProceed();
+        });
+        document.getElementById('planner-leave-save').addEventListener('click', () => {
+          plannerEditMode = false;
+          plannerEditSnapshot = null;
+          plannerEditDateStr = null;
+          saveSharedData();
+          closeModal();
+          showToast('시간표가 저장되었습니다.', 'success');
+          onProceed();
+        });
+      }
+
+      function switchTab(tab, skipPlannerGuard = false) {
         if (['rankings','brag'].includes(tab)) tab = 'members';
+        if (!skipPlannerGuard && prefs.activeTab === 'planner' && plannerEditMode && tab !== 'planner') {
+          promptPlannerSave(() => switchTab(tab, true));
+          return;
+        }
         if (!document.getElementById(`tab-${tab}`)) tab = 'dashboard';
         if (tab === 'guide' && prefs.guideHintUnread) {
           prefs.guideHintUnread = false;
@@ -4318,7 +4364,20 @@
       const pGrid = document.getElementById('planner-grid');
       document.getElementById('planner-mode-toggle').addEventListener('click', () => {
         plannerEditMode = !plannerEditMode;
-        if (!plannerEditMode) saveSharedData();
+        if (plannerEditMode) {
+          const dStr = document.getElementById('planner-date-input').value || todayStr();
+          plannerEditDateStr = dStr;
+          plannerEditSnapshot = JSON.stringify(getMemberMotemote(dStr, prefs.currentUserId));
+          try {
+            if (!history.state || !history.state.plannerEdit) {
+              history.pushState({ plannerEdit: true }, '');
+            }
+          } catch (e) {}
+        } else {
+          plannerEditSnapshot = null;
+          plannerEditDateStr = null;
+          saveSharedData();
+        }
         renderPlannerTab();
       });
 
@@ -5300,6 +5359,11 @@
       });
 
       window.addEventListener('popstate', () => {
+        if (prefs.activeTab === 'planner' && plannerEditMode) {
+          try { history.pushState({ plannerEdit: true }, ''); } catch (e) {}
+          promptPlannerSave(() => renderPlannerTab());
+          return;
+        }
         const ov = document.getElementById('focus-overlay');
         if (ov && !ov.classList.contains('hidden')) {
           try { history.pushState({ focusOpen: true }, ''); } catch (e) {}
