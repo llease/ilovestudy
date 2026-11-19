@@ -1135,72 +1135,66 @@
     </div>
 
     <!-- TAB 3: MOTEMOTE STYLE PLANNER (View Mode & Edit Mode) -->
-    <div id="tab-planner" class="tab-panel hidden space-y-5">
-      <div class="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 shadow-sm">
-        <div class="flex flex-wrap items-center justify-between gap-3 mb-5 pb-4 border-b border-slate-100">
-          <div>
-            <h3 class="text-lg font-extrabold text-slate-900">📝 오늘의 스터디 플래너</h3>
-            <p class="text-xs text-slate-500">시간대별 계획과 할 일을 한눈에 확인하고, 수정 버튼을 눌러 시간표를 편집하세요.</p>
+    <div id="tab-planner" class="tab-panel hidden space-y-4">
+      <div class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-sm space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-2.5 pb-3 border-b border-slate-100">
+          <div class="flex items-center gap-2 min-w-0">
+            <h3 class="text-base sm:text-lg font-extrabold text-slate-900 whitespace-nowrap">📝 오늘의 스터디 플래너</h3>
           </div>
           <div class="flex flex-wrap items-center gap-2">
             <span id="planner-study-mins-pill" class="px-2.5 py-1.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-black whitespace-nowrap">⏱️ 0시간 0분</span>
-            <input id="planner-date-input" type="date" class="rounded-xl border border-slate-300 px-3 py-1.5 text-xs font-bold" />
+            <input id="planner-date-input" type="date" class="rounded-xl border border-slate-300 px-2.5 py-1.5 text-xs font-bold" />
             <button id="planner-mode-toggle" type="button" class="px-3.5 py-1.5 rounded-xl bg-white border border-slate-300 hover:bg-slate-50 text-slate-800 text-xs font-bold whitespace-nowrap">✏️ 시간표 수정</button>
           </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          <!-- Left: Planned Time Schedule + All Tasks -->
-          <div class="lg:col-span-6 space-y-4">
-            <div id="planner-edit-controls" class="hidden space-y-3">
-              <form id="planner-task-form" class="bg-slate-50 rounded-2xl p-3.5 border border-slate-200 space-y-2.5">
-                <div class="flex gap-2 min-w-0">
-                  <input id="ptask-subject" type="text" placeholder="과목" class="min-w-0 flex-1 rounded-xl border border-slate-300 bg-white px-3 py-1.5 text-xs font-bold" required />
-                  <button type="submit" class="px-3.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold whitespace-nowrap shrink-0">추가</button>
-                </div>
-                <textarea id="ptask-title" rows="2" placeholder="할 일" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs resize-none" required></textarea>
-                <div class="flex items-center gap-2 min-w-0">
-                  <span class="text-[11px] font-semibold text-slate-500 whitespace-nowrap shrink-0">색상:</span>
-                  <div id="ptask-color-picker" class="flex flex-wrap items-center gap-1.5 min-w-0"></div>
-                </div>
-              </form>
-
-              <div class="flex items-center gap-2 bg-indigo-50/70 border border-indigo-200 rounded-xl px-3 py-2">
-                <span class="text-xs font-bold text-indigo-900 whitespace-nowrap shrink-0">현재 칠하기:</span>
-                <span id="active-brush-pill" class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-slate-200 text-slate-700 truncate">과목 선택</span>
-              </div>
-            </div>
-
-            <!-- Scheduled Time Ranges Summary -->
-            <div class="space-y-1.5">
-              <h4 class="text-xs font-black text-slate-700">⏰ 시간대별 계획</h4>
-              <div id="planner-schedule-summary" class="space-y-1.5"></div>
-            </div>
-
-            <!-- Full Tasks List (Never cut off) -->
-            <div class="space-y-1.5">
-              <h4 class="text-xs font-black text-slate-700">📌 할 일 목록</h4>
-              <div id="planner-tasks-list" class="space-y-2"></div>
-            </div>
+        <!-- Top: Scheduled Time Ranges + Tasks List (Always at the top for instant overview) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="space-y-1.5 rounded-2xl border border-slate-200 bg-slate-50/60 p-3.5">
+            <h4 class="text-xs font-black text-slate-700">⏰ 시간대별 계획</h4>
+            <div id="planner-schedule-summary" class="space-y-1.5"></div>
           </div>
 
-          <!-- Right: 06:00 ~ 24:00 10-minute Drag Timetable -->
-          <div class="lg:col-span-6">
-            <div class="border border-slate-200 rounded-2xl p-3 sm:p-4 bg-slate-50/50">
-              <div id="planner-today-classes" class="flex flex-wrap gap-1.5 mb-2"></div>
-              <div class="flex flex-wrap items-center justify-between gap-1 mb-1 text-[10px] font-bold">
-                <span class="text-emerald-700">● 초록 = 실제 공부 시간</span>
-                <span id="planner-drag-hint" class="hidden text-indigo-700">드래그로 칠하기 · 칠한 칸 다시 드래그 시 지우기</span>
-              </div>
-              <div class="flex items-center justify-between gap-2 mb-2 text-[11px] text-slate-500 font-semibold">
-                <span class="whitespace-nowrap">TIMETABLE (10분 단위)</span>
-                <div class="flex gap-1 shrink-0">
-                  <span>00</span><span>10</span><span>20</span><span>30</span><span>40</span><span>50</span>
-                </div>
-              </div>
-              <div id="planner-grid" class="space-y-1"></div>
+          <div class="space-y-1.5 rounded-2xl border border-slate-200 bg-slate-50/60 p-3.5">
+            <h4 class="text-xs font-black text-slate-700">📌 할 일 목록</h4>
+            <div id="planner-tasks-list" class="space-y-2"></div>
+          </div>
+        </div>
+
+        <!-- Edit Controls (Shown right above the timetable when editing) -->
+        <div id="planner-edit-controls" class="hidden space-y-3">
+          <form id="planner-task-form" class="bg-slate-50 rounded-2xl p-3.5 border border-slate-200 space-y-2.5">
+            <div class="flex gap-2 min-w-0">
+              <input id="ptask-subject" type="text" placeholder="과목" class="min-w-0 flex-1 rounded-xl border border-slate-300 bg-white px-3 py-1.5 text-xs font-bold" required />
+              <button type="submit" class="px-3.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold whitespace-nowrap shrink-0">추가</button>
+            </div>
+            <textarea id="ptask-title" rows="2" placeholder="할 일" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs resize-none" required></textarea>
+            <div class="flex items-center gap-2 min-w-0">
+              <span class="text-[11px] font-semibold text-slate-500 whitespace-nowrap shrink-0">색상:</span>
+              <div id="ptask-color-picker" class="flex flex-wrap items-center gap-1.5 min-w-0"></div>
+            </div>
+          </form>
+
+          <div class="flex items-center gap-2 bg-indigo-50/70 border border-indigo-200 rounded-xl px-3 py-2">
+            <span class="text-xs font-bold text-indigo-900 whitespace-nowrap shrink-0">현재 칠하기:</span>
+            <span id="active-brush-pill" class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-slate-200 text-slate-700 truncate">과목 선택</span>
+          </div>
+        </div>
+
+        <!-- Bottom: 06:00 ~ 24:00 10-minute Drag Timetable -->
+        <div class="border border-slate-200 rounded-2xl p-3 sm:p-4 bg-slate-50/50">
+          <div id="planner-today-classes" class="flex flex-wrap gap-1.5 mb-2"></div>
+          <div class="flex flex-wrap items-center justify-between gap-1 mb-1 text-[10px] font-bold">
+            <span class="text-emerald-700">● 초록 = 실제 공부 시간</span>
+            <span id="planner-drag-hint" class="hidden text-indigo-700">드래그로 칠하기 · 칠한 칸 다시 드래그 시 지우기</span>
+          </div>
+          <div class="flex items-center justify-between gap-2 mb-2 text-[11px] text-slate-500 font-semibold">
+            <span class="whitespace-nowrap">TIMETABLE (10분 단위)</span>
+            <div class="flex gap-1 shrink-0">
+              <span>00</span><span>10</span><span>20</span><span>30</span><span>40</span><span>50</span>
             </div>
           </div>
+          <div id="planner-grid" class="space-y-1"></div>
         </div>
       </div>
     </div>
