@@ -273,6 +273,7 @@
             </div>
           </div>
           <button id="alert-toggle-btn" type="button" class="w-full flex items-center justify-between px-2.5 py-2 rounded-xl hover:bg-slate-100 text-xs font-bold text-slate-700 whitespace-nowrap">🔔 쉬는시간 알림 켜짐</button>
+          <button id="encourage-menu-btn" type="button" class="w-full flex items-center justify-between px-2.5 py-2 rounded-xl hover:bg-slate-100 text-xs font-bold text-slate-700 whitespace-nowrap">💪 격려해주세요</button>
           <button id="suggest-btn" type="button" class="w-full flex items-center justify-between px-2.5 py-2 rounded-xl hover:bg-slate-100 text-xs font-bold text-slate-700 whitespace-nowrap">💬 관리자에게 건의하기</button>
           <button id="admin-toggle-btn" type="button" class="w-full flex items-center justify-between px-2.5 py-2 rounded-xl hover:bg-slate-100 text-xs font-bold text-slate-700 whitespace-nowrap">🛡️ 관리자 모드</button>
           <div class="border-t border-slate-100 pt-1.5 space-y-1">
@@ -361,6 +362,9 @@
             <button id="btn-open-focus" type="button" class="col-span-2 py-2.5 px-3 rounded-xl bg-slate-950 hover:bg-slate-800 text-white font-bold text-xs sm:text-sm whitespace-nowrap">
               집중 시작하기
             </button>
+          </div>
+          <div class="flex justify-end">
+            <button id="btn-home-encourage" type="button" class="px-3 py-1.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 text-indigo-800 text-xs font-bold whitespace-nowrap">💪 격려해주세요</button>
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -489,7 +493,7 @@
         </div>
         <div id="challenge-cat-tabs" class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1">
           <button type="button" data-ch-cat="special" class="ch-cat-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-950 text-white whitespace-nowrap">🌟 출석 · 특수 (18)</button>
-          <button type="button" data-ch-cat="focus_mid" class="ch-cat-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 whitespace-nowrap">🔥 연속 집중 (3h~12h)</button>
+          <button type="button" data-ch-cat="focus_mid" class="ch-cat-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 whitespace-nowrap">🔥 연속 집중 (1h~12h)</button>
           <button type="button" data-ch-cat="focus_high" class="ch-cat-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 whitespace-nowrap">👑 극한 집중 (13h~24h)</button>
         </div>
         <p id="challenge-focus-note" class="hidden text-[11px] font-bold text-indigo-600 bg-indigo-50/70 border border-indigo-200 rounded-xl px-3 py-2">💡 연속 집중은 하루 총합(누적 집중)이 아니라, 스톱워치를 끊김 없이(휴식 10분 이내) 이어서 집중한 시간 기준입니다.</p>
@@ -544,7 +548,8 @@
             <h3 class="text-lg font-extrabold text-slate-900">📝 오늘의 스터디 플래너</h3>
             <p class="text-xs text-slate-500">시간대별 계획과 할 일을 한눈에 확인하고, 수정 버튼을 눌러 시간표를 편집하세요.</p>
           </div>
-          <div class="flex items-center gap-2">
+          <div class="flex flex-wrap items-center gap-2">
+            <span id="planner-study-mins-pill" class="px-2.5 py-1.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-black whitespace-nowrap">⏱️ 0시간 0분</span>
             <input id="planner-date-input" type="date" class="rounded-xl border border-slate-300 px-3 py-1.5 text-xs font-bold" />
             <button id="planner-mode-toggle" type="button" class="px-3.5 py-1.5 rounded-xl bg-white border border-slate-300 hover:bg-slate-50 text-slate-800 text-xs font-bold whitespace-nowrap">✏️ 시간표 수정</button>
           </div>
@@ -618,10 +623,13 @@
         </div>
         <div class="flex items-center gap-4">
           <div id="profile-avatar-preview" class="w-14 h-14 rounded-full bg-slate-200 border border-slate-300 overflow-hidden flex items-center justify-center text-base font-black text-slate-600 shrink-0"></div>
-          <label class="cursor-pointer px-3 py-2 rounded-xl bg-white border border-slate-300 hover:bg-slate-50 text-xs font-bold text-slate-800 whitespace-nowrap">
-            📷 프로필 사진 변경
-            <input id="profile-avatar-input" type="file" accept="image/*" class="hidden" />
-          </label>
+          <div class="flex flex-wrap items-center gap-2">
+            <label class="cursor-pointer px-3 py-2 rounded-xl bg-white border border-slate-300 hover:bg-slate-50 text-xs font-bold text-slate-800 whitespace-nowrap">
+              📷 프로필 사진 변경
+              <input id="profile-avatar-input" type="file" accept="image/*" class="hidden" />
+            </label>
+            <button id="btn-profile-avatar-reset" type="button" class="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700 whitespace-nowrap">기본 프로필</button>
+          </div>
         </div>
         <form id="nickname-form" class="space-y-3">
           <div id="profile-admin-select-wrap" class="hidden">
@@ -664,7 +672,7 @@
     <!-- TAB 4: UNIVERSITY TIMETABLE -->
     <div id="tab-timetable" class="tab-panel hidden space-y-6">
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <div class="lg:col-span-5 space-y-5">
+        <div class="lg:col-span-5 space-y-5 order-2 lg:order-1">
           <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm space-y-3">
             <div>
               <h3 class="text-sm font-black text-slate-900">대학 수업 시간 등록</h3>
@@ -704,7 +712,7 @@
           </div>
         </div>
 
-        <div class="lg:col-span-7 bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+        <div class="lg:col-span-7 order-1 lg:order-2 bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
           <div class="mb-3">
             <h3 id="weekly-grid-title" class="text-base font-bold text-slate-900">주간 시간표</h3>
             <p id="weekly-grid-desc" class="text-xs text-slate-500"></p>
@@ -939,6 +947,12 @@
           <div id="admin-reports-list" class="space-y-2 max-h-48 overflow-y-auto scrollbar-thin"></div>
         </div>
 
+        <!-- Admin Encouragement Requests Inbox -->
+        <div id="admin-encouragements-section" class="border-t border-slate-200 pt-3.5 space-y-2">
+          <h4 class="text-xs font-black text-slate-900">💪 격려 요청함 (답장 시 멤버 우편함으로 전송)</h4>
+          <div id="admin-encouragements-list" class="space-y-2 max-h-64 overflow-y-auto scrollbar-thin"></div>
+        </div>
+
         <!-- Admin Direct Suggestions Inbox -->
         <div class="border-t border-slate-200 pt-3.5 space-y-2">
           <h4 class="text-xs font-black text-slate-900">📬 스터디원 다이렉트 건의함</h4>
@@ -1156,6 +1170,8 @@
             { id: 'ch_all_resp', cat: 'special', title: '💞 스터디 아부꾼', desc: '모든 스터디원에게 리스펙 보내기', lp: 15 },
             { id: 'ch_promo_streak', cat: 'special', title: '🚀 연승의 화신', desc: '승급전 연속 성공하기', lp: 20 },
             { id: 'ch_brag5', cat: 'special', title: '📸 인스타 갬성충', desc: '자랑하기 피드에 사진 5개 올리기', lp: 20 },
+            { id: 'ch_f1h', cat: 'focus_mid', title: '🕯️ 몰입의 불씨', desc: '1시간 연속 스톱워치 집중 달성 (누적 집중과 별개)', lp: 10, focusSecs: 3600 },
+            { id: 'ch_f2h', cat: 'focus_mid', title: '📚 워밍업 완료', desc: '2시간 연속 스톱워치 집중 달성 (누적 집중과 별개)', lp: 20, focusSecs: 7200 },
             { id: 'ch_f180', cat: 'focus_mid', title: '🫠 의자랑 물아일체', desc: '3시간 연속 스톱워치 연속 집중 달성 (누적 집중과 별개)', lp: 30, focusSecs: 10800 },
             { id: 'ch_f4h', title: '🧠 뇌 풀가동 레츠고', desc: '4시간 연속 스톱워치 연속 집중 달성 (누적 집중과 별개)', lp: 30, focusSecs: 14400 },
             { id: 'ch_f5h', title: '☕ 카페인이 나를 지배한다', desc: '5시간 연속 스톱워치 연속 집중 달성 (누적 집중과 별개)', lp: 30, focusSecs: 18000 },
@@ -1198,14 +1214,20 @@
           maxFocusLogs: {},
           periodStudySecs: {},
           studyBlocks: {},
+          studySlotMins: {},
           suggestions: [],
+          encouragements: [],
           reports: [],
           directMessages: {},
           lpHistory: {},
+          respectLpRewarded: {},
+          periodLpRewarded: {},
+          hourlyLpGiven: {},
           lpCut30Migrated: true,
           lpRebalanceV2: true,
           lpRebalanceV3: true,
           lpRebalanceV4: true,
+          lpRebalanceV5: true,
           promoHistory: {},
           customBadges: { m1: [{ id: 'cb1', label: '🏆 방장 특별상', theme: 'gold' }] },
           motemote: {
@@ -1248,7 +1270,7 @@
             const filtered = existing.filter(c => !['ch_f10', 'ch_f30', 'ch_f60'].includes(c.id));
             const ids = new Set(filtered.map(c => c.id));
             let mergedCh = filtered.concat(base.filter(b => !ids.has(b.id)));
-            if (!parsed.lpRebalanceV4) {
+            if (!parsed.lpRebalanceV5) {
               const baseMap = new Map(base.map(b => [b.id, b]));
               const updatedIds = new Set(['ch1','ch3','ch5','ch_6am','ch_all_resp','ch_brag5','ch_f6h','ch_f24h']);
               mergedCh = mergedCh.filter(c => c.id !== 'ch10').map(c => {
@@ -1260,12 +1282,18 @@
               parsed.lpRebalanceV2 = true;
               parsed.lpRebalanceV3 = true;
               parsed.lpRebalanceV4 = true;
+              parsed.lpRebalanceV5 = true;
             }
             parsed.challenges = mergedCh;
             if (!parsed.periodStudySecs) parsed.periodStudySecs = {};
             if (!Array.isArray(parsed.reports)) parsed.reports = [];
+            if (!Array.isArray(parsed.encouragements)) parsed.encouragements = [];
             if (!parsed.directMessages) parsed.directMessages = {};
             if (!parsed.lpHistory) parsed.lpHistory = {};
+            if (!parsed.respectLpRewarded) parsed.respectLpRewarded = {};
+            if (!parsed.periodLpRewarded) parsed.periodLpRewarded = {};
+            if (!parsed.hourlyLpGiven) parsed.hourlyLpGiven = {};
+            if (!parsed.studySlotMins) parsed.studySlotMins = {};
             return parsed;
           }
         } catch (e) {}
@@ -1319,8 +1347,8 @@
       function snapshotSharedState(obj) {
         const snap = {};
         if (!obj) return snap;
-        const twoLevel = ['studyLogs', 'maxFocusLogs', 'periodStudySecs', 'studyBlocks', 'motemote', 'records', 'manualExempt', 'respectSentByDate'];
-        const oneLevel = ['classes', 'praises', 'directMessages', 'promoHistory', 'customBadges', 'memberChallenges'];
+        const twoLevel = ['studyLogs', 'maxFocusLogs', 'periodStudySecs', 'studyBlocks', 'motemote', 'records', 'manualExempt', 'respectSentByDate', 'periodLpRewarded', 'hourlyLpGiven', 'studySlotMins'];
+        const oneLevel = ['classes', 'praises', 'directMessages', 'promoHistory', 'customBadges', 'memberChallenges', 'respectLpRewarded', 'lpHistory'];
         Object.keys(obj).forEach(k => {
           if (twoLevel.includes(k) && obj[k] && typeof obj[k] === 'object') {
             Object.keys(obj[k]).forEach(k1 => {
@@ -1491,8 +1519,13 @@
               studyBlocks: v.studyBlocks || {},
               suggestions: Array.isArray(v.suggestions) ? v.suggestions : (v.suggestions ? Object.values(v.suggestions) : []),
               reports: Array.isArray(v.reports) ? v.reports : (v.reports ? Object.values(v.reports) : []),
+              encouragements: Array.isArray(v.encouragements) ? v.encouragements : (v.encouragements ? Object.values(v.encouragements) : []),
               directMessages: v.directMessages || {},
               lpHistory: v.lpHistory || {},
+              respectLpRewarded: v.respectLpRewarded || {},
+              periodLpRewarded: v.periodLpRewarded || {},
+              hourlyLpGiven: v.hourlyLpGiven || {},
+              studySlotMins: v.studySlotMins || {},
               promoHistory: v.promoHistory || {},
               customBadges: v.customBadges || {},
               motemote: v.motemote || {},
@@ -1505,7 +1538,7 @@
                 const filtered = existing.filter(c => !['ch_f10', 'ch_f30', 'ch_f60', 'ch10'].includes(c.id));
                 const ids = new Set(filtered.map(c => c.id));
                 let mergedCh = filtered.concat(base.filter(b => !ids.has(b.id)));
-                if (!v.lpRebalanceV4) {
+                if (!v.lpRebalanceV5) {
                   const baseMap = new Map(base.map(b => [b.id, b]));
                   const updatedIds = new Set(['ch1','ch3','ch5','ch_6am','ch_all_resp','ch_brag5','ch_f6h','ch_f24h']);
                   mergedCh = mergedCh.map(c => {
@@ -1523,7 +1556,7 @@
               photos: Array.isArray(v.photos) ? v.photos : (v.photos ? Object.values(v.photos) : [])
             };
             lastSyncedJson = snapshotSharedState(shared);
-            if (cleanupOldPhotos(3) > 0 || !v.lpRebalanceV4) saveSharedData();
+            if (cleanupOldPhotos(3) > 0 || !v.lpRebalanceV5) saveSharedData();
             try { localStorage.setItem(LOCAL_DATA_KEY, JSON.stringify(shared)); } catch (e) {}
           } else {
             // Initialize clean DB structure (keep existing challenges, empty members until created)
@@ -1649,10 +1682,16 @@
         if (mObj && (status === 'present' || status === 'late')) {
           recordMemberActivityForStreak(mObj, dateStr);
         }
-        if (mObj && getMemberMode(mObj) === 'strict') {
-          if (status === 'present') addMemberLp(memberId, 4, '교시 출석');
-          else if (status === 'exempt') addMemberLp(memberId, 2, '수업 면제');
-          else if (status === 'late') addMemberLp(memberId, 1, '교시 지각');
+        if (mObj && getMemberMode(mObj) === 'strict' && (status === 'present' || status === 'exempt' || status === 'late')) {
+          if (!shared.periodLpRewarded) shared.periodLpRewarded = {};
+          if (!shared.periodLpRewarded[dateStr]) shared.periodLpRewarded[dateStr] = {};
+          if (!shared.periodLpRewarded[dateStr][memberId]) shared.periodLpRewarded[dateStr][memberId] = {};
+          if (!shared.periodLpRewarded[dateStr][memberId][pid]) {
+            shared.periodLpRewarded[dateStr][memberId][pid] = true;
+            if (status === 'present') addMemberLp(memberId, 4, '교시 출석');
+            else if (status === 'exempt') addMemberLp(memberId, 2, '수업 면제');
+            else if (status === 'late') addMemberLp(memberId, 1, '교시 지각');
+          }
           if (status === 'present' && (pid === 'p9' || pid === 'p10')) {
             const p9Done = getMemberDayStatus(memberId, dateStr, 'p9') === 'present';
             const p10Done = getMemberDayStatus(memberId, dateStr, 'p10') === 'present';
@@ -2442,6 +2481,12 @@
 
         // Total planned time
         const blockCnt = Object.keys(mm.blocks || {}).length;
+        const pStudyMins = (shared.studyLogs && shared.studyLogs[dateStr] && shared.studyLogs[dateStr][prefs.currentUserId]) || 0;
+        const pStudyPill = document.getElementById('planner-study-mins-pill');
+        if (pStudyPill) {
+          const ph = Math.floor(pStudyMins / 60), pm = pStudyMins % 60;
+          pStudyPill.textContent = `⏱️ 누적 ${ph}시간 ${pm}분 (${pStudyMins}분)`;
+        }
         
 
         document.getElementById('planner-edit-controls').classList.toggle('hidden', !plannerEditMode);
@@ -2570,8 +2615,13 @@
             const task = tid ? taskMap[tid] : null;
             const cls = getClassAtSlot(h, slot);
             const isStudied = !!(shared.studyBlocks && shared.studyBlocks[dateStr] && shared.studyBlocks[dateStr][prefs.currentUserId] && shared.studyBlocks[dateStr][prefs.currentUserId][key]);
+            const slotStudyM = (shared.studySlotMins && shared.studySlotMins[dateStr] && shared.studySlotMins[dateStr][prefs.currentUserId] && shared.studySlotMins[dateStr][prefs.currentUserId][key]) || (isStudied ? 10 : 0);
             let bgStyle = '', extraCls = 'planner-empty-cell';
-            if (isStudied) { bgStyle = 'background:#10b981;'; extraCls = ''; }
+            if (isStudied || slotStudyM > 0) {
+              const pctW = Math.min(100, Math.max(10, slotStudyM * 10));
+              bgStyle = pctW >= 100 ? 'background:#10b981;' : `background:linear-gradient(90deg, #10b981 ${pctW}%, transparent ${pctW}%);`;
+              extraCls = '';
+            }
             else if (task) { bgStyle = `background:${task.color};`; extraCls = ''; }
             else if (cls) { bgStyle = 'background:#e0f2fe;'; extraCls = ''; }
             gridHtml += `<div data-time-cell="${key}" class="time-cell h-6 border-r last:border-r-0 border-slate-100 cursor-crosshair transition-colors ${extraCls}" style="${bgStyle}" title="${hStr}:${slot}0 ${isStudied ? '· [실제 공부]' : (task ? '· ' + task.subject : (cls ? '· [수업] ' + cls.name : ''))}"></div>`;
@@ -2942,6 +2992,34 @@
             ? repList.map(rp => `<div class="flex items-start justify-between gap-2 bg-rose-50 border border-rose-200 rounded-xl p-2.5 text-xs"><div><span class="font-black text-rose-700">대상: ${escapeHtml(rp.targetName)}</span> <span class="text-slate-500">· 신고자: ${escapeHtml(rp.reporterName)} (${rp.date} ${rp.time})</span><p class="text-slate-800 mt-0.5">${escapeHtml(rp.reason)}</p></div><button type="button" data-del-report="${rp.id}" class="text-[10px] px-2 py-0.5 rounded bg-rose-600 text-white font-bold shrink-0">🗑️ 삭제</button></div>`).join('')
             : '<p class="text-xs text-slate-400">접수된 신고가 없습니다.</p>';
         }
+        const encListEl = document.getElementById('admin-encouragements-list');
+        if (encListEl) {
+          const encList = (shared.encouragements || []).slice().reverse();
+          encListEl.innerHTML = encList.length
+            ? encList.map(eq => `
+              <div class="rounded-xl border ${eq.replied ? 'border-slate-200 bg-slate-50' : 'border-indigo-300 bg-indigo-50/70'} p-3 text-xs space-y-2">
+                <div class="flex items-center justify-between gap-2">
+                  <div class="flex items-center gap-1.5 flex-wrap">
+                    <span class="font-black text-slate-900">${escapeHtml(eq.fromName)}</span>
+                    <span class="px-2 py-0.5 rounded-md bg-white border border-slate-200 text-[10px] font-bold">${escapeHtml(eq.type)}</span>
+                    <span class="px-2 py-0.5 rounded-md bg-white border border-slate-200 text-[10px] font-bold">${escapeHtml(eq.mood)}</span>
+                  </div>
+                  <div class="flex items-center gap-2 shrink-0">
+                    <span class="text-[10px] text-slate-400">${eq.date} ${eq.time}</span>
+                    <button type="button" data-del-enc="${eq.id}" class="text-[10px] text-rose-600 font-bold">삭제</button>
+                  </div>
+                </div>
+                ${eq.note ? `<p class="text-slate-700">${escapeHtml(eq.note)}</p>` : ''}
+                ${eq.replied
+                  ? `<div class="rounded-lg bg-white border border-emerald-200 px-2.5 py-1.5 text-[11px] text-emerald-800 font-semibold">✓ 답장 완료: ${escapeHtml(eq.replyText)}</div>`
+                  : `<form data-reply-enc-form="${eq.id}" class="flex gap-1.5">
+                      <input type="text" placeholder="따뜻한 격려 답장을 입력하세요..." class="flex-1 min-w-0 rounded-lg border border-slate-300 bg-white px-2.5 py-1 text-xs" required />
+                      <button type="submit" class="px-3 py-1 rounded-lg bg-indigo-600 text-white text-[11px] font-bold whitespace-nowrap shrink-0">답장</button>
+                    </form>`}
+              </div>
+            `).join('')
+            : '<p class="text-xs text-slate-400">들어온 격려 요청이 없습니다.</p>';
+        }
         const sugList = (shared.suggestions || []).slice().reverse();
         document.getElementById('admin-suggestions-list').innerHTML = sugList.length
           ? sugList.map(sg => `<div class="flex items-start justify-between gap-2 bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs"><div><span class="font-bold text-slate-900">${escapeHtml(sg.fromName)}</span> <span class="text-[10px] text-slate-400">${sg.date} ${sg.time}</span><p class="text-slate-700 mt-0.5">${escapeHtml(sg.text)}</p></div><button type="button" data-del-sug="${sg.id}" class="text-[10px] px-2 py-0.5 rounded bg-slate-200 text-slate-700 font-bold shrink-0">확인</button></div>`).join('')
@@ -3205,13 +3283,9 @@
           img.onload = () => {
             openModal('📷 프로필 사진 원형 맞추기', `
               <div class="space-y-3">
-                <p class="text-xs text-slate-500">사진을 드래그해서 위치를 옮기고, 아래 슬라이더로 크기를 맞추세요.</p>
+                <p class="text-xs text-slate-500">손가락으로 드래그해 위치를 맞추고, 두 손가락(핀치)으로 확대·축소하세요.</p>
                 <div class="flex justify-center">
                   <canvas id="avatar-crop-canvas" width="240" height="240" class="rounded-2xl border border-slate-300 cursor-grab active:cursor-grabbing touch-none bg-slate-900"></canvas>
-                </div>
-                <div class="flex items-center gap-2">
-                  <span class="text-[11px] font-bold text-slate-600 shrink-0">🔍 확대</span>
-                  <input id="avatar-crop-zoom" type="range" min="1" max="3" step="0.05" value="1" class="flex-1" />
                 </div>
                 <div class="flex justify-end gap-2 pt-1">
                   <button id="btn-avatar-crop-cancel" type="button" class="px-3.5 py-2 rounded-xl bg-slate-100 text-xs font-bold text-slate-700">취소</button>
@@ -3221,7 +3295,6 @@
             `);
             const cvs = document.getElementById('avatar-crop-canvas');
             const ctx = cvs.getContext('2d');
-            const zoomInput = document.getElementById('avatar-crop-zoom');
             const size = 240;
             const baseScale = Math.max(size / img.width, size / img.height);
             let zoom = 1;
@@ -3261,10 +3334,15 @@
             }
 
             drawPreview();
-            zoomInput.addEventListener('input', () => {
-              zoom = Number(zoomInput.value) || 1;
+            let pinchStartDist = 0, pinchStartZoom = 1;
+            function getTouchDist(t1, t2) {
+              return Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
+            }
+            cvs.addEventListener('wheel', ev2 => {
+              ev2.preventDefault();
+              zoom = Math.max(1, Math.min(3.5, zoom - ev2.deltaY * 0.002));
               drawPreview();
-            });
+            }, { passive: false });
             cvs.addEventListener('mousedown', ev2 => { dragging = true; lastX = ev2.clientX; lastY = ev2.clientY; });
             window.addEventListener('mousemove', ev2 => {
               if (!dragging) return;
@@ -3275,19 +3353,41 @@
             });
             window.addEventListener('mouseup', () => { dragging = false; });
             cvs.addEventListener('touchstart', ev2 => {
-              if (!ev2.touches[0]) return;
               ev2.preventDefault();
-              dragging = true; lastX = ev2.touches[0].clientX; lastY = ev2.touches[0].clientY;
+              if (ev2.touches.length === 2) {
+                dragging = false;
+                pinchStartDist = getTouchDist(ev2.touches[0], ev2.touches[1]);
+                pinchStartZoom = zoom;
+              } else if (ev2.touches.length === 1) {
+                dragging = true;
+                lastX = ev2.touches[0].clientX;
+                lastY = ev2.touches[0].clientY;
+              }
             }, { passive: false });
             cvs.addEventListener('touchmove', ev2 => {
-              if (!dragging || !ev2.touches[0]) return;
               ev2.preventDefault();
-              offsetX += ev2.touches[0].clientX - lastX;
-              offsetY += ev2.touches[0].clientY - lastY;
-              lastX = ev2.touches[0].clientX; lastY = ev2.touches[0].clientY;
-              drawPreview();
+              if (ev2.touches.length === 2 && pinchStartDist > 0) {
+                const dist = getTouchDist(ev2.touches[0], ev2.touches[1]);
+                zoom = Math.max(1, Math.min(3.5, pinchStartZoom * (dist / pinchStartDist)));
+                drawPreview();
+              } else if (dragging && ev2.touches.length === 1) {
+                offsetX += ev2.touches[0].clientX - lastX;
+                offsetY += ev2.touches[0].clientY - lastY;
+                lastX = ev2.touches[0].clientX;
+                lastY = ev2.touches[0].clientY;
+                drawPreview();
+              }
             }, { passive: false });
-            window.addEventListener('touchend', () => { dragging = false; });
+            cvs.addEventListener('touchend', ev2 => {
+              if (ev2.touches.length < 2) pinchStartDist = 0;
+              if (ev2.touches.length === 1) {
+                dragging = true;
+                lastX = ev2.touches[0].clientX;
+                lastY = ev2.touches[0].clientY;
+              } else if (ev2.touches.length === 0) {
+                dragging = false;
+              }
+            });
 
             document.getElementById('btn-avatar-crop-cancel').addEventListener('click', closeModal);
             document.getElementById('btn-avatar-crop-save').addEventListener('click', () => {
@@ -3410,6 +3510,105 @@
         });
       });
 
+            function openEncourageModal() {
+        const me = shared.members.find(m => m.id === prefs.currentUserId);
+        if (!me) return;
+        const types = ['🔥 공부자극', '🫂 멘탈케어', '☕ 따뜻한 응원', '⚡ 따끔한 한마디'];
+        const moods = ['😫 지치고 힘듦', '😶‍🌫️ 집중이 안 됨', '😰 불안·초조함', '🥱 졸리고 나른함', '🔥 의욕은 있는데 막막함'];
+        let selType = types[0], selMood = moods[0];
+        openModal('💪 관리자에게 격려 요청하기', `
+          <form id="encourage-req-form" class="space-y-3.5 text-xs">
+            <div>
+              <p class="font-black text-slate-800 mb-1.5">1. 어떤 격려가 필요하신가요?</p>
+              <div id="enc-type-chips" class="flex flex-wrap gap-1.5">
+                ${types.map((tp, i) => `<button type="button" data-enc-type="${tp}" class="px-2.5 py-1.5 rounded-xl border font-bold ${i === 0 ? 'bg-slate-950 text-white border-slate-950' : 'bg-slate-50 text-slate-700 border-slate-200'}">${tp}</button>`).join('')}
+              </div>
+            </div>
+            <div>
+              <p class="font-black text-slate-800 mb-1.5">2. 지금 내 기분·상태는?</p>
+              <div id="enc-mood-chips" class="flex flex-wrap gap-1.5">
+                ${moods.map((md, i) => `<button type="button" data-enc-mood="${md}" class="px-2.5 py-1.5 rounded-xl border font-bold ${i === 0 ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-slate-50 text-slate-700 border-slate-200'}">${md}</button>`).join('')}
+              </div>
+            </div>
+            <div>
+              <p class="font-black text-slate-800 mb-1.5">3. 한 줄 이야기 (선택)</p>
+              <textarea id="enc-note-input" rows="2" placeholder="지금 상황을 살짝 적어주시면 딱 맞게 답장해 드릴게요!" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-xs"></textarea>
+            </div>
+            <button type="submit" class="w-full py-2.5 rounded-xl ed-btn-accent font-black text-xs sm:text-sm">관리자에게 전송하기</button>
+          </form>
+        `);
+        document.getElementById('enc-type-chips').addEventListener('click', ev => {
+          const b = ev.target.closest('[data-enc-type]'); if (!b) return;
+          selType = b.dataset.encType;
+          document.querySelectorAll('[data-enc-type]').forEach(x => {
+            const on = x.dataset.encType === selType;
+            x.className = `px-2.5 py-1.5 rounded-xl border font-bold ${on ? 'bg-slate-950 text-white border-slate-950' : 'bg-slate-50 text-slate-700 border-slate-200'}`;
+          });
+        });
+        document.getElementById('enc-mood-chips').addEventListener('click', ev => {
+          const b = ev.target.closest('[data-enc-mood]'); if (!b) return;
+          selMood = b.dataset.encMood;
+          document.querySelectorAll('[data-enc-mood]').forEach(x => {
+            const on = x.dataset.encMood === selMood;
+            x.className = `px-2.5 py-1.5 rounded-xl border font-bold ${on ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-slate-50 text-slate-700 border-slate-200'}`;
+          });
+        });
+        document.getElementById('encourage-req-form').addEventListener('submit', ev => {
+          ev.preventDefault();
+          const note = document.getElementById('enc-note-input').value.trim();
+          if (!shared.encouragements) shared.encouragements = [];
+          shared.encouragements.push({
+            id: 'enc_' + Date.now(),
+            fromId: me.id,
+            fromName: me.name,
+            type: selType,
+            mood: selMood,
+            note,
+            date: todayStr(),
+            time: getNowParts().hhmm,
+            replied: false,
+            replyText: ''
+          });
+          saveSharedData();
+          closeModal();
+          showToast('관리자에게 격려 요청을 보냈습니다! 답장이 오면 💌 우편함으로 도착해요.', 'success');
+        });
+      }
+      document.getElementById('encourage-menu-btn').addEventListener('click', openEncourageModal);
+      document.getElementById('btn-home-encourage').addEventListener('click', openEncourageModal);
+
+      document.getElementById('admin-encouragements-list').addEventListener('click', e => {
+        const delB = e.target.closest('[data-del-enc]');
+        if (!delB) return;
+        shared.encouragements = (shared.encouragements || []).filter(x => x.id !== delB.dataset.delEnc);
+        saveSharedData();
+        renderAdminTab();
+      });
+      document.getElementById('admin-encouragements-list').addEventListener('submit', e => {
+        const form = e.target.closest('[data-reply-enc-form]');
+        if (!form) return;
+        e.preventDefault();
+        const encId = form.dataset.replyEncForm;
+        const eq = (shared.encouragements || []).find(x => x.id === encId);
+        const inp = form.querySelector('input');
+        const reply = inp ? inp.value.trim() : '';
+        if (!eq || !reply) return;
+        eq.replied = true;
+        eq.replyText = reply;
+        if (!shared.directMessages) shared.directMessages = {};
+        if (!shared.directMessages[eq.fromId]) shared.directMessages[eq.fromId] = [];
+        shared.directMessages[eq.fromId].push({
+          id: 'dm_enc_' + Date.now(),
+          text: `[💪 ${eq.type} 답장] ${reply}`,
+          date: todayStr(),
+          time: getNowParts().hhmm,
+          read: false
+        });
+        saveSharedData();
+        showToast(`${eq.fromName}님의 우편함으로 격려 답장을 보냈습니다!`, 'success');
+        renderAdminTab();
+      });
+
       document.getElementById('suggest-btn').addEventListener('click', () => {
         const me = shared.members.find(m => m.id === prefs.currentUserId);
         openModal('💬 관리자에게 다이렉트 건의하기', `
@@ -3489,7 +3688,13 @@
           if (!target) return;
           const tStr = todayStr();
           target.respectCount = (target.respectCount || 0) + 1;
-          addMemberLp(targetId, 2, '리스펙 받음');
+          if (!shared.respectLpRewarded) shared.respectLpRewarded = {};
+          if (!shared.respectLpRewarded[prefs.currentUserId]) shared.respectLpRewarded[prefs.currentUserId] = {};
+          const alreadyRewardedResp = !!shared.respectLpRewarded[prefs.currentUserId][targetId];
+          if (!alreadyRewardedResp) {
+            shared.respectLpRewarded[prefs.currentUserId][targetId] = true;
+            addMemberLp(targetId, 2, '리스펙 받음');
+          }
           if (!shared.praises) shared.praises = {};
           if (!shared.praises[targetId]) shared.praises[targetId] = [];
           const msg = PRAISE_MESSAGES[Math.floor(Math.random() * PRAISE_MESSAGES.length)];
@@ -3507,7 +3712,7 @@
             unlockChallengeFor(targetId, 'ch7', true);
           }
           saveSharedData();
-          showToast(`${target.name}님에게 👏 리스펙을 보냈습니다! (+2 LP)`, 'success');
+          showToast(alreadyRewardedResp ? `${target.name}님에게 👏 리스펙을 보냈습니다!` : `${target.name}님에게 👏 리스펙을 보냈습니다! (+2 LP)`, 'success');
           renderMembersTab();
           return;
         }
@@ -4168,6 +4373,7 @@
           meFocus.firstTime = now.hhmm;
           meFocus.firstTimeDate = tEarly;
           recordEarlyMorningCheck(meFocus, tEarly, now.hhmm);
+          if (now.totalMins >= 360 && now.totalMins < 420) unlockChallengeFor(meFocus.id, 'ch_6am', false);
           saveSharedData();
         }
 
@@ -4305,9 +4511,14 @@
                 const prevDayMins = shared.studyLogs[dKey][meObj.id] || 0;
                 const nextDayMins = prevDayMins + 1;
                 shared.studyLogs[dKey][meObj.id] = nextDayMins;
-                const prevHrs = Math.min(8, Math.floor(prevDayMins / 60));
+                if (!shared.hourlyLpGiven) shared.hourlyLpGiven = {};
+                if (!shared.hourlyLpGiven[dKey]) shared.hourlyLpGiven[dKey] = {};
+                const givenHrs = shared.hourlyLpGiven[dKey][meObj.id] || 0;
                 const nextHrs = Math.min(8, Math.floor(nextDayMins / 60));
-                if (nextHrs > prevHrs) addMemberLp(meObj.id, (nextHrs - prevHrs) * 3, '누적 공부시간 보상');
+                if (nextHrs > givenHrs) {
+                  shared.hourlyLpGiven[dKey][meObj.id] = nextHrs;
+                  addMemberLp(meObj.id, (nextHrs - givenHrs) * 3, '누적 공부시간 보상');
+                }
                 recordMemberActivityForStreak(meObj, dKey);
                 if (!shared.maxFocusLogs[dKey]) shared.maxFocusLogs[dKey] = {};
                 shared.maxFocusLogs[dKey][meObj.id] = Math.max(shared.maxFocusLogs[dKey][meObj.id] || 0, newMins);
@@ -4318,6 +4529,10 @@
                 else if (dh === 23 && dm >= 50) meObj.nightOwlDate = addDaysStr(dKey, 1);
                 const slotKey = `${String(dh).padStart(2, '0')}_${Math.floor(dm / 10)}`;
                 shared.studyBlocks[dKey][meObj.id][slotKey] = true;
+                if (!shared.studySlotMins) shared.studySlotMins = {};
+                if (!shared.studySlotMins[dKey]) shared.studySlotMins[dKey] = {};
+                if (!shared.studySlotMins[dKey][meObj.id]) shared.studySlotMins[dKey][meObj.id] = {};
+                shared.studySlotMins[dKey][meObj.id][slotKey] = Math.min(10, (shared.studySlotMins[dKey][meObj.id][slotKey] || 0) + 1);
               }
               saveSharedData();
             }
@@ -4605,6 +4820,17 @@
         tm.equippedTitle = tm.equippedTitle === tName ? '' : tName;
         saveSharedData();
         showToast(tm.equippedTitle ? `'${tm.equippedTitle}' 칭호를 장착했습니다!` : '칭호 장착을 해제했습니다.', 'success');
+        renderAll();
+      });
+
+      document.getElementById('btn-profile-avatar-reset').addEventListener('click', () => {
+        const ps = document.getElementById('profile-member-select');
+        const mid = (prefs.adminMode && ps && ps.value) ? ps.value : prefs.currentUserId;
+        const m = shared.members.find(x => x.id === mid);
+        if (!m) return;
+        m.avatarUrl = '';
+        saveSharedData();
+        showToast('기본 프로필로 변경되었습니다.', 'info');
         renderAll();
       });
 
