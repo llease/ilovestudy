@@ -7,6 +7,7 @@
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet" />
@@ -160,6 +161,55 @@
     <button id="focus-mini-expand" type="button" class="px-2.5 py-1 rounded-lg bg-slate-950 text-white text-xs font-bold">크게 보기</button>
   </div>
 
+  <!-- Google Auth & First-Time Member Onboarding Overlay -->
+  <div id="auth-overlay" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+    <div class="ed-card max-w-md w-full p-6 space-y-5 shadow-2xl">
+      <div class="flex items-center gap-2.5">
+        <div class="w-9 h-9 rounded-xl bg-slate-950 text-white flex items-center justify-center border border-slate-950 shadow-[2px_2px_0_var(--accent)] shrink-0">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 6.5A2.5 2.5 0 0 1 4.5 4H12v16H4.5A2.5 2.5 0 0 1 2 17.5v-11Z"/>
+            <path d="M22 6.5A2.5 2.5 0 0 0 19.5 4H12v16h7.5a2.5 2.5 0 0 0 2.5-2.5v-11Z"/>
+            <path d="M12 8.5c.8-1 2.4-.8 2.8.4.4 1.1-.6 2.3-2.8 3.6-2.2-1.3-3.2-2.5-2.8-3.6.4-1.2 2-1.4 2.8-.4Z" fill="var(--accent)" stroke="none"/>
+          </svg>
+        </div>
+        <div>
+          <h2 class="text-base font-black text-slate-950 tracking-tight">I LOVE STUDY</h2>
+          <p class="text-[11px] font-semibold text-slate-500">재수 루틴 스터디 · 실시간 동기화</p>
+        </div>
+      </div>
+
+      <div id="auth-login-step" class="space-y-4">
+        <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">Google 계정으로 로그인하면 폰·태블릿·PC 어디서든 내 공부 기록과 시간표가 안전하게 이어집니다.</p>
+        <p id="auth-error-msg" class="hidden text-xs font-bold text-rose-600 bg-rose-50 border border-rose-200 rounded-xl p-2.5"></p>
+        <button id="btn-google-login" type="button" class="w-full py-3 px-4 rounded-xl ed-btn-accent font-black text-sm flex items-center justify-center gap-2.5">
+          <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17Z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.11-6.72-4.96H1.29v3.14C3.26 21.3 7.31 24 12 24Z"/><path fill="#FBBC05" d="M5.28 14.24c-.24-.72-.38-1.49-.38-2.24s.14-1.52.38-2.24V6.62H1.29C.47 8.24 0 10.06 0 12s.47 3.76 1.29 5.38l3.99-3.14Z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.62l3.99 3.14c.95-2.85 3.6-4.96 6.72-4.96Z"/></svg>
+          <span>Google로 로그인하기</span>
+        </button>
+        <button id="btn-auth-local-preview" type="button" class="w-full py-2 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-bold">로그인 없이 로컬 체험하기</button>
+      </div>
+
+      <form id="auth-onboard-step" class="hidden space-y-3.5">
+        <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-900 space-y-0.5">
+          <p class="font-black">환영합니다! 처음 오셨네요 👋</p>
+          <p id="onboard-google-email" class="text-[11px] opacity-80"></p>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">스터디에서 사용할 별명</label>
+          <input id="onboard-nickname-input" type="text" maxlength="16" placeholder="예: 열공하는 재수생" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm font-bold" required />
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">시작 공부 모드</label>
+          <select id="onboard-mode-select" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-xs font-bold bg-white">
+            <option value="free">자율모드 (자유 시간 측정 · 추천)</option>
+            <option value="strict">울트라집중모드 (월~토 교시 출석)</option>
+          </select>
+        </div>
+        <button type="submit" class="w-full py-3 px-4 rounded-xl ed-btn-accent font-black text-sm">내 멤버 만들고 시작하기</button>
+        <button id="btn-onboard-logout" type="button" class="w-full text-center text-xs font-bold text-slate-500 hover:text-slate-800 underline underline-offset-4">다른 Google 계정으로 로그인</button>
+      </form>
+    </div>
+  </div>
+
   <!-- Clean Minimal Header -->
   <header class="bg-white/95 backdrop-blur border-b border-slate-200 sticky top-0 z-30">
     <div class="max-w-5xl mx-auto px-3 py-1.5 flex items-center justify-between gap-1.5">
@@ -179,6 +229,7 @@
       <div class="flex items-center gap-1 shrink-0 relative">
         <button id="mailbox-btn" class="relative h-7 px-2 rounded-lg text-xs font-bold text-slate-700 hover:bg-slate-100 border border-slate-200 flex items-center justify-center shrink-0 whitespace-nowrap" title="우편함">💌<span id="mailbox-badge" class="hidden ml-0.5 px-1 rounded-full text-[9px] bg-rose-500 text-white font-black">0</span></button>
         <button id="dark-toggle-btn" type="button" class="w-7 h-7 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 flex items-center justify-center shrink-0 text-xs" title="다크모드 전환">🌙</button>
+        <button id="btn-header-logout" type="button" class="h-7 px-2 rounded-lg border border-slate-200 bg-white hover:bg-rose-50 text-[11px] font-bold text-slate-700 hover:text-rose-600 flex items-center justify-center shrink-0 whitespace-nowrap" title="로그아웃 / 계정 전환">로그아웃</button>
         <button id="header-more-btn" type="button" class="w-7 h-7 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 flex items-center justify-center shrink-0 font-black text-sm" title="테마 · 알림 · 건의 · 관리자">⋯</button>
 
         <!-- Compact Popover Menu (replaces cramped horizontal icon strip) -->
@@ -194,6 +245,10 @@
           <button id="alert-toggle-btn" type="button" class="w-full flex items-center justify-between px-2.5 py-2 rounded-xl hover:bg-slate-100 text-xs font-bold text-slate-700 whitespace-nowrap">🔔 쉬는시간 알림 켜짐</button>
           <button id="suggest-btn" type="button" class="w-full flex items-center justify-between px-2.5 py-2 rounded-xl hover:bg-slate-100 text-xs font-bold text-slate-700 whitespace-nowrap">💬 관리자에게 건의하기</button>
           <button id="admin-toggle-btn" type="button" class="w-full flex items-center justify-between px-2.5 py-2 rounded-xl hover:bg-slate-100 text-xs font-bold text-slate-700 whitespace-nowrap">🛡️ 관리자 모드</button>
+          <div class="border-t border-slate-100 pt-1.5 space-y-1">
+            <div id="auth-account-info" class="px-2.5 text-[10px] font-semibold text-slate-400 truncate">로컬 모드</div>
+            <button id="btn-google-logout" type="button" class="w-full flex items-center justify-between px-2.5 py-2 rounded-xl hover:bg-rose-50 text-xs font-bold text-rose-600 whitespace-nowrap">🚪 로그아웃 / 계정 전환</button>
+          </div>
         </div>
       </div>
     </div>
@@ -1078,6 +1133,10 @@
       let cloudConnected = false;
       let cloudErrorMsg = '';
       let dbRef = null;
+      let dbListenerAttached = false;
+      let dbLoadedOnce = false;
+      let currentAuthUser = null;
+      let localPreviewMode = false;
 
       let activeChallengeCat = 'special';
       // Planner UI state
@@ -1110,58 +1169,145 @@
         }
       }
 
+      function showAuthOverlay(step, errText) {
+        const ov = document.getElementById('auth-overlay');
+        const loginStep = document.getElementById('auth-login-step');
+        const onboardStep = document.getElementById('auth-onboard-step');
+        const errEl = document.getElementById('auth-error-msg');
+        if (!ov) return;
+        ov.classList.remove('hidden');
+        ov.classList.add('flex');
+        if (step === 'onboard') {
+          loginStep.classList.add('hidden');
+          onboardStep.classList.remove('hidden');
+          if (currentAuthUser) {
+            document.getElementById('onboard-google-email').textContent = currentAuthUser.email || 'Google 계정 연결됨';
+            const nickEl = document.getElementById('onboard-nickname-input');
+            if (!nickEl.value) nickEl.value = (currentAuthUser.displayName || '').slice(0, 16);
+          }
+        } else {
+          loginStep.classList.remove('hidden');
+          onboardStep.classList.add('hidden');
+          if (errText) {
+            errEl.textContent = errText;
+            errEl.classList.remove('hidden');
+          } else {
+            errEl.classList.add('hidden');
+          }
+        }
+      }
+
+      function hideAuthOverlay() {
+        const ov = document.getElementById('auth-overlay');
+        if (!ov) return;
+        ov.classList.add('hidden');
+        ov.classList.remove('flex');
+      }
+
+      function syncAuthUserMember(user) {
+        if (!user) return;
+        const found = (shared.members || []).find(m => m.uid === user.uid);
+        if (found) {
+          prefs.currentUserId = found.id;
+          prefs.joinedMemberId = found.inStudy !== false ? found.id : null;
+          prefs.lastJoinedMemberId = found.id;
+          savePrefs();
+          hideAuthOverlay();
+          renderAll();
+        } else if (dbLoadedOnce || !cloudConnected) {
+          showAuthOverlay('onboard');
+        }
+      }
+
+      function attachRealtimeDb() {
+        if (dbListenerAttached) return;
+        dbListenerAttached = true;
+        dbRef = firebase.database().ref('studyData');
+        dbRef.on('value', snap => {
+          cloudConnected = true; cloudErrorMsg = '';
+          dbLoadedOnce = true;
+          const v = snap.val();
+          if (v && Array.isArray(v.members)) {
+            shared = {
+              adminPin: (!v.adminPin || v.adminPin === '1234') ? '3456' : v.adminPin,
+              studyMode: v.studyMode || 'strict',
+              members: v.members || [],
+              classes: v.classes || {},
+              manualExempt: v.manualExempt || {},
+              studyLogs: v.studyLogs || {},
+              maxFocusLogs: v.maxFocusLogs || {},
+              periodStudySecs: v.periodStudySecs || {},
+              studyBlocks: v.studyBlocks || {},
+              suggestions: Array.isArray(v.suggestions) ? v.suggestions : (v.suggestions ? Object.values(v.suggestions) : []),
+              reports: Array.isArray(v.reports) ? v.reports : (v.reports ? Object.values(v.reports) : []),
+              directMessages: v.directMessages || {},
+              promoHistory: v.promoHistory || {},
+              customBadges: v.customBadges || {},
+              motemote: v.motemote || {},
+              lpCut30Migrated: true,
+              challenges: (() => {
+                const base = buildDefaultSharedData().challenges;
+                const existing = Array.isArray(v.challenges) ? v.challenges : [];
+                const filtered = existing.filter(c => !['ch_f10', 'ch_f30', 'ch_f60'].includes(c.id));
+                const ids = new Set(filtered.map(c => c.id));
+                let mergedCh = filtered.concat(base.filter(b => !ids.has(b.id)));
+                if (!v.lpCut30Migrated) {
+                  mergedCh = mergedCh.map(c => c.focusSecs ? { ...c, lp: Math.max(0, (c.lp || 0) - 30) } : c);
+                }
+                return mergedCh;
+              })(),
+              memberChallenges: v.memberChallenges || {},
+              praises: v.praises || {},
+              records: v.records || {},
+              photos: Array.isArray(v.photos) ? v.photos : (v.photos ? Object.values(v.photos) : [])
+            };
+            if (cleanupOldPhotos(7) > 0 || !v.lpCut30Migrated) saveSharedData();
+            try { localStorage.setItem(LOCAL_DATA_KEY, JSON.stringify(shared)); } catch (e) {}
+          } else {
+            // Initialize clean DB structure (keep existing challenges, empty members until created)
+            if (!shared.members) shared.members = [];
+            dbRef.set(shared).catch(() => {});
+          }
+          updateCloudPill();
+          if (currentAuthUser) syncAuthUserMember(currentAuthUser);
+          renderAll();
+        }, err => {
+          cloudConnected = false; cloudErrorMsg = err?.message || 'Firebase 규칙 확인 필요'; updateCloudPill();
+          if (currentAuthUser) showAuthOverlay('login', '데이터베이스 접근 권한이 없습니다. Firebase 규칙을 확인해 주세요.');
+        });
+      }
+
       function initFirebase() {
         try {
-          if (typeof firebase === 'undefined') { updateCloudPill(); return; }
-          if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-          dbRef = firebase.database().ref('studyData');
-          dbRef.on('value', snap => {
-            cloudConnected = true; cloudErrorMsg = '';
-            const v = snap.val();
-            if (v && Array.isArray(v.members)) {
-              shared = {
-                adminPin: (!v.adminPin || v.adminPin === '1234') ? '3456' : v.adminPin,
-                studyMode: v.studyMode || 'strict',
-                members: v.members || [],
-                classes: v.classes || {},
-                manualExempt: v.manualExempt || {},
-                studyLogs: v.studyLogs || {},
-                maxFocusLogs: v.maxFocusLogs || {},
-                periodStudySecs: v.periodStudySecs || {},
-                studyBlocks: v.studyBlocks || {},
-                suggestions: Array.isArray(v.suggestions) ? v.suggestions : (v.suggestions ? Object.values(v.suggestions) : []),
-                reports: Array.isArray(v.reports) ? v.reports : (v.reports ? Object.values(v.reports) : []),
-                directMessages: v.directMessages || {},
-                promoHistory: v.promoHistory || {},
-                customBadges: v.customBadges || {},
-                motemote: v.motemote || {},
-                lpCut30Migrated: true,
-                challenges: (() => {
-                  const base = buildDefaultSharedData().challenges;
-                  const existing = Array.isArray(v.challenges) ? v.challenges : [];
-                  const filtered = existing.filter(c => !['ch_f10', 'ch_f30', 'ch_f60'].includes(c.id));
-                  const ids = new Set(filtered.map(c => c.id));
-                  let mergedCh = filtered.concat(base.filter(b => !ids.has(b.id)));
-                  if (!v.lpCut30Migrated) {
-                    mergedCh = mergedCh.map(c => c.focusSecs ? { ...c, lp: Math.max(0, (c.lp || 0) - 30) } : c);
-                  }
-                  return mergedCh;
-                })(),
-                memberChallenges: v.memberChallenges || {},
-                praises: v.praises || {},
-                records: v.records || {},
-                photos: Array.isArray(v.photos) ? v.photos : (v.photos ? Object.values(v.photos) : [])
-              };
-              if (cleanupOldPhotos(7) > 0 || !v.lpCut30Migrated) saveSharedData();
-              try { localStorage.setItem(LOCAL_DATA_KEY, JSON.stringify(shared)); } catch (e) {}
-            } else {
-              dbRef.set(shared).catch(() => {});
-            }
+          if (typeof firebase === 'undefined') {
             updateCloudPill();
-            renderAll();
-          }, err => {
-            cloudConnected = false; cloudErrorMsg = err?.message || 'Firebase 규칙 확인 필요'; updateCloudPill();
-          });
+            return;
+          }
+          if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+          if (typeof firebase.auth === 'function') {
+            const auth = firebase.auth();
+            auth.getRedirectResult().catch(() => {});
+            auth.onAuthStateChanged(user => {
+              currentAuthUser = user || null;
+              if (user) {
+                localPreviewMode = false;
+                attachRealtimeDb();
+                if (dbLoadedOnce) syncAuthUserMember(user);
+              } else {
+                dbLoadedOnce = false;
+                if (dbRef && dbListenerAttached) {
+                  try { dbRef.off(); } catch (e) {}
+                  dbListenerAttached = false;
+                }
+                cloudConnected = false;
+                updateCloudPill();
+                if (!localPreviewMode) showAuthOverlay('login');
+              }
+              renderHeaderControls();
+            });
+          } else {
+            attachRealtimeDb();
+          }
         } catch (e) { cloudConnected = false; updateCloudPill(); }
       }
 
@@ -1573,6 +1719,20 @@
         const mbBadge = document.getElementById('mailbox-badge');
         mbBadge.textContent = unreadCnt;
         mbBadge.classList.toggle('hidden', unreadCnt === 0);
+        const accEl = document.getElementById('auth-account-info');
+        const logoutBtn = document.getElementById('btn-google-logout');
+        const hdrLogoutBtn = document.getElementById('btn-header-logout');
+        if (accEl && logoutBtn) {
+          if (currentAuthUser) {
+            accEl.textContent = currentAuthUser.email || currentAuthUser.displayName || 'Google 로그인됨';
+            logoutBtn.textContent = '🚪 로그아웃 / 계정 전환';
+            if (hdrLogoutBtn) hdrLogoutBtn.textContent = '로그아웃';
+          } else {
+            accEl.textContent = '로컬 체험 중';
+            logoutBtn.textContent = '🔑 Google 로그인하기';
+            if (hdrLogoutBtn) hdrLogoutBtn.textContent = '로그인';
+          }
+        }
       }
 
       function renderLiveBanner() {
@@ -2173,6 +2333,7 @@
         document.getElementById('rank-last-list').innerHTML = lSort.length ? lSort.map((m, i) => `<div class="flex justify-between bg-slate-50 rounded-xl px-3 py-2 text-xs"><span><strong>${i + 1}위</strong> ${m.name}</span><span class="font-mono font-bold">${m.lastTime}</span></div>`).join('') : '<p class="text-xs text-slate-400">기록 없음</p>';
 
         const me = shared.members.find(m => m.id === prefs.currentUserId) || shared.members[0];
+        if (!me) return;
         const myTier = getMemberTier(me.lp || 0);
         const sumEl = document.getElementById('my-rank-tier-summary');
         if (sumEl) {
@@ -3230,6 +3391,7 @@
         const firstDay = new Date(y, m, 1).getDay();
         const daysInMonth = new Date(y, m + 1, 0).getDate();
         const me = shared.members.find(x => x.id === prefs.currentUserId) || shared.members[0];
+        if (!me) return;
         const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
         let html = '<table class="w-full text-xs border-collapse"><thead><tr class="bg-slate-100 text-slate-600">' + dayNames.map(d => `<th class="p-2 text-center">${d}</th>`).join('') + '</tr></thead><tbody><tr>';
         for (let i = 0; i < firstDay; i++) html += '<td class="p-1.5 border border-slate-100 bg-slate-50/40"></td>';
@@ -3666,6 +3828,92 @@
       document.getElementById('focus-min-btn').addEventListener('click', minimizeFocusOverlay);
       document.getElementById('focus-mini-expand').addEventListener('click', openFocusOverlay);
       document.getElementById('focus-end-btn').addEventListener('click', () => { closeFocusOverlay(); flushCelebrations(); });
+
+      document.getElementById('btn-google-login').addEventListener('click', () => {
+        if (typeof firebase === 'undefined' || typeof firebase.auth !== 'function') {
+          showAuthOverlay('login', 'Firebase 인증 모듈을 불러오지 못했습니다. 인터넷 연결을 확인하세요.');
+          return;
+        }
+        const provider = new firebase.auth.GoogleAuthProvider();
+        firebase.auth().signInWithPopup(provider).catch(err => {
+          if (err && (err.code === 'auth/popup-blocked' || err.code === 'auth/operation-not-supported-in-this-environment')) {
+            firebase.auth().signInWithRedirect(provider).catch(rErr => {
+              showAuthOverlay('login', '로그인 오류: ' + (rErr?.message || '호스팅된 웹 주소(https://)에서 접속해 주세요.'));
+            });
+          } else {
+            showAuthOverlay('login', '로그인 실패: ' + (err?.message || 'Firebase 콘솔에서 Google 로그인을 활성화했는지 확인하세요.'));
+          }
+        });
+      });
+
+      document.getElementById('btn-auth-local-preview').addEventListener('click', () => {
+        localPreviewMode = true;
+        hideAuthOverlay();
+        renderAll();
+      });
+
+      document.getElementById('auth-onboard-step').addEventListener('submit', e => {
+        e.preventDefault();
+        if (!currentAuthUser) return;
+        const nickname = document.getElementById('onboard-nickname-input').value.trim();
+        const mode = document.getElementById('onboard-mode-select').value || 'free';
+        if (!nickname) { showToast('사용할 별명을 입력해 주세요.', 'warn'); return; }
+        if (!Array.isArray(shared.members)) shared.members = [];
+        const existing = shared.members.find(m => m.uid === currentAuthUser.uid);
+        if (existing) {
+          existing.name = nickname;
+          prefs.currentUserId = existing.id;
+          prefs.joinedMemberId = existing.id;
+          prefs.lastJoinedMemberId = existing.id;
+        } else {
+          const newMember = {
+            id: 'm_' + currentAuthUser.uid.slice(0, 8) + '_' + Date.now(),
+            uid: currentAuthUser.uid,
+            email: currentAuthUser.email || '',
+            name: nickname,
+            avatarUrl: currentAuthUser.photoURL || '',
+            mode,
+            inStudy: true,
+            streak: 0,
+            lp: 0,
+            respectCount: 0,
+            equippedTitle: '',
+            lateNight: false,
+            firstTime: null,
+            lastTime: null
+          };
+          shared.members.push(newMember);
+          prefs.currentUserId = newMember.id;
+          prefs.joinedMemberId = newMember.id;
+          prefs.lastJoinedMemberId = newMember.id;
+        }
+        savePrefs();
+        saveSharedData();
+        hideAuthOverlay();
+        showToast(`${nickname}님, 멤버가 생성되었습니다!`, 'success');
+        renderAll();
+      });
+
+      document.getElementById('btn-onboard-logout').addEventListener('click', () => {
+        if (typeof firebase !== 'undefined' && typeof firebase.auth === 'function') {
+          firebase.auth().signOut().catch(() => {});
+        }
+        showAuthOverlay('login');
+      });
+
+      function handleHeaderAuthClick() {
+        if (currentAuthUser && typeof firebase !== 'undefined' && typeof firebase.auth === 'function') {
+          firebase.auth().signOut().then(() => {
+            showToast('로그아웃되었습니다.', 'info');
+            showAuthOverlay('login');
+          }).catch(() => {});
+        } else {
+          localPreviewMode = false;
+          showAuthOverlay('login');
+        }
+      }
+      document.getElementById('btn-google-logout').addEventListener('click', handleHeaderAuthClick);
+      document.getElementById('btn-header-logout').addEventListener('click', handleHeaderAuthClick);
 
       initFirebase();
       switchTab(prefs.activeTab || 'dashboard');
