@@ -468,17 +468,28 @@
     body[data-dark="true"] #login-welcome-overlay { background:rgba(13,22,38,.92); }
     #login-welcome-overlay.is-active { display:flex; }
     #login-welcome-overlay.is-fading { background:transparent; backdrop-filter:none; -webkit-backdrop-filter:none; }
-    #welcome-logo-fly {
-      width:84px; height:84px; border-radius:26px;
-      display:grid; place-items:center;
-      background:var(--hero-deep); color:var(--hero-text);
-      border:1.5px solid rgba(255,255,255,.16);
-      box-shadow:0 18px 42px rgba(16,30,55,.28), 0 0 0 6px color-mix(in srgb, var(--accent) 22%, transparent);
-      transform:scale(.55) translateY(14px); opacity:0;
-      transition:transform 520ms cubic-bezier(.22,1.22,.36,1), opacity 320ms ease, box-shadow 450ms ease;
-      will-change:transform, opacity;
+    #welcome-logo-stage {
+      position:relative; display:grid; place-items:center;
     }
-    #welcome-logo-fly svg { width:44px; height:44px; }
+    #welcome-glow-aura {
+      position:absolute; width:168px; height:168px; border-radius:9999px;
+      background:radial-gradient(circle, color-mix(in srgb, var(--accent) 42%, transparent) 0%, transparent 70%);
+      opacity:0; transform:scale(.6); pointer-events:none;
+      transition:opacity 900ms ease, transform 1100ms cubic-bezier(.16,1,.3,1);
+    }
+    #login-welcome-overlay.is-entered #welcome-glow-aura { opacity:1; transform:scale(1.08); }
+    #login-welcome-overlay.is-fading #welcome-glow-aura { opacity:0; transform:scale(1.3); transition:opacity 450ms ease; }
+    #welcome-logo-fly {
+      position:relative; width:92px; height:92px; border-radius:28px;
+      display:grid; place-items:center;
+      background:linear-gradient(145deg, var(--hero) 0%, var(--hero-deep) 100%);
+      color:var(--hero-text);
+      border:1.5px solid rgba(255,255,255,.22);
+      box-shadow:0 20px 48px rgba(16,30,55,.32), 0 0 0 6px color-mix(in srgb, var(--accent) 22%, transparent);
+      transform:scale(.82) translateY(12px); opacity:0;
+      transition:transform 700ms cubic-bezier(.22,1.18,.36,1), opacity 420ms ease, box-shadow 500ms ease;
+    }
+    #welcome-logo-fly svg { width:54px; height:54px; overflow:visible; }
     #login-welcome-overlay.is-entered #welcome-logo-fly { transform:scale(1) translateY(0); opacity:1; }
     #login-welcome-overlay.is-flying #welcome-logo-fly {
       box-shadow:none;
@@ -539,13 +550,31 @@
       0% { opacity:0; transform:translate(14px, 5px) rotate(22deg) scale(.68); }
       100% { opacity:1; transform:translate(0, 0) rotate(0deg) scale(1); }
     }
-    @keyframes heartAssemble {
-      0% { opacity:0; transform:translateY(-14px) scale(.1) rotate(-18deg); filter:drop-shadow(0 0 0 transparent); }
-      45% { opacity:1; transform:translateY(2px) scale(1.32) rotate(6deg); filter:drop-shadow(0 0 8px var(--accent)); }
-      72% { opacity:1; transform:translateY(-2px) scale(.94) rotate(-2deg); filter:drop-shadow(0 0 12px var(--accent)); }
-      88% { opacity:1; transform:translateY(0) scale(1.08) rotate(0deg); filter:drop-shadow(0 0 6px var(--accent)); }
-      100% { opacity:1; transform:translateY(0) scale(1) rotate(0deg); filter:drop-shadow(0 0 0 transparent); }
+    #login-welcome-overlay.is-reconstruct #welcome-logo-fly svg .heart-spark {
+      opacity:0; transform-origin:center;
+      animation:sparkPop 1200ms cubic-bezier(.16,1,.3,1) 2500ms both;
     }
+    #login-welcome-overlay:not(.is-reconstruct) #welcome-logo-fly svg .heart-spark { opacity:0; }
+    @keyframes heartAssemble {
+      0% { opacity:0; transform:translateY(-16px) scale(.15) rotate(-14deg); }
+      45% { opacity:1; transform:translateY(1px) scale(1.22) rotate(4deg); }
+      70% { opacity:1; transform:translateY(-1px) scale(.95) rotate(-1deg); }
+      86% { opacity:1; transform:translateY(0) scale(1.06) rotate(0deg); }
+      100% { opacity:1; transform:translateY(0) scale(1) rotate(0deg); }
+    }
+    @keyframes sparkPop {
+      0% { opacity:0; transform:scale(.2) rotate(-30deg); }
+      40% { opacity:1; transform:scale(1.15) rotate(0deg); }
+      100% { opacity:0; transform:scale(.7) rotate(25deg); }
+    }
+    /* Smooth Page Refresh / Entrance Reveal */
+    @keyframes studyCardReveal {
+      0% { opacity:0; transform:translateY(14px) scale(.99); }
+      100% { opacity:1; transform:translateY(0) scale(1); }
+    }
+    body.is-entering #main-live-banner { animation:studyCardReveal 560ms cubic-bezier(.22,1,.36,1) 80ms both; }
+    body.is-entering #home-card-grid > :nth-child(1) { animation:studyCardReveal 580ms cubic-bezier(.22,1,.36,1) 160ms both; }
+    body.is-entering #home-card-grid > :nth-child(2) { animation:studyCardReveal 580ms cubic-bezier(.22,1,.36,1) 240ms both; }
     @keyframes welcomeHeartHalo {
       0% { opacity:0; transform:scale(.78); }
       35% { opacity:.75; transform:scale(1.06); }
@@ -573,12 +602,20 @@
   <a class="skip-link" href="#study-main">본문으로 건너뛰기</a>
   <!-- Login Welcome Animation Overlay -->
   <div id="login-welcome-overlay" aria-hidden="true">
-    <div id="welcome-logo-fly">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-        <path class="book-left" d="M2 6.5A2.5 2.5 0 0 1 4.5 4H12v16H4.5A2.5 2.5 0 0 1 2 17.5v-11Z"/>
-        <path class="book-right" d="M22 6.5A2.5 2.5 0 0 0 19.5 4H12v16h7.5a2.5 2.5 0 0 0 2.5-2.5v-11Z"/>
-        <path class="book-heart" d="M12 8.5c.8-1 2.4-.8 2.8.4.4 1.1-.6 2.3-2.8 3.6-2.2-1.3-3.2-2.5-2.8-3.6.4-1.2 2-1.4 2.8-.4Z" fill="var(--accent)" stroke="none"/>
-      </svg>
+    <div id="welcome-logo-stage">
+      <div id="welcome-glow-aura"></div>
+      <div id="welcome-logo-fly">
+        <svg viewBox="0 0 64 64" shape-rendering="geometricPrecision" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
+          <path class="book-left" d="M8 18.5A6.5 6.5 0 0 1 14.5 12H32v40H14.5A6.5 6.5 0 0 1 8 45.5v-27Z"/>
+          <path class="book-right" d="M56 18.5A6.5 6.5 0 0 0 49.5 12H32v40h17.5A6.5 6.5 0 0 0 56 45.5v-27Z"/>
+          <g class="book-heart">
+            <path d="M32 36.2C32 36.2 21.5 29.2 21.5 22.8C21.5 19.3 24.2 16.8 27.4 16.8C29.5 16.8 31.2 17.9 32 19.5C32.8 17.9 34.5 16.8 36.6 16.8C39.8 16.8 42.5 19.3 42.5 22.8C42.5 29.2 32 36.2 32 36.2Z" fill="var(--accent)" stroke="none"/>
+            <path d="M25.3 21.6C25.6 20.1 26.8 19.2 28.2 19.2" stroke="rgba(255,255,255,0.65)" stroke-width="2" stroke-linecap="round"/>
+          </g>
+          <path class="heart-spark" d="M16 9l1.2 3.2L20.4 13.4l-3.2 1.2L16 17.8l-1.2-3.2-3.2-1.2 3.2-1.2L16 9Z" fill="var(--accent)" stroke="none"/>
+          <path class="heart-spark" d="M49 8l1 2.6L52.6 11.6l-2.6 1L49 15.2l-1-2.6-2.6-1L48 10.6 49 8Z" fill="#ffffff" stroke="none"/>
+        </svg>
+      </div>
     </div>
     <div id="welcome-text-wrap">
       <p id="welcome-cheer-title">오늘 하루도 파이팅해봐요!</p>
@@ -2256,10 +2293,12 @@
           } else {
             ov.classList.add('is-flying', 'is-fading');
           }
+          document.body.classList.add('is-entering');
           setTimeout(() => {
             targetLogo.style.opacity = '';
             ov.classList.remove('is-active', 'is-entered', 'is-flying', 'is-fading', 'is-reconstruct');
             fly.style.transform = '';
+            setTimeout(() => document.body.classList.remove('is-entering'), 700);
           }, 680);
         }, 980);
       }
@@ -2303,10 +2342,12 @@
           } else {
             ov.classList.add('is-flying', 'is-fading');
           }
+          document.body.classList.add('is-entering');
           setTimeout(() => {
             targetLogo.style.opacity = '';
             ov.classList.remove('is-active', 'is-entered', 'is-flying', 'is-fading', 'is-reconstruct');
             fly.style.transform = '';
+            setTimeout(() => document.body.classList.remove('is-entering'), 700);
           }, 1700);
         }, 6500);
       }
@@ -3148,7 +3189,29 @@
           '지금 흘린 땀방울은 시험지 위에서 빛난다.',
           '남들과 비교하지 말고 어제의 나만 이기자.',
           '시작이 반이다. 스톱워치부터 눌러보자.',
-          '작은 몰입이 모여 압도적인 실력이 된다.'
+          '작은 몰입이 모여 압도적인 실력이 된다.',
+          '흙에서 자란 내 마음 파란 하늘 빛 (2006 수능)',
+          '넓은 벌 동쪽 끝으로 옛이야기 (2007 수능)',
+          '손금에 맑은 강물이 흐르고 (2008 수능)',
+          '이 많은 별빛이 내린 언덕 위에 (2009 수능)',
+          '맑은 강물처럼 조용하고 은근하며 (2010 수능)',
+          '날마다 새로우며 깊어지고 넓어진다 (2011 수능)',
+          '진실로 내가 그대를 사랑하는 까닭은 (2012 수능)',
+          '맑은 햇빛으로 반짝반짝 물들이며 (2013 수능)',
+          '꽃초롱 불 밝히듯 눈을 밝힐까 (2014 수능)',
+          '햇살도 둥글둥글하게 뭉치는 맑은 날 (2015 수능)',
+          '넓음과 깊음을 가슴에 채우며 (2016 수능)',
+          '흙에서 자란 내 마음 파아란 하늘빛 (2017 수능)',
+          '큰 바다 넓은 하늘을 우리는 가졌노라 (2018 수능)',
+          '그대만큼 사랑스러운 사람을 본 일이 없다 (2019 수능)',
+          '너무 맑고 초롱한 그 중 하나 별이여 (2020 수능)',
+          '많고 많은 사람 중에 그대 한 사람 (2021 수능)',
+          '넓은 하늘로의 비상을 꿈꾸며 (2022 수능)',
+          '나의 꿈은 맑은 바람이 되어서 (2023 수능)',
+          '가장 넓은 길은 언제나 내 마음속에 (2024 수능)',
+          '저 넓은 세상에서 큰 꿈을 펼쳐라 (2025 수능)',
+          '초록 물결이 톡톡 튀는 젊음처럼 (2026 수능)',
+          '끝없이 높은 하늘로 한없이 넓은 바다로 (2027 수능)'
         ];
         const meBanner = shared.members.find(m => m.id === prefs.currentUserId);
         const bannerEl = document.getElementById('main-live-banner');
