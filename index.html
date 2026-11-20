@@ -78,13 +78,15 @@
     #group-status-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: clamp(12px, 1.55vw, 17px);
+      gap: clamp(16px, 1.75vw, 22px);
     }
     .member-card {
       --member-card-padding: clamp(9px, 1.35vw, 15px);
       --member-portrait-size: 38px;
       --member-portrait-inset: 5px;
-      --member-identity-height: 52px;
+      --member-identity-height: 72px;
+      --member-portrait-drop: 12px;
+      --member-name-inset: calc(var(--member-portrait-size) + 16px);
       position: relative;
       display: grid;
       min-width: 0;
@@ -153,12 +155,13 @@
       align-items: center;
       min-height: var(--member-identity-height);
       min-width: 0;
-      padding-left: calc(var(--member-portrait-size) + 16px);
+      padding-left: var(--member-name-inset);
+      padding-top: calc(var(--member-portrait-drop) * 2);
     }
     .member-avatar {
       position: absolute;
       z-index: 2;
-      top: calc(var(--member-card-padding) + (var(--member-identity-height) - var(--member-portrait-size)) / 2 + 1px);
+      top: calc(var(--member-card-padding) + var(--member-portrait-drop) + (var(--member-identity-height) - var(--member-portrait-size)) / 2 + 1px);
       left: calc(var(--member-card-padding) + var(--member-portrait-inset) + 1px);
       display: grid;
       place-items: center;
@@ -237,6 +240,19 @@
     .member-status::before { opacity: .65; }
     .member-status[data-status="studying"]::before { opacity: 1; }
 
+    .member-flame-space {
+      --flame-overhang: 16px;
+      --flame-side-overhang: 9px;
+      position: absolute;
+      z-index: 0;
+      inset: calc(-1 * var(--flame-overhang)) auto auto calc(-1 * var(--flame-side-overhang));
+      width: calc(var(--flame-side-overhang) + var(--member-card-padding) + var(--member-name-inset) + 3px);
+      height: calc(var(--member-card-padding) + var(--member-identity-height) + var(--flame-overhang) + 4px);
+      overflow: hidden;
+      mask-image: linear-gradient(#000 83%, transparent), linear-gradient(to right, #000 calc(100% - 14px), transparent);
+      mask-composite: intersect;
+      pointer-events: none;
+    }
     /* The shared flame sprite contains 12 frames and a repeat of the first frame.
        The upper row is the silhouette, and the lower row adds the hot core. */
     .member-portrait-flame {
@@ -244,18 +260,18 @@
       --flame-body: color-mix(in srgb, var(--rank-gem) 50%, var(--rank-deep));
       --flame-tip: color-mix(in srgb, var(--rank-gem) 81%, #fff);
       --flame-ember: var(--rank-deep);
-      --flame-width: calc(.66 + var(--flame-strength) * .026 + var(--flame-rank) * .008);
-      --flame-height: calc(.62 + var(--flame-strength) * .033 + var(--flame-rank) * .01);
-      --flame-tempo: calc(1.4s - var(--flame-strength) * .042s - var(--flame-rank) * .017s);
+      --flame-width: calc(.66 + var(--flame-strength) * .022 + var(--flame-rank) * .008);
+      --flame-height: calc(.56 + var(--flame-strength) * .052 + var(--flame-rank) * .01);
+      --flame-tempo: calc(1.4s - var(--flame-strength) * .029s - var(--flame-rank) * .013s);
       --flame-delay: 0s;
       position: absolute;
       z-index: 0;
-      left: calc(var(--member-card-padding) + var(--member-portrait-inset) + var(--member-portrait-size) / 2 + 1px);
-      top: calc(var(--member-card-padding) + var(--member-identity-height) / 2 + 1px);
+      left: calc(var(--flame-side-overhang) + var(--member-card-padding) + var(--member-portrait-inset) + var(--member-portrait-size) / 2 + 1px);
+      top: calc(var(--flame-overhang) + var(--member-card-padding) + var(--member-portrait-drop) + var(--member-identity-height) / 2 + 1px);
       width: 84px;
       height: 76px;
       transform: translate(-50%, -57%);
-      background: radial-gradient(ellipse 46% 49% at 50% 59%, color-mix(in srgb, var(--flame-body) calc(14% + var(--flame-strength) * 3%), transparent), transparent);
+      background: radial-gradient(ellipse 46% 49% at 50% 59%, color-mix(in srgb, var(--flame-body) calc(14% + var(--flame-strength) * 2.2%), transparent), transparent);
       pointer-events: none;
     }
     .member-card[data-member-tier="1"] .member-portrait-flame {
@@ -281,7 +297,7 @@
     }
     .member-portrait-flame::before {
       background: linear-gradient(0deg, var(--rank-deep) 8%, var(--flame-body) 45%, var(--flame-tip) 85%);
-      opacity: calc(.44 + var(--flame-strength) * .029 + var(--flame-rank) * .012);
+      opacity: calc(.41 + var(--flame-strength) * .022 + var(--flame-rank) * .012);
     }
     .member-portrait-flame::after {
       --flame-mask-row: 100%;
@@ -296,7 +312,7 @@
         radial-gradient(circle at 14% 46%, var(--flame-ember) 0 1px, transparent 1.8px),
         radial-gradient(circle at 76% 23%, var(--flame-tip) 0 1.3px, transparent 2.1px),
         radial-gradient(circle at 86% 48%, var(--flame-body) 0 1px, transparent 1.9px);
-      opacity: calc(.34 + var(--flame-strength) * .044);
+      opacity: calc(.29 + var(--flame-strength) * .031);
     }
     .member-flame-embers[data-bright]::after {
       content: '';
@@ -376,8 +392,13 @@
     @media (min-width: 650px) { #group-status-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
     @media (min-width: 1020px) { #group-status-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
     @media (max-width: 470px) {
-      .member-card { --member-portrait-size: 32px; --member-portrait-inset: 4px; --member-identity-height: 44px; }
-      .member-identity { padding-left: calc(var(--member-portrait-size) + 12px); }
+      .member-card {
+        --member-portrait-size: 32px;
+        --member-portrait-inset: 4px;
+        --member-identity-height: 60px;
+        --member-portrait-drop: 8px;
+        --member-name-inset: calc(var(--member-portrait-size) + 12px);
+      }
       .member-card[data-has-menu] .member-identity { padding-right: 24px; }
       .member-portrait-flame { transform: translate(-50%, -57%) scale(.88); }
       .member-rank-line { min-height: 2.9em; align-content: flex-start; }
@@ -1177,6 +1198,18 @@
     #btn-google-login:hover:not(:disabled) {background:var(--tint);border-color:var(--focus-ring)}
     #focus-overlay {background:var(--page)!important;color:var(--ink)!important;min-height:100%;padding-block:max(1rem,env(safe-area-inset-top)) max(1rem,env(safe-area-inset-bottom))}
     #focus-overlay > div {max-width:39rem}
+    .focus-view-switch {display:flex;justify-content:center;gap:.25rem}
+    .focus-view-switch button {
+      min-height:36px;padding:.35rem .65rem;border:1px solid transparent;border-radius:9px;
+      background:transparent;color:var(--muted);font-size:.73rem;font-weight:600
+    }
+    .focus-view-switch button[aria-pressed="true"] {border-color:var(--line);color:var(--ink)}
+    .focus-view-switch button:hover {background:var(--soft)}
+    .focus-view-switch button:focus-visible {outline:2px solid var(--focus-ring);outline-offset:2px}
+    #focus-study-grid {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;text-align:left}
+    @media (max-width:365px) {#focus-study-grid {grid-template-columns:minmax(0,1fr)}}
+    .focus-quote-card {padding:clamp(1.25rem,5vw,2rem);border:1px solid var(--line);border-radius:16px;background:var(--surface)}
+    #focus-quote-text {min-height:4em;display:grid;align-items:center;margin:0;color:var(--ink);font-size:clamp(1.05rem,4vw,1.4rem);font-weight:700;line-height:1.65;word-break:keep-all;overflow-wrap:anywhere}
     #focus-timer-box,#focus-mini-bar {background:linear-gradient(145deg,var(--hero-deep),var(--hero))!important;color:var(--hero-text)!important;border:1px solid #7da3e465!important;box-shadow:0 12px 30px #102a5933!important}
     #focus-timer-box {padding:clamp(1.3rem,5vw,2.5rem) 1rem 1.25rem}
     #focus-timer-box[data-paused="true"] {border-color:var(--accent)!important}
@@ -1613,6 +1646,12 @@
   <!-- Fullscreen Focus Stopwatch Overlay -->
   <div id="focus-overlay" role="dialog" aria-modal="true" aria-label="집중 스톱워치" tabindex="-1" class="fixed inset-0 bg-white z-50 hidden flex-col items-center justify-center p-4 sm:p-6 text-center overflow-y-auto">
     <div class="max-w-lg w-full space-y-5 my-auto py-2">
+      <nav class="focus-view-switch" id="focus-view-switch" aria-label="타이머 화면 전환">
+        <button id="focus-view-timer" type="button" data-focus-view="timer" aria-pressed="true" aria-controls="focus-panel-timer">타이머</button>
+        <button id="focus-view-study" type="button" data-focus-view="study" aria-pressed="false" aria-controls="focus-panel-study">스터디</button>
+        <button id="focus-view-quotes" type="button" data-focus-view="quotes" aria-pressed="false" aria-controls="focus-panel-quotes">공부자극</button>
+      </nav>
+      <section class="space-y-5" id="focus-panel-timer" aria-labelledby="focus-view-timer">
       <div class="space-y-1.5">
         <span id="focus-period-badge" class="inline-block px-3.5 py-1 rounded-full text-xs font-black bg-slate-950 text-white">집중 중</span>
         <p id="focus-period-range" class="text-sm font-bold text-slate-500">스톱워치</p>
@@ -1620,6 +1659,7 @@
       <div id="focus-timer-box" class="relative overflow-hidden py-6 rounded-3xl ed-banner select-none">
         <div id="focus-timer-display" class="text-5xl sm:text-7xl font-mono font-black tracking-tighter">00:00:00</div>
         <p id="focus-pause-label" class="hidden text-xs font-bold mt-2">잠시 쉬는 중 · 10분 초과 휴식 시 연속 집중이 초기화됩니다</p>
+        <p id="focus-today-total" class="text-xs mt-2"></p>
         <p id="focus-cheer-msg" class="text-xs font-bold mt-2 opacity-85 transition-opacity duration-500 min-h-[1rem]"></p>
       </div>
       <div class="grid grid-cols-2 gap-3">
@@ -1636,6 +1676,14 @@
         </div>
         <div id="focus-timetable-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-1.5"></div>
       </div>
+      </section>
+      <section class="hidden" id="focus-panel-study" aria-labelledby="focus-view-study">
+        <div id="focus-study-grid"></div>
+      </section>
+      <section class="hidden focus-quote-card space-y-3" id="focus-panel-quotes" aria-labelledby="focus-view-quotes">
+        <p id="focus-quote-text" aria-live="polite">공부법 알아 볼 시간에 공부를 해라.</p>
+        <button id="focus-next-quote" type="button" class="rounded-lg border border-slate-200 px-3 py-2 text-xs font-bold text-slate-600">다른 문구</button>
+      </section>
     </div>
   </div>
 
@@ -2409,6 +2457,7 @@
               <li class="space-y-0.5">
                 <div class="font-black text-slate-900">⏱️ 집중 스톱워치</div>
                 <p><code>00:00</code>부터 측정하며, 휴식이 10분을 넘기면 연속 집중만 초기화되고 누적 시간은 유지됩니다. <strong>휴식 중</strong>에는 미니 바로 축소해 다른 탭을 볼 수 있습니다.</p>
+                <p>오늘 누적 공부 시간은 매일 <strong>오전 5시(한국 시간)</strong>에 0분부터 다시 쌓입니다. 오전 5시를 걸쳐 공부하면 이전과 새 공부일에 각각 기록되고 스톱워치는 계속 흐릅니다. 타이머 화면의 스터디 탭에서는 공부 중인 부원을, 공부자극 탭에서는 짧은 문구를 볼 수 있습니다.</p>
               </li>
               <li class="space-y-0.5">
                 <div class="font-black text-slate-900">📝 스터디 플래너</div>
@@ -2441,7 +2490,7 @@
               </li>
               <li class="space-y-0.5">
                 <div class="font-black text-slate-900">⚔️ 승급전</div>
-                <p>다음 티어 <strong>15 LP 전부터</strong> 도전 가능하며, 실패해도 LP 차감 없이 <strong>다음 날</strong> 재도전할 수 있습니다. 브론즈·실버는 연속 집중, 골드~다이아는 일일 누적(일요일도 가능)이며, 마스터 이상은 울트라집중 완주 미션으로 <strong>울트라집중 승급전만 일요일 불가</strong>입니다.</p>
+                <p>다음 티어 <strong>15 LP 전부터</strong> 도전할 수 있습니다. 도전 횟수는 시작할 때 사용하며 매일 <strong>오전 5시(한국 시간)</strong>에 초기화됩니다. 오전 5시를 지나 진행 중인 승급전을 마치면 새 공부일의 횟수로 바로 다시 도전할 수 있습니다. 실패 시 LP는 차감되지 않습니다. 브론즈·실버는 연속 집중, 골드~다이아는 일일 누적(일요일도 가능)이며, 마스터 이상은 울트라집중 완주 미션으로 <strong>울트라집중 승급전만 일요일 불가</strong>입니다.</p>
               </li>
               <li class="space-y-0.5">
                 <div class="font-black text-slate-900">🏅 뱃지 · 카드 이펙트</div>
@@ -2624,6 +2673,7 @@
               <span class="text-xs font-bold text-slate-500">LP</span>
             </div>
             <button type="submit" class="px-3.5 py-1.5 rounded-xl bg-slate-950 text-white text-xs font-bold whitespace-nowrap">랭크 적용</button>
+            <button id="btn-admin-resume-promo" type="button" class="hidden px-3.5 py-1.5 rounded-xl border border-indigo-300 text-indigo-700 text-xs font-black whitespace-nowrap">자정에 끊긴 승급전 이어하기</button>
             <button id="btn-admin-skip-promo" type="button" class="hidden px-3.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-black whitespace-nowrap">⏭️ 승급전 건너뛰기</button>
           </form>
           <div class="flex flex-wrap items-center justify-between gap-2 bg-amber-50/70 border border-amber-200 rounded-xl px-3 py-2">
@@ -2790,6 +2840,34 @@
           .replace(/'/g, '&#39;');
       }
       function todayStr() { return localDateKey(new Date()); }
+      function koreaDateKey(date = new Date()) {
+        return new Date(date.getTime() + 9 * 3600000).toISOString().slice(0, 10);
+      }
+      function studyDayKey(date = new Date()) {
+        // Korean time is UTC+9, and the study day starts five hours after midnight.
+        return new Date(date.getTime() + 4 * 3600000).toISOString().slice(0, 10);
+      }
+      function promotionStudyDay(member) {
+        return member.promoActiveStudyDay || member.promoActiveDate;
+      }
+      function promotionIsActive(member, day = studyDayKey()) {
+        const started = member.promoActiveDate && promotionStudyDay(member);
+        return !!started && day >= started && day <= addDaysStr(started, 1);
+      }
+      function promotionMissionDays(member, day = studyDayKey()) {
+        const days = [promotionStudyDay(member), day];
+        // Older releases put post-midnight study in the civil date's bucket.
+        if (member.promoLegacyCarryDate) days.push(member.promoActiveDate, member.promoLegacyCarryDate);
+        return [...new Set(days.filter(Boolean))];
+      }
+      function promotionAttemptUsed(member, day = studyDayKey()) {
+        if (shared.allowConsecutivePromo) return false;
+        if (member.promoAttemptDay) return member.promoAttemptDay === day;
+        const legacyResult = shared.promoHistory?.[member.id]?.[day];
+        return (member.promoActiveDate && promotionStudyDay(member) === day) ||
+          (member.promoCooldownUntil && day < member.promoCooldownUntil) ||
+          (!!legacyResult && !String(legacyResult).includes('관리자 건너뛰기'));
+      }
       function localDateKey(d) {
         return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
       }
@@ -2837,6 +2915,7 @@
       }
 
       function syncMemberPendingModes(t = todayStr()) {
+        const studyDay = studyDayKey();
         let changed = false;
         (shared.members || []).forEach(m => {
           if (currentAuthUser && !prefs.adminMode && m.uid !== currentAuthUser.uid) return;
@@ -2848,20 +2927,29 @@
             m.pendingDate = null;
             changed = true;
           }
-          if (m.promoPendingDate && t >= m.promoPendingDate) {
+          if (m.promoPendingDate && studyDay >= m.promoPendingDate) {
             m.promoActiveDate = m.promoPendingDate;
+            m.promoActiveStudyDay = m.promoPendingDate;
+            m.promoAttemptDay = m.promoPendingDate;
             m.promoPendingDate = null;
             changed = true;
           }
-          if (m.promoActiveDate && t > m.promoActiveDate) {
-            // Promotion day passed without completion -> 2-day cooldown
-            m.promoCooldownUntil = addDaysStr(m.promoActiveDate, 1);
+          if (m.promoActiveDate && !m.promoActiveStudyDay && studyDay <= addDaysStr(m.promoActiveDate, 1)) {
+            const civilDay = koreaDateKey();
+            m.promoActiveStudyDay = m.promoActiveDate === civilDay ? studyDay : m.promoActiveDate;
+            m.promoAttemptDay ||= m.promoActiveStudyDay;
+            m.promoLegacyCarryDate = civilDay;
+            changed = true;
+          }
+          if (m.promoActiveDate && studyDay > addDaysStr(promotionStudyDay(m), 1)) {
             m.promoActiveDate = null;
+            m.promoActiveStudyDay = null;
+            m.promoLegacyCarryDate = null;
             m.promoTargetTier = null;
             m.promoWinStreak = 0;
             changed = true;
           }
-          if (m.promoCooldownUntil && t >= m.promoCooldownUntil) {
+          if (m.promoCooldownUntil && studyDay >= m.promoCooldownUntil) {
             m.promoCooldownUntil = null;
             changed = true;
           }
@@ -3002,6 +3090,7 @@
           },
           manualExempt: {},
           studyLogs: {},
+          studySubminuteMs: {},
           maxFocusLogs: {},
           periodStudySecs: {},
           studyBlocks: {},
@@ -3168,7 +3257,7 @@
       function snapshotSharedState(obj) {
         const snap = {};
         if (!obj) return snap;
-        const twoLevel = ['studyLogs', 'maxFocusLogs', 'periodStudySecs', 'studyBlocks', 'motemote', 'records', 'manualExempt', 'respectSentByDate', 'periodLpRewarded', 'hourlyLpGiven', 'studySlotMins'];
+        const twoLevel = ['studyLogs', 'studySubminuteMs', 'maxFocusLogs', 'periodStudySecs', 'studyBlocks', 'motemote', 'records', 'manualExempt', 'respectSentByDate', 'periodLpRewarded', 'hourlyLpGiven', 'studySlotMins'];
         const oneLevel = ['classes', 'praises', 'directMessages', 'promoHistory', 'customBadges', 'memberChallenges', 'challengeLpGranted', 'respectLpRewarded', 'lpHistory'];
         Object.keys(obj).forEach(k => {
           if (twoLevel.includes(k) && obj[k] && typeof obj[k] === 'object') {
@@ -3678,6 +3767,7 @@
               classes: normArrMap(v.classes),
               manualExempt: v.manualExempt || {},
               studyLogs: v.studyLogs || {},
+              studySubminuteMs: v.studySubminuteMs || {},
               maxFocusLogs: v.maxFocusLogs || {},
               periodStudySecs: v.periodStudySecs || {},
               studyBlocks: v.studyBlocks || {},
@@ -4003,7 +4093,7 @@
           ['classes', 'manualExempt', 'customBadges', 'memberChallenges', 'challengeLpGranted', 'praises', 'directMessages', 'lpHistory', 'promoHistory', 'respectLpRewarded'].forEach(k => {
             if (shared[k]) delete shared[k][memberId];
           });
-          ['records', 'studyLogs', 'maxFocusLogs', 'periodStudySecs', 'studyBlocks', 'studySlotMins', 'hourlyLpGiven', 'motemote', 'periodLpRewarded', 'respectSentByDate'].forEach(k => {
+          ['records', 'studyLogs', 'studySubminuteMs', 'maxFocusLogs', 'periodStudySecs', 'studyBlocks', 'studySlotMins', 'hourlyLpGiven', 'motemote', 'periodLpRewarded', 'respectSentByDate'].forEach(k => {
             if (shared[k]) Object.keys(shared[k]).forEach(d => { if (shared[k][d]) delete shared[k][d][memberId]; });
           });
           if (shared.photos) shared.photos = shared.photos.filter(p => p.memberId !== memberId);
@@ -4159,15 +4249,19 @@
             if (justClearedAllStarter) pendingCelebrations.push({ __starterAllClear: true });
           } else {
             triggerChallengeCelebration(ch);
-            if (justClearedAllStarter) setTimeout(() => playStarterAllClearCeremony(), 500);
+            if (justClearedAllStarter) {
+              const quiet = !!focusInterval || quietTimerStart;
+              setTimeout(() => playStarterAllClearCeremony(quiet), 500);
+            }
           }
         }
       }
 
+      let quietTimerStart = false;
       function showFloatingLp(delta) {
         if (!delta || delta <= 0 || reduceMotion.matches || (focusInterval && !focusPaused)) return;
         try {
-          if (typeof navigator !== 'undefined' && typeof navigator.vibrate === 'function') {
+          if (!focusInterval && !quietTimerStart && typeof navigator !== 'undefined' && typeof navigator.vibrate === 'function') {
             navigator.vibrate(delta >= 25 ? [28, 35, 45] : delta >= 10 ? [22, 28, 22] : 18);
           }
         } catch (e) {}
@@ -4315,6 +4409,9 @@
         return shared.motemote[dateStr][memId];
       }
 
+      function studyMinutes(memberId, day = studyDayKey()) {
+        return Math.max(0, Math.floor(Number(shared.studyLogs?.[day]?.[memberId]) || 0));
+      }
       function formatStudyMins(totalMins) {
         const h = Math.floor(totalMins / 60), m = totalMins % 60;
         return `${h}H ${m}M`;
@@ -4417,7 +4514,6 @@
           modeBtn.className = 'px-2 py-0.5 rounded-full text-[10px] font-black bg-emerald-500 text-white hover:opacity-90 whitespace-nowrap shrink-0';
         }
         const ab = document.getElementById('alert-toggle-btn'); ab.textContent = prefs.alertEnabled ? '🔔 쉬는시간 알림 켜짐' : '🔕 쉬는시간 알림 꺼짐';
-        const tNow = todayStr();
         const tierInfo = getMemberTier(meHdr || 0);
         const promoBar = document.getElementById('promo-action-bar');
         const promoBadge = document.getElementById('promo-bar-badge');
@@ -4427,10 +4523,9 @@
         const targetTier = LOL_TIERS[tierInfo.idx + 1];
         promoBar.style.setProperty('--promo-bar-accent', targetTier?.gemColor || '#d4dfef');
 
-        const isSundayToday = getNowParts().day === 0;
-        if (meHdr && meHdr.promoActiveDate === tNow && tierInfo.nextName) {
+        if (meHdr && promotionIsActive(meHdr) && tierInfo.nextName) {
           const mission = getPromoMission(tierInfo.nextName);
-          if (isSundayToday && mission.type === 'ultra') {
+          if (new Date(meHdr.promoActiveDate).getUTCDay() === 0 && mission.type === 'ultra') {
             document.body.removeAttribute('data-promo');
             promoBar.classList.remove('hidden');
             promoBadge.textContent = '일요일 승급전 제한';
@@ -4451,26 +4546,18 @@
           document.body.setAttribute('data-promo', 'ready');
           const mission = getPromoMission(tierInfo.nextName || '다음 티어');
           promoBar.classList.remove('hidden');
-          promoBadge.textContent = '내일 승급전 예약됨';
+          promoBadge.textContent = '승급전 예약됨';
           promoBadge.className = 'px-2 py-0.5 rounded-md text-[11px] font-black bg-indigo-600 text-white';
-          promoTitle.textContent = `내일(${meHdr.promoPendingDate}) ${tierInfo.nextName || ''} 승급전 시작!`;
+          promoTitle.textContent = `${meHdr.promoPendingDate} 오전 5시 ${tierInfo.nextName || ''} 승급전 시작`;
           promoDesc.textContent = `예정 미션: ${mission.desc}`;
           promoActs.innerHTML = `<button type="button" id="btn-cancel-promo" class="px-3 py-1.5 rounded-xl bg-white border border-slate-300 text-slate-700 text-xs font-bold">예약 취소</button>`;
-        } else if (meHdr && meHdr.promoCooldownUntil && tNow < meHdr.promoCooldownUntil) {
+        } else if (meHdr && tierInfo.inPromo && tierInfo.nextName && promotionAttemptUsed(meHdr)) {
           document.body.removeAttribute('data-promo');
           promoBar.classList.remove('hidden');
           promoBadge.textContent = '승급전 재도전 대기';
           promoBadge.className = 'px-2 py-0.5 rounded-md text-[11px] font-black bg-slate-700 text-white';
-          promoTitle.textContent = `오늘 승급전에 실패했습니다.`;
-          promoDesc.textContent = `내일(${meHdr.promoCooldownUntil})부터 다시 승급전에 도전할 수 있습니다.`;
-          promoActs.innerHTML = '';
-        } else if (meHdr && tierInfo.inPromo && tierInfo.nextName && !shared.allowConsecutivePromo && shared.promoHistory?.[meHdr.id]?.[tNow] && !String(shared.promoHistory[meHdr.id][tNow]).includes('관리자 건너뛰기')) {
-          document.body.removeAttribute('data-promo');
-          promoBar.classList.remove('hidden');
-          promoBadge.textContent = '오늘 승급 완료';
-          promoBadge.className = 'px-2 py-0.5 rounded-md text-[11px] font-black bg-emerald-600 text-white';
-          promoTitle.textContent = `오늘 이미 승급전을 통과했습니다!`;
-          promoDesc.textContent = `승급전은 하루 1회만 진행할 수 있습니다. 내일(${tomorrowStr()}) ${tierInfo.nextName} 승급전에 도전할 수 있습니다.`;
+          promoTitle.textContent = '이번 공부일 승급전 횟수를 사용했어요.';
+          promoDesc.textContent = '한국 시간 오전 5시에 다시 도전할 수 있어요.';
           promoActs.innerHTML = '';
         } else if (meHdr && tierInfo.inPromo && tierInfo.nextName) {
           document.body.setAttribute('data-promo', 'ready');
@@ -4529,7 +4616,7 @@
         const now = getNowParts(), phase = getCurrentPhase(now.totalMins), days = ['일', '월', '화', '수', '목', '금', '토'];
         document.getElementById('live-date-label').textContent = `${todayStr()} (${days[now.day]})`;
         const meClock = shared.members.find(m => m.id === prefs.currentUserId) || shared.members[0];
-        const todayStudyM = meClock ? ((shared.studyLogs && shared.studyLogs[todayStr()] && shared.studyLogs[todayStr()][meClock.id]) || 0) : 0;
+        const todayStudyM = meClock ? studyMinutes(meClock.id) : 0;
         animateCountUp(document.getElementById('live-clock-text'), todayStudyM, formatStudyMins);
         document.getElementById('sim-active-badge').classList.toggle('hidden', !prefs.simTime);
 
@@ -4752,7 +4839,7 @@
         document.getElementById('home-card-grid').classList.toggle('is-free', isFreeDash);
         document.getElementById('my-period-wrap').classList.toggle('hidden', isFreeDash);
         document.getElementById('schedule-list-card').classList.toggle('hidden', isFreeDash);
-        const todayLogMins = (shared.studyLogs && shared.studyLogs[t] && shared.studyLogs[t][me.id]) || 0;
+        const todayLogMins = studyMinutes(me.id);
         animateCountUp(document.getElementById('my-today-study-mins'), todayLogMins, formatStudyMins);
         document.getElementById('my-today-rate').textContent = `출석률 ${calcAttendanceRate(me.id, t)}%`;
         document.getElementById('my-period-chips').innerHTML = STUDY_PERIODS.map(p => {
@@ -4859,8 +4946,7 @@
         }
       }
 
-      function getCurrentWeekDates() {
-        const now = new Date();
+      function getCurrentWeekDates(now = new Date()) {
         const day = now.getDay();
         const diffToMon = day === 0 ? -6 : 1 - day;
         const mon = new Date(now.getFullYear(), now.getMonth(), now.getDate() + diffToMon);
@@ -4874,7 +4960,7 @@
 
       function renderWeeklyReportCards() {
         const t = todayStr();
-        const weekDates = getCurrentWeekDates();
+        const weekDates = getCurrentWeekDates(new Date(studyDayKey() + 'T12:00:00'));
         const boardEl = document.getElementById('tier-status-board');
         if (!prefs.adminMode && !prefs.joinedMemberId) {
           document.getElementById('weekly-report-table').innerHTML = '<p class="text-xs text-slate-400">스터디 참가 시 주간 성적표를 확인할 수 있습니다.</p>';
@@ -5062,8 +5148,9 @@
           : '<div class="ed-card p-10 text-center space-y-1.5"><span class="empty-float-icon text-2xl">📸</span><p class="text-sm font-bold text-slate-500">아직 올라온 게시물이 없습니다</p><p class="text-xs text-slate-400">위에서 오늘의 공부 기록을 첫 번째로 공유해 보세요!</p></div>';
       }
 
-      function renderMemberCard(m, date, mins, now) {
+      function renderMemberCard(m, date, mins, now, inFocus = false) {
         const id = escapeHtml(m.id);
+        const key = inFocus ? `focus-${id}` : id;
         const name = escapeHtml(m.name);
         const title = escapeHtml(m.equippedTitle);
         const tier = getMemberTier(m);
@@ -5074,43 +5161,45 @@
         const status = m.isFocusing ? 'studying' : inClass ? 'class' : 'resting';
         const isMe = m.id === prefs.currentUserId;
         const canRemove = prefs.adminMode && shared.members.length > 1;
-        const hasMenu = !isMe || canRemove;
+        const hasMenu = !inFocus && (!isMe || canRemove);
         const flameStrength = getStudyFlameStrength(mins);
         const hours = Math.floor(mins / 60);
 
         return `<article class="member-card" data-member-card-wrap="${id}" data-member-tier="${tier.idx}"${tier.idx >= 6 ? ' data-elite' : ''}${hasMenu ? ' data-has-menu' : ''}
             style="--rank-deep:${tier.wingColor};--rank-gem:${tier.gemColor}">
-          <button class="member-avatar" id="member-avatar-${id}" type="button" data-member-avatar="${id}" aria-haspopup="dialog"
+          <button class="member-avatar" id="member-avatar-${key}" type="button" data-member-avatar="${id}" aria-haspopup="dialog"
             aria-label="${name} 프로필 사진 보기"${isUltra ? ' data-ultra title="울트라집중모드 · 프로필 사진 보기"' : ' title="프로필 사진 보기"'}>
             ${m.avatarUrl ? `<img src="${escapeHtml(m.avatarUrl)}" alt="" loading="lazy">` : escapeHtml(String(m.name || '').slice(0, 1))}
             ${isUltra ? '<span class="member-avatar-bolt" aria-hidden="true">⚡</span>' : ''}
           </button>
-          <button class="member-card-details" id="member-card-${id}" type="button" data-member-detail="${id}"
+          <button class="member-card-details" id="member-card-${key}" type="button" data-member-detail="${id}"
             aria-label="${name} 상세 기록"
-            aria-describedby="member-rank-${id} member-status-${id} member-study-${id}${title ? ` member-title-${id}` : ''}${featured ? ` member-badges-${id}` : ''}">
-            ${flameStrength ? `<span class="member-portrait-flame" aria-hidden="true" style="--flame-rank:${tier.idx};--flame-strength:${flameStrength}">
-              ${tier.idx >= 4 && flameStrength >= 5
-                ? `<span class="member-flame-embers"${tier.idx >= 6 && flameStrength >= 8 ? ' data-bright' : ''}></span>`
-                : ''}
+            aria-describedby="member-rank-${key} member-status-${key} member-study-${key}${title ? ` member-title-${key}` : ''}${featured ? ` member-badges-${key}` : ''}">
+            ${flameStrength ? `<span class="member-flame-space" aria-hidden="true">
+              <span class="member-portrait-flame" style="--flame-rank:${tier.idx};--flame-strength:${flameStrength}">
+                ${tier.idx >= 4 && mins >= 120
+                  ? `<span class="member-flame-embers"${tier.idx >= 6 && mins >= 300 ? ' data-bright' : ''}></span>`
+                  : ''}
+              </span>
             </span>` : ''}
             <span class="member-identity">
               <span class="member-nameplate">
                 <strong class="member-name" title="${name}">${name}</strong>
-                ${title ? `<span class="member-title" id="member-title-${id}" title="${title}">${title}</span>` : ''}
+                ${title ? `<span class="member-title" id="member-title-${key}" title="${title}">${title}</span>` : ''}
               </span>
             </span>
             <span class="member-rank-line">
-              <span id="member-rank-${id}"><span class="member-rank">${tier.name}</span> ${tier.lp} LP</span>
-              <span id="member-status-${id}" class="member-status" data-status="${status}">${{ studying: '공부 중', class: '수업 중', resting: '휴식 중' }[status]}</span>
-              ${m.promoActiveDate === date && tier.nextName ? '<span class="member-promo">승급전 진행 중</span>'
+              <span id="member-rank-${key}"><span class="member-rank">${tier.name}</span> ${tier.lp} LP</span>
+              <span id="member-status-${key}" class="member-status" data-status="${status}">${{ studying: '공부 중', class: '수업 중', resting: '휴식 중' }[status]}</span>
+              ${promotionIsActive(m) && tier.nextName ? '<span class="member-promo">승급전 진행 중</span>'
                 : m.promoPendingDate ? '<span class="member-promo">승급전 예약</span>'
                 : tier.inPromo ? '<span class="member-promo">승급 LP 충족</span>' : ''}
             </span>
-            <span class="member-study" id="member-study-${id}">
+            <span class="member-study" id="member-study-${key}">
               <span class="member-study-label">오늘 누적 공부</span>
               <strong class="member-study-time">${hours ? `${hours}<small>시간</small> ` : ''}${mins % 60}<small>분</small></strong>
             </span>
-            ${featured ? `<span class="member-badges" id="member-badges-${id}">
+            ${featured ? `<span class="member-badges" id="member-badges-${key}">
               ${renderBadgePill(featured)}
               ${badges.length > 1 ? `<span class="member-badge-count" aria-label="뱃지 ${badges.length - 1}개 더 보기">+${badges.length - 1}</span>` : ''}
             </span>` : ''}
@@ -5172,9 +5261,8 @@
         }
         const now = getNowParts();
         const date = todayStr();
-        const totals = shared.studyLogs?.[date] || {};
         const members = shared.members.filter(m => m.inStudy !== false)
-          .map(m => ({ member: m, mins: Math.max(0, Math.floor(Number(totals[m.id]) || 0)) }))
+          .map(m => ({ member: m, mins: studyMinutes(m.id) }))
           .sort((a, b) => b.mins - a.mins);
         const studying = members.filter(({ member }) => member.isFocusing).length;
         summary.innerHTML = `<span>참가 ${members.length}명</span><span class="member-roster-live" data-active="${studying > 0}">공부 중 ${studying}명</span>`;
@@ -5600,7 +5688,7 @@
                 </div>
                 <div class="space-y-1">
                   ${inTier.map((m, idx) => {
-                    const mins = (shared.studyLogs && shared.studyLogs[t] && shared.studyLogs[t][m.id]) || 0;
+                    const mins = studyMinutes(m.id);
                     return `<div class="flex items-center justify-between gap-2 bg-white rounded-lg px-2.5 py-1.5 text-xs border border-slate-100">
                       <span class="font-bold text-slate-900 truncate"><strong>${idx + 1}위</strong> ${escapeHtml(m.name)}</span>
                       <div class="flex items-center gap-2 shrink-0">
@@ -5947,6 +6035,7 @@
 
       function renderAll() {
         renderHeaderControls();
+        renderFocusStudy();
         renderLiveBanner();
         if (prefs.activeTab === 'dashboard') renderDashboard();
         if (prefs.activeTab === 'members') { renderMembersTab(); renderWeeklyReportCards(); renderRankingsTab(); renderBragTab(); requestAnimationFrame(() => updateSubTabSlider('members-sub-bar', 'members-sub-slider', '[data-members-sub]', 'membersSub', document.querySelector('[data-members-sub][aria-pressed="true"]')?.dataset.membersSub || 'live')); }
@@ -6162,16 +6251,16 @@
         if (!me) return;
         const tierInfo = getMemberTier(me);
         if (e.target.id === 'btn-join-promo') {
-          const tNow = todayStr();
-          const tmr = tomorrowStr();
-          if (!shared.allowConsecutivePromo && shared.promoHistory?.[me.id]?.[tNow] && !String(shared.promoHistory[me.id][tNow]).includes('관리자 건너뛰기')) {
-            showToast(`승급전은 하루에 1회만 가능합니다. 내일(${tmr}) 다시 도전해 주세요!`, 'warn');
+          const tNow = koreaDateKey();
+          const tmr = addDaysStr(tNow, 1);
+          if (me.promoActiveDate || me.promoPendingDate || promotionAttemptUsed(me)) {
+            showToast('승급전 도전 횟수는 오전 5시에 초기화돼요.', 'warn');
             return;
           }
           const mission = getPromoMission(tierInfo.nextName);
           const needsTomorrow = mission.type === 'ultra' && getMemberMode(me) !== 'strict';
           const targetDay = needsTomorrow ? tmr : tNow;
-          if (mission.type === 'ultra' && new Date(targetDay + 'T12:00:00').getDay() === 0) {
+          if (mission.type === 'ultra' && new Date(targetDay).getUTCDay() === 0) {
             showToast('울트라집중모드가 필요한 승급전은 일요일에 진행할 수 없습니다. 월~토요일에 도전해 주세요!', 'warn');
             return;
           }
@@ -6187,14 +6276,25 @@
             ...details,
             phase: 'preview',
             confirm: () => {
-              if (needsTomorrow) {
-                me.promoPendingDate = tmr;
-                me.pendingMode = 'strict';
-                me.pendingDate = tmr;
-              } else {
-                me.promoActiveDate = tNow;
+              syncMemberPendingModes();
+              const member = shared.members.find(m => m.id === me.id);
+              if (!member || member.promoActiveDate || member.promoPendingDate || promotionAttemptUsed(member) ||
+                  getMemberTier(member).nextName !== targetTier.name || koreaDateKey() !== tNow) {
+                closePromotion();
+                renderAll();
+                showToast('승급전 상태가 바뀌었어요. 다시 확인해 주세요.', 'warn');
+                return;
               }
-              me.promoTargetTier = targetTier.name;
+              if (needsTomorrow) {
+                member.promoPendingDate = tmr;
+                member.pendingMode = 'strict';
+                member.pendingDate = tmr;
+              } else {
+                member.promoActiveDate = tNow;
+                member.promoActiveStudyDay = studyDayKey();
+                member.promoAttemptDay = member.promoActiveStudyDay;
+              }
+              member.promoTargetTier = targetTier.name;
               saveSharedData();
               renderAll();
               showPromotion({ ...details, phase: needsTomorrow ? 'scheduled' : 'started' });
@@ -6207,29 +6307,35 @@
           showToast('승급전 예약이 취소되었습니다.', 'info');
           renderAll();
         } else if (e.target.id === 'btn-fail-promo') {
-          const tNow = todayStr();
+          if (!promotionIsActive(me)) return;
+          me.promoAttemptDay ||= promotionStudyDay(me);
           me.promoActiveDate = null;
+          me.promoActiveStudyDay = null;
+          me.promoLegacyCarryDate = null;
           me.promoTargetTier = null;
           me.promoWinStreak = 0;
-          me.promoCooldownUntil = addDaysStr(tNow, 1);
           saveSharedData();
-          showToast(`승급전을 포기했습니다. 내일(${me.promoCooldownUntil})부터 다시 도전할 수 있습니다.`, 'warn');
+          showToast(promotionAttemptUsed(me) ? '승급전을 포기했어요. 오전 5시부터 다시 도전할 수 있어요.' : '승급전을 포기했어요. 다시 도전할 수 있어요.', 'warn');
           renderAll();
         } else if (e.target.id === 'btn-complete-promo') {
-          const tNow = todayStr();
+          if (!promotionIsActive(me)) return;
+          const tNow = koreaDateKey();
           const mission = getPromoMission(tierInfo.nextName);
-          if (mission.type === 'ultra' && getNowParts().day === 0) {
+          if (mission.type === 'ultra' && new Date(me.promoActiveDate).getUTCDay() === 0) {
             showToast('울트라집중모드가 필요한 승급전은 일요일에 완료할 수 없습니다.', 'warn');
             return;
           }
-          const todayMins = (shared.studyLogs?.[tNow]?.[me.id]) || 0;
-          const todayMaxCont = Math.max((shared.maxFocusLogs?.[tNow]?.[me.id]) || 0, Math.floor(focusElapsedSecs / 60));
+          if (focusInterval && !focusPaused) syncFocusClock(true);
+          const started = promotionStudyDay(me);
+          const days = promotionMissionDays(me);
+          const todayMins = days.reduce((sum, day) => sum + studyMinutes(me.id, day), 0);
+          const todayMaxCont = Math.max(...days.map(day => Number(shared.maxFocusLogs?.[day]?.[me.id]) || 0), Math.floor(focusElapsedSecs / 60));
           let missionOk = false;
           if (mission.type === 'continuous') missionOk = todayMaxCont >= mission.mins;
           else if (mission.type === 'total') missionOk = todayMins >= mission.mins;
           else if (mission.type === 'ultra') {
             missionOk = STUDY_PERIODS.slice(0, 8).every(p => {
-              const st = getMemberDayStatus(me.id, tNow, p.id);
+              const st = getMemberDayStatus(me.id, me.promoActiveDate, p.id);
               return st === 'present' || st === 'exempt';
             });
           }
@@ -6245,10 +6351,14 @@
           me.bankedLp = 0;
           if (!shared.promoHistory) shared.promoHistory = {};
           if (!shared.promoHistory[me.id]) shared.promoHistory[me.id] = {};
-          shared.promoHistory[me.id][tNow] = `${tierInfo.nextName} 승급`;
+          const priorResult = shared.promoHistory[me.id][tNow];
+          shared.promoHistory[me.id][tNow] = [priorResult, `${tierInfo.nextName} 승급`].filter(Boolean).join(' · ');
+          me.promoAttemptDay ||= started;
           me.promoWinStreak = (me.promoWinStreak || 0) + 1;
           if (me.promoWinStreak >= 2) unlockChallengeFor(me.id, 'ch_promo_streak', false);
           me.promoActiveDate = null;
+          me.promoActiveStudyDay = null;
+          me.promoLegacyCarryDate = null;
           me.promoTargetTier = null;
           saveSharedData();
           renderAll();
@@ -6805,9 +6915,9 @@
         setMemberCardMenu(menu, false);
         menu.focus({ preventScroll: true });
       });
-      memberGrid.addEventListener('click', e => {
+      function handleMemberCardClick(e) {
         const menuBtn = e.target.closest('[data-card-menu-btn]');
-        const openMenu = memberGrid.querySelector('[data-card-menu-btn][aria-expanded="true"]');
+        const openMenu = e.currentTarget.querySelector('[data-card-menu-btn][aria-expanded="true"]');
         if (menuBtn) {
           e.stopPropagation();
           if (openMenu && openMenu !== menuBtn) setMemberCardMenu(openMenu, false);
@@ -6908,8 +7018,8 @@
           if (!m) return;
           if (!prefs.adminMode) { unlockChallengeFor(prefs.currentUserId, 'ch_spy', false); saveSharedData(); }
           const t = todayStr();
-          const todayTotalMins = Math.max(0, Math.floor(Number(shared.studyLogs?.[t]?.[m.id]) || 0));
-          const maxF = (shared.maxFocusLogs && shared.maxFocusLogs[t] && shared.maxFocusLogs[t][m.id]) || 0;
+          const todayTotalMins = studyMinutes(m.id);
+          const maxF = shared.maxFocusLogs?.[studyDayKey()]?.[m.id] || 0;
           const todayRespect = ((shared.praises && shared.praises[m.id]) || []).filter(p => p.date === t).length;
           const allB = getBadgesForMember(m, t);
           openModal(`${m.name} 상세 기록`, `
@@ -6937,7 +7047,9 @@
             </div>
           `);
         }
-      });
+      }
+      memberGrid.addEventListener('click', handleMemberCardClick);
+      document.getElementById('focus-study-grid').addEventListener('click', handleMemberCardClick);
 
       document.getElementById('challenge-cat-tabs').addEventListener('click', e => {
         const b = e.target.closest('[data-ch-cat]'); if (!b) return;
@@ -7504,10 +7616,33 @@
         saveSharedData(); showToast(`${m.name}님을 즉시 자율모드로 전환했습니다.`, 'info'); renderAll();
       });
 
+      function canResumeMidnightPromotion(member, calendarDay = koreaDateKey()) {
+        if (!member || member.inStudy === false || member.promoActiveDate || member.promoPendingDate) return false;
+        const started = addDaysStr(calendarDay, -1);
+        const tier = getMemberTier(member);
+        return !!(tier.inPromo && tier.nextName && member.promoRecoveredDay !== started &&
+          (!member.promoAttemptDay || member.promoAttemptDay < started) &&
+          (getPromoMission(tier.nextName).type !== 'ultra' || new Date(started).getUTCDay() !== 0));
+      }
+
+      function resumeMidnightPromotion(member, calendarDay = koreaDateKey()) {
+        if (!canResumeMidnightPromotion(member, calendarDay)) return false;
+        const started = addDaysStr(calendarDay, -1);
+        member.promoActiveDate = started;
+        member.promoActiveStudyDay = started;
+        member.promoAttemptDay = started;
+        member.promoRecoveredDay = started;
+        member.promoLegacyCarryDate = calendarDay;
+        member.promoTargetTier = getMemberTier(member).nextName;
+        member.promoCooldownUntil = null;
+        return true;
+      }
+
       function syncAdminRankControls(mid) {
         const m = shared.members.find(x => x.id === mid);
         const infoEl = document.getElementById('admin-rank-current-info');
         const skipBtn = document.getElementById('btn-admin-skip-promo');
+        document.getElementById('btn-admin-resume-promo').classList.toggle('hidden', !prefs.adminMode || !canResumeMidnightPromotion(m));
         const lpIn = document.getElementById('admin-rank-lp-input');
         const tierSel = document.getElementById('admin-rank-tier-preset');
         if (!m) return;
@@ -7550,6 +7685,8 @@
         m.bankedLp = 0;
         if (newTIdx !== prevTIdx) {
           m.promoActiveDate = null;
+          m.promoActiveStudyDay = null;
+          m.promoLegacyCarryDate = null;
           m.promoPendingDate = null;
           m.promoTargetTier = null;
           m.promoCooldownUntil = null;
@@ -7566,6 +7703,40 @@
         showToast(shared.allowConsecutivePromo ? '승급전 하루 연속 도전이 허용되었습니다!' : '승급전이 하루 1회로 제한되었습니다.', 'info');
         renderAll();
       });
+      document.getElementById('btn-admin-resume-promo').addEventListener('click', () => {
+        if (!prefs.adminMode) return;
+        const id = document.getElementById('admin-rank-member').value;
+        const member = shared.members.find(m => m.id === id);
+        const calendarDay = koreaDateKey();
+        if (!canResumeMidnightPromotion(member, calendarDay)) return;
+        const tier = getMemberTier(member);
+        const started = addDaysStr(calendarDay, -1);
+        openModal('자정에 끊긴 승급전 이어하기', `
+          <div class="space-y-3 text-sm">
+            <p><strong>${escapeHtml(member.name)}</strong>님의 <strong>${escapeHtml(tier.nextName)} 승급전</strong>을 다시 진행 상태로 돌립니다.</p>
+            <p class="text-xs text-slate-600">${started}에 실제 시작했고 이전 버전의 자정 처리로 종료된 경우에만 사용하세요. 저장된 공부 기록으로 기존 미션을 확인한 뒤 부원이 완료 버튼을 누릅니다.</p>
+            <div class="flex justify-end gap-2">
+              <button id="cancel-midnight-promo" type="button" class="px-3 py-2 rounded-lg border border-slate-200">취소</button>
+              <button id="confirm-midnight-promo" type="button" class="ed-btn-accent px-3 py-2 rounded-lg font-bold">이어하기</button>
+            </div>
+          </div>
+        `);
+        document.getElementById('cancel-midnight-promo').onclick = closeModal;
+        document.getElementById('confirm-midnight-promo').onclick = () => {
+          const current = shared.members.find(m => m.id === id);
+          if (!prefs.adminMode || koreaDateKey() !== calendarDay || !current ||
+              getMemberTier(current).nextName !== tier.nextName || !resumeMidnightPromotion(current, calendarDay)) {
+            closeModal();
+            showToast('승급전 상태가 바뀌었어요. 다시 확인해 주세요.', 'warn');
+            return;
+          }
+          closeModal();
+          saveSharedData();
+          renderAll();
+          showToast(`${current.name}님의 승급전을 이어갈 수 있어요.`, 'success');
+        };
+      });
+
       document.getElementById('btn-admin-skip-promo').addEventListener('click', () => {
         if (!prefs.adminMode) return;
         const mid = document.getElementById('admin-rank-member').value;
@@ -7581,6 +7752,8 @@
         m.lp = Math.max(m.lp || 0, nextObj.min) + releasedBank;
         m.bankedLp = 0;
         m.promoActiveDate = null;
+        m.promoActiveStudyDay = null;
+        m.promoLegacyCarryDate = null;
         m.promoPendingDate = null;
         m.promoTargetTier = null;
         m.promoCooldownUntil = null;
@@ -7693,7 +7866,7 @@
         }
         html += '</tr></tbody></table>';
         document.getElementById('calendar-grid-wrap').innerHTML = html;
-        const wkDates = getCurrentWeekDates();
+        const wkDates = getCurrentWeekDates(new Date(studyDayKey() + 'T12:00:00'));
         const wkLabels = ['월', '화', '수', '목', '금', '토', '일'];
         let wkTotal = 0;
         const wkItems = wkDates.map((dStr, idx) => {
@@ -7931,6 +8104,61 @@
         } catch (e) {}
       }
 
+      const FOCUS_QUOTES = [
+        '공부법 알아 볼 시간에 공부를 해라.',
+        '적당히 하면 적당히 사는 거예요.',
+        '내가 뭘 하고 싶은지 모르기 때문에 공부를 하는 거예요.',
+        '지금 네가 편한 것은 내리막길을 걷고 있기 때문이다.',
+        '부족한 것은 시간이 아니라 의지이다.',
+        '노력을 이기는 재능은 없고 노력을 외면하는 결과도 없다.',
+        '일단 해라 감정은 사라지고 결과는 남는다.',
+        '가장 어두운 밤도 언젠가는 끝나고 해는 떠오를 것이다.',
+        '실패하는게 두려운 게 아니라 노력하지 않는 게 두렵다.',
+        '꿈을 꾸기에 인생은 빛난다.',
+        '젊었을 때 배움을 게을리한 사람은 과거를 상실하며 미래도 없다.',
+        '고통은 잠깐이다. 포기는 영원히 남는다.',
+        '서두르지 말되, 멈추지 마라.'
+      ];
+      let focusQuoteIndex = 0;
+      let focusStudyMarkup = '';
+      const focusViewSwitch = document.getElementById('focus-view-switch');
+
+      function renderFocusStudy() {
+        if (!shown(document.getElementById('focus-overlay')) || !shown(document.getElementById('focus-panel-study'))) return;
+        const grid = document.getElementById('focus-study-grid');
+        const day = studyDayKey();
+        const date = todayStr();
+        const now = getNowParts();
+        const peers = prefs.joinedMemberId ? shared.members.filter(m => m.inStudy !== false && m.isFocusing && m.id !== prefs.currentUserId) : [];
+        const cards = peers.map(member => ({ member, mins: studyMinutes(member.id, day) })).sort((a, b) => b.mins - a.mins);
+        const markup = cards.length
+          ? cards.map(({ member, mins }) => renderMemberCard(member, date, mins, now, true)).join('')
+          : '<p class="member-roster-empty">지금 공부 중인 다른 스터디원이 없어요.</p>';
+        if (markup === focusStudyMarkup) return;
+        const focusedId = grid.contains(document.activeElement) ? document.activeElement.id : '';
+        const modalFocusId = previousModalFocus && grid.contains(previousModalFocus) ? previousModalFocus.id : '';
+        grid.innerHTML = focusStudyMarkup = markup;
+        if (modalFocusId) previousModalFocus = document.getElementById(modalFocusId) || document.getElementById('focus-view-study');
+        if (focusedId) (document.getElementById(focusedId) || document.getElementById('focus-view-study')).focus({ preventScroll: true });
+      }
+
+      function setFocusView(view) {
+        for (const button of focusViewSwitch.querySelectorAll('[data-focus-view]')) {
+          const active = button.dataset.focusView === view;
+          button.setAttribute('aria-pressed', String(active));
+          document.getElementById(button.getAttribute('aria-controls')).classList.toggle('hidden', !active);
+        }
+        renderFocusStudy();
+      }
+      focusViewSwitch.addEventListener('click', e => {
+        const button = e.target.closest('[data-focus-view]');
+        if (button) setFocusView(button.dataset.focusView);
+      });
+      document.getElementById('focus-next-quote').addEventListener('click', () => {
+        focusQuoteIndex = (focusQuoteIndex + 1) % FOCUS_QUOTES.length;
+        document.getElementById('focus-quote-text').textContent = FOCUS_QUOTES[focusQuoteIndex];
+      });
+
       function formatStopwatch(secs) {
         const h = String(Math.floor(secs / 3600)).padStart(2, '0');
         const m = String(Math.floor((secs % 3600) / 60)).padStart(2, '0');
@@ -7946,12 +8174,7 @@
         document.getElementById('focus-min-btn').classList.toggle('hidden', !focusPaused);
         document.getElementById('focus-pause-btn').textContent = focusPaused ? '공부 다시 시작하기' : '잠시 쉬기';
         document.getElementById('focus-timer-box').dataset.paused = String(focusPaused);
-        const cheerEl = document.getElementById('focus-cheer-msg');
-        if (cheerEl && !cheerEl.textContent) {
-          const meD = shared.members.find(x => x.id === prefs.currentUserId);
-          const todayM = (meD && shared.studyLogs?.[todayStr()]?.[meD.id]) || 0;
-          cheerEl.textContent = `오늘 누적 ${formatStudyMins(todayM)}`;
-        }
+        document.getElementById('focus-today-total').textContent = `오늘 누적 ${formatStudyMins(studyMinutes(prefs.currentUserId))}`;
       }
 
       // Split real elapsed time at local minute boundaries. Endpoints are half-open [start, end).
@@ -7965,16 +8188,27 @@
         }
       }
 
-      function focusCreditMinutes(segmentStartMs, accumulatedSecs, fromSecs, toSecs, visit) {
-        for (let n = Math.floor(fromSecs / 60) + 1; n <= Math.floor(toSecs / 60); n++) {
-          // Record the minute against its final measured instant, not against the screen's resume time.
-          const d = new Date(segmentStartMs + (n * 60 - accumulatedSecs) * 1000 - 1);
-          visit(d, n);
+      function creditStudySlice(member, startMs, endMs, segmentStartMs, accumulatedSecs) {
+        const date = new Date(endMs - 1);
+        const day = studyDayKey(date);
+        const remainder = ((shared.studySubminuteMs ||= {})[day] ||= {});
+        const elapsed = (Number(remainder[member.id]) || 0) + endMs - startMs;
+        remainder[member.id] = elapsed % 60000;
+        const earned = Math.floor(elapsed / 60000);
+        const continuousMins = Math.floor((accumulatedSecs + (endMs - segmentStartMs) / 1000) / 60);
+        if (continuousMins > 0) {
+          const maxima = (shared.maxFocusLogs[day] ||= {});
+          maxima[member.id] = Math.max(maxima[member.id] || 0, continuousMins);
         }
+        for (let i = 0; i < earned; i++) {
+          logFocusMinute(member, date, continuousMins);
+        }
+        return earned > 0;
       }
 
       function logFocusMinute(member, date, continuousMins) {
-        const day = localDateKey(date), hours = date.getHours(), mins = date.getMinutes();
+        const day = studyDayKey(date);
+        const localDay = localDateKey(date), hours = date.getHours(), mins = date.getMinutes();
         const id = member.id;
         const totals = (shared.studyLogs[day] ||= {});
         totals[id] = (Number(totals[id]) || 0) + 1;
@@ -7985,15 +8219,13 @@
           rewarded[id] = earnedHours;
           addMemberLp(id, (earnedHours - priorHours) * 3, '누적 공부시간 보상');
         }
-        recordMemberActivityForStreak(member, day);
-        const maxima = (shared.maxFocusLogs[day] ||= {});
-        maxima[id] = Math.max(maxima[id] || 0, continuousMins);
+        recordMemberActivityForStreak(member, localDay);
         if (hours === 4) unlockChallengeFor(id, 'ch_4am', false);
         if (hours === 0 && mins <= 5 && continuousMins >= 6) unlockChallengeFor(id, 'ch_cinderella', false);
-        if (hours < 5) member.nightOwlDate = day;
+        if (hours < 5) member.nightOwlDate = localDay;
         const slot = `${String(hours).padStart(2, '0')}_${Math.floor(mins / 10)}`;
-        const blocks = ((shared.studyBlocks[day] ||= {})[id] ||= {});
-        const slotMinutes = ((shared.studySlotMins[day] ||= {})[id] ||= {});
+        const blocks = ((shared.studyBlocks[localDay] ||= {})[id] ||= {});
+        const slotMinutes = ((shared.studySlotMins[localDay] ||= {})[id] ||= {});
         blocks[slot] = true;
         slotMinutes[slot] = Math.min(10, (slotMinutes[slot] || 0) + 1);
       }
@@ -8046,12 +8278,14 @@
         const end = focusStartedAt + (target - focusAccumulatedSecs) * 1000;
         const gainedMinute = Math.floor(target / 60) > Math.floor(from / 60);
         let markedAttendance = false;
+        let creditedStudyMinute = false;
         focusWriteBatch = true;
         try {
           ['studyLogs', 'hourlyLpGiven', 'maxFocusLogs', 'studyBlocks', 'studySlotMins', 'periodStudySecs'].forEach(k => { shared[k] ||= {}; });
           const chunks = new Map();
           const simulated = prefs.simTime ? toMins(prefs.simTime) : null;
           focusTimeSlices(start, end, (d, a, b) => {
+            if (creditStudySlice(me, a, b, focusStartedAt, focusAccumulatedSecs)) creditedStudyMinute = true;
             const day = localDateKey(d);
             syncMemberPendingModes(day);
             const mode = focusModeBeforeChange && day < focusModeBeforeChange.date ? focusModeBeforeChange.mode : getMemberMode(me);
@@ -8068,7 +8302,6 @@
             // Combine fractional boundary slices before evaluating the eligibility threshold.
             byPeriod[phase.id] = Math.round(((Number(byPeriod[phase.id]) || 0) + secs) * 1000) / 1000;
           }
-          focusCreditMinutes(focusStartedAt, focusAccumulatedSecs, from, target, (date, n) => logFocusMinute(me, date, n));
           for (const {day, phase} of chunks.values()) {
             const secs = shared.periodStudySecs[day][me.id][phase.id];
             const status = getMemberDayStatus(me.id, day, phase.id);
@@ -8091,10 +8324,10 @@
         } finally { focusWriteBatch = false; }
         updateFocusDisplay();
         refreshFocusAttendance(force || markedAttendance);
-        if (force || gainedMinute || markedAttendance || Math.floor(target / 15) > Math.floor(from / 15)) {
+        if (force || gainedMinute || creditedStudyMinute || markedAttendance || Math.floor(target / 15) > Math.floor(from / 15)) {
           saveSharedData();
           saveFocusState();
-          if (gainedMinute || markedAttendance) renderAll();
+          if (gainedMinute || creditedStudyMinute || markedAttendance) renderAll();
         }
       }
 
@@ -8131,12 +8364,12 @@
             focusPaused = false;
             pauseStartedAt = null;
             focusModeBeforeChange = null;
-            triggerHaptic(16);
           }
           if (meFocus && meFocus.isFocusing !== !focusPaused) {
             meFocus.isFocusing = !focusPaused;
             saveSharedData();
           }
+          setFocusView('timer');
           document.getElementById('focus-cheer-msg').textContent = '';
           focusInterval = setInterval(() => syncFocusClock(false), 250);
           if (isRestoring !== true) { unlockChallengeFor(meFocus.id, 'ch_newbie', false); saveSharedData(); }
@@ -8153,6 +8386,7 @@
         const ov = document.getElementById('focus-overlay');
         ov.classList.remove('hidden');
         ov.classList.add('flex');
+        renderFocusStudy();
         refreshFocusAttendance(true);
         refreshStudyDialogs();
         ov.focus({preventScroll:true});
@@ -8174,12 +8408,14 @@
         document.getElementById('focus-mini-expand').focus({preventScroll:true});
       }
 
-      const STUDY_FLAME_THRESHOLDS = [10, 30, 60, 90, 120, 180, 240, 300, 360, 420, 480, 540, 600];
+      const STUDY_FLAME_THRESHOLDS = [30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 360, 420, 480, 540, 600];
 
       function getStudyFlameStrength(mins) {
         const minutes = Number(mins) || 0;
         const nextStage = STUDY_FLAME_THRESHOLDS.findIndex(threshold => minutes < threshold);
-        return nextStage === -1 ? STUDY_FLAME_THRESHOLDS.length : nextStage;
+        const completed = nextStage === -1 ? STUDY_FLAME_THRESHOLDS.length : nextStage;
+        const reached = STUDY_FLAME_THRESHOLDS[completed - 1] ?? 0;
+        return reached / 30;
       }
 
       function closeFocusOverlay(discard = false) {
@@ -8211,11 +8447,10 @@
         refreshStudyDialogs();
         if (wasOpen && !discard) {
           renderAll();
-          triggerHaptic([16, 30, 20]);
           const sessionMins = Math.floor(finishedSecs / 60);
           if (sessionMins >= 1) {
             const meF = shared.members.find(x => x.id === prefs.currentUserId);
-            const todayTotal = (meF && shared.studyLogs?.[todayStr()]?.[meF.id]) || 0;
+            const todayTotal = meF ? studyMinutes(meF.id) : 0;
             const sH = Math.floor(sessionMins / 60), sM = sessionMins % 60;
             const sessionStr = sH > 0 ? `${sH}시간 ${sM}분` : `${sM}분`;
             openModal('⏱️ 집중 완료 리포트', `
@@ -8236,23 +8471,27 @@
             `);
             document.getElementById('btn-focus-summary-ok')?.addEventListener('click', closeModal);
           } else {
-            showToast('1분 미만 집중은 기록에 반영되지 않습니다.', 'info');
+            showToast('짧은 집중 시간도 오늘 누적에 합산돼요.', 'info');
             if (prefs.activeTab === 'dashboard') document.getElementById('btn-open-focus').focus({preventScroll:true});
           }
         }
       }
 
-      document.getElementById('btn-open-focus').addEventListener('click', () => openFocusOverlay(false));
+      document.getElementById('btn-open-focus').addEventListener('click', () => {
+        quietTimerStart = true;
+        try { openFocusOverlay(false); }
+        finally { quietTimerStart = false; }
+      });
       let pendingCelebrations = [];
       let celebrationFrame = 0;
-      function playStarterAllClearCeremony() {
+      function playStarterAllClearCeremony(quiet = false) {
         const ov = document.getElementById('starter-clear-overlay');
         const closeBtn = document.getElementById('btn-starter-clear-close');
         if (!ov) return;
         ov.classList.remove('hidden');
         ov.classList.add('flex');
         ov.setAttribute('aria-hidden', 'false');
-        triggerHaptic([25, 45, 30, 45, 50]);
+        if (!quiet) triggerHaptic([25, 45, 30, 45, 50]);
         triggerChallengeCelebration({ title: '🎓 입문 챌린지 23종 올클리어!', lp: 0 });
         if (closeBtn) closeBtn.onclick = () => {
           ov.classList.add('hidden');
@@ -8296,10 +8535,10 @@
         document.getElementById('promotion-mission-value').textContent = success ? `+${releasedBank} LP` : mission;
         document.getElementById('promotion-note').textContent = {
           preview: willSchedule
-            ? '예정일에 울트라집중모드와 함께 시작합니다. 실패하면 다음 날부터 다시 도전할 수 있어요.'
-            : '미션을 달성한 뒤 승급전 완료 버튼을 눌러주세요. 실패하면 다음 날부터 다시 도전할 수 있어요.',
+            ? '예정일 오전 5시부터 승급전을 진행할 수 있어요. 도전 횟수는 매일 오전 5시에 초기화돼요.'
+            : '미션을 달성한 뒤 승급전 완료 버튼을 눌러주세요. 도전 횟수는 매일 오전 5시에 초기화돼요.',
           started: '미션을 달성한 뒤 승급전 완료 버튼을 눌러주세요.',
-          scheduled: '예정일에 울트라집중모드와 함께 시작합니다.',
+          scheduled: '예정일 오전 5시부터 승급전을 진행할 수 있어요.',
           success: '새로운 티어에 도달했어요!'
         }[phase];
 
@@ -8358,14 +8597,13 @@
       function flushCelebrations() {
         while (pendingCelebrations.length > 0) {
           const ch = pendingCelebrations.shift();
-          if (ch && ch.__starterAllClear) playStarterAllClearCeremony();
+          if (ch && ch.__starterAllClear) playStarterAllClearCeremony(true);
           else triggerChallengeCelebration(ch);
         }
       }
 
       let pauseStartedAt = null;
       document.getElementById('focus-pause-btn').addEventListener('click', () => {
-        triggerHaptic(12);
         if (!focusPaused) syncFocusClock(true);
         focusPaused = !focusPaused;
         const meP = shared.members.find(x => x.id === prefs.currentUserId);
@@ -8822,7 +9060,7 @@
             ['classes', 'manualExempt', 'customBadges', 'memberChallenges', 'praises', 'directMessages', 'lpHistory', 'promoHistory', 'respectLpRewarded'].forEach(k => {
               if (shared[k]) delete shared[k][mid];
             });
-            ['records', 'studyLogs', 'maxFocusLogs', 'periodStudySecs', 'studyBlocks', 'studySlotMins', 'hourlyLpGiven', 'motemote', 'periodLpRewarded', 'respectSentByDate'].forEach(k => {
+            ['records', 'studyLogs', 'studySubminuteMs', 'maxFocusLogs', 'periodStudySecs', 'studyBlocks', 'studySlotMins', 'hourlyLpGiven', 'motemote', 'periodLpRewarded', 'respectSentByDate'].forEach(k => {
               if (shared[k]) {
                 Object.keys(shared[k]).forEach(d => {
                   if (shared[k][d]) delete shared[k][d][mid];
@@ -8990,15 +9228,16 @@
       switchTab(prefs.activeTab || 'dashboard');
       let bannerMinute = '';
       function refreshScheduleMinute() {
-        if (document.hidden || prefs.simTime) return;
-        const key = `${todayStr()} ${getNowParts().hhmm}`;
+        if (document.hidden) return;
+        const key = Math.floor(Date.now() / 60000);
         if (key === bannerMinute) return;
         bannerMinute = key;
-        if (!focusInterval || focusPaused) syncMemberPendingModes();
+        renderHeaderControls();
+        renderFocusStudy();
         renderLiveBanner();
         if (prefs.activeTab === 'dashboard') renderDashboard();
         if (prefs.activeTab === 'members') renderMembersTab();
-        if (focusInterval && focusPaused) refreshFocusAttendance(true);
+        if (focusInterval && focusPaused) { updateFocusDisplay(); refreshFocusAttendance(true); }
       }
       setInterval(refreshScheduleMinute, 2000);
       document.addEventListener('visibilitychange', refreshScheduleMinute);
