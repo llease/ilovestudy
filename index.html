@@ -7268,53 +7268,51 @@
       let focusInterval = null;
       let focusModeBeforeChange = null;
       let focusLastGridMinute = '';
-      let focusLastNotifMin = -1;
+      let focusOsNotifShown = false;
+      let focusOsNotifRef = null;
 
       function updateFocusOsNotification(force = false) {
         if (typeof Notification === 'undefined' || Notification.permission !== 'granted') return;
-        const mins = Math.floor(focusElapsedSecs / 60);
-        if (!force && mins === focusLastNotifMin) return;
-        focusLastNotifMin = mins;
-        const h = Math.floor(mins / 60), m = mins % 60;
-        const timeTxt = h > 0 ? `${h}시간 ${m}분` : `${m}분`;
-        const meN = shared.members.find(x => x.id === prefs.currentUserId);
-        const nowN = getNowParts(), dayN = todayStr(), phaseN = getCurrentPhase(nowN.totalMins);
-        const strictN = meN && getMemberMode(meN) === 'strict';
-        let title = '집중 중';
-        let body = `${timeTxt} 경과`;
-        if (focusPaused) {
-          title = '일시정지';
-          body = `${timeTxt} 경과 · 10분 초과 시 초기화`;
-        } else if (strictN && phaseN?.type === 'study') {
-          const secsN = shared.periodStudySecs?.[dayN]?.[meN.id]?.[phaseN.id] || 0;
-          const statusN = getMemberDayStatus(meN.id, dayN, phaseN.id);
-          const leftAtt = Math.max(0, Math.ceil((Math.ceil(phaseN.mins * 60 * 0.75) - secsN) / 60));
-          const leftEnd = Math.max(0, phaseN.endMins - nowN.totalMins);
-          title = `${phaseN.label} 집중 중`;
-          if (statusN === 'exempt') body = `${timeTxt} 경과 · 수업 면제 (${phaseN.end} 종료)`;
-          else if (statusN === 'present' || leftAtt === 0) body = `${timeTxt} 경과 · 출석 인정 (종료 ${leftEnd}분 전)`;
-          else body = `${timeTxt} 경과 · 출석 ${leftAtt}분 전`;
-        } else {
-          const todayMinsN = (meN && shared.studyLogs?.[dayN]?.[meN.id]) || 0;
-          body = `${timeTxt} 경과 · 오늘 누적 ${Math.floor(todayMinsN / 60)}시간 ${todayMinsN % 60}분`;
-        }
+        if (focusOsNotifShown && !force) return;
+        focusOsNotifShown = true;
+        const title = 'I LOVE STUDY';
         const opts = {
-          body,
+          body: '타이머가 실행 중입니다. 눌러서 타이머 화면으로 돌아가기',
           icon: './icon-192.png',
           tag: 'iluvstudy-focus',
           renotify: false,
           silent: true,
-          requireInteraction: false
+          requireInteraction: false,
+          data: { url: './?focus=1' }
         };
         if (navigator.serviceWorker && navigator.serviceWorker.controller) {
           navigator.serviceWorker.ready.then(reg => reg.showNotification(title, opts)).catch(() => {});
         } else {
-          try { new Notification(title, opts); } catch (e) {}
+          try {
+            if (focusOsNotifRef) { try { focusOsNotifRef.close(); } catch (e) {} }
+            const n = new Notification(title, opts);
+            focusOsNotifRef = n;
+            n.onclick = () => {
+              try { window.focus(); } catch (e) {}
+              const ov = document.getElementById('focus-overlay');
+              if (ov && focusInterval) {
+                ov.classList.remove('hidden');
+                ov.classList.add('flex');
+                document.getElementById('focus-mini-bar')?.classList.add('hidden');
+                ov.focus({ preventScroll: true });
+              }
+              try { n.close(); } catch (e) {}
+            };
+          } catch (e) {}
         }
       }
 
       function closeFocusOsNotification() {
-        focusLastNotifMin = -1;
+        focusOsNotifShown = false;
+        if (focusOsNotifRef) {
+          try { focusOsNotifRef.close(); } catch (e) {}
+          focusOsNotifRef = null;
+        }
         if (navigator.serviceWorker && navigator.serviceWorker.controller) {
           navigator.serviceWorker.ready.then(reg => reg.getNotifications({ tag: 'iluvstudy-focus' })).then(list => {
             list.forEach(n => n.close());
@@ -7521,7 +7519,7 @@
             }
           }
           const newMins = Math.floor(target / 60);
-          if (gainedMinute) { me.focusMins = newMins; updateFocusOsNotification(); }
+          if (gainedMinute) { me.focusMins = newMins; }
           focusElapsedSecs = target;
           const claimed = new Set(shared.memberChallenges?.[me.id] || []);
           (shared.challenges || []).forEach(ch => {
@@ -8062,7 +8060,6 @@
           focusStartedAt = Date.now();
           focusModeBeforeChange = null;
         }
-        updateFocusOsNotification(true);
         saveFocusState();
         updateFocusDisplay();
       });
