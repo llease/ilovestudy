@@ -901,11 +901,37 @@
     body[data-mode="strict"] #study-main .ed-card { border-color:rgba(239,68,68,.24) !important; }
     body[data-mode="strict"] #study-mode-btn {background:#dc2626;color:#ffffff;border-color:#dc2626}
 
-    body[data-promo="active"] { --page:#fefcf3; }
-    body[data-dark="true"][data-promo="active"] { --page:#161510; }
-    body[data-promo="active"] #study-header { border-bottom:2px solid rgba(234,179,8,.75) !important; }
-    body[data-promo="active"] #main-live-banner { border-color:rgba(250,204,21,.75) !important; box-shadow:0 14px 32px rgba(234,179,8,.18) !important; }
-    body[data-promo="active"] #study-main .ed-card { border-color:rgba(234,179,8,.42) !important; }
+    body[data-promo="active"] {
+      --page:#fbf6e9;
+      background-image: radial-gradient(ellipse 80% 340px at 50% 0%, rgba(234, 179, 8, 0.16), transparent 70%);
+    }
+    body[data-dark="true"][data-promo="active"] {
+      --page:#090b12;
+      background-image: radial-gradient(ellipse 80% 340px at 50% 0%, rgba(234, 179, 8, 0.18), transparent 70%);
+    }
+    body[data-promo="active"] #study-header {
+      background: linear-gradient(90deg, #0b1120 0%, #1c1917 50%, #0b1120 100%) !important;
+      border-bottom: 2px solid rgba(250, 204, 21, 0.85) !important;
+      color: #fef3c7 !important;
+      box-shadow: 0 8px 28px rgba(234, 179, 8, 0.16);
+    }
+    body[data-promo="active"] #study-header :is(h1, h2, span, p) { color: #fef3c7; }
+    body[data-promo="active"] #main-live-banner {
+      background: linear-gradient(125deg, #0f172a 0%, #291d09 55%, #452707 100%) !important;
+      border-color: rgba(250, 204, 21, 0.8) !important;
+      box-shadow: 0 18px 40px rgba(234, 179, 8, 0.24) !important;
+    }
+    body[data-promo="active"] #promo-action-bar {
+      background: linear-gradient(135deg, #0f172a 0%, #231807 100%) !important;
+      border-color: rgba(250, 204, 21, 0.85) !important;
+      box-shadow: 0 12px 30px rgba(234, 179, 8, 0.22) !important;
+    }
+    body[data-promo="active"] #promo-bar-title { color: #fef08a !important; }
+    body[data-promo="active"] #promo-bar-desc { color: #e2e8f0 !important; }
+    body[data-promo="active"] #study-main .ed-card {
+      border-color: rgba(217, 119, 6, 0.42) !important;
+      box-shadow: 0 8px 24px rgba(180, 83, 9, 0.08);
+    }
     #schedule-list-wrap > [aria-current="time"] {background:var(--tint);color:var(--link);border-color:var(--line)}
     #focus-overlay {justify-content:flex-start}
     #focus-period-badge {background:var(--tint);color:var(--link);border:1px solid var(--line)}
@@ -2242,6 +2268,16 @@
             <button type="submit" class="px-3.5 py-1.5 rounded-xl bg-slate-950 text-white text-xs font-bold whitespace-nowrap">랭크 적용</button>
             <button id="btn-admin-skip-promo" type="button" class="hidden px-3.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-black whitespace-nowrap">⏭️ 승급전 건너뛰기</button>
           </form>
+          <div class="flex flex-wrap items-center justify-between gap-2 bg-amber-50/70 border border-amber-200 rounded-xl px-3 py-2">
+            <div>
+              <p class="text-xs font-black text-slate-900">🔁 승급전 하루 연속 도전 허용</p>
+              <p class="text-[11px] text-slate-600">켜면 하루에 승급전을 여러 번 연속으로 통과할 수 있습니다.</p>
+            </div>
+            <label class="inline-flex items-center gap-1.5 cursor-pointer select-none">
+              <input id="admin-toggle-consecutive-promo" type="checkbox" class="w-4 h-4 accent-amber-500 rounded" />
+              <span id="admin-consecutive-promo-label" class="text-xs font-black text-slate-700">꺼짐 (하루 1회)</span>
+            </label>
+          </div>
         </div>
       </div>
 
@@ -4066,7 +4102,7 @@
           promoTitle.textContent = `오늘 승급전에 실패했습니다.`;
           promoDesc.textContent = `내일(${meHdr.promoCooldownUntil})부터 다시 승급전에 도전할 수 있습니다.`;
           promoActs.innerHTML = '';
-        } else if (meHdr && tierInfo.inPromo && tierInfo.nextName && shared.promoHistory?.[meHdr.id]?.[tNow] && !String(shared.promoHistory[meHdr.id][tNow]).includes('관리자 건너뛰기')) {
+        } else if (meHdr && tierInfo.inPromo && tierInfo.nextName && !shared.allowConsecutivePromo && shared.promoHistory?.[meHdr.id]?.[tNow] && !String(shared.promoHistory[meHdr.id][tNow]).includes('관리자 건너뛰기')) {
           document.body.removeAttribute('data-promo');
           promoBar.classList.remove('hidden');
           promoBadge.textContent = '오늘 승급 완료';
@@ -5336,6 +5372,10 @@
         const rankMemSel = document.getElementById('admin-rank-member');
         const curRankMem = validMemberId(rankMemSel.value);
         rankMemSel.innerHTML = shared.members.map(m => `<option value="${m.id}" ${m.id === curRankMem ? 'selected' : ''}>${escapeHtml(m.name)}</option>`).join('');
+        const consPromoChk = document.getElementById('admin-toggle-consecutive-promo');
+        const consPromoLbl = document.getElementById('admin-consecutive-promo-label');
+        if (consPromoChk) consPromoChk.checked = !!shared.allowConsecutivePromo;
+        if (consPromoLbl) consPromoLbl.textContent = shared.allowConsecutivePromo ? '켜짐 (연속 허용)' : '꺼짐 (하루 1회)';
         const rankPresetSel = document.getElementById('admin-rank-tier-preset');
         rankPresetSel.innerHTML = LOL_TIERS.map(t => `<option value="${t.min}">${t.icon} ${t.name} (${t.min} LP~)</option>`).join('');
         syncAdminRankControls(curRankMem);
@@ -5717,7 +5757,7 @@
         if (e.target.id === 'btn-join-promo') {
           const tNow = todayStr();
           const tmr = tomorrowStr();
-          if (shared.promoHistory?.[me.id]?.[tNow] && !String(shared.promoHistory[me.id][tNow]).includes('관리자 건너뛰기')) {
+          if (!shared.allowConsecutivePromo && shared.promoHistory?.[me.id]?.[tNow] && !String(shared.promoHistory[me.id][tNow]).includes('관리자 건너뛰기')) {
             showToast(`승급전은 하루에 1회만 가능합니다. 내일(${tmr}) 다시 도전해 주세요!`, 'warn');
             return;
           }
@@ -7105,6 +7145,13 @@
         saveSharedData();
         const tInfo = getMemberTier(m);
         showToast(`${m.name}님의 랭크가 ${tInfo.icon} ${tInfo.name} (${m.lp} LP)로 변경되었습니다!`, 'success');
+        renderAll();
+      });
+      document.getElementById('admin-toggle-consecutive-promo')?.addEventListener('change', e => {
+        if (!prefs.adminMode) return;
+        shared.allowConsecutivePromo = !!e.target.checked;
+        saveSharedData();
+        showToast(shared.allowConsecutivePromo ? '승급전 하루 연속 도전이 허용되었습니다!' : '승급전이 하루 1회로 제한되었습니다.', 'info');
         renderAll();
       });
       document.getElementById('btn-admin-skip-promo').addEventListener('click', () => {
