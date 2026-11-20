@@ -423,6 +423,47 @@
     }
     .promo-shockwave-2 { animation-delay: 0.9s; border-color: rgba(56, 189, 248, 0.75); }
     .promo-emblem-wrap { animation: promoEmblemFloat 2.8s ease-in-out infinite; }
+    /* 5b. Tier Challenge Launch Ceremony */
+    #promo-challenge-overlay {
+      position: fixed; inset: 0; z-index: 87;
+      display: none; align-items: center; justify-content: center; padding: 1.5rem;
+      background: radial-gradient(circle at 50% 42%, var(--ch-bg, rgba(30, 41, 59, 0.85)) 0%, rgba(4, 7, 16, 0.95) 72%);
+      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    }
+    #promo-challenge-overlay.is-active { display: flex; }
+    @keyframes challengeEmblemSlam {
+      0% { opacity: 0; transform: scale(2.2) translateY(-18px); filter: brightness(2); }
+      55% { opacity: 1; transform: scale(0.92) translateY(2px); filter: brightness(1.25); }
+      80% { transform: scale(1.06) translateY(-2px); filter: brightness(1.05); }
+      100% { opacity: 1; transform: scale(1) translateY(0); filter: brightness(1); }
+    }
+    .challenge-emblem-slam { animation: challengeEmblemSlam 720ms cubic-bezier(.16, 1, .3, 1) both; }
+    .challenge-rays {
+      position: fixed; left: 50%; top: 46%; width: 150vmax; height: 150vmax;
+      background: repeating-conic-gradient(from 0deg, var(--ch-glow, rgba(250, 204, 21, 0.16)) 0deg 8deg, transparent 8deg 22deg);
+      mask-image: radial-gradient(circle, rgba(0,0,0,0.95) 0%, transparent 64%);
+      -webkit-mask-image: radial-gradient(circle, rgba(0,0,0,0.95) 0%, transparent 64%);
+      animation: promoRaysSpin 14s linear infinite;
+      pointer-events: none; z-index: 0;
+    }
+    .challenge-halo {
+      position: absolute; inset: -16px; border-radius: 9999px;
+      background: conic-gradient(from 0deg, var(--ch-c1, #fde047), var(--ch-c2, #38bdf8), #ffffff, var(--ch-c1, #fde047));
+      opacity: 0.9; filter: blur(10px); animation: tierHaloSpin 3.2s linear infinite; pointer-events: none;
+    }
+    .challenge-ring-1 {
+      position: absolute; inset: -8px; border-radius: 9999px;
+      border: 3px solid var(--ch-c1, #fde047);
+      animation: promoShockwave 1.6s cubic-bezier(.16, 1, .3, 1) infinite;
+      pointer-events: none;
+    }
+    .challenge-ring-2 {
+      position: absolute; inset: -8px; border-radius: 9999px;
+      border: 2.5px solid var(--ch-c2, #38bdf8);
+      animation: promoShockwave 1.6s cubic-bezier(.16, 1, .3, 1) infinite;
+      animation-delay: 0.8s;
+      pointer-events: none;
+    }
     /* Subtle Micro-Details */
     body { transition: background-color 240ms ease, color 240ms ease; }
     .ed-card, #main-live-banner { transition: background-color 240ms ease, border-color 240ms ease, box-shadow 240ms ease; }
@@ -1051,6 +1092,26 @@
         <p id="tier-promo-sub" class="text-xs text-slate-200 leading-relaxed"></p>
       </div>
       <button id="btn-tier-promo-close" type="button" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-400 text-slate-950 font-black text-sm shadow-lg">계속하기</button>
+    </div>
+  </div>
+  <!-- Tier Promotion Challenge Launch Overlay -->
+  <div id="promo-challenge-overlay" role="dialog" aria-modal="true" aria-labelledby="promo-challenge-title" aria-hidden="true">
+    <div class="challenge-rays" aria-hidden="true"></div>
+    <canvas id="promo-challenge-canvas" class="fixed inset-0 z-[1] pointer-events-none"></canvas>
+    <div id="promo-challenge-card" class="promo-card-in max-w-sm w-full rounded-3xl bg-slate-950/92 border-2 p-7 text-center text-white space-y-5">
+      <div class="promo-emblem-wrap relative mx-auto w-28 h-28 grid place-items-center">
+        <div class="challenge-ring-1"></div>
+        <div class="challenge-ring-2"></div>
+        <div class="challenge-halo"></div>
+        <div id="promo-challenge-icon" class="challenge-emblem-slam relative z-[1] w-24 h-24 rounded-full bg-slate-950 border-2 grid place-items-center text-5xl shadow-2xl">⚔️</div>
+      </div>
+      <div class="space-y-2.5">
+        <p id="promo-challenge-badge" class="inline-block px-3 py-0.5 rounded-full text-[11px] font-black tracking-widest uppercase">⚔️ PROMOTION CHALLENGE</p>
+        <h3 id="promo-challenge-title" class="text-2xl font-black tracking-tight text-white">승급전 도전 개시!</h3>
+        <div id="promo-challenge-mission" class="px-3.5 py-2.5 rounded-2xl bg-white/10 border border-white/15 text-xs font-bold text-slate-100 leading-relaxed"></div>
+        <p id="promo-challenge-sub" class="text-xs text-slate-300 leading-relaxed"></p>
+      </div>
+      <button id="btn-promo-challenge-close" type="button" class="w-full py-3.5 rounded-2xl font-black text-sm shadow-lg transition active:scale-[0.98]">도전 시작!</button>
     </div>
   </div>
   <!-- Starter All-Clear Grand Celebration Overlay -->
@@ -5588,6 +5649,7 @@
           `);
           document.getElementById('promo-modal-cancel').addEventListener('click', closeModal);
           document.getElementById('promo-modal-confirm').addEventListener('click', () => {
+            const targetTierObj = LOL_TIERS.find(t => t.name === tierInfo.nextName) || { name: tierInfo.nextName, icon: '⚔️' };
             if (needsTomorrow) {
               me.promoPendingDate = tmr;
               me.pendingMode = 'strict';
@@ -5602,6 +5664,7 @@
               showToast(`${tierInfo.nextName} 승급전이 시작되었습니다! 미션을 달성해 보세요.`, 'success');
             }
             renderAll();
+            playTierChallengeCeremony(targetTierObj, mission.desc, needsTomorrow, targetDay);
           });
         } else if (e.target.id === 'btn-cancel-promo') {
           me.promoPendingDate = null;
@@ -7757,6 +7820,184 @@
           ov.classList.remove('is-active');
           ov.setAttribute('aria-hidden', 'true');
           if (promoFxFrame) { cancelAnimationFrame(promoFxFrame); promoFxFrame = 0; }
+        };
+      }
+      const TIER_CHALLENGE_THEMES = {
+        '아이언': { c1: '#a1a1aa', c2: '#71717a', glow: 'rgba(161,161,170,0.16)', bg: 'rgba(39,39,42,0.86)', colors: ['#d4d4d8', '#a1a1aa', '#71717a', '#ffffff'], intensity: 1.0, tagline: '강철 같은 기본기로 첫 관문을 돌파하세요!' },
+        '브론즈': { c1: '#f59e0b', c2: '#b45309', glow: 'rgba(217,119,6,0.18)', bg: 'rgba(69,26,3,0.86)', colors: ['#fbbf24', '#d97706', '#fcd34d', '#ffffff'], intensity: 1.1, tagline: '단련된 청동의 불꽃으로 승격을 쟁취하세요!' },
+        '실버': { c1: '#e2e8f0', c2: '#64748b', glow: 'rgba(203,213,225,0.2)', bg: 'rgba(30,41,59,0.88)', colors: ['#f8fafc', '#cbd5e1', '#94a3b8', '#38bdf8'], intensity: 1.2, tagline: '서늘하고 날카로운 은빛 몰입을 보여줄 때입니다!' },
+        '골드': { c1: '#facc15', c2: '#eab308', glow: 'rgba(250,204,21,0.22)', bg: 'rgba(66,32,6,0.88)', colors: ['#fde047', '#facc15', '#fb923c', '#ffffff'], intensity: 1.35, tagline: '찬란한 황금빛 왕관을 향한 도전을 시작합니다!' },
+        '플래티넘': { c1: '#2dd4bf', c2: '#0d9488', glow: 'rgba(45,212,191,0.22)', bg: 'rgba(17,58,56,0.88)', colors: ['#5eead4', '#2dd4bf', '#14b8a6', '#e0f2fe'], intensity: 1.5, tagline: '흔들리지 않는 청록의 집중력으로 한계를 넘으세요!' },
+        '에메랄드': { c1: '#34d399', c2: '#059669', glow: 'rgba(52,211,153,0.24)', bg: 'rgba(6,55,40,0.88)', colors: ['#6ee7b7', '#34d399', '#10b981', '#fef08a'], intensity: 1.65, tagline: '비취빛 폭풍처럼 압도적인 공부량을 증명하세요!' },
+        '다이아몬드': { c1: '#38bdf8', c2: '#0284c7', glow: 'rgba(56,189,248,0.25)', bg: 'rgba(12,45,72,0.9)', colors: ['#7dd3fc', '#38bdf8', '#e0f2fe', '#ffffff'], intensity: 1.8, tagline: '다이아몬드처럼 단단하고 눈부신 몰입을 펼쳐보세요!' },
+        '마스터': { c1: '#c084fc', c2: '#9333ea', glow: 'rgba(192,132,252,0.26)', bg: 'rgba(46,16,101,0.9)', colors: ['#d8b4fe', '#c084fc', '#a855f7', '#fde047'], intensity: 1.95, tagline: '신비로운 마스터의 영역! 극한의 울트라집중이 시작됩니다.' },
+        '그랜드마스터': { c1: '#fb7185', c2: '#e11d48', glow: 'rgba(251,113,133,0.28)', bg: 'rgba(76,5,25,0.9)', colors: ['#fda4af', '#fb7185', '#f43f5e', '#fbbf24'], intensity: 2.1, tagline: '타오르는 진홍빛 투지로 최상위 포식자의 자격을 증명하세요!' },
+        '챌린저': { c1: '#fde047', c2: '#38bdf8', glow: 'rgba(253,224,71,0.28)', bg: 'rgba(15,23,42,0.92)', colors: ['#fde047', '#38bdf8', '#fb923c', '#ffffff'], intensity: 2.3, tagline: '정점의 왕좌를 향한 마지막 전설이 지금 시작됩니다!' }
+      };
+      let challengeFxFrame = 0;
+      function playTierChallengeCeremony(tierObj, missionDesc, needsTomorrow, targetDay) {
+        const ov = document.getElementById('promo-challenge-overlay');
+        const card = document.getElementById('promo-challenge-card');
+        const iconEl = document.getElementById('promo-challenge-icon');
+        const badgeEl = document.getElementById('promo-challenge-badge');
+        const titleEl = document.getElementById('promo-challenge-title');
+        const missionEl = document.getElementById('promo-challenge-mission');
+        const subEl = document.getElementById('promo-challenge-sub');
+        const closeBtn = document.getElementById('btn-promo-challenge-close');
+        const cvs = document.getElementById('promo-challenge-canvas');
+        if (!ov || !card || !iconEl || !titleEl) return;
+
+        const theme = TIER_CHALLENGE_THEMES[tierObj.name] || TIER_CHALLENGE_THEMES['골드'];
+        ov.style.setProperty('--ch-c1', theme.c1);
+        ov.style.setProperty('--ch-c2', theme.c2);
+        ov.style.setProperty('--ch-glow', theme.glow);
+        ov.style.setProperty('--ch-bg', theme.bg);
+
+        card.style.borderColor = theme.c1;
+        card.style.boxShadow = `0 0 65px ${theme.glow.replace(/0\.\d+/, '0.45')}`;
+        iconEl.textContent = tierObj.icon || '⚔️';
+        iconEl.style.borderColor = theme.c1;
+        badgeEl.textContent = needsTomorrow ? `⚔️ ${tierObj.name} 승급전 예약` : `⚔️ ${tierObj.name} 승급전 도전 개시`;
+        badgeEl.style.background = `${theme.c1}26`;
+        badgeEl.style.border = `1px solid ${theme.c1}80`;
+        badgeEl.style.color = theme.c1;
+
+        titleEl.textContent = needsTomorrow ? `${tierObj.name} 승급전 출정 준비!` : `${tierObj.name} 승급전 도전!`;
+        missionEl.innerHTML = `<span class="opacity-75 text-[10px] block mb-0.5 uppercase tracking-wider">승급 미션</span>${escapeHtml(missionDesc || '')}`;
+        subEl.textContent = needsTomorrow
+          ? `${theme.tagline} (${targetDay} 울트라집중모드로 자동 시작)`
+          : theme.tagline;
+
+        closeBtn.style.background = `linear-gradient(90deg, ${theme.c1}, ${theme.c2})`;
+        closeBtn.style.color = '#090f1d';
+        closeBtn.textContent = needsTomorrow ? '내일 출정 준비 완료!' : '지금 바로 도전 시작!';
+
+        // Re-trigger slam animation
+        iconEl.classList.remove('challenge-emblem-slam');
+        void iconEl.offsetWidth;
+        iconEl.classList.add('challenge-emblem-slam');
+
+        ov.classList.add('is-active');
+        ov.setAttribute('aria-hidden', 'false');
+        triggerHaptic([35, 40, 60, 40, 85]);
+
+        if (challengeFxFrame) { cancelAnimationFrame(challengeFxFrame); challengeFxFrame = 0; }
+        if (cvs && !reduceMotion.matches) {
+          const ctx = cvs.getContext('2d');
+          const W = cvs.width = window.innerWidth;
+          const H = cvs.height = window.innerHeight;
+          const embers = [];
+          const sparks = [];
+          const rings = [{ r: 20, maxR: Math.max(W, H) * 0.55, alpha: 0.9, c: theme.c1 }];
+
+          function spawnRadialBurst(bx, by, count, speedMul = 1) {
+            for (let i = 0; i < count; i++) {
+              const ang = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.3;
+              const spd = (140 + Math.random() * 260) * speedMul;
+              sparks.push({
+                x: bx, y: by, vx: Math.cos(ang) * spd, vy: Math.sin(ang) * spd,
+                r: 2 + Math.random() * 3.2,
+                c: theme.colors[Math.floor(Math.random() * theme.colors.length)],
+                life: 0, maxLife: 0.9 + Math.random() * 0.7
+              });
+            }
+          }
+          function spawnRisingEmbers(n) {
+            for (let i = 0; i < n; i++) {
+              embers.push({
+                x: Math.random() * W, y: H + 10 + Math.random() * 40,
+                vx: (Math.random() - 0.5) * 45,
+                vy: -(120 + Math.random() * 210 * Math.min(1.5, theme.intensity * 0.75)),
+                r: 1.8 + Math.random() * 3.2,
+                c: theme.colors[Math.floor(Math.random() * theme.colors.length)],
+                life: 0, maxLife: 2.0 + Math.random() * 1.5
+              });
+            }
+          }
+
+          spawnRadialBurst(W * 0.5, H * 0.44, Math.round(42 * theme.intensity), 1.1);
+          spawnRisingEmbers(Math.round(28 * theme.intensity));
+          const waveSchedule = [
+            { t: 0.85, x: W * 0.28, y: H * 0.34, done: false },
+            { t: 1.75, x: W * 0.72, y: H * 0.34, done: false },
+            { t: 2.85, x: W * 0.5, y: H * 0.44, done: false }
+          ];
+
+          let lastTime = performance.now();
+          const startTime = lastTime;
+          let lastEmber = 0;
+          function tick(now) {
+            if (!ov.classList.contains('is-active') || reduceMotion.matches) {
+              ctx.clearRect(0, 0, W, H); challengeFxFrame = 0; return;
+            }
+            const dt = Math.min(0.05, (now - lastTime) / 1000);
+            const elapsed = (now - startTime) / 1000;
+            lastTime = now;
+            ctx.clearRect(0, 0, W, H);
+
+            for (const w of waveSchedule) {
+              if (!w.done && elapsed >= w.t) {
+                w.done = true;
+                spawnRadialBurst(w.x, w.y, Math.round(28 * theme.intensity), 0.9);
+                rings.push({ r: 16, maxR: Math.max(W, H) * 0.45, alpha: 0.75, c: theme.c2 });
+              }
+            }
+            if (elapsed < 3.9 && elapsed - lastEmber > 0.22) {
+              lastEmber = elapsed;
+              spawnRisingEmbers(Math.round(9 * theme.intensity));
+            }
+            for (let i = rings.length - 1; i >= 0; i--) {
+              const rg = rings[i];
+              rg.r += 560 * dt;
+              rg.alpha -= 0.75 * dt;
+              if (rg.alpha <= 0 || rg.r >= rg.maxR) { rings.splice(i, 1); continue; }
+              ctx.save();
+              ctx.globalAlpha = Math.max(0, rg.alpha);
+              ctx.strokeStyle = rg.c;
+              ctx.lineWidth = 3;
+              ctx.beginPath();
+              ctx.arc(W * 0.5, H * 0.44, rg.r, 0, Math.PI * 2);
+              ctx.stroke();
+              ctx.restore();
+            }
+            for (let i = sparks.length - 1; i >= 0; i--) {
+              const s = sparks[i];
+              s.life += dt;
+              if (s.life >= s.maxLife) { sparks.splice(i, 1); continue; }
+              s.vx *= 0.96; s.vy *= 0.96;
+              s.x += s.vx * dt; s.y += s.vy * dt;
+              ctx.globalAlpha = Math.max(0, 1 - s.life / s.maxLife);
+              ctx.fillStyle = s.c;
+              ctx.beginPath();
+              ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+              ctx.fill();
+            }
+            for (let i = embers.length - 1; i >= 0; i--) {
+              const e = embers[i];
+              e.life += dt;
+              if (e.life >= e.maxLife || e.y < -20) { embers.splice(i, 1); continue; }
+              e.x += e.vx * dt + Math.sin(elapsed * 3 + i) * 0.35;
+              e.y += e.vy * dt;
+              ctx.globalAlpha = Math.max(0, (1 - e.life / e.maxLife) * 0.88);
+              ctx.fillStyle = e.c;
+              ctx.beginPath();
+              ctx.arc(e.x, e.y, e.r, 0, Math.PI * 2);
+              ctx.fill();
+            }
+            ctx.globalAlpha = 1;
+            if (elapsed < 4.8 || sparks.length || embers.length || rings.length) {
+              challengeFxFrame = requestAnimationFrame(tick);
+            } else {
+              challengeFxFrame = 0;
+            }
+          }
+          challengeFxFrame = requestAnimationFrame(tick);
+        }
+
+        if (closeBtn) closeBtn.onclick = () => {
+          ov.classList.remove('is-active');
+          ov.setAttribute('aria-hidden', 'true');
+          if (challengeFxFrame) { cancelAnimationFrame(challengeFxFrame); challengeFxFrame = 0; }
         };
       }
       function triggerChallengeCelebration(ch) {
