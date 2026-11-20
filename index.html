@@ -423,7 +423,18 @@
     .study-home-grid.is-free #home-today-todos-card {grid-column:2;grid-row:1 / span 2;border-top:0;border-left:1px solid var(--line);padding:.1rem 0 .1rem 1.2rem}
     .study-today-stat {background:var(--soft);border:1px solid var(--line);border-radius:12px;min-height:46px;display:flex;justify-content:space-between;align-items:center;gap:.5rem;padding:.65rem .85rem;font-size:.83rem}
     #study-mode-btn {background:var(--tint);color:var(--link);border:1px solid var(--line);max-width:100%;white-space:normal;text-align:left}
-    body[data-mode="strict"] #study-mode-btn {background:var(--hero);color:var(--hero-text);border-color:var(--hero)}
+    body[data-mode="strict"] { --page:#fcf5f5; }
+    body[data-dark="true"][data-mode="strict"] { --page:#15121d; }
+    body[data-mode="strict"] #study-header { border-bottom:2px solid rgba(239,68,68,.55) !important; }
+    body[data-mode="strict"] #main-live-banner { background:linear-gradient(122deg,#1a1225 0%,#451226 62%,#6b182f 100%) !important; border-color:rgba(248,113,113,.55) !important; }
+    body[data-mode="strict"] #study-main .ed-card { border-color:rgba(239,68,68,.24) !important; }
+    body[data-mode="strict"] #study-mode-btn {background:#dc2626;color:#ffffff;border-color:#dc2626}
+
+    body[data-promo="active"] { --page:#fefcf3; }
+    body[data-dark="true"][data-promo="active"] { --page:#161510; }
+    body[data-promo="active"] #study-header { border-bottom:2px solid rgba(234,179,8,.75) !important; }
+    body[data-promo="active"] #main-live-banner { border-color:rgba(250,204,21,.75) !important; box-shadow:0 14px 32px rgba(234,179,8,.18) !important; }
+    body[data-promo="active"] #study-main .ed-card { border-color:rgba(234,179,8,.42) !important; }
     #schedule-list-wrap > [aria-current="time"] {background:var(--tint);color:var(--link);border-color:var(--line)}
     #focus-overlay {justify-content:flex-start}
     #focus-period-badge {background:var(--tint);color:var(--link);border:1px solid var(--line)}
@@ -579,6 +590,32 @@
       35% { opacity:.75; transform:scale(1.06); }
       100% { opacity:0; transform:scale(1.42); }
     }
+    /* Polished Approval Completion & 3s Approved Banner */
+    @keyframes pendingPulseGlow {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.35); }
+      50% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+    }
+    @keyframes approvedBarFill {
+      0% { width: 0%; }
+      100% { width: 100%; }
+    }
+    .pending-check-orb {
+      width: 52px; height: 52px; border-radius: 9999px;
+      display: grid; place-items: center;
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: #ffffff; font-size: 24px; font-weight: 900;
+      animation: pendingPulseGlow 2.4s ease-in-out infinite;
+    }
+    #approved-toast-overlay {
+      position: fixed; inset: 0; z-index: 82;
+      display: none; align-items: center; justify-content: center; padding: 1.5rem;
+      background: rgba(15, 23, 42, 0.84); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    }
+    #approved-toast-overlay.is-active { display: flex; }
+    .approved-progress-fill {
+      height: 100%; background: linear-gradient(90deg, #34d399, #60a5fa);
+      animation: approvedBarFill 3s linear forwards;
+    }
     /* Friendly Onboarding Wizard */
     @keyframes onboardStepIn {
       0% { opacity:0; transform:translateX(14px) scale(.985); }
@@ -619,6 +656,20 @@
     <div id="welcome-text-wrap">
       <p id="welcome-cheer-title">오늘 하루도 파이팅해봐요!</p>
       <p id="welcome-cheer-sub">I LOVE STUDY</p>
+    </div>
+  </div>
+  <!-- 3-Second Approval Granted Overlay -->
+  <div id="approved-toast-overlay" aria-hidden="true">
+    <div class="max-w-sm w-full rounded-3xl bg-slate-900 border border-emerald-400/40 p-6 text-center text-white shadow-2xl space-y-4">
+      <div class="mx-auto pending-check-orb">✓</div>
+      <div class="space-y-1.5">
+        <p class="text-[11px] font-black tracking-widest uppercase text-emerald-300">APPROVED</p>
+        <h3 class="text-lg font-black tracking-tight">요청이 승인되었습니다!</h3>
+        <p id="approved-toast-sub" class="text-xs text-slate-300 leading-relaxed">관리자가 가입 요청을 수락했습니다. 곧 시작 화면으로 이동합니다.</p>
+      </div>
+      <div class="h-1.5 w-full rounded-full bg-slate-800 overflow-hidden">
+        <div id="approved-progress-bar" class="approved-progress-fill"></div>
+      </div>
     </div>
   </div>
   <!-- Celebration Confetti Canvas Overlay (non-blocking) -->
@@ -700,11 +751,18 @@
       </div>
 
       <div id="auth-pending-step" class="hidden space-y-4">
-        <div id="auth-pending-box" class="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-xs text-amber-950 space-y-1.5">
-          <p id="auth-pending-title" class="font-black text-sm">⏳ 가입 승인 대기 중입니다</p>
-          <p id="auth-pending-desc" class="leading-relaxed">관리자에게 가입 요청서를 보냈습니다. 관리자가 수락하면 이 화면이 자동으로 열리며 바로 시작할 수 있습니다.</p>
+        <div id="auth-pending-box" class="relative overflow-hidden p-5 rounded-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-950 border border-emerald-400/35 text-white space-y-3 text-center shadow-lg">
+          <div class="mx-auto pending-check-orb">✓</div>
+          <div class="space-y-1">
+            <span id="auth-pending-badge" class="inline-block px-2.5 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 text-[10px] font-black tracking-wider uppercase">Request Completed</span>
+            <p id="auth-pending-title" class="font-black text-base tracking-tight">가입 요청이 완료되었습니다!</p>
+            <p id="auth-pending-desc" class="text-xs text-slate-300 leading-relaxed">관리자에게 가입 요청서가 안전하게 전달되었습니다.<br/>승인된 뒤에 다시 접속하시면 바로 시작할 수 있어요.</p>
+          </div>
         </div>
-        <button id="btn-pending-logout" type="button" class="w-full py-2.5 rounded-xl bg-slate-950 text-white text-xs font-bold">다른 Google 계정으로 로그인</button>
+        <div class="space-y-2">
+          <button id="btn-reapply-join" type="button" class="hidden w-full py-2.5 rounded-xl ed-btn-accent text-xs font-black">다시 가입 요청하기</button>
+          <button id="btn-pending-logout" type="button" class="w-full py-2.5 rounded-xl bg-slate-950 text-white text-xs font-bold">다른 Google 계정으로 로그인</button>
+        </div>
       </div>
 
       <form id="auth-onboard-step" class="hidden space-y-3.5" novalidate>
@@ -2289,14 +2347,19 @@
           const box = document.getElementById('auth-pending-box');
           const pTitle = document.getElementById('auth-pending-title');
           const pDesc = document.getElementById('auth-pending-desc');
+          const reapplyBtn = document.getElementById('btn-reapply-join');
           if (step === 'rejected') {
-            box.className = 'p-4 rounded-2xl bg-rose-50 border border-rose-200 text-xs text-rose-900 space-y-1.5';
-            pTitle.textContent = '❌ 가입 요청이 거절되었습니다';
-            pDesc.textContent = '관리자가 가입 요청을 승인하지 않았습니다. 다른 계정으로 로그인해 주세요.';
+            box.className = 'p-4 rounded-2xl bg-rose-50 border border-rose-200 text-xs text-rose-900 space-y-1.5 text-left';
+            const orb = box.querySelector('.pending-check-orb'); if (orb) orb.classList.add('hidden'); const bdg = document.getElementById('auth-pending-badge'); if (bdg) bdg.classList.add('hidden');
+            pTitle.textContent = '❌ 이전 가입 요청이 수락되지 않았습니다';
+            pDesc.textContent = '입력 내용을 확인한 뒤 다시 가입 요청을 보내실 수 있습니다.';
+            if (reapplyBtn) reapplyBtn.classList.remove('hidden');
           } else {
-            box.className = 'p-4 rounded-2xl bg-amber-50 border border-amber-200 text-xs text-amber-950 space-y-1.5';
-            pTitle.textContent = '⏳ 가입 승인 대기 중입니다';
-            pDesc.textContent = '관리자에게 가입 요청서를 보냈습니다. 관리자가 수락하면 이 화면이 자동으로 열리며 바로 시작할 수 있습니다.';
+            box.className = 'relative overflow-hidden p-5 rounded-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-950 border border-emerald-400/35 text-white space-y-3 text-center shadow-lg';
+            const orb = box.querySelector('.pending-check-orb'); if (orb) orb.classList.remove('hidden'); const bdg = document.getElementById('auth-pending-badge'); if (bdg) bdg.classList.remove('hidden');
+            pTitle.textContent = '가입 요청이 완료되었습니다!';
+            pDesc.innerHTML = '관리자에게 가입 요청서가 안전하게 전달되었습니다.<br/>승인된 뒤에 다시 접속하시면 바로 시작할 수 있어요.';
+            if (reapplyBtn) reapplyBtn.classList.add('hidden');
           }
         } else {
           loginStep.classList.remove('hidden');
@@ -2366,6 +2429,30 @@
             setTimeout(() => document.body.classList.remove('is-entering'), 700);
           }, 680);
         }, 980);
+      }
+
+      function playApprovedThenFirstJoin(nickname) {
+        welcomePlayedForSession = true;
+        const ov = document.getElementById('approved-toast-overlay');
+        const sub = document.getElementById('approved-toast-sub');
+        const bar = document.getElementById('approved-progress-bar');
+        if (!ov) {
+          welcomePlayedForSession = false;
+          playFirstJoinWelcome(nickname);
+          return;
+        }
+        if (sub) sub.textContent = `${nickname ? nickname + '님, ' : ''}관리자가 가입 요청을 수락했습니다. 곧 시작 화면으로 이동합니다.`;
+        if (bar) {
+          bar.classList.remove('approved-progress-fill');
+          void bar.offsetWidth;
+          bar.classList.add('approved-progress-fill');
+        }
+        ov.classList.add('is-active');
+        setTimeout(() => {
+          ov.classList.remove('is-active');
+          welcomePlayedForSession = false;
+          playFirstJoinWelcome(nickname);
+        }, 3000);
       }
 
       function playFirstJoinWelcome(nickname) {
@@ -2451,7 +2538,14 @@
           savePrefs();
           hideAuthOverlay();
           renderAll();
-          if (pendingFirstJoinWelcome) {
+          if (found.justApproved) {
+            found.justApproved = false;
+            prefs.guideHintUnread = true;
+            savePrefs();
+            saveSharedData();
+            switchTab('profile');
+            playApprovedThenFirstJoin(found.name);
+          } else if (pendingFirstJoinWelcome) {
             const info = pendingFirstJoinWelcome;
             pendingFirstJoinWelcome = null;
             playFirstJoinWelcome(info.nickname || found.name);
@@ -6508,6 +6602,18 @@
       }
       document.getElementById('btn-onboard-logout').addEventListener('click', signOutToLogin);
       document.getElementById('btn-pending-logout')?.addEventListener('click', signOutToLogin);
+      document.getElementById('btn-reapply-join')?.addEventListener('click', async () => {
+        if (!currentAuthUser || !dbRef) { showAuthOverlay('onboard'); return; }
+        const uid = currentAuthUser.uid;
+        try {
+          await dbRef.child('joinRequests').transaction(cur => {
+            return (Array.isArray(cur) ? cur : Object.values(cur || {})).filter(Boolean).filter(r => r.uid !== uid);
+          }, undefined, false);
+          shared.joinRequests = (shared.joinRequests || []).filter(r => r.uid !== uid);
+        } catch (e) {}
+        setOnboardStep(1);
+        showAuthOverlay('onboard');
+      });
 
       document.querySelectorAll('[data-set-signup-mode]').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -6533,6 +6639,7 @@
               avatarUrl: req.avatarUrl || '',
               mode: 'free',
               inStudy: false,
+              justApproved: true,
               streak: 0, lp: 0, respectCount: 0, equippedTitle: '', lateNight: false, firstTime: null, lastTime: null
             });
           }
