@@ -52,34 +52,34 @@
     .flame-lv1::before, .flame-lv2::before, .flame-lv3::before, .flame-lv4::before, .flame-lv5::before, .flame-lv6::before, .flame-lv7::before, .flame-lv8::before, .flame-lv9::before, .flame-lv10::before {
       content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 0;
     }
-    /* Lv1 (10m+): Subtle warm ember */
-    .flame-lv1 { box-shadow: 0 2px 8px rgba(249, 115, 22, 0.14); }
-    .flame-lv1::before { background: linear-gradient(to top, rgba(249, 115, 22, 0.09), transparent 36%); }
-    /* Lv2 (30m+): Soft crimson-orange glow */
+    /* Lv1 (10m+): Tiny warm ember */
+    .flame-lv1 { box-shadow: 0 2px 6px rgba(249, 115, 22, 0.16); }
+    .flame-lv1::before { background: linear-gradient(to top, rgba(249, 115, 22, 0.08), transparent 32%); }
+    /* Lv2 (30m+): Small crimson-orange glow */
     @keyframes flamePulseRed {
-      0%, 100% { box-shadow: 0 4px 12px rgba(239, 68, 68, 0.18); }
-      50% { box-shadow: 0 6px 18px rgba(239, 68, 68, 0.32); }
+      0%, 100% { box-shadow: 0 3px 10px rgba(239, 68, 68, 0.22); }
+      50% { box-shadow: 0 5px 14px rgba(239, 68, 68, 0.34); }
     }
     .flame-lv2 { animation: flamePulseRed 2.8s ease-in-out infinite; }
-    .flame-lv2::before { background: radial-gradient(circle at 85% 92%, rgba(249, 115, 22, 0.15), transparent 58%), linear-gradient(to top, rgba(239, 68, 68, 0.12), transparent 58%); }
-    /* Lv3 (1h+): Cobalt-sky plasma flame */
+    .flame-lv2::before { background: radial-gradient(circle at 85% 92%, rgba(249, 115, 22, 0.14), transparent 52%), linear-gradient(to top, rgba(239, 68, 68, 0.11), transparent 46%); }
+    /* Lv3 (1h+): Medium cobalt-sky plasma */
     @keyframes flamePulseBlue {
-      0%, 100% { box-shadow: 0 5px 16px rgba(37, 99, 235, 0.26); }
-      50% { box-shadow: 0 8px 26px rgba(56, 189, 248, 0.45); }
+      0%, 100% { box-shadow: 0 4px 14px rgba(37, 99, 235, 0.28); }
+      50% { box-shadow: 0 7px 22px rgba(56, 189, 248, 0.45); }
     }
     .flame-lv3 { animation: flamePulseBlue 2.5s ease-in-out infinite; }
-    .flame-lv3::before { background: radial-gradient(circle at 82% 88%, rgba(37, 99, 235, 0.2), transparent 62%), linear-gradient(to top, rgba(56, 189, 248, 0.16), transparent 62%); }
-    /* Lv4 (2h+): Electric violet-magenta aura */
+    .flame-lv3::before { background: radial-gradient(circle at 82% 88%, rgba(37, 99, 235, 0.2), transparent 58%), linear-gradient(to top, rgba(56, 189, 248, 0.15), transparent 56%); }
+    /* Lv4 (2h~3h+): Electric violet-magenta aura */
     @keyframes flamePulsePurple {
-      0%, 100% { box-shadow: 0 6px 20px rgba(147, 51, 234, 0.32), 0 0 12px rgba(192, 132, 252, 0.2); }
-      50% { box-shadow: 0 10px 34px rgba(192, 132, 252, 0.55), 0 0 20px rgba(236, 72, 153, 0.36); }
+      0%, 100% { box-shadow: 0 6px 20px rgba(147, 51, 234, 0.36), 0 0 10px rgba(192, 132, 252, 0.24); }
+      50% { box-shadow: 0 8px 30px rgba(192, 132, 252, 0.58), 0 0 18px rgba(236, 72, 153, 0.38); }
     }
     .flame-lv4 { animation: flamePulsePurple 2.2s ease-in-out infinite; }
-    .flame-lv4::before { background: radial-gradient(circle at 80% 85%, rgba(168, 85, 247, 0.25), transparent 65%), linear-gradient(to top, rgba(236, 72, 153, 0.16), rgba(168, 85, 247, 0.06) 62%, transparent); }
-    /* Lv5 (4h+): Golden amber aura + light shimmer */
-    @keyframes flamePulseGold {
-      0%, 100% { box-shadow: 0 8px 26px rgba(234, 179, 8, 0.38), 0 0 18px rgba(250, 204, 21, 0.28); }
-      50% { box-shadow: 0 12px 42px rgba(250, 204, 21, 0.65), 0 0 28px rgba(253, 224, 71, 0.48); }
+    .flame-lv4::before { background: radial-gradient(circle at 80% 85%, rgba(168, 85, 247, 0.26), transparent 64%), linear-gradient(to top, rgba(236, 72, 153, 0.16), rgba(168, 85, 247, 0.08) 62%, transparent); }
+    /* Lv5 (4h+): Deep Royal Indigo-Violet (replaces yellow) */
+    @keyframes flamePulseIndigo {
+      0%, 100% { box-shadow: 0 8px 26px rgba(99, 102, 241, 0.42), 0 0 16px rgba(168, 85, 247, 0.32); }
+      50% { box-shadow: 0 11px 38px rgba(129, 140, 248, 0.65), 0 0 26px rgba(192, 132, 252, 0.48); }
     }
     @keyframes flameShimmer {
       0% { transform: translateX(-180%) skewX(-22deg); opacity: 0; }
@@ -87,104 +87,93 @@
       52% { opacity: 1; }
       65%, 100% { transform: translateX(380%) skewX(-22deg); opacity: 0; }
     }
-    .flame-lv5 { animation: flamePulseGold 2s ease-in-out infinite; }
-    .flame-lv5::before { background: radial-gradient(circle at 80% 80%, rgba(250, 204, 21, 0.28), transparent 66%), linear-gradient(to top, rgba(245, 158, 11, 0.2), transparent 68%); }
+    .flame-lv5 { animation: flamePulseIndigo 2s ease-in-out infinite; }
+    .flame-lv5::before { background: radial-gradient(circle at 80% 80%, rgba(99, 102, 241, 0.28), transparent 66%), linear-gradient(to top, rgba(168, 85, 247, 0.2), transparent 68%); }
     .flame-lv5::after {
-      content: ''; position: absolute; top: 0; bottom: 0; left: 0; width: 42%; pointer-events: none; z-index: 0;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.36), transparent);
+      content: ''; position: absolute; top: 0; bottom: 0; left: 0; width: 40%; pointer-events: none; z-index: 0;
+      background: linear-gradient(90deg, transparent, rgba(224, 231, 255, 0.38), transparent);
       animation: flameShimmer 3.2s ease-in-out infinite;
     }
-    /* Lv6 (5h+): Crimson-gold phoenix flare + faster shimmer */
-    @keyframes flamePulsePhoenix {
-      0%, 100% { box-shadow: 0 10px 30px rgba(244, 63, 94, 0.44), 0 0 24px rgba(251, 146, 60, 0.36); }
-      50% { box-shadow: 0 14px 50px rgba(244, 63, 94, 0.7), 0 0 36px rgba(253, 224, 71, 0.52); }
+    /* Lv6 (5h+): Ice-Cyan Sapphire Flare */
+    @keyframes flamePulseSapphire {
+      0%, 100% { box-shadow: 0 10px 32px rgba(6, 182, 212, 0.45), 0 0 22px rgba(56, 189, 248, 0.36); }
+      50% { box-shadow: 0 14px 48px rgba(56, 189, 248, 0.72), 0 0 34px rgba(125, 211, 252, 0.54); }
     }
-    .flame-lv6 { animation: flamePulsePhoenix 1.8s ease-in-out infinite; }
-    .flame-lv6::before { background: radial-gradient(circle at 82% 82%, rgba(244, 63, 94, 0.28), transparent 65%), radial-gradient(circle at 18% 22%, rgba(251, 191, 36, 0.22), transparent 58%), linear-gradient(to top, rgba(249, 115, 22, 0.24), transparent 72%); }
+    .flame-lv6 { animation: flamePulseSapphire 1.85s ease-in-out infinite; }
+    .flame-lv6::before { background: radial-gradient(circle at 82% 82%, rgba(6, 182, 212, 0.28), transparent 66%), radial-gradient(circle at 18% 22%, rgba(56, 189, 248, 0.22), transparent 60%), linear-gradient(to top, rgba(37, 99, 235, 0.22), transparent 72%); }
     .flame-lv6::after {
-      content: ''; position: absolute; top: 0; bottom: 0; left: 0; width: 48%; pointer-events: none; z-index: 0;
-      background: linear-gradient(90deg, transparent, rgba(254, 240, 138, 0.45), transparent);
-      animation: flameShimmer 2.6s ease-in-out infinite;
+      content: ''; position: absolute; top: 0; bottom: 0; left: 0; width: 46%; pointer-events: none; z-index: 0;
+      background: linear-gradient(90deg, transparent, rgba(224, 242, 254, 0.46), transparent);
+      animation: flameShimmer 2.7s ease-in-out infinite;
     }
-    /* Lv7 (6h+): Cyan-prism aurora flame */
+    /* Lv7 (6h+): Emerald-Violet Aurora */
     @keyframes flamePulseAurora {
-      0%, 100% { box-shadow: 0 10px 36px rgba(6, 182, 212, 0.48), 0 0 30px rgba(56, 189, 248, 0.4), 0 0 46px rgba(168, 85, 247, 0.28); }
-      50% { box-shadow: 0 16px 58px rgba(56, 189, 248, 0.78), 0 0 44px rgba(45, 212, 191, 0.56), 0 0 62px rgba(167, 139, 250, 0.42); }
+      0%, 100% { box-shadow: 0 10px 38px rgba(16, 185, 129, 0.46), 0 0 28px rgba(56, 189, 248, 0.4), 0 0 44px rgba(168, 85, 247, 0.28); }
+      50% { box-shadow: 0 16px 58px rgba(52, 211, 153, 0.74), 0 0 42px rgba(56, 189, 248, 0.56), 0 0 60px rgba(168, 85, 247, 0.42); }
     }
     .flame-lv7 { animation: flamePulseAurora 1.65s ease-in-out infinite; }
-    .flame-lv7::before { background: radial-gradient(circle at 80% 85%, rgba(45, 212, 191, 0.34), transparent 65%), radial-gradient(circle at 20% 20%, rgba(168, 85, 247, 0.26), transparent 60%), linear-gradient(135deg, rgba(56, 189, 248, 0.22), rgba(168, 85, 247, 0.16) 55%, rgba(250, 204, 21, 0.14)); }
+    .flame-lv7::before { background: radial-gradient(circle at 80% 85%, rgba(45, 212, 191, 0.32), transparent 66%), radial-gradient(circle at 20% 20%, rgba(168, 85, 247, 0.26), transparent 60%), linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(56, 189, 248, 0.16) 55%, rgba(168, 85, 247, 0.16)); }
     .flame-lv7::after {
       content: ''; position: absolute; top: 0; bottom: 0; left: 0; width: 52%; pointer-events: none; z-index: 0;
-      background: linear-gradient(90deg, transparent, rgba(224, 242, 254, 0.55), transparent);
+      background: linear-gradient(90deg, transparent, rgba(209, 250, 229, 0.52), transparent);
       animation: flameShimmer 2.3s ease-in-out infinite;
     }
-    /* Lv8 (7h+): Mythic cosmic rainbow supernova */
-    @keyframes flamePulseMythic {
-      0%, 100% { box-shadow: 0 12px 42px rgba(250, 204, 21, 0.56), 0 0 36px rgba(56, 189, 248, 0.48), 0 0 56px rgba(236, 72, 153, 0.36); }
-      50% { box-shadow: 0 18px 68px rgba(250, 204, 21, 0.86), 0 0 52px rgba(168, 85, 247, 0.68), 0 0 74px rgba(244, 63, 94, 0.52); }
+    /* Lv8 (7h+): Crimson Rose & Amethyst */
+    @keyframes flamePulseCrimson {
+      0%, 100% { box-shadow: 0 12px 44px rgba(244, 63, 94, 0.52), 0 0 36px rgba(192, 132, 252, 0.45), 0 0 56px rgba(236, 72, 153, 0.34); }
+      50% { box-shadow: 0 18px 68px rgba(244, 63, 94, 0.8), 0 0 52px rgba(168, 85, 247, 0.65), 0 0 74px rgba(244, 63, 94, 0.48); }
     }
-    .flame-lv8 { animation: flamePulseMythic 1.45s ease-in-out infinite; }
-    .flame-lv8::before { background: conic-gradient(from 120deg at 80% 75%, rgba(250, 204, 21, 0.34), rgba(244, 63, 94, 0.28), rgba(168, 85, 247, 0.28), rgba(56, 189, 248, 0.32), rgba(52, 211, 153, 0.24), rgba(250, 204, 21, 0.34)); }
+    .flame-lv8 { animation: flamePulseCrimson 1.45s ease-in-out infinite; }
+    .flame-lv8::before { background: conic-gradient(from 120deg at 80% 75%, rgba(244, 63, 94, 0.3), rgba(168, 85, 247, 0.3), rgba(236, 72, 153, 0.28), rgba(99, 102, 241, 0.26), rgba(244, 63, 94, 0.3)); }
     .flame-lv8::after {
       content: ''; position: absolute; top: 0; bottom: 0; left: 0; width: 58%; pointer-events: none; z-index: 0;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.68), transparent);
-      animation: flameShimmer 1.9s ease-in-out infinite;
+      background: linear-gradient(90deg, transparent, rgba(255, 228, 230, 0.62), transparent);
+      animation: flameShimmer 1.95s ease-in-out infinite;
     }
-    /* Lv9 (8h+): Celestial Hypernova */
+    /* Lv9 (8h+): Hypernova Violet-Sapphire */
     @keyframes flamePulseLv9 {
-      0%, 100% { box-shadow: 0 14px 48px rgba(99, 102, 241, 0.62), 0 0 44px rgba(56, 189, 248, 0.56), 0 0 68px rgba(250, 204, 21, 0.42); }
-      50% { box-shadow: 0 20px 78px rgba(56, 189, 248, 0.9), 0 0 62px rgba(168, 85, 247, 0.74), 0 0 88px rgba(244, 63, 94, 0.56); }
+      0%, 100% { box-shadow: 0 14px 52px rgba(139, 92, 246, 0.6), 0 0 46px rgba(56, 189, 248, 0.55), 0 0 72px rgba(236, 72, 153, 0.42); }
+      50% { box-shadow: 0 20px 80px rgba(56, 189, 248, 0.88), 0 0 64px rgba(168, 85, 247, 0.74), 0 0 90px rgba(244, 63, 94, 0.54); }
     }
     .flame-lv9 { animation: flamePulseLv9 1.25s ease-in-out infinite; }
     .flame-lv9::before {
-      background: conic-gradient(from 45deg at 50% 50%, rgba(99, 102, 241, 0.36), rgba(56, 189, 248, 0.34), rgba(250, 204, 21, 0.34), rgba(244, 63, 94, 0.3), rgba(99, 102, 241, 0.36));
+      background: conic-gradient(from 45deg at 50% 50%, rgba(139, 92, 246, 0.36), rgba(56, 189, 248, 0.34), rgba(236, 72, 153, 0.32), rgba(99, 102, 241, 0.32), rgba(139, 92, 246, 0.36));
     }
     .flame-lv9::after {
       content: ''; position: absolute; top: 0; bottom: 0; left: 0; width: 64%; pointer-events: none; z-index: 0;
-      background: linear-gradient(90deg, transparent, rgba(224, 242, 254, 0.76), transparent);
+      background: linear-gradient(90deg, transparent, rgba(224, 242, 254, 0.72), transparent);
       animation: flameShimmer 1.6s ease-in-out infinite;
     }
-    /* Lv10 (9h+): Transcendent Godlike Supernova */
+    /* Lv10 (9h+): Colossal Cosmic Prism Vortex */
     @keyframes flamePulseLv10 {
-      0% {
-        box-shadow: 0 0 34px rgba(253, 224, 71, 0.95), 0 0 64px rgba(56, 189, 248, 0.82), 0 0 98px rgba(244, 63, 94, 0.68);
-      }
-      33% {
-        box-shadow: 0 0 42px rgba(56, 189, 248, 0.98), 0 0 76px rgba(168, 85, 247, 0.86), 0 0 112px rgba(250, 204, 21, 0.74);
-      }
-      66% {
-        box-shadow: 0 0 42px rgba(244, 63, 94, 0.98), 0 0 76px rgba(250, 204, 21, 0.88), 0 0 112px rgba(52, 211, 153, 0.74);
-      }
-      100% {
-        box-shadow: 0 0 34px rgba(253, 224, 71, 0.95), 0 0 64px rgba(56, 189, 248, 0.82), 0 0 98px rgba(244, 63, 94, 0.68);
-      }
+      0% { box-shadow: 0 0 38px rgba(168, 85, 247, 0.9), 0 0 72px rgba(56, 189, 248, 0.78), 0 0 112px rgba(236, 72, 153, 0.62); }
+      33% { box-shadow: 0 0 44px rgba(56, 189, 248, 0.95), 0 0 82px rgba(168, 85, 247, 0.84), 0 0 120px rgba(52, 211, 153, 0.66); }
+      66% { box-shadow: 0 0 44px rgba(244, 63, 94, 0.92), 0 0 82px rgba(192, 132, 252, 0.84), 0 0 120px rgba(56, 189, 248, 0.68); }
+      100% { box-shadow: 0 0 38px rgba(168, 85, 247, 0.9), 0 0 72px rgba(56, 189, 248, 0.78), 0 0 112px rgba(236, 72, 153, 0.62); }
     }
     @keyframes flameLv10Vortex {
       0% { transform: rotate(0deg) scale(1); }
       50% { transform: rotate(180deg) scale(1.08); }
       100% { transform: rotate(360deg) scale(1); }
     }
-    .flame-lv10 {
-      animation: flamePulseLv10 1.8s ease-in-out infinite;
-    }
+    .flame-lv10 { animation: flamePulseLv10 1.9s ease-in-out infinite; }
     .flame-lv10::before {
       inset: -65%;
       background: conic-gradient(
         from 0deg,
-        rgba(253, 224, 71, 0.42),
-        rgba(244, 63, 94, 0.36),
-        rgba(168, 85, 247, 0.38),
-        rgba(56, 189, 248, 0.42),
-        rgba(52, 211, 153, 0.34),
-        rgba(251, 146, 60, 0.38),
-        rgba(253, 224, 71, 0.42)
+        rgba(168, 85, 247, 0.4),
+        rgba(56, 189, 248, 0.4),
+        rgba(236, 72, 153, 0.36),
+        rgba(52, 211, 153, 0.32),
+        rgba(99, 102, 241, 0.4),
+        rgba(168, 85, 247, 0.4)
       );
       animation: flameLv10Vortex 5.5s linear infinite;
     }
     .flame-lv10::after {
-      content: ''; position: absolute; top: 0; bottom: 0; left: 0; width: 72%; pointer-events: none; z-index: 0;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.9), rgba(253, 224, 71, 0.55), transparent);
-      animation: flameShimmer 1.25s ease-in-out infinite;
+      content: ''; position: absolute; top: 0; bottom: 0; left: 0; width: 70%; pointer-events: none; z-index: 0;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.85), rgba(224, 242, 254, 0.5), transparent);
+      animation: flameShimmer 1.3s ease-in-out infinite;
     }
     @keyframes ultraRingSpin {
       0% { transform: rotate(0deg); }
@@ -197,59 +186,6 @@
       background: conic-gradient(from 0deg, #ef4444, #f97316, #fde047, #ef4444);
       animation: ultraRingSpin 3s linear infinite;
       pointer-events: none;
-    }
-    /* Tier-Specific Metallic & Armored Borders (Light + Dark Mode Tuned) */
-    .rank-frame-base {
-      border-style: solid !important;
-      border-color: transparent !important;
-      border-width: 3px !important;
-      border-top-width: 6px !important;
-      border-bottom-width: 4px !important;
-      background-origin: border-box !important;
-      background-clip: padding-box, border-box !important;
-      --rf-bg: #ffffff;
-    }
-    body[data-dark="true"] .rank-frame-base {
-      --rf-bg: #111827;
-    }
-    .rank-frame-0 {
-      background-image: linear-gradient(var(--rf-bg), var(--rf-bg)), linear-gradient(145deg, #52525b 0%, #d4d4d8 35%, #3f3f46 70%, #a1a1aa 100%) !important;
-    }
-    .rank-frame-1 {
-      background-image: linear-gradient(var(--rf-bg), var(--rf-bg)), linear-gradient(145deg, #92400e 0%, #fbbf24 34%, #451a03 68%, #d97706 100%) !important;
-    }
-    .rank-frame-2 {
-      background-image: linear-gradient(var(--rf-bg), var(--rf-bg)), linear-gradient(145deg, #64748b 0%, #f8fafc 32%, #475569 65%, #cbd5e1 100%) !important;
-    }
-    .rank-frame-3 {
-      background-image: linear-gradient(var(--rf-bg), var(--rf-bg)), linear-gradient(145deg, #b45309 0%, #fef08a 28%, #ca8a04 58%, #fde047 84%, #92400e 100%) !important;
-    }
-    .rank-frame-4 {
-      background-image: linear-gradient(var(--rf-bg), var(--rf-bg)), linear-gradient(145deg, #0f766e 0%, #99f6e4 30%, #115e59 62%, #2dd4bf 86%, #134e4a 100%) !important;
-    }
-    .rank-frame-5 {
-      background-image: linear-gradient(var(--rf-bg), var(--rf-bg)), linear-gradient(145deg, #047857 0%, #a7f3d0 28%, #065f46 60%, #34d399 86%, #064e3b 100%) !important;
-    }
-    .rank-frame-6 {
-      border-width: 3.5px !important; border-top-width: 6.5px !important;
-      background-image: linear-gradient(var(--rf-bg), var(--rf-bg)), linear-gradient(135deg, #0284c7 0%, #e0f2fe 26%, #38bdf8 52%, #bae6fd 78%, #0369a1 100%) !important;
-    }
-    .rank-frame-7 {
-      border-width: 3.5px !important; border-top-width: 6.5px !important;
-      background-image: linear-gradient(var(--rf-bg), var(--rf-bg)), linear-gradient(135deg, #7e22ce 0%, #f5d0fe 26%, #a855f7 52%, #fde047 76%, #581c87 100%) !important;
-    }
-    .rank-frame-8 {
-      border-width: 3.5px !important; border-top-width: 7px !important;
-      background-image: linear-gradient(var(--rf-bg), var(--rf-bg)), linear-gradient(135deg, #be123c 0%, #fecdd3 24%, #f43f5e 52%, #fbbf24 78%, #881337 100%) !important;
-    }
-    @keyframes challengerBorderPulse {
-      0%, 100% { filter: drop-shadow(0 0 6px rgba(250,204,21,0.55)); }
-      50% { filter: drop-shadow(0 0 12px rgba(56,189,248,0.75)); }
-    }
-    .rank-frame-9 {
-      border-width: 4px !important; border-top-width: 7.5px !important;
-      background-image: linear-gradient(var(--rf-bg), var(--rf-bg)), linear-gradient(135deg, #fde047 0%, #ffffff 22%, #38bdf8 48%, #f59e0b 74%, #fde047 100%) !important;
-      animation: challengerBorderPulse 2.6s ease-in-out infinite;
     }
     /* 5. Tier Promotion & Challenge (Minimal Metallic Material Animation) */
     #tier-promo-overlay, #promo-challenge-overlay {
@@ -672,56 +608,11 @@
     body[data-mode="strict"] #study-main .ed-card { border-color:rgba(239,68,68,.24) !important; }
     body[data-mode="strict"] #study-mode-btn {background:#dc2626;color:#ffffff;border-color:#dc2626}
 
-    body[data-promo="active"] {
-      --page:#fbf6e9;
-      background-image: radial-gradient(ellipse 80% 340px at 50% 0%, rgba(234, 179, 8, 0.16), transparent 70%);
-    }
-    body[data-dark="true"][data-promo="active"] {
-      --page:#090b12;
-      background-image: radial-gradient(ellipse 80% 340px at 50% 0%, rgba(234, 179, 8, 0.18), transparent 70%);
-    }
-    body[data-promo="active"] #study-header {
-      background: linear-gradient(90deg, #0b1120 0%, #1c1917 50%, #0b1120 100%) !important;
-      border-bottom: 2px solid rgba(250, 204, 21, 0.85) !important;
-      color: #fef3c7 !important;
-      box-shadow: 0 8px 28px rgba(234, 179, 8, 0.16);
-    }
-    body[data-promo="active"] #study-header > div:first-child :is(h1, h2, p) { color: #fef3c7 !important; }
-    body[data-promo="active"] #study-header > div:first-child :is(button, select):not(#header-more-menu button) {
-      background: rgba(255, 255, 255, 0.1) !important;
-      border-color: rgba(250, 204, 21, 0.45) !important;
-      color: #fef3c7 !important;
-    }
-    body[data-promo="active"] #header-more-menu {
-      background: var(--surface, #ffffff) !important;
-      color: var(--ink, #0f172a) !important;
-      border-color: var(--line, #cbd5e1) !important;
-    }
-    body[data-promo="active"] #header-more-menu button { color: var(--ink, #0f172a) !important; }
-    body[data-promo="active"] #header-more-menu #btn-google-logout { color: #e11d48 !important; }
-    body[data-promo="active"] #study-nav { border-top-color: rgba(250, 204, 21, 0.25) !important; }
-    body[data-promo="active"] #study-nav .nav-tab.tab-idle { color: #cbd5e1 !important; }
-    body[data-promo="active"] #study-nav .nav-tab.tab-active {
-      background: rgba(250, 204, 21, 0.18) !important;
-      color: #fef08a !important;
-      border-color: rgba(250, 204, 21, 0.5) !important;
-    }
-    body[data-promo="active"] #main-live-banner {
-      background: linear-gradient(125deg, #0f172a 0%, #291d09 55%, #452707 100%) !important;
-      border-color: rgba(250, 204, 21, 0.8) !important;
-      box-shadow: 0 18px 40px rgba(234, 179, 8, 0.24) !important;
-    }
-    body[data-promo="active"] #promo-action-bar {
-      background: linear-gradient(135deg, #0f172a 0%, #231807 100%) !important;
-      border-color: rgba(250, 204, 21, 0.85) !important;
-      box-shadow: 0 12px 30px rgba(234, 179, 8, 0.22) !important;
-    }
-    body[data-promo="active"] #promo-bar-title { color: #fef08a !important; }
-    body[data-promo="active"] #promo-bar-desc { color: #e2e8f0 !important; }
-    body[data-promo="active"] #study-main .ed-card {
-      border-color: rgba(217, 119, 6, 0.42) !important;
-      box-shadow: 0 8px 24px rgba(180, 83, 9, 0.08);
-    }
+    body[data-promo="active"] { --page:#fefcf3; }
+    body[data-dark="true"][data-promo="active"] { --page:#161510; }
+    body[data-promo="active"] #study-header { border-bottom:2px solid rgba(234,179,8,.75) !important; }
+    body[data-promo="active"] #main-live-banner { border-color:rgba(250,204,21,.75) !important; box-shadow:0 14px 32px rgba(234,179,8,.18) !important; }
+    body[data-promo="active"] #study-main .ed-card { border-color:rgba(234,179,8,.42) !important; }
     #schedule-list-wrap > [aria-current="time"] {background:var(--tint);color:var(--link);border-color:var(--line)}
     #focus-overlay {justify-content:flex-start}
     #focus-period-badge {background:var(--tint);color:var(--link);border:1px solid var(--line)}
@@ -3484,16 +3375,16 @@
       ];
 
       const LOL_TIERS = [
-        { name: '아이언', min: 0, icon: '🔩', cls: 'bg-zinc-200 text-zinc-800 border-zinc-400', frame: 'rank-frame-base rank-frame-0', wingColor: '#71717a', gemColor: '#a1a1aa' },
-        { name: '브론즈', min: 80, icon: '🥉', cls: 'bg-amber-800 text-amber-50 border-amber-950', frame: 'rank-frame-base rank-frame-1', wingColor: '#b45309', gemColor: '#f59e0b' },
-        { name: '실버', min: 170, icon: '🥈', cls: 'bg-slate-200 text-slate-800 border-slate-400', frame: 'rank-frame-base rank-frame-2', wingColor: '#64748b', gemColor: '#e2e8f0' },
-        { name: '골드', min: 270, icon: '🥇', cls: 'bg-yellow-300 text-yellow-950 border-yellow-600', frame: 'rank-frame-base rank-frame-3', wingColor: '#ca8a04', gemColor: '#fde047' },
-        { name: '플래티넘', min: 380, icon: '💠', cls: 'bg-teal-200 text-teal-950 border-teal-500', frame: 'rank-frame-base rank-frame-4', wingColor: '#0d9488', gemColor: '#5eead4' },
-        { name: '에메랄드', min: 500, icon: '💚', cls: 'bg-emerald-300 text-emerald-950 border-emerald-600', frame: 'rank-frame-base rank-frame-5', wingColor: '#059669', gemColor: '#6ee7b7' },
-        { name: '다이아몬드', min: 630, icon: '💎', cls: 'bg-sky-300 text-sky-950 border-sky-600', frame: 'rank-frame-base rank-frame-6', wingColor: '#0284c7', gemColor: '#bae6fd' },
-        { name: '마스터', min: 770, icon: '🔮', cls: 'bg-purple-500 text-white border-purple-800', frame: 'rank-frame-base rank-frame-7', wingColor: '#7e22ce', gemColor: '#f0abfc' },
-        { name: '그랜드마스터', min: 930, icon: '🔥', cls: 'bg-rose-600 text-white border-rose-900', frame: 'rank-frame-base rank-frame-8', wingColor: '#be123c', gemColor: '#fb7185' },
-        { name: '챌린저', min: 1200, icon: '👑', cls: 'bg-gradient-to-r from-amber-300 via-sky-300 to-amber-400 text-slate-950 border-slate-950', frame: 'rank-frame-base rank-frame-9', wingColor: '#eab308', gemColor: '#38bdf8' }
+        { name: '아이언', min: 0, icon: '🔩', cls: 'bg-zinc-200 text-zinc-800 border-zinc-400', frame: 'border-2 border-t-4 border-zinc-500' },
+        { name: '브론즈', min: 80, icon: '🥉', cls: 'bg-amber-800 text-amber-50 border-amber-950', frame: 'border-2 border-t-4 border-amber-700' },
+        { name: '실버', min: 170, icon: '🥈', cls: 'bg-slate-200 text-slate-800 border-slate-400', frame: 'border-2 border-t-4 border-slate-400 ring-1 ring-slate-300/60' },
+        { name: '골드', min: 270, icon: '🥇', cls: 'bg-yellow-300 text-yellow-950 border-yellow-600', frame: 'border-2 border-t-4 border-yellow-500 ring-1 ring-yellow-400/70' },
+        { name: '플래티넘', min: 380, icon: '💠', cls: 'bg-teal-200 text-teal-950 border-teal-500', frame: 'border-2 border-t-4 border-teal-500 ring-1 ring-teal-400/70' },
+        { name: '에메랄드', min: 500, icon: '💚', cls: 'bg-emerald-300 text-emerald-950 border-emerald-600', frame: 'border-2 border-t-4 border-emerald-500 ring-1 ring-emerald-400/80' },
+        { name: '다이아몬드', min: 630, icon: '💎', cls: 'bg-sky-300 text-sky-950 border-sky-600', frame: 'border-2 border-t-4 border-sky-400 ring-2 ring-sky-300/80' },
+        { name: '마스터', min: 770, icon: '🔮', cls: 'bg-purple-500 text-white border-purple-800', frame: 'border-2 border-t-4 border-purple-500 ring-2 ring-purple-400/80' },
+        { name: '그랜드마스터', min: 930, icon: '🔥', cls: 'bg-rose-600 text-white border-rose-900', frame: 'border-2 border-t-4 border-rose-500 ring-2 ring-amber-400/80' },
+        { name: '챌린저', min: 1200, icon: '👑', cls: 'bg-gradient-to-r from-amber-300 via-sky-300 to-amber-400 text-slate-950 border-slate-950', frame: 'border-2 border-t-4 border-amber-400 ring-2 ring-sky-400' }
       ];
       function getMemberTier(lpOrMember) {
         const isObj = lpOrMember && typeof lpOrMember === 'object';
