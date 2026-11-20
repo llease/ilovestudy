@@ -876,21 +876,12 @@
             <p class="font-black text-indigo-950">🎉 거의 다 끝났어요!</p>
             <p id="onboard-summary-line" class="text-[11px] text-indigo-900 font-semibold"></p>
           </div>
-          <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 text-[11px] text-slate-700 space-y-2 leading-relaxed">
-            <div class="flex items-center justify-between gap-2">
-              <p class="font-black text-slate-900">📄 개인정보 수집·이용 안내 (필수)</p>
-              <button type="button" id="btn-open-privacy-policy" class="text-[10.5px] font-bold text-indigo-600 hover:underline shrink-0">전문 보기</button>
-            </div>
-            <ul class="space-y-1 text-[10.5px] text-slate-600 list-disc pl-4">
-              <li><strong>수집 항목</strong> : 실명, 활동 별명, Google 계정 식별 정보(UID·이메일), 가입 설문 응답(가입 경로·기대 기능·목표 공부시간)</li>
-              <li><strong>수집·이용 목적</strong> : 스터디원 본인 확인, 부정 이용·보안 사고 예방 및 대응, 서비스 운영 관리 (목적 외 사용 및 제3자 제공 없음)</li>
-              <li><strong>보유·이용 기간 및 파기</strong> : 회원 탈퇴 시 공부 시간·플래너·사진 등 활동 기록은 즉시 파기되며, 부정 이용 방지 및 보안 사고 대응을 위해 <strong>가입 시 제출한 본인 확인·설문 기록(실명·이메일·가입 설문)은 탈퇴 후 7일간(일주일) 별도 보관</strong> 후 파기합니다.</li>
-              <li><strong>거부 권리 및 불이익</strong> : 개인정보 수집·이용 동의를 거부할 권리가 있으며, 필수 항목 동의 거부 시 서비스 가입 및 이용이 제한됩니다.</li>
-            </ul>
-            <label class="flex items-center gap-2 pt-1.5 border-t border-slate-200 font-bold text-slate-900 cursor-pointer">
+          <div class="flex items-center justify-between gap-2 px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs">
+            <label class="flex items-center gap-2 font-bold text-slate-900 cursor-pointer min-w-0">
               <input id="onboard-privacy-agree" type="checkbox" class="shrink-0" />
-              <span>[필수] 위 개인정보 수집·이용 내용에 모두 동의합니다.</span>
+              <span class="truncate">[필수] 개인정보 수집·이용 동의</span>
             </label>
+            <button type="button" id="btn-open-privacy-policy" class="text-[11px] font-bold text-indigo-600 hover:underline shrink-0 whitespace-nowrap">보기</button>
           </div>
           <div class="grid grid-cols-3 gap-2 pt-1">
             <button type="button" data-onboard-prev="3" class="py-3 rounded-xl bg-slate-100 text-xs font-bold text-slate-700">← 이전</button>
@@ -2167,6 +2158,7 @@
       let dbListenerAttached = false;
       let dbLoadedOnce = false;
       let currentAuthUser = null;
+      let authResolvedOnce = false;
       let sessionClaimed = false;
       let pendingSessionClaimUntil = 0;
       const SESSION_ID = (() => {
@@ -2807,6 +2799,7 @@
             auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(() => {});
             auth.getRedirectResult().catch(() => {});
             auth.onAuthStateChanged(user => {
+              authResolvedOnce = true;
               currentAuthUser = user || null;
               if (user) {
                 if (!dbLoadedOnce) showAuthOverlay('loading');
@@ -3334,7 +3327,7 @@
         function isAdminUser() {
           return !!(currentAuthUser && (currentAuthUser.email || '').toLowerCase() === ADMIN_EMAIL);
         }
-        if (prefs.adminMode && !isAdminUser()) {
+        if (prefs.adminMode && authResolvedOnce && !isAdminUser()) {
           prefs.adminMode = false;
           prefs.inspectingMember = false;
           savePrefs();
@@ -3742,7 +3735,7 @@
             }
             if (remaining.length > 0 && !prefs.hideStarterGuide) {
               const pct = STARTER_LIST.length ? Math.round((doneCount / STARTER_LIST.length) * 100) : 0;
-              const nextThree = remaining.slice(0, 3);
+              const nextThree = (needStudyJoin ? remaining.filter(c => c.id !== 'ch_join_study') : remaining).slice(0, 3);
               guideHtml += `<div class="ed-card p-3.5 sm:p-4 space-y-2.5">
                 <div class="flex items-center justify-between gap-2">
                   <div class="flex items-center gap-2 min-w-0">
@@ -6385,23 +6378,23 @@
         const meN = shared.members.find(x => x.id === prefs.currentUserId);
         const nowN = getNowParts(), dayN = todayStr(), phaseN = getCurrentPhase(nowN.totalMins);
         const strictN = meN && getMemberMode(meN) === 'strict';
-        let title = `집중 중 · ${timeTxt} 경과`;
-        let body = '';
+        let title = '집중 중';
+        let body = `${timeTxt} 경과`;
         if (focusPaused) {
-          title = `일시정지 · ${timeTxt} 경과`;
-          body = '10분 초과 휴식 시 연속 집중 초기화';
+          title = '일시정지';
+          body = `${timeTxt} 경과 · 10분 초과 시 초기화`;
         } else if (strictN && phaseN?.type === 'study') {
           const secsN = shared.periodStudySecs?.[dayN]?.[meN.id]?.[phaseN.id] || 0;
           const statusN = getMemberDayStatus(meN.id, dayN, phaseN.id);
           const leftAtt = Math.max(0, Math.ceil((Math.ceil(phaseN.mins * 60 * 0.75) - secsN) / 60));
           const leftEnd = Math.max(0, phaseN.endMins - nowN.totalMins);
-          title = `${phaseN.label} 진행 중 · ${timeTxt} 경과`;
-          if (statusN === 'exempt') body = `수업 면제 · 종료 ${leftEnd}분 전 (${phaseN.end})`;
-          else if (statusN === 'present' || leftAtt === 0) body = `출석 인정 · 종료 ${leftEnd}분 전 (${phaseN.end})`;
-          else body = `출석까지 ${leftAtt}분 · 종료 ${leftEnd}분 전`;
+          title = `${phaseN.label} 집중 중`;
+          if (statusN === 'exempt') body = `${timeTxt} 경과 · 수업 면제 (${phaseN.end} 종료)`;
+          else if (statusN === 'present' || leftAtt === 0) body = `${timeTxt} 경과 · 출석 인정 (종료 ${leftEnd}분 전)`;
+          else body = `${timeTxt} 경과 · 출석 ${leftAtt}분 전`;
         } else {
           const todayMinsN = (meN && shared.studyLogs?.[dayN]?.[meN.id]) || 0;
-          body = `오늘 누적 ${Math.floor(todayMinsN / 60)}시간 ${todayMinsN % 60}분`;
+          body = `${timeTxt} 경과 · 오늘 누적 ${Math.floor(todayMinsN / 60)}시간 ${todayMinsN % 60}분`;
         }
         const opts = {
           body,
