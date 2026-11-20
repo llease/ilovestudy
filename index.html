@@ -49,7 +49,7 @@
     #planner-grid.is-editing .time-cell { touch-action: none; user-select: none; -webkit-user-select: none; cursor: crosshair; }
     #group-status-grid [data-member-detail] { position: relative; overflow: hidden; }
     #group-status-grid [data-member-detail] > * { position: relative; z-index: 1; }
-    .flame-lv1::before, .flame-lv2::before, .flame-lv3::before, .flame-lv4::before, .flame-lv5::before, .flame-lv6::before, .flame-lv7::before, .flame-lv8::before {
+    .flame-lv1::before, .flame-lv2::before, .flame-lv3::before, .flame-lv4::before, .flame-lv5::before, .flame-lv6::before, .flame-lv7::before, .flame-lv8::before, .flame-lv9::before, .flame-lv10::before {
       content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 0;
     }
     /* Lv1 (10m+): Subtle warm ember */
@@ -128,6 +128,62 @@
       background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.68), transparent);
       animation: flameShimmer 1.9s ease-in-out infinite;
     }
+    /* Lv9 (8h+): Celestial Hypernova */
+    @keyframes flamePulseLv9 {
+      0%, 100% { box-shadow: 0 12px 36px rgba(99, 102, 241, 0.58), 0 0 0 3px rgba(129, 140, 248, 0.88), 0 0 34px rgba(56, 189, 248, 0.58), 0 0 50px rgba(250, 204, 21, 0.42); }
+      50% { box-shadow: 0 16px 54px rgba(56, 189, 248, 0.88), 0 0 0 4px rgba(250, 204, 21, 0.92), 0 0 48px rgba(168, 85, 247, 0.72), 0 0 64px rgba(244, 63, 94, 0.55); }
+    }
+    .flame-lv9 { animation: flamePulseLv9 1.25s ease-in-out infinite; }
+    .flame-lv9::before {
+      background: conic-gradient(from 45deg at 50% 50%, rgba(99, 102, 241, 0.36), rgba(56, 189, 248, 0.34), rgba(250, 204, 21, 0.34), rgba(244, 63, 94, 0.3), rgba(99, 102, 241, 0.36));
+    }
+    .flame-lv9::after {
+      content: ''; position: absolute; top: 0; bottom: 0; left: 0; width: 64%; pointer-events: none; z-index: 0;
+      background: linear-gradient(90deg, transparent, rgba(224, 242, 254, 0.76), transparent);
+      animation: flameShimmer 1.6s ease-in-out infinite;
+    }
+    /* Lv10 (9h+): Transcendent Godlike Supernova */
+    @keyframes flamePulseLv10 {
+      0% {
+        box-shadow: 0 0 0 3.5px #fde047, 0 0 26px rgba(253, 224, 71, 0.95), 0 0 48px rgba(56, 189, 248, 0.8), 0 0 72px rgba(244, 63, 94, 0.65);
+      }
+      33% {
+        box-shadow: 0 0 0 4.5px #38bdf8, 0 0 34px rgba(56, 189, 248, 0.98), 0 0 60px rgba(168, 85, 247, 0.85), 0 0 86px rgba(250, 204, 21, 0.72);
+      }
+      66% {
+        box-shadow: 0 0 0 4.5px #f43f5e, 0 0 34px rgba(244, 63, 94, 0.98), 0 0 60px rgba(250, 204, 21, 0.88), 0 0 86px rgba(52, 211, 153, 0.72);
+      }
+      100% {
+        box-shadow: 0 0 0 3.5px #fde047, 0 0 26px rgba(253, 224, 71, 0.95), 0 0 48px rgba(56, 189, 248, 0.8), 0 0 72px rgba(244, 63, 94, 0.65);
+      }
+    }
+    @keyframes flameLv10Vortex {
+      0% { transform: rotate(0deg) scale(1); }
+      50% { transform: rotate(180deg) scale(1.08); }
+      100% { transform: rotate(360deg) scale(1); }
+    }
+    .flame-lv10 {
+      animation: flamePulseLv10 1.8s ease-in-out infinite;
+    }
+    .flame-lv10::before {
+      inset: -65%;
+      background: conic-gradient(
+        from 0deg,
+        rgba(253, 224, 71, 0.42),
+        rgba(244, 63, 94, 0.36),
+        rgba(168, 85, 247, 0.38),
+        rgba(56, 189, 248, 0.42),
+        rgba(52, 211, 153, 0.34),
+        rgba(251, 146, 60, 0.38),
+        rgba(253, 224, 71, 0.42)
+      );
+      animation: flameLv10Vortex 5.5s linear infinite;
+    }
+    .flame-lv10::after {
+      content: ''; position: absolute; top: 0; bottom: 0; left: 0; width: 72%; pointer-events: none; z-index: 0;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.9), rgba(253, 224, 71, 0.55), transparent);
+      animation: flameShimmer 1.25s ease-in-out infinite;
+    }
     @keyframes ultraRingSpin {
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
@@ -139,6 +195,62 @@
       background: conic-gradient(from 0deg, #ef4444, #f97316, #fde047, #ef4444);
       animation: ultraRingSpin 3s linear infinite;
       pointer-events: none;
+    }
+    /* LoL-style Rank Crest Borders */
+    .rank-frame-base {
+      border: 3px solid transparent;
+      border-top-width: 5px;
+      background-origin: border-box;
+      background-clip: padding-box, border-box;
+    }
+    .rank-frame-0 {
+      background-image: linear-gradient(var(--surface, #fff), var(--surface, #fff)), linear-gradient(145deg, #71717a 0%, #d4d4d8 35%, #3f3f46 70%, #a1a1aa 100%);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.45), 0 3px 10px rgba(63,63,70,0.18);
+    }
+    .rank-frame-1 {
+      background-image: linear-gradient(var(--surface, #fff), var(--surface, #fff)), linear-gradient(145deg, #92400e 0%, #f59e0b 32%, #451a03 68%, #d97706 100%);
+      box-shadow: inset 0 1px 0 rgba(254,243,199,0.5), 0 4px 12px rgba(180,83,9,0.22);
+    }
+    .rank-frame-2 {
+      background-image: linear-gradient(var(--surface, #fff), var(--surface, #fff)), linear-gradient(145deg, #64748b 0%, #f8fafc 30%, #475569 65%, #cbd5e1 100%);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.85), 0 4px 14px rgba(100,116,139,0.25);
+    }
+    .rank-frame-3 {
+      background-image: linear-gradient(var(--surface, #fff), var(--surface, #fff)), linear-gradient(145deg, #b45309 0%, #fef08a 28%, #ca8a04 58%, #fde047 84%, #92400e 100%);
+      box-shadow: inset 0 1px 0 rgba(254,249,195,0.9), 0 5px 16px rgba(234,179,8,0.28);
+    }
+    .rank-frame-4 {
+      background-image: linear-gradient(var(--surface, #fff), var(--surface, #fff)), linear-gradient(145deg, #0f766e 0%, #99f6e4 30%, #115e59 62%, #2dd4bf 86%, #134e4a 100%);
+      box-shadow: inset 0 1px 0 rgba(204,251,241,0.85), 0 5px 18px rgba(20,184,166,0.3);
+    }
+    .rank-frame-5 {
+      background-image: linear-gradient(var(--surface, #fff), var(--surface, #fff)), linear-gradient(145deg, #047857 0%, #a7f3d0 28%, #065f46 60%, #34d399 86%, #064e3b 100%);
+      box-shadow: inset 0 1px 0 rgba(209,250,229,0.9), 0 6px 20px rgba(16,185,129,0.32);
+    }
+    .rank-frame-6 {
+      border-width: 3.5px; border-top-width: 5.5px;
+      background-image: linear-gradient(var(--surface, #fff), var(--surface, #fff)), linear-gradient(135deg, #0369a1 0%, #e0f2fe 26%, #38bdf8 52%, #bae6fd 78%, #0284c7 100%);
+      box-shadow: inset 0 1px 0 rgba(224,242,254,0.95), 0 6px 22px rgba(56,189,248,0.36);
+    }
+    .rank-frame-7 {
+      border-width: 3.5px; border-top-width: 5.5px;
+      background-image: linear-gradient(var(--surface, #fff), var(--surface, #fff)), linear-gradient(135deg, #6b21a8 0%, #f0abfc 26%, #9333ea 52%, #fde047 76%, #581c87 100%);
+      box-shadow: inset 0 1px 0 rgba(250,232,255,0.9), 0 7px 24px rgba(147,51,234,0.38);
+    }
+    .rank-frame-8 {
+      border-width: 3.5px; border-top-width: 6px;
+      background-image: linear-gradient(var(--surface, #fff), var(--surface, #fff)), linear-gradient(135deg, #9f1239 0%, #fda4af 24%, #e11d48 52%, #fbbf24 78%, #881337 100%);
+      box-shadow: inset 0 1px 0 rgba(255,228,230,0.9), 0 8px 26px rgba(225,29,72,0.42);
+    }
+    @keyframes challengerBorderPulse {
+      0%, 100% { filter: drop-shadow(0 0 6px rgba(250,204,21,0.55)); }
+      50% { filter: drop-shadow(0 0 12px rgba(56,189,248,0.75)); }
+    }
+    .rank-frame-9 {
+      border-width: 4px; border-top-width: 6px;
+      background-image: linear-gradient(var(--surface, #fff), var(--surface, #fff)), linear-gradient(135deg, #fde047 0%, #ffffff 22%, #38bdf8 48%, #f59e0b 74%, #fde047 100%);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.98), 0 8px 28px rgba(250,204,21,0.45);
+      animation: challengerBorderPulse 2.6s ease-in-out infinite;
     }
     .ultra-avatar-bolt {
       position: absolute;
@@ -383,7 +495,62 @@
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
-    .tier-promo-emblem { animation: tierEmblemPop 650ms cubic-bezier(.22, 1.15, .36, 1) both; }
+    @keyframes tierEmblemFlipPop {
+      0% { opacity: 0; transform: perspective(600px) rotateY(-160deg) scale(0.35); filter: brightness(2.2); }
+      55% { opacity: 1; transform: perspective(600px) rotateY(16deg) scale(1.16); filter: brightness(1.3); }
+      80% { transform: perspective(600px) rotateY(-6deg) scale(0.97); }
+      100% { opacity: 1; transform: perspective(600px) rotateY(0deg) scale(1); filter: brightness(1); }
+    }
+    @keyframes ceremonyFlash {
+      0% { opacity: 0.75; }
+      100% { opacity: 0; }
+    }
+    @keyframes ceremonyOrbitSpin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(-360deg); }
+    }
+    @keyframes ceremonyStaggerUp {
+      0% { opacity: 0; transform: translateY(14px) scale(0.96); }
+      100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    @keyframes ceremonyBtnShine {
+      0% { transform: translateX(-140%) skewX(-22deg); }
+      45%, 100% { transform: translateX(240%) skewX(-22deg); }
+    }
+    @keyframes challengeCardImpact {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      25% { transform: translate(-3px, 3px) scale(1.015); }
+      50% { transform: translate(3px, -2px) scale(0.995); }
+      75% { transform: translate(-2px, 1px) scale(1.005); }
+    }
+    .tier-promo-emblem { animation: tierEmblemFlipPop 820ms cubic-bezier(.22, 1.15, .36, 1) both; }
+    .ceremony-flash {
+      position: fixed; inset: 0; z-index: 3; pointer-events: none;
+      background: radial-gradient(circle at 50% 44%, var(--flash-c, rgba(253, 224, 71, 0.55)), transparent 65%);
+      animation: ceremonyFlash 750ms ease-out forwards;
+    }
+    .ceremony-orbit {
+      position: absolute; inset: -24px; border-radius: 9999px;
+      border: 1.5px dashed var(--orbit-c, rgba(253, 224, 71, 0.55));
+      animation: ceremonyOrbitSpin 9s linear infinite; pointer-events: none;
+    }
+    .ceremony-orbit::before, .ceremony-orbit::after {
+      content: ''; position: absolute; width: 8px; height: 8px; border-radius: 9999px;
+      background: var(--orbit-dot, #fde047); box-shadow: 0 0 12px var(--orbit-dot, #fde047);
+    }
+    .ceremony-orbit::before { top: -4px; left: 50%; transform: translateX(-50%); }
+    .ceremony-orbit::after { bottom: -4px; left: 50%; transform: translateX(-50%); background: var(--orbit-dot2, #38bdf8); box-shadow: 0 0 12px var(--orbit-dot2, #38bdf8); }
+    .ceremony-stagger-1 { animation: ceremonyStaggerUp 480ms cubic-bezier(.22,1,.36,1) 180ms both; }
+    .ceremony-stagger-2 { animation: ceremonyStaggerUp 520ms cubic-bezier(.22,1,.36,1) 290ms both; }
+    .ceremony-stagger-3 { animation: ceremonyStaggerUp 520ms cubic-bezier(.22,1,.36,1) 400ms both; }
+    .ceremony-stagger-4 { animation: ceremonyStaggerUp 520ms cubic-bezier(.22,1,.36,1) 520ms both; }
+    .ceremony-btn-shine { position: relative; overflow: hidden; }
+    .ceremony-btn-shine::after {
+      content: ''; position: absolute; top: 0; bottom: 0; left: 0; width: 42%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.55), transparent);
+      animation: ceremonyBtnShine 2.6s ease-in-out 0.9s infinite; pointer-events: none;
+    }
+    .challenge-impact { animation: promoCardIn 550ms cubic-bezier(.22,1.15,.36,1) both, challengeCardImpact 360ms ease-out 340ms both; }
     .tier-promo-halo {
       position: absolute; inset: -14px; border-radius: 9999px;
       background: conic-gradient(from 0deg, #fde047, #38bdf8, #a855f7, #f43f5e, #34d399, #fde047);
@@ -1078,40 +1245,44 @@
   <!-- Tier Promotion Emblem Ceremony Overlay -->
   <div id="tier-promo-overlay" role="dialog" aria-modal="true" aria-labelledby="tier-promo-title" aria-hidden="true">
     <div class="promo-rays" aria-hidden="true"></div>
+    <div id="tier-promo-flash" class="ceremony-flash" aria-hidden="true"></div>
     <canvas id="promo-fx-canvas" class="fixed inset-0 z-[1] pointer-events-none"></canvas>
-    <div class="promo-card-in max-w-sm w-full rounded-3xl bg-slate-900/95 border-2 border-amber-300/60 p-7 text-center text-white shadow-[0_0_60px_rgba(250,204,21,0.35)] space-y-5">
+    <div class="promo-card-in max-w-sm w-full rounded-3xl bg-slate-900/95 border-2 border-amber-300/60 p-7 text-center text-white shadow-[0_0_65px_rgba(250,204,21,0.38)] space-y-5">
       <div class="promo-emblem-wrap relative mx-auto w-28 h-28 grid place-items-center">
         <div class="promo-shockwave"></div>
         <div class="promo-shockwave promo-shockwave-2"></div>
+        <div class="ceremony-orbit"></div>
         <div class="tier-promo-halo"></div>
         <div id="tier-promo-icon" class="tier-promo-emblem relative z-[1] w-24 h-24 rounded-full bg-slate-950 border-2 border-amber-300 grid place-items-center text-5xl shadow-2xl">👑</div>
       </div>
       <div class="space-y-2">
-        <p class="inline-block px-3 py-0.5 rounded-full bg-amber-400/20 border border-amber-300/40 text-[11px] font-black tracking-widest uppercase text-amber-300">TIER PROMOTION</p>
-        <h3 id="tier-promo-title" class="text-2xl font-black tracking-tight bg-gradient-to-r from-amber-200 via-white to-amber-300 bg-clip-text text-transparent">승급을 축하합니다!</h3>
-        <p id="tier-promo-sub" class="text-xs text-slate-200 leading-relaxed"></p>
+        <p class="ceremony-stagger-1 inline-block px-3 py-0.5 rounded-full bg-amber-400/20 border border-amber-300/40 text-[11px] font-black tracking-widest uppercase text-amber-300">TIER PROMOTION</p>
+        <h3 id="tier-promo-title" class="ceremony-stagger-2 text-2xl font-black tracking-tight bg-gradient-to-r from-amber-200 via-white to-amber-300 bg-clip-text text-transparent">승급을 축하합니다!</h3>
+        <p id="tier-promo-sub" class="ceremony-stagger-3 text-xs text-slate-200 leading-relaxed"></p>
       </div>
-      <button id="btn-tier-promo-close" type="button" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-400 text-slate-950 font-black text-sm shadow-lg">계속하기</button>
+      <button id="btn-tier-promo-close" type="button" class="ceremony-stagger-4 ceremony-btn-shine w-full py-3.5 rounded-2xl bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-400 text-slate-950 font-black text-sm shadow-lg">계속하기</button>
     </div>
   </div>
   <!-- Tier Promotion Challenge Launch Overlay -->
   <div id="promo-challenge-overlay" role="dialog" aria-modal="true" aria-labelledby="promo-challenge-title" aria-hidden="true">
     <div class="challenge-rays" aria-hidden="true"></div>
+    <div id="promo-challenge-flash" class="ceremony-flash" aria-hidden="true"></div>
     <canvas id="promo-challenge-canvas" class="fixed inset-0 z-[1] pointer-events-none"></canvas>
-    <div id="promo-challenge-card" class="promo-card-in max-w-sm w-full rounded-3xl bg-slate-950/92 border-2 p-7 text-center text-white space-y-5">
+    <div id="promo-challenge-card" class="challenge-impact relative z-[2] max-w-sm w-full rounded-3xl bg-slate-950/92 border-2 p-7 text-center text-white space-y-5">
       <div class="promo-emblem-wrap relative mx-auto w-28 h-28 grid place-items-center">
         <div class="challenge-ring-1"></div>
         <div class="challenge-ring-2"></div>
+        <div id="promo-challenge-orbit" class="ceremony-orbit"></div>
         <div class="challenge-halo"></div>
         <div id="promo-challenge-icon" class="challenge-emblem-slam relative z-[1] w-24 h-24 rounded-full bg-slate-950 border-2 grid place-items-center text-5xl shadow-2xl">⚔️</div>
       </div>
       <div class="space-y-2.5">
-        <p id="promo-challenge-badge" class="inline-block px-3 py-0.5 rounded-full text-[11px] font-black tracking-widest uppercase">⚔️ PROMOTION CHALLENGE</p>
-        <h3 id="promo-challenge-title" class="text-2xl font-black tracking-tight text-white">승급전 도전 개시!</h3>
-        <div id="promo-challenge-mission" class="px-3.5 py-2.5 rounded-2xl bg-white/10 border border-white/15 text-xs font-bold text-slate-100 leading-relaxed"></div>
-        <p id="promo-challenge-sub" class="text-xs text-slate-300 leading-relaxed"></p>
+        <p id="promo-challenge-badge" class="ceremony-stagger-1 inline-block px-3 py-0.5 rounded-full text-[11px] font-black tracking-widest uppercase">⚔️ PROMOTION CHALLENGE</p>
+        <h3 id="promo-challenge-title" class="ceremony-stagger-2 text-2xl font-black tracking-tight text-white">승급전 도전 개시!</h3>
+        <div id="promo-challenge-mission" class="ceremony-stagger-3 px-3.5 py-2.5 rounded-2xl bg-white/10 border border-white/15 text-xs font-bold text-slate-100 leading-relaxed"></div>
+        <p id="promo-challenge-sub" class="ceremony-stagger-3 text-xs text-slate-300 leading-relaxed"></p>
       </div>
-      <button id="btn-promo-challenge-close" type="button" class="w-full py-3.5 rounded-2xl font-black text-sm shadow-lg transition active:scale-[0.98]">도전 시작!</button>
+      <button id="btn-promo-challenge-close" type="button" class="ceremony-stagger-4 ceremony-btn-shine w-full py-3.5 rounded-2xl font-black text-sm shadow-lg transition active:scale-[0.98]">도전 시작!</button>
     </div>
   </div>
   <!-- Starter All-Clear Grand Celebration Overlay -->
@@ -3574,17 +3745,30 @@
       ];
 
       const LOL_TIERS = [
-        { name: '아이언', min: 0, icon: '🔩', cls: 'bg-zinc-200 text-zinc-800 border-zinc-400', frame: 'border-2 border-t-4 border-zinc-500' },
-        { name: '브론즈', min: 80, icon: '🥉', cls: 'bg-amber-800 text-amber-50 border-amber-950', frame: 'border-2 border-t-4 border-amber-700' },
-        { name: '실버', min: 170, icon: '🥈', cls: 'bg-slate-200 text-slate-800 border-slate-400', frame: 'border-2 border-t-4 border-slate-400 ring-1 ring-slate-300/60' },
-        { name: '골드', min: 270, icon: '🥇', cls: 'bg-yellow-300 text-yellow-950 border-yellow-600', frame: 'border-2 border-t-4 border-yellow-500 ring-1 ring-yellow-400/70' },
-        { name: '플래티넘', min: 380, icon: '💠', cls: 'bg-teal-200 text-teal-950 border-teal-500', frame: 'border-2 border-t-4 border-teal-500 ring-1 ring-teal-400/70' },
-        { name: '에메랄드', min: 500, icon: '💚', cls: 'bg-emerald-300 text-emerald-950 border-emerald-600', frame: 'border-2 border-t-4 border-emerald-500 ring-1 ring-emerald-400/80' },
-        { name: '다이아몬드', min: 630, icon: '💎', cls: 'bg-sky-300 text-sky-950 border-sky-600', frame: 'border-2 border-t-4 border-sky-400 ring-2 ring-sky-300/80' },
-        { name: '마스터', min: 770, icon: '🔮', cls: 'bg-purple-500 text-white border-purple-800', frame: 'border-2 border-t-4 border-purple-500 ring-2 ring-purple-400/80' },
-        { name: '그랜드마스터', min: 930, icon: '🔥', cls: 'bg-rose-600 text-white border-rose-900', frame: 'border-2 border-t-4 border-rose-500 ring-2 ring-amber-400/80' },
-        { name: '챌린저', min: 1200, icon: '👑', cls: 'bg-gradient-to-r from-amber-300 via-sky-300 to-amber-400 text-slate-950 border-slate-950', frame: 'border-2 border-t-4 border-amber-400 ring-2 ring-sky-400' }
+        { name: '아이언', min: 0, icon: '🔩', cls: 'bg-zinc-200 text-zinc-800 border-zinc-400', frame: 'rank-frame-base rank-frame-0', wingColor: '#71717a', gemColor: '#a1a1aa' },
+        { name: '브론즈', min: 80, icon: '🥉', cls: 'bg-amber-800 text-amber-50 border-amber-950', frame: 'rank-frame-base rank-frame-1', wingColor: '#b45309', gemColor: '#f59e0b' },
+        { name: '실버', min: 170, icon: '🥈', cls: 'bg-slate-200 text-slate-800 border-slate-400', frame: 'rank-frame-base rank-frame-2', wingColor: '#64748b', gemColor: '#e2e8f0' },
+        { name: '골드', min: 270, icon: '🥇', cls: 'bg-yellow-300 text-yellow-950 border-yellow-600', frame: 'rank-frame-base rank-frame-3', wingColor: '#ca8a04', gemColor: '#fde047' },
+        { name: '플래티넘', min: 380, icon: '💠', cls: 'bg-teal-200 text-teal-950 border-teal-500', frame: 'rank-frame-base rank-frame-4', wingColor: '#0d9488', gemColor: '#5eead4' },
+        { name: '에메랄드', min: 500, icon: '💚', cls: 'bg-emerald-300 text-emerald-950 border-emerald-600', frame: 'rank-frame-base rank-frame-5', wingColor: '#059669', gemColor: '#6ee7b7' },
+        { name: '다이아몬드', min: 630, icon: '💎', cls: 'bg-sky-300 text-sky-950 border-sky-600', frame: 'rank-frame-base rank-frame-6', wingColor: '#0284c7', gemColor: '#bae6fd' },
+        { name: '마스터', min: 770, icon: '🔮', cls: 'bg-purple-500 text-white border-purple-800', frame: 'rank-frame-base rank-frame-7', wingColor: '#7e22ce', gemColor: '#f0abfc' },
+        { name: '그랜드마스터', min: 930, icon: '🔥', cls: 'bg-rose-600 text-white border-rose-900', frame: 'rank-frame-base rank-frame-8', wingColor: '#be123c', gemColor: '#fb7185' },
+        { name: '챌린저', min: 1200, icon: '👑', cls: 'bg-gradient-to-r from-amber-300 via-sky-300 to-amber-400 text-slate-950 border-slate-950', frame: 'rank-frame-base rank-frame-9', wingColor: '#eab308', gemColor: '#38bdf8' }
       ];
+      function renderRankCrestSvg(tierObj, hasTitle) {
+        const w = tierObj.wingColor || '#94a3b8';
+        const g = tierObj.gemColor || '#e2e8f0';
+        const posCls = hasTitle ? 'top-0.5 right-9' : 'top-0 left-1/2 -translate-x-1/2';
+        return `<div class="pointer-events-none absolute ${posCls} z-20 flex items-center justify-center" aria-hidden="true">
+          <svg width="56" height="16" viewBox="0 0 56 16" fill="none" xmlns="http://www.w3.org/2000/svg" class="drop-shadow-sm">
+            <path d="M2 6 L18 3 L24 8 L16 11 L6 10 Z" fill="${w}" stroke="#0f172a" stroke-width="0.9"/>
+            <path d="M54 6 L38 3 L32 8 L40 11 L50 10 Z" fill="${w}" stroke="#0f172a" stroke-width="0.9"/>
+            <polygon points="28,1 35,7.5 28,14.5 21,7.5" fill="${g}" stroke="#0f172a" stroke-width="1.1"/>
+            <polygon points="28,3.5 31.8,7.5 28,11.5 24.2,7.5" fill="#ffffff" fill-opacity="0.55"/>
+          </svg>
+        </div>`;
+      }
 
       function getMemberTier(lpOrMember) {
         const isObj = lpOrMember && typeof lpOrMember === 'object';
@@ -4608,7 +4792,7 @@
           const allBadges = getBadgesForMember(m, t);
           const badges = allBadges;
           const tierObj = getMemberTier(m);
-          const flameCls = todayTotalMins >= 420 ? 'flame-lv8' : todayTotalMins >= 360 ? 'flame-lv7' : todayTotalMins >= 300 ? 'flame-lv6' : todayTotalMins >= 240 ? 'flame-lv5' : todayTotalMins >= 120 ? 'flame-lv4' : todayTotalMins >= 60 ? 'flame-lv3' : todayTotalMins >= 30 ? 'flame-lv2' : todayTotalMins >= 10 ? 'flame-lv1' : '';
+          const flameLvCard = getFlameLevel(todayTotalMins); const flameCls = flameLvCard > 0 ? `flame-lv${flameLvCard}` : '';
           const isPromoNow = m.promoActiveDate === t;
           const isUltra = getMemberMode(m) === 'strict';
           const inClassNow = ((shared.classes && shared.classes[m.id]) || []).some(c => Number(c.day) === now.day && toMins(c.start) <= now.totalMins && now.totalMins < toMins(c.end));
@@ -4622,6 +4806,7 @@
           return `
             <div data-member-card-wrap="${m.id}" class="relative pt-2.5 flex flex-col">
               ${m.equippedTitle ? `<div class="absolute top-0 left-3 z-10 max-w-[calc(100%-24px)] px-2 py-0.5 rounded-t-lg rounded-b-sm bg-slate-100 border border-slate-300 text-[10px] font-bold text-slate-600 whitespace-nowrap truncate leading-none shadow-sm" title="${escapeHtml(m.equippedTitle)}"><span class="opacity-65">👑</span> ${escapeHtml(m.equippedTitle)}</div>` : ''}
+              ${renderRankCrestSvg(tierObj, !!m.equippedTitle)}
               ${hasMenu ? `<div class="absolute right-2.5 top-[22px] sm:top-[24px] z-40">
                 <button type="button" data-card-menu-btn="${m.id}" aria-label="스터디원 더보기" class="w-6 h-6 rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-900 flex items-center justify-center text-xs font-black">⋯</button>
                 <div data-card-menu-box="${m.id}" class="hidden absolute right-0 top-7 z-50 w-36 rounded-xl bg-white border border-slate-200 shadow-xl p-1 space-y-0.5 text-left">
@@ -6982,9 +7167,15 @@
       });
       document.getElementById('admin-rank-lp-input').addEventListener('input', e => {
         const val = Math.max(0, Number(e.target.value) || 0);
-        let matchIdx = 0;
-        for (let i = 0; i < LOL_TIERS.length; i++) if (val >= LOL_TIERS[i].min) matchIdx = i;
-        document.getElementById('admin-rank-tier-preset').value = String(LOL_TIERS[matchIdx].min);
+        const tierSel = document.getElementById('admin-rank-tier-preset');
+        const curMin = Number(tierSel.value) || 0;
+        // LP 입력만으로는 티어를 자동 승급시키지 않음 (승급전 도전하기를 거쳐야 승급)
+        // 단, 현재 선택된 티어의 최소 LP보다 낮아진 경우에만 하위 티어로 맞춤
+        if (val < curMin) {
+          let matchIdx = 0;
+          for (let i = 0; i < LOL_TIERS.length; i++) if (val >= LOL_TIERS[i].min) matchIdx = i;
+          tierSel.value = String(LOL_TIERS[matchIdx].min);
+        }
       });
       document.getElementById('admin-rank-form').addEventListener('submit', e => {
         e.preventDefault();
@@ -6995,12 +7186,18 @@
         const presetMin = Number(document.getElementById('admin-rank-tier-preset').value) || 0;
         let newTIdx = LOL_TIERS.findIndex(t => t.min === presetMin);
         if (newTIdx < 0) {
-          newTIdx = 0;
-          for (let i = 0; i < LOL_TIERS.length; i++) if (newLp >= LOL_TIERS[i].min) newTIdx = i;
+          newTIdx = typeof m.tierIdx === 'number' ? m.tierIdx : 0;
         }
+        const prevTIdx = typeof m.tierIdx === 'number' ? m.tierIdx : getMemberTier(m).idx;
         m.lp = newLp;
         m.tierIdx = newTIdx;
         m.bankedLp = 0;
+        if (newTIdx !== prevTIdx) {
+          m.promoActiveDate = null;
+          m.promoPendingDate = null;
+          m.promoTargetTier = null;
+          m.promoCooldownUntil = null;
+        }
         saveSharedData();
         const tInfo = getMemberTier(m);
         showToast(`${m.name}님의 랭크가 ${tInfo.icon} ${tInfo.name} (${m.lp} LP)로 변경되었습니다!`, 'success');
@@ -7277,7 +7474,7 @@
         focusOsNotifShown = true;
         const title = 'I LOVE STUDY';
         const opts = {
-          body: '타이머가 실행 중입니다. 눌러서 타이머 화면으로 돌아가기',
+          body: '타이머가 실행 중입니다.',
           icon: './icon-192.png',
           tag: 'iluvstudy-focus',
           renotify: false,
@@ -7387,7 +7584,7 @@
         if (cheerEl && !cheerEl.textContent) {
           const meD = shared.members.find(x => x.id === prefs.currentUserId);
           const todayM = (meD && shared.studyLogs?.[todayStr()]?.[meD.id]) || 0;
-          const nextFlame = [10, 30, 60, 120, 240, 300, 360, 420].find(m => m > todayM);
+          const nextFlame = [10, 30, 60, 120, 240, 300, 360, 420, 480, 540].find(m => m > todayM);
           cheerEl.textContent = nextFlame
             ? `오늘 누적 ${formatStudyMins(todayM)} · 다음 불꽃 오라까지 ${nextFlame - todayM}분`
             : `오늘 누적 ${formatStudyMins(todayM)} · 🔥 최고 단계 불꽃 오라 달성!`;
@@ -7615,7 +7812,7 @@
       }
 
       function getFlameLevel(mins) {
-        return mins >= 420 ? 8 : mins >= 360 ? 7 : mins >= 300 ? 6 : mins >= 240 ? 5 : mins >= 120 ? 4 : mins >= 60 ? 3 : mins >= 30 ? 2 : mins >= 10 ? 1 : 0;
+        return mins >= 540 ? 10 : mins >= 480 ? 9 : mins >= 420 ? 8 : mins >= 360 ? 7 : mins >= 300 ? 6 : mins >= 240 ? 5 : mins >= 120 ? 4 : mins >= 60 ? 3 : mins >= 30 ? 2 : mins >= 10 ? 1 : 0;
       }
 
       function closeFocusOverlay(discard = false) {
@@ -7712,6 +7909,9 @@
         subEl.textContent = releasedBank > 0
           ? `보관 중이던 +${releasedBank} LP가 합산되어 새 티어에 등극했습니다!`
           : `축하합니다! 꾸준한 몰입으로 새로운 티어에 도달했습니다.`;
+        const flashEl = document.getElementById('tier-promo-flash');
+        if (flashEl) { flashEl.classList.remove('ceremony-flash'); void flashEl.offsetWidth; flashEl.classList.add('ceremony-flash'); }
+        iconEl.classList.remove('tier-promo-emblem'); void iconEl.offsetWidth; iconEl.classList.add('tier-promo-emblem');
         ov.classList.add('is-active');
         ov.setAttribute('aria-hidden', 'false');
         triggerHaptic([25, 45, 35, 45, 50, 60, 40]);
@@ -7724,6 +7924,12 @@
           const colors = ['#fde047', '#38bdf8', '#f43f5e', '#a855f7', '#34d399', '#fb923c', '#ffffff'];
           const sparks = [];
           const confetti = [];
+          const stars = Array.from({ length: 28 }, () => ({
+            x: Math.random() * W, y: Math.random() * H,
+            r: 1.5 + Math.random() * 2.5, ph: Math.random() * Math.PI * 2,
+            c: colors[Math.floor(Math.random() * colors.length)]
+          }));
+          const promoRings = [{ r: 18, maxR: Math.max(W, H) * 0.65, alpha: 0.95, c: '#fde047' }];
           function spawnBurst(bx, by, count) {
             for (let i = 0; i < count; i++) {
               const ang = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.25;
@@ -7768,8 +7974,25 @@
             const elapsed = (now - startTime) / 1000;
             lastTime = now;
             ctx.clearRect(0, 0, W, H);
+            for (const st of stars) {
+              const tw = 0.25 + 0.75 * Math.abs(Math.sin(elapsed * 3.5 + st.ph));
+              ctx.globalAlpha = elapsed > 4.6 ? tw * Math.max(0, (5.4 - elapsed) / 0.8) : tw * 0.8;
+              ctx.fillStyle = st.c;
+              ctx.beginPath(); ctx.arc(st.x, st.y, st.r, 0, Math.PI * 2); ctx.fill();
+            }
+            for (let i = promoRings.length - 1; i >= 0; i--) {
+              const rg = promoRings[i];
+              rg.r += 540 * dt; rg.alpha -= 0.72 * dt;
+              if (rg.alpha <= 0 || rg.r >= rg.maxR) { promoRings.splice(i, 1); continue; }
+              ctx.save(); ctx.globalAlpha = Math.max(0, rg.alpha);
+              ctx.strokeStyle = rg.c; ctx.lineWidth = 3;
+              ctx.beginPath(); ctx.arc(W * 0.5, H * 0.44, rg.r, 0, Math.PI * 2); ctx.stroke(); ctx.restore();
+            }
             for (const b of burstSchedule) {
-              if (!b.done && elapsed >= b.t) { b.done = true; spawnBurst(b.x, b.y, b.n); }
+              if (!b.done && elapsed >= b.t) {
+                b.done = true; spawnBurst(b.x, b.y, b.n);
+                if (b.t >= 3.5) promoRings.push({ r: 18, maxR: Math.max(W, H) * 0.6, alpha: 0.9, c: '#38bdf8' });
+              }
             }
             if (elapsed < 4.3 && elapsed - lastRain > 0.28) {
               lastRain = elapsed;
@@ -7850,6 +8073,12 @@
         ov.style.setProperty('--ch-c2', theme.c2);
         ov.style.setProperty('--ch-glow', theme.glow);
         ov.style.setProperty('--ch-bg', theme.bg);
+        ov.style.setProperty('--flash-c', theme.glow.replace(/0\.\d+/, '0.62'));
+        ov.style.setProperty('--orbit-c', `${theme.c1}99`);
+        ov.style.setProperty('--orbit-dot', theme.c1);
+        ov.style.setProperty('--orbit-dot2', theme.c2);
+        const chFlash = document.getElementById('promo-challenge-flash');
+        if (chFlash) { chFlash.classList.remove('ceremony-flash'); void chFlash.offsetWidth; chFlash.classList.add('ceremony-flash'); }
 
         card.style.borderColor = theme.c1;
         card.style.boxShadow = `0 0 65px ${theme.glow.replace(/0\.\d+/, '0.45')}`;
@@ -7886,7 +8115,20 @@
           const H = cvs.height = window.innerHeight;
           const embers = [];
           const sparks = [];
+          const streaks = [];
           const rings = [{ r: 20, maxR: Math.max(W, H) * 0.55, alpha: 0.9, c: theme.c1 }];
+          function spawnStreaks(n) {
+            for (let i = 0; i < n; i++) {
+              streaks.push({
+                x: Math.random() * W, y: H + 30 + Math.random() * 80,
+                len: 35 + Math.random() * 65, vy: -(520 + Math.random() * 480),
+                w: 1.5 + Math.random() * 2,
+                c: theme.colors[Math.floor(Math.random() * theme.colors.length)],
+                life: 0, maxLife: 0.8 + Math.random() * 0.5
+              });
+            }
+          }
+          spawnStreaks(Math.round(14 * theme.intensity));
 
           function spawnRadialBurst(bx, by, count, speedMul = 1) {
             for (let i = 0; i < count; i++) {
@@ -7943,6 +8185,18 @@
             if (elapsed < 3.9 && elapsed - lastEmber > 0.22) {
               lastEmber = elapsed;
               spawnRisingEmbers(Math.round(9 * theme.intensity));
+              spawnStreaks(Math.round(4 * theme.intensity));
+            }
+            for (let i = streaks.length - 1; i >= 0; i--) {
+              const st = streaks[i];
+              st.life += dt;
+              if (st.life >= st.maxLife || st.y < -st.len) { streaks.splice(i, 1); continue; }
+              st.y += st.vy * dt;
+              ctx.save();
+              ctx.globalAlpha = Math.max(0, (1 - st.life / st.maxLife) * 0.65);
+              ctx.strokeStyle = st.c; ctx.lineWidth = st.w; ctx.lineCap = 'round';
+              ctx.beginPath(); ctx.moveTo(st.x, st.y); ctx.lineTo(st.x, st.y + st.len); ctx.stroke();
+              ctx.restore();
             }
             for (let i = rings.length - 1; i >= 0; i--) {
               const rg = rings[i];
