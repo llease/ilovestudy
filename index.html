@@ -297,7 +297,154 @@
     :where(button,input,select,textarea,a):focus-visible {outline:2px solid var(--focus-ring);outline-offset:3px}
     :where(button,a,input,select,textarea) {touch-action:manipulation}
     button:disabled {cursor:not-allowed}
-    button {transition:background-color 140ms,color 140ms,border-color 140ms,box-shadow 140ms,transform 140ms}
+    button {transition:background-color 140ms,color 140ms,border-color 140ms,box-shadow 140ms,transform 120ms cubic-bezier(.22,1,.36,1)}
+    button:active:not(:disabled) {transform:scale(0.965)}
+    @keyframes focusBoxBreathe {
+      0%, 100% { box-shadow: 0 12px 30px rgba(16, 42, 89, 0.24), 0 0 0 0 rgba(104, 166, 255, 0.25); }
+      50% { box-shadow: 0 16px 38px rgba(16, 42, 89, 0.36), 0 0 0 5px rgba(104, 166, 255, 0.14); }
+    }
+    #focus-timer-box[data-paused="false"] { animation: focusBoxBreathe 3s ease-in-out infinite; }
+    @keyframes igLikeBounce {
+      0% { transform: scale(1); }
+      35% { transform: scale(1.32); }
+      70% { transform: scale(0.92); }
+      100% { transform: scale(1.1); }
+    }
+    .ig-like-active { animation: igLikeBounce 340ms cubic-bezier(.22, 1, .36, 1) forwards; }
+    /* 1. Focus Ring Timer Size Inside Dial */
+    #focus-ring-wrap #focus-timer-display { font-size: clamp(1.75rem, 6.2vw, 2.35rem) !important; letter-spacing: -0.03em; }
+    #focus-ring-wrap #focus-timer-display::before { margin-bottom: 0.2rem; font-size: 0.68rem; }
+    /* 2. Todo V Strikethrough Drawing & Check Pop */
+    .todo-strike { position: relative; display: inline-block; max-width: 100%; }
+    .todo-strike::after {
+      content: ''; position: absolute; left: 0; right: 0; top: 52%; height: 1.5px;
+      background: currentColor; opacity: 0.7;
+      transform: scaleX(0); transform-origin: left center;
+      transition: transform 320ms cubic-bezier(.22, 1, .36, 1);
+      pointer-events: none;
+    }
+    .todo-strike.is-done { opacity: 0.6; }
+    .todo-strike.is-done::after { transform: scaleX(1); }
+    @keyframes todoCheckPop {
+      0% { transform: scale(0.85); }
+      45% { transform: scale(1.18); }
+      100% { transform: scale(1); }
+    }
+    .todo-check-pop { animation: todoCheckPop 260ms cubic-bezier(.22, 1, .36, 1); }
+    /* 3. Mobile Bottom-Sheet Modal */
+    @keyframes modalSheetUp {
+      0% { opacity: 0.5; transform: translateY(36px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    @media (max-width: 640px) {
+      #modal-overlay { align-items: flex-end !important; padding: 0 !important; }
+      #modal-box {
+        border-bottom-left-radius: 0 !important; border-bottom-right-radius: 0 !important;
+        border-top-left-radius: 24px !important; border-top-right-radius: 24px !important;
+        max-width: 100% !important; width: 100% !important;
+        max-height: 88dvh !important;
+        padding-bottom: max(1.25rem, env(safe-area-inset-bottom)) !important;
+        animation: modalSheetUp 240ms cubic-bezier(.22, 1, .36, 1) both !important;
+      }
+    }
+    /* 4. Sliding Sub-Tab Pill */
+    .subtab-track { position: relative; }
+    .subtab-slider {
+      position: absolute; top: 4px; bottom: 4px; left: 0; border-radius: 12px;
+      background: #0f172a; transition: transform 260ms cubic-bezier(.22, 1, .36, 1), width 260ms cubic-bezier(.22, 1, .36, 1);
+      pointer-events: none; z-index: 0;
+    }
+    body[data-dark="true"] .subtab-slider { background: var(--primary); }
+    .subtab-track > button { position: relative; z-index: 1; background: transparent !important; }
+    body[data-dark="true"] #tab-members [data-members-sub][aria-pressed="true"],
+    body[data-dark="true"] #tab-admin [data-admin-sub][aria-pressed="true"] { background: transparent !important; color: var(--on-primary) !important; }
+    /* 5. Tier Promotion Ceremony */
+    #tier-promo-overlay {
+      position: fixed; inset: 0; z-index: 86;
+      display: none; align-items: center; justify-content: center; padding: 1.5rem;
+      background: rgba(9, 15, 29, 0.88); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    }
+    #tier-promo-overlay.is-active { display: flex; }
+    @keyframes tierEmblemPop {
+      0% { opacity: 0; transform: scale(0.45) rotate(-14deg); }
+      60% { opacity: 1; transform: scale(1.12) rotate(4deg); }
+      100% { opacity: 1; transform: scale(1) rotate(0deg); }
+    }
+    @keyframes tierHaloSpin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .tier-promo-emblem { animation: tierEmblemPop 650ms cubic-bezier(.22, 1.15, .36, 1) both; }
+    .tier-promo-halo {
+      position: absolute; inset: -10px; border-radius: 9999px;
+      background: conic-gradient(from 0deg, #fde047, #38bdf8, #a855f7, #f43f5e, #fde047);
+      opacity: 0.72; filter: blur(6px); animation: tierHaloSpin 6s linear infinite; pointer-events: none;
+    }
+    /* Subtle Micro-Details */
+    body { transition: background-color 240ms ease, color 240ms ease; }
+    .ed-card, #main-live-banner { transition: background-color 240ms ease, border-color 240ms ease, box-shadow 240ms ease; }
+    #study-header { transition: background-color 220ms ease, box-shadow 220ms ease, backdrop-filter 220ms ease; }
+    #study-header.is-scrolled {
+      background: color-mix(in srgb, var(--surface) 88%, transparent) !important;
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 6px 20px rgba(15, 23, 42, 0.06);
+    }
+    body[data-dark="true"] #study-header.is-scrolled { box-shadow: 0 6px 22px rgba(0, 0, 0, 0.35); }
+    @keyframes popoverReveal {
+      0% { opacity: 0; transform: scale(0.95) translateY(-4px); }
+      100% { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    #header-more-menu:not(.hidden), [data-card-menu-box]:not(.hidden) {
+      transform-origin: top right;
+      animation: popoverReveal 140ms cubic-bezier(.22, 1, .36, 1) both;
+    }
+    @keyframes toastSlideIn {
+      0% { opacity: 0; transform: translateY(8px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    .study-toast-in { animation: toastSlideIn 180ms cubic-bezier(.22, 1, .36, 1) both; transition: opacity 260ms ease, transform 260ms ease; }
+    @keyframes plannerCellPop {
+      0% { transform: scale(0.91); }
+      100% { transform: scale(1); }
+    }
+    .planner-cell-pop { animation: plannerCellPop 150ms cubic-bezier(.22, 1, .36, 1); }
+    input:not([type="checkbox"]):not([type="file"]), select, textarea {
+      transition: border-color 150ms ease, box-shadow 150ms ease, background-color 150ms ease;
+    }
+    input:not([type="checkbox"]):not([type="file"]):not([id^="comment-input-"]):focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--focus-ring) !important;
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--focus-ring) 16%, transparent);
+    }
+    @keyframes miniDotPulse {
+      0%, 100% { opacity: 0.45; transform: scale(0.9); }
+      50% { opacity: 1; transform: scale(1.1); }
+    }
+    .mini-focus-dot {
+      width: 7px; height: 7px; border-radius: 9999px; background: #34d399;
+      animation: miniDotPulse 2.4s ease-in-out infinite; flex-shrink: 0;
+    }
+    #weekly-report-table > div > div, #profile-lp-history > div {
+      transition: box-shadow 150ms ease, background-color 150ms ease;
+    }
+    #weekly-report-table > div > div:hover, #profile-lp-history > div:hover {
+      box-shadow: inset 3px 0 0 var(--primary);
+    }
+    @keyframes emptyFloat {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-3px); }
+    }
+    .empty-float-icon { display: inline-block; animation: emptyFloat 3.2s ease-in-out infinite; }
+    #scroll-top-btn {
+      position: fixed; right: max(1rem, env(safe-area-inset-right)); bottom: calc(4.75rem + env(safe-area-inset-bottom));
+      z-index: 30; width: 38px; height: 38px; border-radius: 9999px;
+      background: var(--surface); color: var(--ink); border: 1px solid var(--line);
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.12);
+      display: grid; place-items: center; font-size: 14px; font-weight: 900;
+      transition: opacity 200ms ease, transform 200ms ease, background-color 140ms ease;
+    }
+    #scroll-top-btn:hover { background: var(--tint); color: var(--link); }
+    #scroll-top-btn.is-hidden { opacity: 0; pointer-events: none; transform: translateY(8px); }
     .skip-link {position:fixed;top:.5rem;left:.75rem;z-index:100;transform:translateY(-160%);padding:.7rem 1rem;border-radius:.75rem;background:var(--surface);color:var(--link)}
     .skip-link:focus {transform:none}
     #study-header {background:var(--surface)!important;color:var(--ink)!important;border-color:var(--line)!important;box-shadow:0 3px 16px #10284c09;backdrop-filter:none;padding-top:env(safe-area-inset-top,0px)}
@@ -774,6 +921,21 @@
       </div>
     </div>
   </div>
+  <!-- Tier Promotion Emblem Ceremony Overlay -->
+  <div id="tier-promo-overlay" role="dialog" aria-modal="true" aria-labelledby="tier-promo-title" aria-hidden="true">
+    <div class="max-w-sm w-full rounded-3xl bg-slate-900/95 border border-amber-400/50 p-7 text-center text-white shadow-2xl space-y-5">
+      <div class="relative mx-auto w-24 h-24 grid place-items-center">
+        <div class="tier-promo-halo"></div>
+        <div id="tier-promo-icon" class="tier-promo-emblem relative z-[1] w-24 h-24 rounded-full bg-slate-950 border-2 border-amber-300 grid place-items-center text-5xl shadow-xl">👑</div>
+      </div>
+      <div class="space-y-1.5">
+        <p class="text-[11px] font-black tracking-widest uppercase text-amber-300">TIER PROMOTION</p>
+        <h3 id="tier-promo-title" class="text-xl font-black tracking-tight">승급을 축하합니다!</h3>
+        <p id="tier-promo-sub" class="text-xs text-slate-300 leading-relaxed"></p>
+      </div>
+      <button id="btn-tier-promo-close" type="button" class="w-full py-3 rounded-2xl bg-gradient-to-r from-amber-400 to-yellow-300 text-slate-950 font-black text-sm shadow-lg">계속하기</button>
+    </div>
+  </div>
   <!-- Celebration Confetti Canvas Overlay (non-blocking) -->
   <canvas id="confetti-canvas" class="fixed inset-0 z-50 pointer-events-none hidden"></canvas>
   <!-- Toast -->
@@ -782,6 +944,7 @@
   <!-- Modal -->
   <div id="modal-overlay" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[60] hidden items-center justify-center p-4">
     <div id="modal-box" role="dialog" aria-modal="true" aria-labelledby="modal-title" class="bg-white rounded-2xl shadow-xl max-w-md w-full p-5 sm:p-6 max-h-[90vh] overflow-y-auto">
+      <div class="sm:hidden w-10 h-1 rounded-full bg-slate-300 mx-auto mb-3 opacity-80"></div>
       <div class="flex items-center justify-between mb-4">
         <h3 id="modal-title" tabindex="-1" class="text-sm sm:text-base font-black text-slate-900 whitespace-nowrap truncate">알림</h3>
         <button id="modal-close" type="button" aria-label="알림 닫기" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg">✕</button>
@@ -797,10 +960,16 @@
         <span id="focus-period-badge" class="inline-block px-3.5 py-1 rounded-full text-xs font-black bg-slate-950 text-white">집중 중</span>
         <p id="focus-period-range" class="text-sm font-bold text-slate-500">스톱워치</p>
       </div>
-      <div id="focus-timer-box" class="relative overflow-hidden py-6 rounded-3xl ed-banner select-none">
-        <div id="focus-timer-display" class="text-5xl sm:text-7xl font-mono font-black tracking-tighter">00:00:00</div>
+      <div id="focus-timer-box" class="relative overflow-hidden py-6 px-4 rounded-3xl ed-banner select-none">
+        <div id="focus-ring-wrap" class="relative mx-auto w-48 h-48 sm:w-56 sm:h-56 flex items-center justify-center">
+          <svg class="absolute inset-0 w-full h-full -rotate-90 pointer-events-none" viewBox="0 0 200 200" aria-hidden="true">
+            <circle cx="100" cy="100" r="90" fill="none" stroke="rgba(255,255,255,0.14)" stroke-width="6" />
+            <circle id="focus-ring-progress" cx="100" cy="100" r="90" fill="none" stroke="var(--accent)" stroke-width="6" stroke-linecap="round" stroke-dasharray="565.49" stroke-dashoffset="565.49" style="transition: stroke-dashoffset 300ms linear, stroke 300ms ease;" />
+          </svg>
+          <div id="focus-timer-display" class="relative z-[1] font-mono font-black tracking-tighter">00:00:00</div>
+        </div>
         <p id="focus-pause-label" class="hidden text-xs font-bold mt-2">잠시 쉬는 중 · 10분 초과 휴식 시 연속 집중이 초기화됩니다</p>
-        <p id="focus-cheer-msg" class="text-xs font-bold mt-2 opacity-80 transition-opacity duration-500 min-h-[1rem]"></p>
+        <p id="focus-cheer-msg" class="text-xs font-bold mt-2 opacity-85 transition-opacity duration-500 min-h-[1rem]"></p>
       </div>
       <div class="grid grid-cols-2 gap-3">
         <button id="focus-pause-btn" type="button" class="py-3.5 px-4 rounded-2xl border-2 border-slate-950 bg-slate-100 hover:bg-slate-200 text-slate-950 font-black text-sm">잠시 쉬기</button>
@@ -820,10 +989,12 @@
   </div>
 
   <!-- Floating Mini Stopwatch Bar (when browsing other tabs) -->
-  <div id="focus-mini-bar" class="fixed bottom-4 right-4 z-40 hidden items-center gap-3 px-4 py-2.5 rounded-2xl ed-banner">
+  <div id="focus-mini-bar" class="fixed bottom-4 right-4 z-40 hidden items-center gap-2.5 px-4 py-2.5 rounded-2xl ed-banner">
+    <span class="mini-focus-dot" aria-hidden="true"></span>
     <span id="focus-mini-time" class="font-mono font-black text-sm">00:00:00</span>
     <button id="focus-mini-expand" type="button" class="px-2.5 py-1 rounded-lg bg-slate-950 text-white text-xs font-bold">크게 보기</button>
   </div>
+  <button id="scroll-top-btn" type="button" aria-label="맨 위로 이동" title="맨 위로" class="is-hidden">↑</button>
 
   <!-- Google Auth & First-Time Member Onboarding Overlay -->
   <div id="auth-overlay" role="dialog" aria-modal="true" aria-labelledby="auth-title" class="fixed inset-0 bg-slate-950/75 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
@@ -1177,7 +1348,8 @@
     <!-- TAB 2: UNIFIED STUDY & RANKING HUB -->
     <div id="tab-members" class="tab-panel hidden space-y-3.5">
       <!-- Segmented Sub-Tab Switcher -->
-      <div class="grid grid-cols-3 gap-1.5 p-1 rounded-2xl bg-slate-100 border border-slate-200">
+      <div id="members-sub-bar" class="subtab-track grid grid-cols-3 gap-1.5 p-1 rounded-2xl bg-slate-100 border border-slate-200">
+        <span id="members-sub-slider" class="subtab-slider" aria-hidden="true"></span>
         <button type="button" data-members-sub="live" aria-pressed="true" aria-controls="members-sub-live" class="members-sub-btn py-2 px-2 rounded-xl text-[11px] sm:text-xs font-black bg-slate-950 text-white whitespace-nowrap transition">👥 스터디원 · 성적표</button>
         <button type="button" data-members-sub="rank" aria-pressed="false" aria-controls="members-sub-rank" class="members-sub-btn py-2 px-2 rounded-xl text-[11px] sm:text-xs font-bold text-slate-600 hover:text-slate-950 whitespace-nowrap transition">🏆 랭킹 · 챌린지</button>
         <button type="button" data-members-sub="brag" aria-pressed="false" aria-controls="members-sub-brag" class="members-sub-btn py-2 px-2 rounded-xl text-[11px] sm:text-xs font-bold text-slate-600 hover:text-slate-950 whitespace-nowrap transition">✨ STUDYGRAM</button>
@@ -1220,11 +1392,7 @@
         <div id="tier-grouped-rankings-list" class="space-y-2.5"></div>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-        <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
-          <h3 class="text-sm font-bold text-slate-900 mb-3">📊 의무 교시 출석률 랭킹</h3>
-          <div id="rank-rate-list" class="space-y-2"></div>
-        </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
         <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
           <h3 class="text-sm font-bold text-slate-900 mb-3">🌅 오늘 가장 먼저 시작한 사람</h3>
           <div id="rank-first-list" class="space-y-2"></div>
@@ -1689,7 +1857,8 @@
       </div>
 
       <!-- Admin Segmented Sub-Tab Bar -->
-      <div class="grid grid-cols-2 sm:grid-cols-4 gap-1.5 p-1 rounded-2xl bg-slate-100 border border-slate-200">
+      <div id="admin-sub-bar" class="subtab-track grid grid-cols-2 sm:grid-cols-4 gap-1.5 p-1 rounded-2xl bg-slate-100 border border-slate-200">
+        <span id="admin-sub-slider" class="subtab-slider" aria-hidden="true"></span>
         <button type="button" data-admin-sub="attendance" aria-pressed="true" aria-controls="admin-sub-attendance" class="admin-sub-btn py-2 px-2 rounded-xl text-[11px] sm:text-xs font-black bg-slate-950 text-white whitespace-nowrap transition">출석 · 가입<span id="admin-sub-badge-join" class="hidden ml-1 px-1.5 py-0.2 rounded-full bg-amber-400 text-slate-950 text-[9px] font-black">0</span></button>
         <button type="button" data-admin-sub="members" aria-pressed="false" aria-controls="admin-sub-members" class="admin-sub-btn py-2 px-2 rounded-xl text-[11px] sm:text-xs font-bold text-slate-600 hover:text-slate-950 whitespace-nowrap transition">멤버 · 기록</button>
         <button type="button" data-admin-sub="rewards" aria-pressed="false" aria-controls="admin-sub-rewards" class="admin-sub-btn py-2 px-2 rounded-xl text-[11px] sm:text-xs font-bold text-slate-600 hover:text-slate-950 whitespace-nowrap transition">챌린지 · 뱃지</button>
@@ -2979,15 +3148,18 @@
         } catch (e) { cloudConnected = false; updateCloudPill(); }
       }
 
+      function triggerHaptic(pattern = 12) {
+        try { if (typeof navigator !== 'undefined' && typeof navigator.vibrate === 'function') navigator.vibrate(pattern); } catch (e) {}
+      }
       function showToast(msg, type = 'info') {
         const c = document.getElementById('toast-container');
         const cls = { info: 'bg-slate-900 text-white', success: 'bg-emerald-600 text-white', warn: 'bg-amber-500 text-white', error: 'bg-rose-600 text-white' };
         const el = document.createElement('div');
-        el.className = `pointer-events-auto px-4 py-2.5 rounded-xl shadow-lg text-xs font-semibold transition-all ${cls[type] || cls.info}`;
+        el.className = `study-toast-in pointer-events-auto px-4 py-2.5 rounded-xl shadow-lg text-xs font-semibold ${cls[type] || cls.info}`;
         el.textContent = msg;
         while (c.childElementCount >= 3) c.firstElementChild.remove();
         c.appendChild(el);
-        setTimeout(() => { el.classList.add('opacity-0'); setTimeout(() => el.remove(), 300); }, 3000);
+        setTimeout(() => { el.style.transform = 'translateY(6px)'; el.classList.add('opacity-0'); setTimeout(() => el.remove(), 280); }, 3000);
       }
 
       let previousModalFocus = null;
@@ -3380,6 +3552,7 @@
         });
 
         if (memberId === prefs.currentUserId && delta > 0 && !prefs.adminMode) {
+          if (focusInterval) focusSessionLp += delta;
           showFloatingLp(delta);
         }
       }
@@ -3470,6 +3643,26 @@
       function formatStudyMins(totalMins) {
         const h = Math.floor(totalMins / 60), m = totalMins % 60;
         return `${h}H ${m}M`;
+      }
+      function animateCountUp(el, toVal, formatter, duration = 420) {
+        if (!el) return;
+        const prevRaw = el.dataset.animVal;
+        const fromVal = prevRaw !== undefined ? Number(prevRaw) : toVal;
+        el.dataset.animVal = String(toVal);
+        if (reduceMotion.matches || isNaN(fromVal) || fromVal === toVal) {
+          el.textContent = formatter(toVal);
+          return;
+        }
+        if (el._animRaf) cancelAnimationFrame(el._animRaf);
+        const start = performance.now();
+        function step(now) {
+          const p = Math.min(1, (now - start) / duration);
+          const eased = 1 - Math.pow(1 - p, 3);
+          el.textContent = formatter(Math.round(fromVal + (toVal - fromVal) * eased));
+          if (p < 1) el._animRaf = requestAnimationFrame(step);
+          else { el._animRaf = 0; el.textContent = formatter(toVal); }
+        }
+        el._animRaf = requestAnimationFrame(step);
       }
 
       function renderHeaderControls() {
@@ -3652,7 +3845,7 @@
         document.getElementById('live-date-label').textContent = `${todayStr()} (${days[now.day]})`;
         const meClock = shared.members.find(m => m.id === prefs.currentUserId) || shared.members[0];
         const todayStudyM = meClock ? ((shared.studyLogs && shared.studyLogs[todayStr()] && shared.studyLogs[todayStr()][meClock.id]) || 0) : 0;
-        document.getElementById('live-clock-text').textContent = formatStudyMins(todayStudyM);
+        animateCountUp(document.getElementById('live-clock-text'), todayStudyM, formatStudyMins);
         document.getElementById('sim-active-badge').classList.toggle('hidden', !prefs.simTime);
 
         // Studying count in banner (only visible to joined study members or admin)
@@ -3817,7 +4010,7 @@
         document.getElementById('my-period-wrap').classList.toggle('hidden', isFreeDash);
         document.getElementById('schedule-list-card').classList.toggle('hidden', isFreeDash);
         const todayLogMins = (shared.studyLogs && shared.studyLogs[t] && shared.studyLogs[t][me.id]) || 0;
-        document.getElementById('my-today-study-mins').textContent = formatStudyMins(todayLogMins);
+        animateCountUp(document.getElementById('my-today-study-mins'), todayLogMins, formatStudyMins);
         document.getElementById('my-today-rate').textContent = `출석률 ${calcAttendanceRate(me.id, t)}%`;
         document.getElementById('my-period-chips').innerHTML = STUDY_PERIODS.map(p => {
           const st = getMemberDayStatus(me.id, t, p.id), m = getStatusMeta(st);
@@ -3848,9 +4041,9 @@
                   <div class="flex items-center gap-1.5 min-w-0 flex-1">
                     <span class="w-2.5 h-2.5 rounded-full shrink-0" style="background:${tk.color || '#6366f1'}"></span>
                     <span class="px-1.5 py-0.5 rounded bg-white border border-slate-200 text-[10px] font-bold text-slate-700 shrink-0">${escapeHtml(tk.subject)}</span>
-                    <span class="font-medium text-slate-800 truncate ${tk.status === 'V' ? 'line-through opacity-60' : ''}">${escapeHtml(tk.title)}</span>
+                    <span class="font-medium text-slate-800 truncate todo-strike ${tk.status === 'V' ? 'is-done' : ''}">${escapeHtml(tk.title)}</span>
                   </div>
-                  <button type="button" data-home-cycle-task="${tk.id}" class="w-7 h-7 rounded-lg border text-xs font-extrabold shrink-0 ${stStyles[tk.status || '']}" title="클릭해 V / △ / X 변경">${tk.status || '·'}</button>
+                  <button type="button" data-home-cycle-task="${tk.id}" class="w-7 h-7 rounded-lg border text-xs font-extrabold shrink-0 ${tk.status === 'V' ? 'todo-check-pop ' : ''}${stStyles[tk.status || '']}" title="클릭해 V / △ / X 변경">${tk.status || '·'}</button>
                 </div>
               `).join('')
             : '<p class="text-[11px] text-slate-400">오늘 등록된 할 일이 없습니다. 플래너에서 추가해 보세요.</p>';
@@ -4106,7 +4299,7 @@
                 <div class="px-3.5 pt-2.5 pb-1 flex items-center justify-between">
                   <div class="flex items-center gap-3.5">
                     <button type="button" data-toggle-like="${p.id}" aria-pressed="${likedByMe}" aria-label="좋아요" class="inline-flex items-center gap-1 transition active:scale-90 ${likedByMe ? 'text-rose-500' : 'text-slate-800 hover:text-rose-500'}">
-                      <svg class="w-6 h-6 transition-transform ${likedByMe ? 'scale-110' : ''}" viewBox="0 0 24 24" fill="${likedByMe ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+                      <svg class="w-6 h-6 transition-transform ${likedByMe ? 'scale-110 ig-like-active' : ''}" viewBox="0 0 24 24" fill="${likedByMe ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
                     </button>
                     <button type="button" data-focus-comment="${p.id}" aria-label="댓글 달기" class="inline-flex items-center gap-1 text-slate-800 hover:text-sky-600 transition">
                       <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>
@@ -4138,7 +4331,7 @@
                 </form>
               </article>`;
             }).join('')
-          : '<div class="ed-card p-10 text-center space-y-1.5"><p class="text-sm font-bold text-slate-500">아직 올라온 게시물이 없습니다</p><p class="text-xs text-slate-400">위에서 오늘의 공부 기록을 첫 번째로 공유해 보세요!</p></div>';
+          : '<div class="ed-card p-10 text-center space-y-1.5"><span class="empty-float-icon text-2xl">📸</span><p class="text-sm font-bold text-slate-500">아직 올라온 게시물이 없습니다</p><p class="text-xs text-slate-400">위에서 오늘의 공부 기록을 첫 번째로 공유해 보세요!</p></div>';
       }
 
       function renderMembersTab() {
@@ -4303,10 +4496,10 @@
                   <div class="flex items-center gap-2 min-w-0 flex-1">
                     <span class="w-3.5 h-3.5 rounded-full shrink-0" style="background:${t.color}"></span>
                     <span class="px-1.5 py-0.5 rounded bg-slate-100 text-slate-700 text-[11px] font-bold shrink-0">${escapeHtml(t.subject)}</span>
-                    <span class="text-xs font-medium text-slate-800 truncate">${escapeHtml(t.title)}</span>
+                    <span class="text-xs font-medium text-slate-800 truncate todo-strike ${t.status === 'V' ? 'is-done' : ''}">${escapeHtml(t.title)}</span>
                   </div>
                   <div class="flex items-center gap-1 shrink-0">
-                    <button type="button" data-cycle-status="${t.id}" class="w-7 h-7 rounded-lg border text-xs font-extrabold ${statusStyles[t.status || '']}" title="클릭해 V / △ / X 변경">${t.status || '·'}</button>
+                    <button type="button" data-cycle-status="${t.id}" class="w-7 h-7 rounded-lg border text-xs font-extrabold ${t.status === 'V' ? 'todo-check-pop ' : ''}${statusStyles[t.status || '']}" title="클릭해 V / △ / X 변경">${t.status || '·'}</button>
                     <button type="button" data-del-task="${t.id}" class="w-6 h-7 text-slate-400 hover:text-rose-600 text-xs font-bold">✕</button>
                   </div>
                 </div>
@@ -4413,6 +4606,9 @@
             if (task) {
               cell.style.background = task.color;
               cell.style.borderColor = task.color;
+              cell.classList.remove('planner-cell-pop');
+              void cell.offsetWidth;
+              cell.classList.add('planner-cell-pop');
             }
           }
         }
@@ -4648,8 +4844,6 @@
             tierGrpEl.innerHTML = blocks.length ? blocks.join('') : '<p class="text-xs text-slate-400">참가 중인 스터디원이 없습니다.</p>';
           }
         }
-        const rSort = activeMembers.map(m => ({ ...m, rate: calcAttendanceRate(m.id, t) })).sort((a, b) => b.rate - a.rate);
-        document.getElementById('rank-rate-list').innerHTML = rSort.length ? rSort.map((m, i) => `<div class="flex justify-between bg-slate-50 rounded-xl px-3 py-2 text-xs"><span><strong>${i + 1}위</strong> ${escapeHtml(m.name)}</span><strong class="text-indigo-600">${m.rate}%</strong></div>`).join('') : '<p class="text-xs text-slate-400">참가 후 확인 가능</p>';
         const fSort = activeMembers.filter(m => m.firstTime && (!m.firstTimeDate || m.firstTimeDate === t)).sort((a, b) => toMins(a.firstTime) - toMins(b.firstTime));
         document.getElementById('rank-first-list').innerHTML = fSort.length ? fSort.map((m, i) => `<div class="flex justify-between bg-slate-50 rounded-xl px-3 py-2 text-xs"><span><strong>${i + 1}위</strong> ${escapeHtml(m.name)}</span><span class="font-mono font-bold">${m.firstTime}</span></div>`).join('') : '<p class="text-xs text-slate-400">기록 없음</p>';
         const lSort = activeMembers.filter(m => m.lastTime).sort((a, b) => toMins(b.lastTime) - toMins(a.lastTime));
@@ -4975,14 +5169,14 @@
         renderHeaderControls();
         renderLiveBanner();
         if (prefs.activeTab === 'dashboard') renderDashboard();
-        if (prefs.activeTab === 'members') { renderMembersTab(); renderWeeklyReportCards(); renderRankingsTab(); renderBragTab(); }
+        if (prefs.activeTab === 'members') { renderMembersTab(); renderWeeklyReportCards(); renderRankingsTab(); renderBragTab(); requestAnimationFrame(() => updateSubTabSlider('members-sub-bar', 'members-sub-slider', '[data-members-sub]', 'membersSub', document.querySelector('[data-members-sub][aria-pressed="true"]')?.dataset.membersSub || 'live')); }
         if (prefs.activeTab === 'brag') renderBragTab();
         if (prefs.activeTab === 'planner') renderPlannerTab();
         if (prefs.activeTab === 'calendar') renderCalendarTab();
         if (prefs.activeTab === 'profile') renderProfileTab();
         if (prefs.activeTab === 'timetable') renderTimetableTab();
         if (prefs.activeTab === 'rankings') { prefs.activeTab = 'members'; }
-        if (prefs.activeTab === 'admin') renderAdminTab();
+        if (prefs.activeTab === 'admin') { renderAdminTab(); requestAnimationFrame(() => updateSubTabSlider('admin-sub-bar', 'admin-sub-slider', '[data-admin-sub]', 'adminSub', document.querySelector('[data-admin-sub][aria-pressed="true"]')?.dataset.adminSub || 'attendance')); }
       }
 
       function promptPlannerSave(onProceed) {
@@ -5031,6 +5225,23 @@
         });
       }
 
+      function updateSubTabSlider(barId, sliderId, btnSelector, activeAttr, activeVal) {
+        const bar = document.getElementById(barId);
+        const slider = document.getElementById(sliderId);
+        if (!bar || !slider) return;
+        const activeBtn = Array.from(bar.querySelectorAll(btnSelector)).find(b => b.dataset[activeAttr] === activeVal);
+        if (!activeBtn || activeBtn.offsetWidth === 0) return;
+        slider.style.width = `${activeBtn.offsetWidth}px`;
+        slider.style.height = `${activeBtn.offsetHeight}px`;
+        slider.style.top = `${activeBtn.offsetTop}px`;
+        slider.style.transform = `translate3d(${activeBtn.offsetLeft}px, 0, 0)`;
+      }
+      window.addEventListener('resize', () => {
+        const mAct = document.querySelector('[data-members-sub][aria-pressed="true"]')?.dataset.membersSub || 'live';
+        const aAct = document.querySelector('[data-admin-sub][aria-pressed="true"]')?.dataset.adminSub || 'attendance';
+        updateSubTabSlider('members-sub-bar', 'members-sub-slider', '[data-members-sub]', 'membersSub', mAct);
+        updateSubTabSlider('admin-sub-bar', 'admin-sub-slider', '[data-admin-sub]', 'adminSub', aAct);
+      });
       function switchTab(tab, skipPlannerGuard = false) {
         if (['rankings','brag'].includes(tab)) tab = 'members';
         if (!skipPlannerGuard && prefs.activeTab === 'planner' && plannerEditMode && tab !== 'planner') {
@@ -5044,10 +5255,15 @@
         }
         prefs.activeTab = tab;
         document.querySelectorAll('.nav-tab').forEach(b => {
-          b.classList.toggle('tab-active', b.dataset.tab === tab);
-          b.classList.toggle('tab-idle', b.dataset.tab !== tab);
-          if (b.dataset.tab === tab) b.setAttribute('aria-current', 'page');
-          else b.removeAttribute('aria-current');
+          const isCurTab = b.dataset.tab === tab;
+          b.classList.toggle('tab-active', isCurTab);
+          b.classList.toggle('tab-idle', !isCurTab);
+          if (isCurTab) {
+            b.setAttribute('aria-current', 'page');
+            try { b.scrollIntoView({ behavior: reduceMotion.matches ? 'auto' : 'smooth', inline: 'center', block: 'nearest' }); } catch (e) {}
+          } else {
+            b.removeAttribute('aria-current');
+          }
         });
         document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('hidden', p.id !== `tab-${tab}`));
         document.getElementById('home-top-banners').classList.toggle('hidden', tab !== 'dashboard');
@@ -5072,6 +5288,7 @@
               ? 'members-sub-btn py-2 px-2 rounded-xl text-[11px] sm:text-xs font-black bg-slate-950 text-white whitespace-nowrap transition'
               : 'members-sub-btn py-2 px-2 rounded-xl text-[11px] sm:text-xs font-bold text-slate-600 hover:text-slate-950 whitespace-nowrap transition';
           });
+          updateSubTabSlider('members-sub-bar', 'members-sub-slider', '[data-members-sub]', 'membersSub', targetSub);
           if (targetSub === 'rank') renderRankingsTab();
           if (targetSub === 'brag') renderBragTab();
         });
@@ -5257,8 +5474,8 @@
           me.promoActiveDate = null;
           me.promoTargetTier = null;
           saveSharedData();
-          showToast(`축하합니다! ${tierInfo.nextName} 티어로 승급했습니다!${releasedBank > 0 ? ` (보관 LP +${releasedBank} 합산)` : ''}`, 'success');
           renderAll();
+          playTierPromoCeremony(nextObj || { icon: '👑', name: tierInfo.nextName }, releasedBank);
         }
       });
 
@@ -5718,6 +5935,7 @@
             ? 'admin-sub-btn py-2 px-2 rounded-xl text-[11px] sm:text-xs font-black bg-slate-950 text-white whitespace-nowrap transition'
             : 'admin-sub-btn py-2 px-2 rounded-xl text-[11px] sm:text-xs font-bold text-slate-600 hover:text-slate-950 whitespace-nowrap transition';
         });
+        requestAnimationFrame(() => updateSubTabSlider('admin-sub-bar', 'admin-sub-slider', '[data-admin-sub]', 'adminSub', targetSub));
       }
       document.querySelectorAll('[data-admin-sub]').forEach(btn => {
         btn.addEventListener('click', () => switchAdminSubTab(btn.dataset.adminSub));
@@ -6365,7 +6583,7 @@
         const likesMap = getPhotoLikesMap(p);
         if (forceLike && likesMap[prefs.currentUserId]) return;
         if (likesMap[prefs.currentUserId]) delete likesMap[prefs.currentUserId];
-        else likesMap[prefs.currentUserId] = true;
+        else { likesMap[prefs.currentUserId] = true; triggerHaptic(14); }
         p.likes = likesMap;
         saveSharedData();
         renderBragTab();
@@ -6603,6 +6821,7 @@
       document.getElementById('btn-cleanup-old').addEventListener('click', () => confirmPhotoCleanup(1, '어제 및 이전 날짜의'));
 
       let calCursor = new Date();
+      let selectedCalDay = null;
       function renderCalendarTab() {
         const y = calCursor.getFullYear(), m = calCursor.getMonth();
         document.getElementById('cal-month-label').textContent = `${y}년 ${m + 1}월`;
@@ -6624,7 +6843,8 @@
           if (isUltraSched) icons.push('🔥');
           if (promoEvt) icons.push('👑');
           else if (isPromoSched) icons.push('⚔️');
-          html += `<td class="p-1.5 border border-slate-200 align-top h-14 hover:bg-slate-50 cursor-pointer text-center" data-cal-day="${dStr}">
+          const isSelCal = selectedCalDay === dStr;
+          html += `<td class="p-1.5 border border-slate-200 align-top h-14 hover:bg-slate-50 cursor-pointer text-center transition-shadow ${isSelCal ? 'ring-2 ring-indigo-500 ring-inset bg-indigo-50/40' : ''}" data-cal-day="${dStr}">
             <div class="font-bold text-[11px] ${dStr === todayStr() ? 'text-indigo-600 underline' : 'text-slate-700'}">${d}</div>
             <div class="text-xs leading-tight mt-0.5">${icons.join('')}</div>
           </td>`;
@@ -6662,6 +6882,14 @@
         const td = e.target.closest('[data-cal-day]'); if (!td) return;
         if (!prefs.adminMode) { unlockChallengeFor(prefs.currentUserId, 'ch_cal_day', false); saveSharedData(); }
         const dStr = td.dataset.calDay, me = shared.members.find(x => x.id === prefs.currentUserId);
+        selectedCalDay = dStr;
+        document.querySelectorAll('#calendar-grid-wrap [data-cal-day]').forEach(cell => {
+          const on = cell.dataset.calDay === dStr;
+          cell.classList.toggle('ring-2', on);
+          cell.classList.toggle('ring-indigo-500', on);
+          cell.classList.toggle('ring-inset', on);
+          cell.classList.toggle('bg-indigo-50/40', on);
+        });
         const mins = (shared.studyLogs && shared.studyLogs[dStr] && shared.studyLogs[dStr][me.id]) || 0;
         const promoEvt = (shared.promoHistory && shared.promoHistory[me.id] && shared.promoHistory[me.id][dStr]) || '없음';
         document.getElementById('calendar-day-detail').innerHTML = `<strong>${dStr}</strong> (${escapeHtml(me.name)}) · 누적 공부: <strong>${formatStudyMins(mins)}</strong> · 승급 기록: <strong>${escapeHtml(promoEvt)}</strong>`;
@@ -6691,6 +6919,15 @@
           if (e.key === 'Escape' && shown(moreMenu)) { e.preventDefault(); setMore(false, true); }
         });
       }
+      const studyHeaderEl = document.getElementById('study-header');
+      const scrollTopBtn = document.getElementById('scroll-top-btn');
+      window.addEventListener('scroll', () => {
+        if (studyHeaderEl) studyHeaderEl.classList.toggle('is-scrolled', window.scrollY > 8);
+        if (scrollTopBtn) scrollTopBtn.classList.toggle('is-hidden', window.scrollY <= 360);
+      }, { passive: true });
+      scrollTopBtn?.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: reduceMotion.matches ? 'auto' : 'smooth' });
+      });
       document.getElementById('dark-toggle-btn').addEventListener('click', () => {
         prefs.darkMode = !prefs.darkMode;
         if (prefs.darkMode) { unlockChallengeFor(prefs.currentUserId, 'ch_dark', false); saveSharedData(); }
@@ -6744,6 +6981,7 @@
       // Fullscreen Focus Stopwatch Logic (Counts up from 00:00)
       let focusPaused = false;
       let focusElapsedSecs = 0;
+      let focusSessionLp = 0;
       let focusAccumulatedSecs = 0;
       let focusStartedAt = null;
       let focusInterval = null;
@@ -6866,7 +7104,34 @@
         document.getElementById('focus-min-btn').classList.toggle('hidden', !focusPaused);
         document.getElementById('focus-pause-btn').textContent = focusPaused ? '공부 다시 시작하기' : '잠시 쉬기';
         document.getElementById('focus-timer-box').dataset.paused = String(focusPaused);
-
+        const ringEl = document.getElementById('focus-ring-progress');
+        if (ringEl) {
+          const CIRC = 565.49;
+          const meR = shared.members.find(x => x.id === prefs.currentUserId);
+          const nowR = getNowParts(), dayR = todayStr(), phaseR = getCurrentPhase(nowR.totalMins);
+          const strictR = meR && getMemberMode(meR) === 'strict' && phaseR?.type === 'study';
+          let frac = 0;
+          let ringColor = 'var(--accent)';
+          if (strictR) {
+            const pSecs = shared.periodStudySecs?.[dayR]?.[meR.id]?.[phaseR.id] || 0;
+            const reqSecs = Math.max(1, Math.ceil(phaseR.mins * 60 * 0.75));
+            frac = Math.min(1, pSecs / reqSecs);
+            if (frac >= 1) ringColor = '#34d399';
+          } else {
+            frac = focusElapsedSecs > 0 && focusElapsedSecs % 60 === 0 ? 1 : (focusElapsedSecs % 60) / 60;
+          }
+          ringEl.style.strokeDashoffset = String((CIRC * (1 - frac)).toFixed(2));
+          ringEl.style.stroke = ringColor;
+        }
+        const cheerEl = document.getElementById('focus-cheer-msg');
+        if (cheerEl && !cheerEl.textContent) {
+          const meD = shared.members.find(x => x.id === prefs.currentUserId);
+          const todayM = (meD && shared.studyLogs?.[todayStr()]?.[meD.id]) || 0;
+          const nextFlame = [10, 30, 60, 120, 240, 300, 360, 420].find(m => m > todayM);
+          cheerEl.textContent = nextFlame
+            ? `오늘 누적 ${formatStudyMins(todayM)} · 다음 불꽃 오라까지 ${nextFlame - todayM}분`
+            : `오늘 누적 ${formatStudyMins(todayM)} · 🔥 최고 단계 불꽃 오라 달성!`;
+        }
       }
 
       // Split real elapsed time at local minute boundaries. Endpoints are half-open [start, end).
@@ -7041,10 +7306,12 @@
           if (isRestoring !== true) {
             focusElapsedSecs = 0;
             focusAccumulatedSecs = 0;
+            focusSessionLp = 0;
             focusStartedAt = Date.now();
             focusPaused = false;
             pauseStartedAt = null;
             focusModeBeforeChange = null;
+            triggerHaptic(16);
           }
           if (meFocus && meFocus.isFocusing !== !focusPaused) {
             meFocus.isFocusing = !focusPaused;
@@ -7087,17 +7354,25 @@
         document.getElementById('focus-mini-expand').focus({preventScroll:true});
       }
 
+      function getFlameLevel(mins) {
+        return mins >= 420 ? 8 : mins >= 360 ? 7 : mins >= 300 ? 6 : mins >= 240 ? 5 : mins >= 120 ? 4 : mins >= 60 ? 3 : mins >= 30 ? 2 : mins >= 10 ? 1 : 0;
+      }
+
       function closeFocusOverlay(discard = false) {
         const wasOpen = !!focusInterval;
         if (wasOpen && !discard && !focusPaused) syncFocusClock(true);
+        const finishedSecs = focusElapsedSecs;
+        const earnedSessionLp = focusSessionLp;
         if (focusInterval) { clearInterval(focusInterval); focusInterval = null; }
         focusElapsedSecs = 0;
         focusAccumulatedSecs = 0;
+        focusSessionLp = 0;
         focusStartedAt = null;
         pauseStartedAt = null;
         focusModeBeforeChange = null;
         focusPaused = false;
         clearFocusState();
+        closeFocusOsNotification();
         if (discard) pendingCelebrations.length = 0;
         if (wasOpen && !discard && !prefs.adminMode) {
           const meObj = shared.members.find(x => x.id === prefs.currentUserId);
@@ -7110,12 +7385,64 @@
         mini.classList.add('hidden');
         mini.classList.remove('flex');
         refreshStudyDialogs();
-        if (wasOpen && !discard) { renderAll(); if (prefs.activeTab === 'dashboard') document.getElementById('btn-open-focus').focus({preventScroll:true}); }
+        if (wasOpen && !discard) {
+          renderAll();
+          triggerHaptic([16, 30, 20]);
+          const sessionMins = Math.floor(finishedSecs / 60);
+          if (sessionMins >= 1) {
+            const meF = shared.members.find(x => x.id === prefs.currentUserId);
+            const todayTotal = (meF && shared.studyLogs?.[todayStr()]?.[meF.id]) || 0;
+            const flameLv = getFlameLevel(todayTotal);
+            const sH = Math.floor(sessionMins / 60), sM = sessionMins % 60;
+            const sessionStr = sH > 0 ? `${sH}시간 ${sM}분` : `${sM}분`;
+            openModal('⏱️ 집중 완료 리포트', `
+              <div class="space-y-3 text-center py-1">
+                <div class="text-2xl font-black text-slate-900">${sessionStr} 집중 완료!</div>
+                <div class="grid grid-cols-2 gap-2 text-xs">
+                  <div class="rounded-xl bg-slate-50 border border-slate-200 p-2.5">
+                    <div class="text-slate-400 font-semibold">오늘 누적 공부</div>
+                    <div class="font-mono font-black text-sm text-indigo-600 mt-0.5">${formatStudyMins(todayTotal)}</div>
+                  </div>
+                  <div class="rounded-xl bg-slate-50 border border-slate-200 p-2.5">
+                    <div class="text-slate-400 font-semibold">이번 세션 보상</div>
+                    <div class="font-mono font-black text-sm text-emerald-600 mt-0.5">${earnedSessionLp > 0 ? `+${earnedSessionLp} LP` : '기록 저장 ✓'}</div>
+                  </div>
+                </div>
+                ${flameLv > 0 ? `<div class="rounded-xl bg-amber-50 border border-amber-200 px-3 py-2 text-xs font-bold text-amber-900">🔥 현재 카드 불꽃 오라 <strong>Lv.${flameLv}</strong> 적용 중!</div>` : ''}
+                <button type="button" id="btn-focus-summary-ok" class="w-full py-2.5 rounded-xl ed-btn-accent text-xs font-black">확인</button>
+              </div>
+            `);
+            document.getElementById('btn-focus-summary-ok')?.addEventListener('click', closeModal);
+          } else {
+            showToast('1분 미만 집중은 기록에 반영되지 않습니다.', 'info');
+            if (prefs.activeTab === 'dashboard') document.getElementById('btn-open-focus').focus({preventScroll:true});
+          }
+        }
       }
 
       document.getElementById('btn-open-focus').addEventListener('click', () => openFocusOverlay(false));
       let pendingCelebrations = [];
       let celebrationFrame = 0;
+      function playTierPromoCeremony(tierObj, releasedBank = 0) {
+        const ov = document.getElementById('tier-promo-overlay');
+        const iconEl = document.getElementById('tier-promo-icon');
+        const titleEl = document.getElementById('tier-promo-title');
+        const subEl = document.getElementById('tier-promo-sub');
+        const closeBtn = document.getElementById('btn-tier-promo-close');
+        if (!ov || !iconEl || !titleEl || !subEl) return;
+        iconEl.textContent = tierObj.icon || '👑';
+        titleEl.textContent = `${tierObj.name} 티어 승급!`;
+        subEl.textContent = releasedBank > 0
+          ? `보관 중이던 +${releasedBank} LP가 합산되어 새 티어에 등극했습니다!`
+          : `축하합니다! 꾸준한 몰입으로 새로운 티어에 도달했습니다.`;
+        ov.classList.add('is-active');
+        ov.setAttribute('aria-hidden', 'false');
+        triggerHaptic([20, 40, 28, 40, 35]);
+        if (closeBtn) closeBtn.onclick = () => {
+          ov.classList.remove('is-active');
+          ov.setAttribute('aria-hidden', 'true');
+        };
+      }
       function triggerChallengeCelebration(ch) {
         showToast(`🎉 챌린지 달성! [${ch.title}] (+${ch.lp} LP)`, 'success');
         const canvas = document.getElementById('confetti-canvas');
@@ -7153,6 +7480,7 @@
 
       let pauseStartedAt = null;
       document.getElementById('focus-pause-btn').addEventListener('click', () => {
+        triggerHaptic(12);
         if (!focusPaused) syncFocusClock(true);
         focusPaused = !focusPaused;
         const meP = shared.members.find(x => x.id === prefs.currentUserId);
