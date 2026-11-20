@@ -2146,12 +2146,13 @@
       let dbLoadedOnce = false;
       let currentAuthUser = null;
       let sessionClaimed = false;
+      let pendingSessionClaimUntil = 0;
       const SESSION_ID = (() => {
         try {
-          let s = sessionStorage.getItem('iluvstudy_session_id');
+          let s = localStorage.getItem(storageScope + 'iluvstudy_device_session_id');
           if (!s) {
             s = 'sess_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
-            sessionStorage.setItem('iluvstudy_session_id', s);
+            localStorage.setItem(storageScope + 'iluvstudy_device_session_id', s);
           }
           return s;
         } catch (e) {
@@ -2560,17 +2561,23 @@
         const found = (shared.members || []).find(m => m.uid === user.uid);
         if (found) {
           if (sessionClaimed && found.activeSessionId && found.activeSessionId !== SESSION_ID) {
-            sessionClaimed = false;
-            closeFocusOverlay(true);
-            if (typeof firebase !== 'undefined' && typeof firebase.auth === 'function') {
-              firebase.auth().signOut().catch(() => {});
+            if (Date.now() <= pendingSessionClaimUntil || syncDirty || syncFlight) {
+              found.activeSessionId = SESSION_ID;
+            } else {
+              sessionClaimed = false;
+              pendingSessionClaimUntil = 0;
+              closeFocusOverlay(true);
+              if (typeof firebase !== 'undefined' && typeof firebase.auth === 'function') {
+                firebase.auth().signOut().catch(() => {});
+              }
+              showAuthOverlay('login', '다른 기기에서 같은 Google 계정으로 로그인하여 현재 기기에서 자동 로그아웃되었습니다.');
+              return;
             }
-            showAuthOverlay('login', '다른 기기에서 같은 Google 계정으로 로그인하여 현재 기기에서 자동 로그아웃되었습니다.');
-            return;
           }
           if (!sessionClaimed) {
             sessionClaimed = true;
             if (found.activeSessionId !== SESSION_ID) {
+              pendingSessionClaimUntil = Date.now() + 8000;
               found.activeSessionId = SESSION_ID;
               saveSharedData();
             }
@@ -2725,11 +2732,15 @@
           lastSyncedJson = snapshotSharedState(remote);
           if (hadBaseline && currentAuthUser && sessionClaimed) {
             const registered = remote.members.find(m => m.uid === currentAuthUser.uid);
-            if (registered?.activeSessionId && registered.activeSessionId !== SESSION_ID) {
-              resetCloudWrites();
-              shared = remote;
-              syncAuthUserMember(currentAuthUser);
-              return;
+            if (registered?.activeSessionId === SESSION_ID) {
+              pendingSessionClaimUntil = 0;
+            } else if (registered?.activeSessionId && registered.activeSessionId !== SESSION_ID) {
+              if (Date.now() > pendingSessionClaimUntil && !syncDirty && !syncFlight) {
+                resetCloudWrites();
+                shared = remote;
+                syncAuthUserMember(currentAuthUser);
+                return;
+              }
             }
           }
           for (const [path, value] of Object.entries(localPatch)) {
@@ -3058,10 +3069,14 @@
           const rec = dayObj && dayObj[memberId];
           return rec && Object.values(rec).some(st => st === 'present' || st === 'late');
         });
-        const hasPlannerTask = Object.values(shared.motemote || {}).some(dayObj => {
+        const hasSharedTask = Object.values(shared.motemote || {}).some(dayObj => {
           const mm = dayObj && dayObj[memberId];
           return mm && Array.isArray(mm.tasks) && mm.tasks.length > 0;
         });
+        const hasPrivateTask = (memberId === prefs.currentUserId) && Object.values(myPrivateData.motemote || {}).some(mm => {
+          return mm && Array.isArray(mm.tasks) && mm.tasks.length > 0;
+        });
+        const hasPlannerTask = hasSharedTask || hasPrivateTask;
         if (hasAttendance && hasPlannerTask) unlockChallengeFor(memberId, 'ch6', false);
       }
 
@@ -6295,11 +6310,6 @@
             document.getElementById('focus-cheer-msg').textContent = `${newMins}분 집중했어요. 지금 페이스를 이어가 보세요.`;
           }
         } finally { focusWriteBatch = false; }
-        if (typeof Notification !== 'undefined' && Notification.permission === 'default' && !isRestoring) {
-          Notification.requestPermission().then(p => { if (p === 'granted' && focusInterval) updateFocusOsNotification(true); }).catch(() => {});
-        } else {
-          updateFocusOsNotification(true);
-        }
         updateFocusDisplay();
         refreshFocusAttendance(force || markedAttendance);
         if (force || gainedMinute || markedAttendance || Math.floor(target / 15) > Math.floor(from / 15)) {
@@ -6318,12 +6328,19 @@
         const meFocus = shared.members.find(m => m.id === prefs.currentUserId);
         if (!meFocus) return;
         const tEarly = todayStr();
-        if (!focusInterval && isRestoring !== true && meFocus && now.totalMins < toMins('08:00') && (meFocus.firstTimeDate !== tEarly || !meFocus.firstTime || toMins(now.hhmm) < toMins(meFocus.firstTime))) {
-          meFocus.firstTime = now.hhmm;
-          meFocus.firstTimeDate = tEarly;
-          recordEarlyMorningCheck(meFocus, tEarly, now.hhmm);
-          if (now.totalMins >= 360 && now.totalMins < 420) unlockChallengeFor(meFocus.id, 'ch_6am', false);
-          saveSharedData();
+        if (!focusInterval && isRestoring !== true && meFocus && now.totalMins < toMins('08:00')) {
+          let earlyChanged = false;
+          if (meFocus.firstTimeDate !== tEarly || !meFocus.firstTime || toMins(now.hhmm) < toMins(meFocus.firstTime)) {
+            meFocus.firstTime = now.hhmm;
+            meFocus.firstTimeDate = tEarly;
+            recordEarlyMorningCheck(meFocus, tEarly, now.hhmm);
+            earlyChanged = true;
+          }
+          if (now.totalMins >= 360 && now.totalMins < 420) {
+            unlockChallengeFor(meFocus.id, 'ch_6am', false);
+            earlyChanged = true;
+          }
+          if (earlyChanged) saveSharedData();
         }
 
         if (!focusInterval) {
@@ -6340,9 +6357,14 @@
             saveSharedData();
           }
           document.getElementById('focus-cheer-msg').textContent = '';
-          focusInterval = setInterval(syncFocusClock, 1000);
-          if (isRestoring !== true) unlockChallengeFor(meFocus.id, 'ch_newbie', false);
+          focusInterval = setInterval(() => syncFocusClock(false), 250);
+          if (isRestoring !== true) { unlockChallengeFor(meFocus.id, 'ch_newbie', false); saveSharedData(); }
           if (isRestoring !== true) saveFocusState();
+          if (typeof Notification !== 'undefined' && Notification.permission === 'default' && isRestoring !== true) {
+            Notification.requestPermission().then(p => { if (p === 'granted' && focusInterval) updateFocusOsNotification(true); }).catch(() => {});
+          } else {
+            updateFocusOsNotification(true);
+          }
         }
         updateFocusDisplay();
         document.getElementById('focus-mini-bar').classList.add('hidden');
@@ -6968,6 +6990,7 @@
           if (!already) {
             unlockChallengeFor(prefs.currentUserId, 'ch_rank_bottom', false);
             saveSharedData();
+            renderRankingsTab();
           }
         }
       }, { passive: true });
