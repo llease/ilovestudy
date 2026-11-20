@@ -699,6 +699,17 @@
         </button>
       </div>
 
+      <div id="auth-pending-step" class="hidden space-y-4">
+        <div id="auth-pending-box" class="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-xs text-amber-950 space-y-1.5">
+          <p id="auth-pending-title" class="font-black text-sm">⏳ 가입 승인 대기 중입니다</p>
+          <p id="auth-pending-desc" class="leading-relaxed">관리자에게 가입 요청서를 보냈습니다. 관리자가 수락하면 이 화면이 자동으로 열리며 바로 시작할 수 있습니다.</p>
+        </div>
+        <div class="flex gap-2">
+          <button id="btn-cancel-join-req" type="button" class="flex-1 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700">요청 취소</button>
+          <button id="btn-pending-logout" type="button" class="flex-1 py-2.5 rounded-xl bg-slate-950 text-white text-xs font-bold">다른 계정 로그인</button>
+        </div>
+      </div>
+
       <form id="auth-onboard-step" class="hidden space-y-3.5" novalidate>
         <!-- Progress Header -->
         <div class="space-y-1.5">
@@ -800,7 +811,7 @@
             <ul class="space-y-1 text-[10.5px] text-slate-600 list-disc pl-4">
               <li><strong>수집 항목</strong> : 실명, 활동 별명, Google 계정 식별 정보(UID·이메일), 가입 설문 응답(가입 경로·기대 기능·목표 공부시간)</li>
               <li><strong>수집·이용 목적</strong> : 스터디원 본인 확인, 부정 이용·보안 사고 예방 및 대응, 서비스 운영 관리 (목적 외 사용 및 제3자 제공 없음)</li>
-              <li><strong>보유·이용 기간 및 파기</strong> : 회원 탈퇴 시 즉시 파기되며(<strong>내 프로필 → 계정 탈퇴</strong>에서 직접 탈퇴 가능), 보안 사고·분쟁 대응이 필요한 경우 해당 조치 완료 시까지 보관합니다.</li>
+              <li><strong>보유·이용 기간 및 파기</strong> : 회원 탈퇴 시 공부 시간·플래너·사진 등 활동 기록은 즉시 파기되며, 부정 이용 방지 및 보안 사고 대응을 위해 <strong>가입 시 제출한 본인 확인·설문 기록(실명·이메일·가입 설문)은 탈퇴 후 7일간(일주일) 별도 보관</strong> 후 파기합니다.</li>
               <li><strong>거부 권리 및 불이익</strong> : 개인정보 수집·이용 동의를 거부할 권리가 있으며, 필수 항목 동의 거부 시 서비스 가입 및 이용이 제한됩니다.</li>
             </ul>
             <label class="flex items-center gap-2 pt-1.5 border-t border-slate-200 font-bold text-slate-900 cursor-pointer">
@@ -810,7 +821,7 @@
           </div>
           <div class="grid grid-cols-3 gap-2 pt-1">
             <button type="button" data-onboard-prev="3" class="py-3 rounded-xl bg-slate-100 text-xs font-bold text-slate-700">← 이전</button>
-            <button type="submit" class="col-span-2 py-3 px-4 rounded-xl ed-btn-accent font-black text-sm">설정 완료하고 시작하기</button>
+            <button id="btn-onboard-submit" type="submit" class="col-span-2 py-3 px-4 rounded-xl ed-btn-accent font-black text-sm">설정 완료하고 시작하기</button>
           </div>
         </div>
 
@@ -1288,36 +1299,37 @@
                 <label class="block text-[11px] font-semibold text-slate-600 mb-1">대상 멤버 (관리자 전용)</label>
                 <select id="class-member-select" class="w-full rounded-xl border border-slate-300 px-2.5 py-1.5 text-xs bg-white"></select>
               </div>
-              <div class="grid grid-cols-2 gap-2">
-                <div>
-                  <label class="block text-[11px] font-semibold text-slate-600 mb-1">요일</label>
-                  <select id="class-day-select" class="w-full rounded-xl border border-slate-300 px-2.5 py-1.5 text-xs">
-                    <option value="1">월요일</option><option value="2">화요일</option><option value="3">수요일</option>
-                    <option value="4">목요일</option><option value="5">금요일</option><option value="6">토요일</option>
-                  </select>
-                </div>
-                <div>
-                  <label class="block text-[11px] font-semibold text-slate-600 mb-1">수업명</label>
-                  <input id="class-name-input" type="text" placeholder="예: 자료구조" class="w-full min-w-0 rounded-xl border border-slate-300 px-2.5 py-1.5 text-xs" required />
-                </div>
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-600 mb-1">수업명</label>
+                <input id="class-name-input" type="text" placeholder="예: 자료구조" class="w-full min-w-0 rounded-xl border border-slate-300 px-2.5 py-1.5 text-xs font-semibold" required />
               </div>
-              <div class="grid grid-cols-2 gap-2">
-                <input id="class-start-input" type="time" value="10:30" class="w-full rounded-xl border border-slate-300 px-2.5 py-1.5 text-xs" required />
-                <input id="class-end-input" type="time" value="12:15" class="w-full rounded-xl border border-slate-300 px-2.5 py-1.5 text-xs" required />
+              <div class="space-y-1.5">
+                <div class="flex items-center justify-between">
+                  <span class="text-[11px] font-semibold text-slate-600">수업 시간</span>
+                  <button id="btn-add-form-slot" type="button" class="text-[11px] font-bold text-indigo-600 hover:underline">+ 시간 추가</button>
+                </div>
+                <div id="class-slots-wrap" class="space-y-1.5"></div>
               </div>
               <button type="submit" class="w-full py-2 rounded-xl bg-white border border-slate-300 hover:bg-slate-50 text-slate-800 text-xs font-bold whitespace-nowrap">수업 등록</button>
             </form>
-            <div id="registered-classes-list" class="space-y-2 max-h-48 overflow-y-auto scrollbar-thin"></div>
+            <div id="registered-classes-list" class="space-y-2 max-h-72 overflow-y-auto scrollbar-thin pr-0.5"></div>
           </div>
         </div>
 
-        <div class="lg:col-span-7 order-1 lg:order-2 bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+        <div class="lg:col-span-7 order-1 lg:order-2 bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-sm">
           <div class="mb-3">
             <h3 id="weekly-grid-title" class="text-base font-bold text-slate-900">주간 시간표</h3>
             <p id="weekly-grid-desc" class="text-xs text-slate-500"></p>
           </div>
           <div id="weekly-exemption-grid" class="overflow-x-auto"></div>
         </div>
+      </div>
+      <div id="ultra-exempt-card" class="hidden bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-sm space-y-2.5">
+        <div>
+          <h4 class="text-sm font-black text-slate-900">⚡ 울트라집중모드 · 전용 면제 시간표</h4>
+          <p class="text-[11px] text-slate-500">등록한 대학 수업이 자동 면제되며, 칸을 눌러 직접 <strong>수업면제</strong>를 켜고 끌 수도 있습니다.</p>
+        </div>
+        <div id="ultra-exempt-table-wrap" class="overflow-x-auto"></div>
       </div>
     </div>
 
@@ -1502,6 +1514,21 @@
         <button id="admin-jump-reports-btn" type="button" class="px-3 py-1 rounded-lg bg-rose-600 text-white text-[11px] font-bold whitespace-nowrap shrink-0">신고 내역 보기</button>
       </div>
       <div class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-sm space-y-4">
+        <div class="space-y-2.5 bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <h4 class="text-xs sm:text-sm font-black text-slate-900">🚪 신규 가입 허용 모드</h4>
+            <span id="admin-signup-mode-badge" class="px-2.5 py-0.5 rounded-full text-[11px] font-black bg-emerald-100 text-emerald-800">모두 가입 허용</span>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <button type="button" data-set-signup-mode="open" class="py-2 px-3 rounded-xl border text-xs font-bold text-left transition bg-white border-slate-200 text-slate-700">🟢 모두 가입 허용<span class="block text-[10px] font-normal opacity-75">설문 작성 후 즉시 시작</span></button>
+            <button type="button" data-set-signup-mode="approval" class="py-2 px-3 rounded-xl border text-xs font-bold text-left transition bg-white border-slate-200 text-slate-700">🟡 승인 후 가입<span class="block text-[10px] font-normal opacity-75">요청서 확인 후 수락/거절</span></button>
+          </div>
+          <div id="admin-join-requests-wrap" class="pt-2 border-t border-slate-200 space-y-1.5 hidden">
+            <h5 class="text-xs font-black text-indigo-900">📩 가입 요청함</h5>
+            <div id="admin-join-requests-list" class="space-y-1.5"></div>
+          </div>
+        </div>
+
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <span class="px-2 py-0.5 rounded bg-indigo-100 text-indigo-800 text-[10px] font-bold">방장 전용 관리자</span>
@@ -1847,6 +1874,8 @@
         const t = todayStr();
         return {
           studyMode: 'strict',
+          signupMode: 'open',
+          joinRequests: [],
           members: [
             { id: 'm1', name: '나 (방장)', mode: 'strict', streak: 4, lp: 420, respectCount: 3, equippedTitle: '새벽 공기 도둑', lateNight: false, firstTime: '07:52', lastTime: null },
             { id: 'm2', name: '지훈', mode: 'strict', streak: 6, lp: 588, respectCount: 5, equippedTitle: '심연의 지배자', lateNight: true, firstTime: '07:48', lastTime: '23:50' },
@@ -2242,21 +2271,41 @@
         const ov = document.getElementById('auth-overlay');
         const loginStep = document.getElementById('auth-login-step');
         const onboardStep = document.getElementById('auth-onboard-step');
+        const pendingStep = document.getElementById('auth-pending-step');
         const errEl = document.getElementById('auth-error-msg');
         if (!ov) return;
         ov.classList.remove('hidden');
         ov.classList.add('flex');
+        [loginStep, onboardStep, pendingStep].forEach(el => el && el.classList.add('hidden'));
         if (step === 'onboard') {
-          loginStep.classList.add('hidden');
           onboardStep.classList.remove('hidden');
+          const sMode = shared.signupMode || 'open';
+          const sBtn = document.getElementById('btn-onboard-submit');
+          if (sBtn) sBtn.textContent = sMode === 'approval' ? '가입 요청서 보내기' : '설정 완료하고 시작하기';
           if (currentAuthUser) {
             document.getElementById('onboard-google-email').textContent = currentAuthUser.email || 'Google 계정 연결됨';
             const nickEl = document.getElementById('onboard-nickname-input');
             if (!nickEl.value) nickEl.value = (currentAuthUser.displayName || '').slice(0, 16);
           }
+        } else if (step === 'pending' || step === 'rejected') {
+          pendingStep.classList.remove('hidden');
+          const box = document.getElementById('auth-pending-box');
+          const pTitle = document.getElementById('auth-pending-title');
+          const pDesc = document.getElementById('auth-pending-desc');
+          const cancelBtn = document.getElementById('btn-cancel-join-req');
+          if (step === 'rejected') {
+            box.className = 'p-4 rounded-2xl bg-rose-50 border border-rose-200 text-xs text-rose-900 space-y-1.5';
+            pTitle.textContent = '❌ 가입 요청이 거절되었습니다';
+            pDesc.textContent = '관리자가 가입 요청을 승인하지 않았습니다. 요청을 취소하고 다시 신청하거나 다른 계정으로 로그인하세요.';
+            cancelBtn.textContent = '다시 신청하기';
+          } else {
+            box.className = 'p-4 rounded-2xl bg-amber-50 border border-amber-200 text-xs text-amber-950 space-y-1.5';
+            pTitle.textContent = '⏳ 가입 승인 대기 중입니다';
+            pDesc.textContent = '관리자에게 가입 요청서를 보냈습니다. 관리자가 수락하면 이 화면이 자동으로 열리며 바로 시작할 수 있습니다.';
+            cancelBtn.textContent = '요청 취소';
+          }
         } else {
           loginStep.classList.remove('hidden');
-          onboardStep.classList.add('hidden');
           if (errText) {
             errEl.textContent = errText;
             errEl.classList.remove('hidden');
@@ -2265,7 +2314,8 @@
           }
         }
         refreshStudyDialogs();
-        document.getElementById(step === 'onboard' ? 'onboard-nickname-input' : 'btn-google-login').focus({preventScroll:true});
+        if (step === 'onboard') document.getElementById('onboard-nickname-input').focus({preventScroll:true});
+        else if (step === 'login') document.getElementById('btn-google-login').focus({preventScroll:true});
       }
 
       let welcomePlayedForSession = false;
@@ -2408,7 +2458,13 @@
           }
           restoreFocusStateIfNeeded(found.id);
         } else if (dbLoadedOnce || !cloudConnected) {
-          showAuthOverlay('onboard');
+          const sMode = shared.signupMode || 'open';
+          const myReq = (shared.joinRequests || []).find(r => r.uid === user.uid);
+          if (myReq) {
+            showAuthOverlay(myReq.status === 'rejected' ? 'rejected' : 'pending');
+          } else {
+            showAuthOverlay('onboard');
+          }
         }
       }
 
@@ -2431,7 +2487,18 @@
         if ((user.email || '').toLowerCase() === ADMIN_EMAIL && !allPrivateRef) {
           allPrivateRef = database.ref('privateData');
           allPrivateRef.on('value', snap => {
-            allPrivateData = snap.val() || {};
+            const raw = snap.val() || {};
+            const today = todayStr();
+            Object.entries(raw).forEach(([uid, rec]) => {
+              if (rec && rec.status === 'withdrawn' && rec.withdrawnAt) {
+                const wDate = String(rec.withdrawnAt).split(' ')[0];
+                if (/^\d{4}-\d{2}-\d{2}$/.test(wDate) && daysDiff(wDate, today) >= 7) {
+                  database.ref('privateData/' + uid).remove().catch(() => {});
+                  delete raw[uid];
+                }
+              }
+            });
+            allPrivateData = raw;
             if (prefs.activeTab === 'admin') renderAdminTab();
           }, () => {});
         }
@@ -2468,6 +2535,8 @@
           const v = value || {};
           const remote = {
               studyMode: v.studyMode || 'strict',
+              signupMode: v.signupMode || 'open',
+              joinRequests: Array.isArray(v.joinRequests) ? v.joinRequests : (v.joinRequests ? Object.values(v.joinRequests) : []),
               members: (Array.isArray(v.members) ? v.members : Object.values(v.members || {})).filter(Boolean).map(m => { if (m.email) { const { email, ...rest } = m; return rest; } return m; }),
               classes: v.classes || {},
               manualExempt: v.manualExempt || {},
@@ -3027,12 +3096,14 @@
         const adminBtn = document.getElementById('admin-toggle-btn');
         if (adminBtn) adminBtn.classList.toggle('hidden', !isAdminUser());
         const repCnt = (shared.reports || []).length;
+        const pendingJoinCnt = (shared.joinRequests || []).filter(r => r.status === 'pending').length;
+        const adminAlertCnt = repCnt + pendingJoinCnt;
         if (adminBtn) {
-          adminBtn.innerHTML = `<span>🛡️ ${prefs.adminMode ? '관리자 모드 ON' : '관리자 모드'}</span>${repCnt > 0 && prefs.adminMode ? `<span class="px-1.5 py-0.5 rounded-full bg-rose-600 text-white text-[10px] font-black">${repCnt}</span>` : ''}`;
+          adminBtn.innerHTML = `<span>🛡️ ${prefs.adminMode ? '관리자 모드 ON' : '관리자 모드'}</span>${adminAlertCnt > 0 && prefs.adminMode ? `<span class="px-1.5 py-0.5 rounded-full bg-rose-600 text-white text-[10px] font-black">${adminAlertCnt}</span>` : ''}`;
         }
         const adminNav = document.getElementById('nav-tab-admin');
         if (adminNav) {
-          adminNav.innerHTML = repCnt > 0 ? `🛡️ 관리자 <span class="ml-0.5 px-1.5 py-0.2 rounded-full bg-rose-600 text-white text-[9px] font-black">${repCnt}</span>` : '🛡️ 관리자';
+          adminNav.innerHTML = adminAlertCnt > 0 ? `🛡️ 관리자 <span class="ml-0.5 px-1.5 py-0.2 rounded-full bg-rose-600 text-white text-[9px] font-black">${adminAlertCnt}</span>` : '🛡️ 관리자';
         }
         const repAlertBanner = document.getElementById('admin-report-alert-banner');
         const repAlertText = document.getElementById('admin-report-alert-text');
@@ -3833,8 +3904,33 @@
         const cls = (shared.classes && shared.classes[selId]) || [];
 
 
-        document.getElementById('registered-classes-list').innerHTML = cls.length
-          ? cls.map(c => `<div class="flex items-center justify-between gap-2 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs"><span class="min-w-0 truncate"><strong>[${days[c.day]}] ${escapeHtml(c.name)}</strong> <span class="text-slate-500">${c.start}~${c.end}</span></span><div class="flex items-center gap-2 shrink-0"><button type="button" data-add-time-class="${c.id}" class="text-emerald-600 font-bold whitespace-nowrap">+ 시간추가</button><button type="button" data-edit-class="${c.id}" class="text-indigo-600 font-bold whitespace-nowrap">수정</button><button type="button" data-del-class="${c.id}" class="text-rose-500 font-bold whitespace-nowrap">삭제</button></div></div>`).join('')
+        const groupedCls = [];
+        const grpMap = new Map();
+        cls.forEach(c => {
+          if (!grpMap.has(c.name)) {
+            const g = { name: c.name, items: [] };
+            grpMap.set(c.name, g);
+            groupedCls.push(g);
+          }
+          grpMap.get(c.name).items.push(c);
+        });
+        groupedCls.forEach(g => g.items.sort((a, b) => (Number(a.day) - Number(b.day)) || (toMins(a.start) - toMins(b.start))));
+        document.getElementById('registered-classes-list').innerHTML = groupedCls.length
+          ? groupedCls.map(g => `<div class="bg-slate-50 border border-slate-200 rounded-xl p-2.5 space-y-1.5 text-xs">
+              <div class="flex items-center justify-between gap-2">
+                <strong class="text-slate-900 truncate">${escapeHtml(g.name)}</strong>
+                <button type="button" data-add-slot-subject="${escapeHtml(g.name)}" class="text-[11px] font-bold text-emerald-600 hover:underline whitespace-nowrap shrink-0">+ 시간 추가</button>
+              </div>
+              <div class="space-y-1">
+                ${g.items.map(c => `<div class="flex items-center justify-between gap-2 bg-white border border-slate-200/80 rounded-lg px-2.5 py-1.5">
+                  <span class="text-slate-700 font-medium whitespace-nowrap"><strong>${days[c.day]}</strong> <span class="font-mono text-[11px] text-slate-500">${c.start}~${c.end}</span></span>
+                  <div class="flex items-center gap-2 shrink-0">
+                    <button type="button" data-edit-class="${c.id}" class="text-indigo-600 font-bold whitespace-nowrap">수정</button>
+                    <button type="button" data-del-class="${c.id}" class="text-rose-500 font-bold whitespace-nowrap">삭제</button>
+                  </div>
+                </div>`).join('')}
+              </div>
+            </div>`).join('')
           : '<p class="text-xs text-slate-400">등록된 수업이 없습니다.</p>';
 
         const showRussellGrid = tm && (getMemberMode(tm) === 'strict' || tm.pendingMode === 'strict');
@@ -3850,7 +3946,7 @@
         const startHour = Math.max(7, minStartH);
         const endHour = Math.min(22, maxEndH);
         const totalHours = Math.max(1, endHour - startHour);
-        const pxPerHour = 44;
+        const pxPerHour = 52;
         const totalHeight = totalHours * pxPerHour;
         const ETA_PALETTE = [
           { bg: '#fef3c7', border: '#f59e0b', text: '#78350f' },
@@ -3869,11 +3965,11 @@
         }
 
         let etaHtml = `<div class="rounded-xl border border-slate-200 overflow-hidden bg-white">
-          <div class="grid border-b border-slate-200 bg-slate-100 text-[11px] font-bold text-slate-600" style="grid-template-columns:44px repeat(${dayCols.length}, minmax(0, 1fr))">
-            <div class="py-1.5 text-center">시간</div>
+          <div class="grid border-b border-slate-200 bg-slate-100 text-[11px] font-bold text-slate-600" style="grid-template-columns:34px repeat(${dayCols.length}, minmax(0, 1fr))">
+            <div class="py-1.5 text-center">시</div>
             ${dayCols.map(d => `<div class="py-1.5 text-center border-l border-slate-200">${days[d]}</div>`).join('')}
           </div>
-          <div class="grid relative" style="grid-template-columns:44px repeat(${dayCols.length}, minmax(0, 1fr)); height:${totalHeight}px">
+          <div class="grid relative" style="grid-template-columns:34px repeat(${dayCols.length}, minmax(0, 1fr)); height:${totalHeight}px">
             <div class="relative border-r border-slate-200 bg-slate-50/70">
               ${Array.from({ length: totalHours }, (_, i) => `<div class="absolute left-0 right-0 text-center text-[10px] font-mono font-bold text-slate-400 border-t border-slate-100 first:border-t-0" style="top:${i * pxPerHour}px; height:${pxPerHour}px; padding-top:2px">${startHour + i}</div>`).join('')}
             </div>`;
@@ -3888,38 +3984,34 @@
             const eM = Math.min(endHour * 60, toMins(c.end));
             if (eM <= sM) continue;
             const topPx = ((sM - startHour * 60) / 60) * pxPerHour;
-            const heightPx = Math.max(22, ((eM - sM) / 60) * pxPerHour - 2);
+            const heightPx = Math.max(24, ((eM - sM) / 60) * pxPerHour - 2);
             const pal = getSubjectPalette(c.name);
-            etaHtml += `<div class="absolute left-0.5 right-0.5 rounded-lg px-1.5 py-1 overflow-hidden border shadow-sm flex flex-col justify-start" style="top:${topPx + 1}px; height:${heightPx}px; background:${pal.bg}; border-color:${pal.border}; color:${pal.text}" title="${escapeHtml(c.name)} (${c.start}~${c.end})">
-              <div class="text-[10px] font-black leading-tight line-clamp-2 break-keep">${escapeHtml(c.name)}</div>
-              ${heightPx >= 36 ? `<div class="text-[9px] font-mono opacity-80 mt-0.5 leading-none">${c.start}~${c.end}</div>` : ''}
-            </div>`;
+            etaHtml += `<button type="button" data-eta-edit="${c.id}" class="absolute left-0.5 right-0.5 rounded-lg px-1 py-1 border border-l-[3px] shadow-sm flex items-center justify-center text-center overflow-y-auto no-scrollbar hover:brightness-95 transition" style="top:${topPx + 1}px; height:${heightPx}px; background:${pal.bg}; border-color:${pal.border}; color:${pal.text}" title="${escapeHtml(c.name)} (${c.start}~${c.end}) · 클릭해 수정">
+              <span class="w-full text-[10px] sm:text-[11px] font-extrabold leading-[1.2] break-all">${escapeHtml(c.name)}</span>
+            </button>`;
           }
           etaHtml += `</div>`;
         }
         etaHtml += `</div></div>`;
+        document.getElementById('weekly-exemption-grid').innerHTML = etaHtml;
 
+        const ultraCard = document.getElementById('ultra-exempt-card');
+        const ultraWrap = document.getElementById('ultra-exempt-table-wrap');
+        ultraCard.classList.toggle('hidden', !showRussellGrid);
         if (showRussellGrid) {
-          let rHtml = `<div class="mt-5 pt-4 border-t border-slate-200 space-y-2">
-            <div>
-              <h4 class="text-sm font-black text-slate-900">⚡ 울트라집중모드 · 전용 면제 시간표</h4>
-              <p class="text-[11px] text-slate-500">등록한 대학 수업이 자동 면제되며, 칸을 눌러 직접 <strong>수업면제</strong>를 켜고 끌 수도 있습니다.</p>
-            </div>
-            <table class="w-full text-xs border-collapse"><thead><tr class="bg-slate-100 text-slate-600"><th class="p-2 text-left">교시</th>`;
+          let rHtml = `<table class="w-full text-xs border-collapse"><thead><tr class="bg-slate-100 text-slate-600"><th class="p-2 text-left">교시</th>`;
           for (let d = 1; d <= 6; d++) rHtml += `<th class="p-2 text-center">${days[d]}</th>`;
           rHtml += '</tr></thead><tbody>';
           for (const p of STUDY_PERIODS.slice(0, 8)) {
-            rHtml += `<tr class="border-b border-slate-100"><td class="p-2 font-semibold whitespace-nowrap">${p.label} <span class="text-[10px] text-slate-400 font-normal">${p.start}</span></td>`;
+            rHtml += `<tr class="border-b border-slate-100"><td class="px-2 py-1.5 font-semibold whitespace-nowrap"><span class="text-xs font-bold">${p.label}</span> <span class="text-[10px] text-slate-400 font-mono font-normal">${p.start}</span></td>`;
             for (let d = 1; d <= 6; d++) {
               const ex = getExemptPeriodIds(selId, d).has(p.id);
               rHtml += `<td class="p-1 text-center"><button type="button" data-toggle-exempt="${selId}|${d}|${p.id}" class="w-full py-1.5 rounded-lg text-[11px] font-bold border ${ex ? 'bg-sky-500 text-white border-sky-600' : 'bg-slate-50 text-slate-400 border-slate-200'}">${ex ? '면제' : '의무'}</button></td>`;
             }
             rHtml += '</tr>';
           }
-          rHtml += '</tbody></table></div>';
-          document.getElementById('weekly-exemption-grid').innerHTML = etaHtml + rHtml;
-        } else {
-          document.getElementById('weekly-exemption-grid').innerHTML = etaHtml;
+          rHtml += '</tbody></table>';
+          ultraWrap.innerHTML = rHtml;
         }
       }
 
@@ -4170,26 +4262,90 @@
           ? sugList.map(sg => `<div class="flex items-start justify-between gap-2 bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs"><div><span class="font-bold text-slate-900">${escapeHtml(sg.fromName)}</span> <span class="text-[10px] text-slate-400">${sg.date} ${sg.time}</span><p class="text-slate-700 mt-0.5">${escapeHtml(sg.text)}</p></div><button type="button" data-del-sug="${sg.id}" class="text-[10px] px-2 py-0.5 rounded bg-slate-200 text-slate-700 font-bold shrink-0">확인</button></div>`).join('')
           : '<p class="text-xs text-slate-400">들어온 건의사항이 없습니다.</p>';
 
+        // Signup mode buttons & Join requests inbox
+        const curSMode = shared.signupMode === 'approval' ? 'approval' : 'open';
+        const sBadge = document.getElementById('admin-signup-mode-badge');
+        if (sBadge) {
+          if (curSMode === 'open') { sBadge.textContent = '모두 가입 허용'; sBadge.className = 'px-2.5 py-0.5 rounded-full text-[11px] font-black bg-emerald-100 text-emerald-800'; }
+          else { sBadge.textContent = '승인 후 가입'; sBadge.className = 'px-2.5 py-0.5 rounded-full text-[11px] font-black bg-amber-100 text-amber-800'; }
+        }
+        document.querySelectorAll('[data-set-signup-mode]').forEach(btn => {
+          const active = btn.dataset.setSignupMode === curSMode;
+          btn.className = `py-2 px-3 rounded-xl border text-xs font-bold text-left transition ${active ? 'bg-slate-950 text-white border-slate-950 ring-2 ring-indigo-400' : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-100'}`;
+        });
+        const reqs = (shared.joinRequests || []).filter(r => r.status === 'pending');
+        const reqWrap = document.getElementById('admin-join-requests-wrap');
+        const reqList = document.getElementById('admin-join-requests-list');
+        if (reqWrap && reqList) {
+          reqWrap.classList.toggle('hidden', reqs.length === 0 && curSMode !== 'approval');
+          reqList.innerHTML = reqs.length
+            ? reqs.map(r => {
+                const pRec = (r.uid && allPrivateData[r.uid]) ? allPrivateData[r.uid] : {};
+                return `<div class="rounded-xl border border-indigo-200 bg-white p-2.5 text-xs space-y-1.5">
+                  <div class="flex items-center justify-between gap-2">
+                    <div class="flex items-center gap-1.5 min-w-0">
+                      <span class="px-2 py-0.5 rounded-md bg-slate-950 text-white text-[10px] font-black shrink-0">실명: ${escapeHtml(pRec.realName || '미확인')}</span>
+                      <span class="font-bold text-slate-900 truncate">${escapeHtml(r.nickname)}</span>
+                    </div>
+                    <span class="text-[10px] text-slate-400 shrink-0">${escapeHtml(r.requestedAt || '')}</span>
+                  </div>
+                  ${pRec.email ? `<div class="text-[10px] text-slate-500">이메일: ${escapeHtml(pRec.email)}</div>` : ''}
+                  <div class="flex flex-wrap gap-1 text-[10px] font-semibold">
+                    <span class="px-2 py-0.5 rounded-md bg-slate-50 border border-slate-200">경로: ${escapeHtml(r.source || '-')}</span>
+                    <span class="px-2 py-0.5 rounded-md bg-slate-50 border border-slate-200">기대: ${escapeHtml(r.feature || '-')}</span>
+                    <span class="px-2 py-0.5 rounded-md bg-slate-50 border border-slate-200">목표: ${escapeHtml(r.goalHours || '-')}시간</span>
+                  </div>
+                  <div class="flex justify-end gap-1.5 pt-0.5">
+                    <button type="button" data-reject-join="${escapeHtml(r.uid)}" class="px-2.5 py-1 rounded-lg bg-rose-50 text-rose-700 border border-rose-200 text-[11px] font-bold">거절</button>
+                    <button type="button" data-approve-join="${escapeHtml(r.uid)}" class="px-3 py-1 rounded-lg bg-emerald-600 text-white text-[11px] font-bold">수락</button>
+                  </div>
+                </div>`;
+              }).join('')
+            : '<p class="text-[11px] text-slate-400">대기 중인 가입 요청서가 없습니다.</p>';
+        }
+
         const obListEl = document.getElementById('admin-onboarding-list');
         if (obListEl) {
-          const obRows = (shared.members || []).map(m => {
+          const seenUids = new Set();
+          const obRows = [];
+          (shared.members || []).forEach(m => {
+            if (m.uid) seenUids.add(m.uid);
             const pRec = (m.uid && allPrivateData[m.uid]) ? allPrivateData[m.uid] : {};
             const realName = pRec.realName || m.realName || '';
             const survey = pRec.onboardingSurvey || m.onboardingSurvey || null;
-            return { m, realName, survey };
-          }).filter(item => item.realName || item.survey);
+            if (realName || survey) obRows.push({ uid: m.uid, name: m.name, email: pRec.email || '', realName, survey, withdrawn: false });
+          });
+          Object.entries(allPrivateData || {}).forEach(([uid, pRec]) => {
+            if (seenUids.has(uid) || !pRec) return;
+            if (pRec.realName || pRec.onboardingSurvey) {
+              obRows.push({
+                uid,
+                name: pRec.nickname || '탈퇴 회원',
+                email: pRec.email || '',
+                realName: pRec.realName || '',
+                survey: pRec.onboardingSurvey || null,
+                withdrawn: pRec.status === 'withdrawn' || !seenUids.has(uid),
+                withdrawnAt: pRec.withdrawnAt || ''
+              });
+            }
+          });
           obListEl.innerHTML = obRows.length
-            ? obRows.map(({ m, realName, survey }) => {
-                const sv = survey || {};
-                return `<div class="rounded-xl border border-slate-200 bg-slate-50 p-2.5 text-xs space-y-1.5">
+            ? obRows.map(item => {
+                const sv = item.survey || {};
+                return `<div class="rounded-xl border ${item.withdrawn ? 'border-rose-200 bg-rose-50/60' : 'border-slate-200 bg-slate-50'} p-2.5 text-xs space-y-1.5">
                   <div class="flex items-center justify-between gap-2">
-                    <div class="flex items-center gap-1.5 min-w-0">
-                      <span class="px-2 py-0.5 rounded-md bg-slate-950 text-white text-[10px] font-black shrink-0">실명: ${escapeHtml(realName || '미등록')}</span>
-                      <span class="font-bold text-slate-800 truncate">별명: ${escapeHtml(m.name)}</span>
+                    <div class="flex items-center gap-1.5 min-w-0 flex-wrap">
+                      <span class="px-2 py-0.5 rounded-md bg-slate-950 text-white text-[10px] font-black shrink-0">실명: ${escapeHtml(item.realName || '미등록')}</span>
+                      <span class="font-bold text-slate-800 truncate">별명: ${escapeHtml(item.name)}</span>
+                      ${item.withdrawn ? `<span class="px-1.5 py-0.5 rounded bg-rose-600 text-white text-[10px] font-black shrink-0">탈퇴${item.withdrawnAt ? ' (' + escapeHtml(item.withdrawnAt) + ')' : ''}</span>` : ''}
                     </div>
-                    ${sv.agreedAt ? `<span class="text-[10px] text-slate-400 shrink-0">${escapeHtml(sv.agreedAt)}</span>` : ''}
+                    <div class="flex items-center gap-2 shrink-0">
+                      ${sv.agreedAt ? `<span class="text-[10px] text-slate-400">${escapeHtml(sv.agreedAt)}</span>` : ''}
+                      ${item.withdrawn && item.uid ? `<button type="button" data-del-archive="${escapeHtml(item.uid)}" class="text-[10px] font-bold text-rose-600 hover:underline">보관 삭제</button>` : ''}
+                    </div>
                   </div>
-                  ${survey ? `<div class="flex flex-wrap gap-1">
+                  ${item.email ? `<div class="text-[10px] text-slate-500">이메일: ${escapeHtml(item.email)}</div>` : ''}
+                  ${item.survey ? `<div class="flex flex-wrap gap-1">
                     <span class="px-2 py-0.5 rounded-md bg-white border border-slate-200 text-[10px] font-semibold">경로: ${escapeHtml(sv.source || '-')}</span>
                     <span class="px-2 py-0.5 rounded-md bg-white border border-slate-200 text-[10px] font-semibold">기대: ${escapeHtml(sv.feature || '-')}</span>
                     <span class="px-2 py-0.5 rounded-md bg-white border border-slate-200 text-[10px] font-semibold">목표: ${escapeHtml(sv.goalHours || '-')}시간</span>
@@ -5250,13 +5406,76 @@
         if (m && nm) { m.name = nm; if (shared.photos) shared.photos.forEach(p => { if (p.memberId === mid) p.memberName = nm; }); if (shared.reports) shared.reports.forEach(r => { if (r.targetId === mid) r.targetName = nm; }); saveSharedData(); showToast('별명 저장됨', 'success'); renderAll(); renderMembersTab(); renderWeeklyReportCards(); }
       });
 
+      function makeSlotRowHtml(day = 1, start = '10:30', end = '12:00', removable = false) {
+        return `<div class="class-slot-row rounded-xl border border-slate-200 bg-slate-50/70 p-2 space-y-1.5 sm:space-y-0 sm:bg-transparent sm:border-0 sm:p-0 sm:grid sm:grid-cols-[84px_minmax(0,1fr)_minmax(0,1fr)_auto] sm:items-center sm:gap-1.5">
+          <div class="flex items-center justify-between gap-1.5 sm:contents">
+            <select class="slot-day w-24 sm:w-full rounded-xl border border-slate-300 bg-white px-2 py-1.5 text-xs font-semibold">
+              <option value="1" ${day==1?'selected':''}>월요일</option><option value="2" ${day==2?'selected':''}>화요일</option><option value="3" ${day==3?'selected':''}>수요일</option>
+              <option value="4" ${day==4?'selected':''}>목요일</option><option value="5" ${day==5?'selected':''}>금요일</option><option value="6" ${day==6?'selected':''}>토요일</option>
+            </select>
+            <button type="button" class="slot-remove sm:order-last px-2 py-1 text-slate-400 hover:text-rose-600 text-xs font-bold ${removable ? '' : 'invisible pointer-events-none'}" aria-label="시간 삭제">✕</button>
+          </div>
+          <div class="grid grid-cols-2 gap-1.5 sm:contents">
+            <input type="time" value="${start}" class="slot-start w-full min-w-0 rounded-xl border border-slate-300 bg-white px-2 py-1.5 text-xs" required />
+            <input type="time" value="${end}" class="slot-end w-full min-w-0 rounded-xl border border-slate-300 bg-white px-2 py-1.5 text-xs" required />
+          </div>
+        </div>`;
+      }
+      function resetFormSlots() {
+        const wrap = document.getElementById('class-slots-wrap');
+        if (wrap) wrap.innerHTML = makeSlotRowHtml(1, '10:30', '12:00', false);
+      }
+      function refreshSlotRemoveButtons() {
+        const rows = document.querySelectorAll('#class-slots-wrap .class-slot-row');
+        rows.forEach(r => {
+          const btn = r.querySelector('.slot-remove');
+          if (btn) btn.className = `slot-remove px-1.5 py-1 text-slate-400 hover:text-rose-600 text-xs font-bold ${rows.length > 1 ? '' : 'invisible pointer-events-none'}`;
+        });
+      }
+      resetFormSlots();
+      document.getElementById('btn-add-form-slot').addEventListener('click', () => {
+        const wrap = document.getElementById('class-slots-wrap');
+        const lastRow = wrap.querySelector('.class-slot-row:last-child');
+        const nextDay = lastRow ? Math.min(6, (Number(lastRow.querySelector('.slot-day').value) % 5) + 1) : 1;
+        const lastStart = lastRow ? lastRow.querySelector('.slot-start').value : '10:30';
+        const lastEnd = lastRow ? lastRow.querySelector('.slot-end').value : '12:00';
+        wrap.insertAdjacentHTML('beforeend', makeSlotRowHtml(nextDay, lastStart, lastEnd, true));
+        refreshSlotRemoveButtons();
+      });
+      document.getElementById('class-slots-wrap').addEventListener('click', e => {
+        const rm = e.target.closest('.slot-remove');
+        if (!rm) return;
+        const rows = document.querySelectorAll('#class-slots-wrap .class-slot-row');
+        if (rows.length > 1) {
+          rm.closest('.class-slot-row').remove();
+          refreshSlotRemoveButtons();
+        }
+      });
       document.getElementById('class-form').addEventListener('submit', e => {
         e.preventDefault();
-        const mid = document.getElementById('class-member-select').value, d = document.getElementById('class-day-select').value, n = document.getElementById('class-name-input').value.trim(), s = document.getElementById('class-start-input').value, en = document.getElementById('class-end-input').value;
-        if (!n || toMins(s) >= toMins(en)) { showToast('시간을 확인하세요.', 'warn'); return; }
+        const mid = document.getElementById('class-member-select').value;
+        const n = document.getElementById('class-name-input').value.trim();
+        if (!n) { showToast('수업명을 입력하세요.', 'warn'); return; }
+        const rows = Array.from(document.querySelectorAll('#class-slots-wrap .class-slot-row'));
+        const newSlots = [];
+        for (const r of rows) {
+          const d = Number(r.querySelector('.slot-day').value);
+          const s = r.querySelector('.slot-start').value;
+          const en = r.querySelector('.slot-end').value;
+          if (!s || !en || toMins(s) >= toMins(en)) { showToast('시작·종료 시각을 확인하세요.', 'warn'); return; }
+          newSlots.push({ day: d, start: s, end: en });
+        }
         if (!shared.classes) shared.classes = {}; if (!shared.classes[mid]) shared.classes[mid] = [];
-        shared.classes[mid].push({ id: 'c_' + Date.now(), day: Number(d), name: n, start: s, end: en });
-        saveSharedData(); document.getElementById('class-name-input').value = ''; showToast(`${n} 수업이 시간표에 추가되었습니다!`, 'success'); renderTimetableTab(); document.getElementById('weekly-exemption-grid').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        const baseTs = Date.now();
+        newSlots.forEach((sl, idx) => {
+          shared.classes[mid].push({ id: `c_${baseTs}_${idx}`, day: sl.day, name: n, start: sl.start, end: sl.end });
+        });
+        saveSharedData();
+        document.getElementById('class-name-input').value = '';
+        resetFormSlots();
+        showToast(`${n} (${newSlots.length}개 시간)이 시간표에 등록되었습니다!`, 'success');
+        renderTimetableTab();
+        document.getElementById('weekly-exemption-grid').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       });
       const CNU_EE_PRESET = [
         { day: 1, name: '물리학2', start: '10:30', end: '12:00' },
@@ -5287,16 +5506,50 @@
 
       document.getElementById('registered-classes-list').addEventListener('click', e => {
         const mid = document.getElementById('class-member-select').value;
-        const addTimeId = e.target.dataset.addTimeClass;
-        if (addTimeId && shared.classes && shared.classes[mid]) {
-          const cls = shared.classes[mid].find(c => c.id === addTimeId);
-          if (!cls) return;
-          document.getElementById('class-name-input').value = cls.name;
-          document.getElementById('class-start-input').value = cls.start;
-          document.getElementById('class-end-input').value = cls.end;
-          const daySel = document.getElementById('class-day-select');
-          daySel.focus();
-          showToast(`'${cls.name}' 과목명이 채워졌습니다. 요일과 시간만 바꿔 등록하세요!`, 'info');
+        const addSubjBtn = e.target.closest('[data-add-slot-subject]');
+        if (addSubjBtn) {
+          const subjName = addSubjBtn.dataset.addSlotSubject;
+          openModal(`'${subjName}' 시간 추가`, `
+            <form id="add-subj-slot-form" class="space-y-3 text-xs">
+              <p class="text-slate-500"><strong>${escapeHtml(subjName)}</strong> 과목에 새 요일·시간을 추가합니다.</p>
+              <div id="modal-subj-slots" class="space-y-2">
+                ${makeSlotRowHtml(1, '10:30', '12:00', false)}
+              </div>
+              <button type="button" id="btn-modal-more-slot" class="text-[11px] font-bold text-indigo-600 hover:underline">+ 시간 하나 더 추가</button>
+              <button type="submit" class="w-full py-2.5 rounded-xl bg-slate-950 text-white text-sm font-bold">저장하기</button>
+            </form>
+          `);
+          document.getElementById('btn-modal-more-slot').addEventListener('click', () => {
+            const box = document.getElementById('modal-subj-slots');
+            box.insertAdjacentHTML('beforeend', makeSlotRowHtml(3, '10:30', '12:00', true));
+          });
+          document.getElementById('modal-subj-slots').addEventListener('click', ev => {
+            const rm = ev.target.closest('.slot-remove');
+            if (rm && document.querySelectorAll('#modal-subj-slots .class-slot-row').length > 1) {
+              rm.closest('.class-slot-row').remove();
+            }
+          });
+          document.getElementById('add-subj-slot-form').addEventListener('submit', ev => {
+            ev.preventDefault();
+            const rows = Array.from(document.querySelectorAll('#modal-subj-slots .class-slot-row'));
+            const toAdd = [];
+            for (const r of rows) {
+              const d = Number(r.querySelector('.slot-day').value);
+              const s = r.querySelector('.slot-start').value;
+              const en = r.querySelector('.slot-end').value;
+              if (!s || !en || toMins(s) >= toMins(en)) { showToast('시작·종료 시각을 확인하세요.', 'warn'); return; }
+              toAdd.push({ day: d, start: s, end: en });
+            }
+            if (!shared.classes) shared.classes = {};
+            if (!shared.classes[mid]) shared.classes[mid] = [];
+            const baseTs = Date.now();
+            toAdd.forEach((sl, idx) => {
+              shared.classes[mid].push({ id: `c_${baseTs}_${idx}`, day: sl.day, name: subjName, start: sl.start, end: sl.end });
+            });
+            saveSharedData(); closeModal();
+            showToast(`'${subjName}'에 ${toAdd.length}개 시간이 추가되었습니다.`, 'success');
+            renderTimetableTab();
+          });
           return;
         }
         const editId = e.target.dataset.editClass;
@@ -5350,6 +5603,12 @@
         if (shared.classes && shared.classes[mid]) { shared.classes[mid] = shared.classes[mid].filter(c => c.id !== id); saveSharedData(); renderTimetableTab(); }
       });
       document.getElementById('weekly-exemption-grid').addEventListener('click', e => {
+        const b = e.target.closest('[data-eta-edit]');
+        if (!b) return;
+        const editBtn = document.querySelector(`#registered-classes-list [data-edit-class="${b.dataset.etaEdit}"]`);
+        if (editBtn) editBtn.click();
+      });
+      document.getElementById('ultra-exempt-table-wrap').addEventListener('click', e => {
         const b = e.target.closest('[data-toggle-exempt]'); if (!b) return;
         const [mid, d, pid] = b.dataset.toggleExempt.split('|');
         if (!shared.manualExempt) shared.manualExempt = {}; if (!shared.manualExempt[mid]) shared.manualExempt[mid] = {}; if (!shared.manualExempt[mid][d]) shared.manualExempt[mid][d] = {};
@@ -6167,22 +6426,48 @@
         if (!dbRef || !cloudConnected || cloudLinkLive === false) { showToast('연결된 뒤에 다시 시작하기를 눌러 주세요.', 'warn'); return; }
         const button = e.currentTarget.querySelector('button[type="submit"]');
         const onboardingSurvey = { source, feature, goalHours: Number(goalHours), agreedAt: `${todayStr()} ${getNowParts().hhmm}` };
+        const sMode = shared.signupMode === 'approval' ? 'approval' : 'open';
         const newMember = {
           id:'m_' + user.uid.slice(0,8) + '_' + Date.now(), uid:user.uid, activeSessionId:SESSION_ID,
           name:nickname, avatarUrl:user.photoURL || '', mode:'free', inStudy:false,
           streak:0, lp:0, respectCount:0, equippedTitle:'', lateNight:false, firstTime:null, lastTime:null
         };
-        pendingFirstJoinWelcome = { realName, nickname };
+        if (sMode === 'open') pendingFirstJoinWelcome = { realName, nickname };
         onboardingBusy = true;
         button.disabled = true;
-        button.textContent = '기록 준비 중…';
+        button.textContent = sMode === 'approval' ? '요청서 전송 중…' : '기록 준비 중…';
         try {
           await firebase.database().ref('privateData/' + user.uid).set({
             realName,
             nickname,
+            email: user.email || '',
             onboardingSurvey,
+            status: sMode === 'approval' ? 'pending' : 'active',
             motemote: {}
           });
+          if (sMode === 'approval') {
+            const reqObj = {
+              uid: user.uid,
+              nickname,
+              avatarUrl: user.photoURL || '',
+              source,
+              feature,
+              goalHours: Number(goalHours),
+              requestedAt: `${todayStr()} ${getNowParts().hhmm}`,
+              status: 'pending'
+            };
+            await dbRef.child('joinRequests').transaction(cur => {
+              const list = (Array.isArray(cur) ? cur : Object.values(cur || {})).filter(Boolean).filter(r => r.uid !== user.uid);
+              list.push(reqObj);
+              return list;
+            }, undefined, false);
+            if (!shared.joinRequests) shared.joinRequests = [];
+            shared.joinRequests = shared.joinRequests.filter(r => r.uid !== user.uid);
+            shared.joinRequests.push(reqObj);
+            showAuthOverlay('pending');
+            showToast('관리자에게 가입 요청서를 보냈습니다!', 'success');
+            return;
+          }
           const result = await dbRef.child('members').transaction(cur => {
             const members = (Array.isArray(cur) ? cur : Object.values(cur || {})).filter(Boolean);
             if (!members.some(m => m.uid === user.uid)) members.push(newMember);
@@ -6209,15 +6494,94 @@
         } finally {
           onboardingBusy = false;
           button.disabled = false;
-          button.textContent = '설정 완료하고 시작하기';
+          button.textContent = (shared.signupMode === 'approval') ? '가입 요청서 보내기' : '설정 완료하고 시작하기';
         }
       });
 
-      document.getElementById('btn-onboard-logout').addEventListener('click', () => {
+      function signOutToLogin() {
         if (typeof firebase !== 'undefined' && typeof firebase.auth === 'function') {
           firebase.auth().signOut().catch(() => {});
         }
         showAuthOverlay('login');
+      }
+      document.getElementById('btn-onboard-logout').addEventListener('click', signOutToLogin);
+      document.getElementById('btn-pending-logout')?.addEventListener('click', signOutToLogin);
+      document.getElementById('btn-cancel-join-req')?.addEventListener('click', async () => {
+        if (!currentAuthUser || !dbRef) return;
+        const uid = currentAuthUser.uid;
+        try {
+          await dbRef.child('joinRequests').transaction(cur => {
+            return (Array.isArray(cur) ? cur : Object.values(cur || {})).filter(Boolean).filter(r => r.uid !== uid);
+          }, undefined, false);
+          shared.joinRequests = (shared.joinRequests || []).filter(r => r.uid !== uid);
+          showAuthOverlay('onboard');
+        } catch (e) { showToast('요청 취소 중 오류가 발생했습니다.', 'error'); }
+      });
+
+      document.querySelectorAll('[data-set-signup-mode]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          shared.signupMode = btn.dataset.setSignupMode;
+          saveSharedData();
+          const labels = { open: '모두 가입 허용', approval: '승인 후 가입' };
+          showToast(`가입 모드가 '${labels[shared.signupMode]}'으로 변경되었습니다.`, 'success');
+          renderAdminTab();
+        });
+      });
+
+      document.getElementById('admin-join-requests-list')?.addEventListener('click', async e => {
+        const appBtn = e.target.closest('[data-approve-join]');
+        if (appBtn) {
+          const uid = appBtn.dataset.approveJoin;
+          const req = (shared.joinRequests || []).find(r => r.uid === uid);
+          if (!req) return;
+          if (!shared.members.some(m => m.uid === uid)) {
+            shared.members.push({
+              id: 'm_' + uid.slice(0, 8) + '_' + Date.now(),
+              uid,
+              name: req.nickname,
+              avatarUrl: req.avatarUrl || '',
+              mode: 'free',
+              inStudy: false,
+              streak: 0, lp: 0, respectCount: 0, equippedTitle: '', lateNight: false, firstTime: null, lastTime: null
+            });
+          }
+          shared.joinRequests = (shared.joinRequests || []).filter(r => r.uid !== uid);
+          if (typeof firebase !== 'undefined') {
+            firebase.database().ref('privateData/' + uid).update({ status: 'active' }).catch(() => {});
+          }
+          saveSharedData();
+          showToast(`${req.nickname}님의 가입 요청을 수락했습니다!`, 'success');
+          renderAdminTab();
+          return;
+        }
+        const rejBtn = e.target.closest('[data-reject-join]');
+        if (rejBtn) {
+          const uid = rejBtn.dataset.rejectJoin;
+          const req = (shared.joinRequests || []).find(r => r.uid === uid);
+          if (!req) return;
+          req.status = 'rejected';
+          if (typeof firebase !== 'undefined') {
+            firebase.database().ref('privateData/' + uid).update({ status: 'rejected' }).catch(() => {});
+          }
+          saveSharedData();
+          showToast(`${req.nickname}님의 가입 요청을 거절했습니다.`, 'info');
+          renderAdminTab();
+        }
+      });
+
+      document.getElementById('admin-onboarding-list')?.addEventListener('click', async e => {
+        const delBtn = e.target.closest('[data-del-archive]');
+        if (!delBtn) return;
+        const uid = delBtn.dataset.delArchive;
+        if (!uid || typeof firebase === 'undefined') return;
+        try {
+          await firebase.database().ref('privateData/' + uid).remove();
+          delete allPrivateData[uid];
+          showToast('탈퇴 회원의 보관 기록을 영구 삭제했습니다.', 'info');
+          renderAdminTab();
+        } catch (err) {
+          showToast('보관 기록 삭제에 실패했습니다.', 'error');
+        }
       });
 
       function openPrivacyPolicyModal() {
@@ -6238,7 +6602,7 @@
             </div>
             <div class="space-y-1">
               <p class="font-black text-slate-900">4. 보유 및 이용 기간</p>
-              <p>회원 탈퇴 또는 관리자 삭제 시 지체 없이 파기합니다. (단, 보안 사고·분쟁 대응이 필요한 경우 해당 조치 완료 시까지 보관)</p>
+              <p>회원 탈퇴 시 공부 시간·플래너·출석·사진 등 서비스 이용 기록은 즉시 파기합니다. 단, 부정 이용 방지 및 보안 사고·분쟁 대응을 위해 <strong>가입 시 제출한 실명·이메일·가입 설문 기록은 탈퇴 후 7일간(일주일) 관리자 전용 보관함에 별도 보존</strong> 후 파기합니다.</p>
             </div>
             <div class="space-y-1">
               <p class="font-black text-slate-900">5. 이용자의 권리 (직접 탈퇴 및 삭제 요청)</p>
@@ -6301,7 +6665,15 @@
           try {
             if (focusInterval) closeFocusOverlay(true);
             if (uid && typeof firebase !== 'undefined') {
-              try { await firebase.database().ref('privateData/' + uid).remove(); } catch (e) {}
+              try {
+                await firebase.database().ref('privateData/' + uid).update({
+                  status: 'withdrawn',
+                  withdrawnAt: `${todayStr()} ${getNowParts().hhmm}`,
+                  nickname: me.name || myPrivateData.nickname || '',
+                  email: (currentAuthUser && currentAuthUser.email) || myPrivateData.email || '',
+                  motemote: null
+                });
+              } catch (e) {}
             }
             shared.members = (shared.members || []).filter(m => m.id !== mid);
             ['classes', 'manualExempt', 'customBadges', 'memberChallenges', 'praises', 'directMessages', 'lpHistory', 'promoHistory', 'respectLpRewarded'].forEach(k => {
