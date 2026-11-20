@@ -1051,65 +1051,65 @@
     /* Applied tier theme polish (scales up with tier, while keeping Bronze & Gold genuinely classy) */
     body[data-theme="bronze"] .ed-btn-accent:not(#btn-checkin):not(#btn-google-login) {background:linear-gradient(135deg,#9a4e26 0%,#c77d50 100%);border-color:#7c3a17}
     /* Tier Themes: Remove Grid Pattern & Add 3D Metallic Raised Plaque + Richer Aura */
-    body:is([data-theme="iron"],[data-theme="bronze"],[data-theme="silver"],[data-theme="gold"],[data-theme="platinum"],[data-theme="emerald"],[data-theme="diamond"],[data-theme="master"],[data-theme="grandmaster"],[data-theme="challenger"]) #main-live-banner {
+    body:is([data-theme="iron"],[data-theme="bronze"],[data-theme="silver"],[data-theme="gold"],[data-theme="platinum"],[data-theme="emerald"],[data-theme="diamond"],[data-theme="master"],[data-theme="grandmaster"],[data-theme="challenger"]) :is(#main-live-banner, :where(#focus-overlay[data-focus-theme="home"]) .focus-home-scene) {
       transform: translateY(-2px);
     }
-    body:is([data-theme="iron"],[data-theme="bronze"],[data-theme="silver"],[data-theme="gold"],[data-theme="platinum"],[data-theme="emerald"],[data-theme="diamond"],[data-theme="master"],[data-theme="grandmaster"],[data-theme="challenger"]) #main-live-banner::before {
+    body:is([data-theme="iron"],[data-theme="bronze"],[data-theme="silver"],[data-theme="gold"],[data-theme="platinum"],[data-theme="emerald"],[data-theme="diamond"],[data-theme="master"],[data-theme="grandmaster"],[data-theme="challenger"]) :is(#main-live-banner, :where(#focus-overlay[data-focus-theme="home"]) .focus-home-scene)::before {
       background-image: none;
       mask-image: none; -webkit-mask-image: none;
       background: linear-gradient(126deg, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0.03) 34%, transparent 56%, rgba(255,255,255,0.08) 82%, transparent 100%);
       opacity: 1;
     }
-    body:is([data-theme="diamond"],[data-theme="master"],[data-theme="grandmaster"],[data-theme="challenger"]) #main-live-banner::after {
+    body:is([data-theme="diamond"],[data-theme="master"],[data-theme="grandmaster"],[data-theme="challenger"]) :is(#main-live-banner, :where(#focus-overlay[data-focus-theme="home"]) .focus-home-scene)::after {
       content: ''; position: absolute; top: 0; bottom: 0; left: 0; width: 42%; pointer-events: none; z-index: -1;
       background: linear-gradient(90deg, transparent, rgba(255,255,255,0.16), transparent);
       animation: flameShimmer 4.2s ease-in-out infinite;
     }
-    body[data-theme="iron"] #main-live-banner {
+    body[data-theme="iron"] :is(#main-live-banner, :where(#focus-overlay[data-focus-theme="home"]) .focus-home-scene) {
       border-color: #94a3b899 !important;
       box-shadow: inset 0 1.5px 0 rgba(255,255,255,0.34), inset 0 -2px 0 rgba(0,0,0,0.42), 0 14px 32px rgba(51,65,85,0.34), 0 0 18px rgba(148,163,184,0.16) !important;
     }
-    body[data-theme="bronze"] #main-live-banner {
+    body[data-theme="bronze"] :is(#main-live-banner, :where(#focus-overlay[data-focus-theme="home"]) .focus-home-scene) {
       border-color: #e09f74b8 !important;
       box-shadow: inset 0 1.5px 0 rgba(255,228,204,0.4), inset 0 -2px 0 rgba(0,0,0,0.42), 0 16px 36px rgba(124,58,23,0.36), 0 0 22px rgba(217,119,6,0.2) !important;
     }
     body[data-theme="silver"] .ed-btn-accent:not(#btn-checkin):not(#btn-google-login) {background:linear-gradient(135deg,#475c7a 0%,#6c82a3 100%);border-color:#3a4b63}
-    body[data-theme="silver"] #main-live-banner {
+    body[data-theme="silver"] :is(#main-live-banner, :where(#focus-overlay[data-focus-theme="home"]) .focus-home-scene) {
       border-color: #e2e8f0b8 !important;
       box-shadow: inset 0 1.5px 0 rgba(255,255,255,0.48), inset 0 -2px 0 rgba(0,0,0,0.38), 0 16px 36px rgba(51,65,85,0.36), 0 0 24px rgba(203,213,225,0.24) !important;
     }
     body[data-theme="gold"] .ed-btn-accent:not(#btn-checkin):not(#btn-google-login) {background:linear-gradient(135deg,#9a6906 0%,#d99b16 55%,#b87d09 100%);border-color:#825704;box-shadow:0 4px 14px rgba(217,155,22,.28)}
-    body[data-theme="gold"] #main-live-banner {
+    body[data-theme="gold"] :is(#main-live-banner, :where(#focus-overlay[data-focus-theme="home"]) .focus-home-scene) {
       border-color: #fde047c8 !important;
       box-shadow: inset 0 1.5px 0 rgba(254,249,195,0.52), inset 0 -2px 0 rgba(0,0,0,0.4), 0 18px 40px rgba(161,98,7,0.4), 0 0 28px rgba(250,204,21,0.3) !important;
     }
     body[data-theme="platinum"] .ed-btn-accent:not(#btn-checkin):not(#btn-google-login) {background:linear-gradient(135deg,#0f766e 0%,#14b8a6 100%);box-shadow:0 4px 14px rgba(20,184,166,.28)}
-    body[data-theme="platinum"] #main-live-banner {
+    body[data-theme="platinum"] :is(#main-live-banner, :where(#focus-overlay[data-focus-theme="home"]) .focus-home-scene) {
       border-color: #5eead4c0 !important;
       box-shadow: inset 0 1.5px 0 rgba(204,251,241,0.48), inset 0 -2px 0 rgba(0,0,0,0.4), 0 18px 40px rgba(15,118,110,0.42), 0 0 30px rgba(45,212,191,0.3) !important;
     }
     body[data-theme="emerald"] .ed-btn-accent:not(#btn-checkin):not(#btn-google-login) {background:linear-gradient(135deg,#0d6b47 0%,#10b981 100%);box-shadow:0 4px 16px rgba(16,185,129,.3)}
-    body[data-theme="emerald"] #main-live-banner {
+    body[data-theme="emerald"] :is(#main-live-banner, :where(#focus-overlay[data-focus-theme="home"]) .focus-home-scene) {
       border-color: #6ee7b7c4 !important;
       box-shadow: inset 0 1.5px 0 rgba(209,250,229,0.48), inset 0 -2px 0 rgba(0,0,0,0.4), 0 18px 42px rgba(13,107,71,0.44), 0 0 32px rgba(16,185,129,0.32) !important;
     }
     body[data-theme="diamond"] .ed-btn-accent:not(#btn-checkin):not(#btn-google-login) {background:linear-gradient(135deg,#1864ab 0%,#38bdf8 52%,#4f46e5 100%);box-shadow:0 4px 16px rgba(56,189,248,.34)}
-    body[data-theme="diamond"] #main-live-banner {
+    body[data-theme="diamond"] :is(#main-live-banner, :where(#focus-overlay[data-focus-theme="home"]) .focus-home-scene) {
       border-color: #7dd3fcd8 !important;
       box-shadow: inset 0 1.5px 0 rgba(224,242,254,0.55), inset 0 -2px 0 rgba(0,0,0,0.42), 0 20px 46px rgba(24,100,171,0.48), 0 0 36px rgba(56,189,248,0.38) !important;
     }
     body[data-theme="master"] .ed-btn-accent:not(#btn-checkin):not(#btn-google-login) {background:linear-gradient(135deg,#5b21b6 0%,#9333ea 55%,#7c3aed 100%);box-shadow:0 4px 18px rgba(147,51,234,.36)}
-    body[data-theme="master"] #main-live-banner {
+    body[data-theme="master"] :is(#main-live-banner, :where(#focus-overlay[data-focus-theme="home"]) .focus-home-scene) {
       border-color: #d8b4fed8 !important;
       box-shadow: inset 0 1.5px 0 rgba(243,232,255,0.52), inset 0 -2px 0 rgba(0,0,0,0.44), 0 20px 48px rgba(91,33,182,0.5), 0 0 40px rgba(168,85,247,0.42) !important;
     }
     body[data-theme="grandmaster"] .ed-btn-accent:not(#btn-checkin):not(#btn-google-login) {background:linear-gradient(135deg,#9f1239 0%,#e11d48 55%,#f59e0b 100%);box-shadow:0 4px 18px rgba(225,29,72,.38)}
-    body[data-theme="grandmaster"] #main-live-banner {
+    body[data-theme="grandmaster"] :is(#main-live-banner, :where(#focus-overlay[data-focus-theme="home"]) .focus-home-scene) {
       border-color: #fda4afde !important;
       box-shadow: inset 0 1.5px 0 rgba(254,226,226,0.52), inset 0 -2px 0 rgba(0,0,0,0.44), 0 22px 50px rgba(159,18,57,0.54), 0 0 44px rgba(244,63,94,0.45) !important;
     }
     body[data-theme="challenger"] .ed-btn-accent:not(#btn-checkin):not(#btn-google-login) {background:linear-gradient(135deg,#1d4ed8 0%,#0284c7 50%,#d97706 100%);box-shadow:0 4px 20px rgba(59,130,246,.36),0 0 12px rgba(245,158,11,.28)}
-    body[data-theme="challenger"] #main-live-banner {
+    body[data-theme="challenger"] :is(#main-live-banner, :where(#focus-overlay[data-focus-theme="home"]) .focus-home-scene) {
       background-image: var(--study-hero-image,linear-gradient(122deg,#091533 0%,#1d4ed8 55%,#0e7490 82%,#92620a 100%)) !important;
       border-color: #fde047e0 !important;
       box-shadow: inset 0 1.5px 0 rgba(255,255,255,0.6), inset 0 -2px 0 rgba(0,0,0,0.45), 0 24px 54px rgba(29,78,216,0.54), 0 0 48px rgba(250,204,21,0.42), 0 0 24px rgba(56,189,248,0.34) !important;
@@ -1129,7 +1129,7 @@
     #study-main {padding-block:clamp(1rem,3vw,2.25rem) 4rem}
     #home-top-banners {margin-bottom:0}
     #main-live-banner {display:grid;position:relative;isolation:isolate;overflow:hidden;grid-template-columns:minmax(0,1fr) auto;gap:1.5rem;align-items:center;padding:clamp(1.25rem,3vw,2.15rem);min-height:190px;border-radius:24px;background:linear-gradient(118deg,var(--hero-deep) 0%,var(--hero) 75%)!important;background-image:var(--study-hero-image,linear-gradient(118deg,var(--hero-deep),var(--hero)))!important;color:var(--hero-text)!important;border:1px solid #668bd472!important;box-shadow:0 14px 32px #112b5922!important}
-    #main-live-banner::before {content:'';pointer-events:none;z-index:-1;position:absolute;inset:0;background-image:linear-gradient(#9cc4fe23 1px,transparent 1px),linear-gradient(90deg,#9cc4fe23 1px,transparent 1px);background-size:22px 22px;mask-image:linear-gradient(95deg,transparent 33%,#000);opacity:.57}
+    :is(#main-live-banner, :where(#focus-overlay[data-focus-theme="home"]) .focus-home-scene)::before {content:'';pointer-events:none;z-index:-1;position:absolute;inset:0;background-image:linear-gradient(#9cc4fe23 1px,transparent 1px),linear-gradient(90deg,#9cc4fe23 1px,transparent 1px);background-size:22px 22px;mask-image:linear-gradient(95deg,transparent 33%,#000);opacity:.57}
     .study-kicker {display:flex;align-items:center;gap:.55rem;color:var(--hero-muted);font-size:.71rem;font-weight:750;letter-spacing:.12em;margin-bottom:.55rem}
     .study-kicker::before {content:'';width:1.5rem;height:2px;background:var(--accent);border-radius:2px}
     #live-period-title {font-size:clamp(1.3rem,3.2vw,2.15rem);letter-spacing:-.045em;line-height:1.35;margin-top:.55rem;overflow-wrap:anywhere;word-break:keep-all}
@@ -1201,7 +1201,39 @@
       --focus-subtle: #a6afc1;
       --focus-divider: #2e374b;
     }
+    .focus-home-scene { display:none; }
+    body #focus-overlay[data-focus-theme="home"] {
+      --focus-bg: var(--hero-deep);
+      --focus-fg: var(--hero-text);
+      --focus-subtle: var(--hero-muted);
+      --focus-divider: color-mix(in srgb, var(--hero-text) 30%, transparent);
+    }
+    #focus-overlay[data-focus-theme="home"] .focus-home-scene {
+      display:block; position:fixed; inset:0; z-index:0; isolation:isolate; overflow:hidden;
+      background:linear-gradient(118deg,var(--hero-deep),var(--hero));
+      border:1px solid var(--focus-divider); pointer-events:none;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      #focus-overlay[data-focus-theme="home"] .focus-home-scene::after {animation:none}
+    }
+    .focus-theme-switch { display:flex; align-self:flex-end; gap:2px; border:1px solid var(--focus-divider); border-radius:9px; padding:2px; }
+    .focus-theme-switch button { min-height:34px; padding:.35rem .65rem; font-size:.72rem; color:var(--focus-subtle); border-radius:6px; font-weight:700 }
+    .focus-theme-switch button[aria-pressed="true"] { color:var(--focus-fg); background:color-mix(in srgb,var(--focus-fg) 10%,transparent); }
+    #focus-rest-label,#focus-rest-note {color:var(--focus-subtle); font-size:clamp(.7rem,2.2vw,.85rem);font-variant-numeric:tabular-nums}
+    #focus-rest-note {min-height:1.35em;line-height:1.45}
+    #focus-overlay[data-resting="true"][data-rest-empty="true"] #focus-rest-label {font-weight:800}
+    #header-more-menu [data-just-unlocked] {outline:2px solid var(--focus-ring);outline-offset:3px;z-index:1}
+    @media (prefers-reduced-motion: no-preference) {
+      #header-more-menu [data-just-unlocked] {animation:tierSwatchUnlock 1.2s var(--ios-ease) both}
+    }
+    @keyframes tierSwatchUnlock {
+      0% { transform:scale(.85); filter:grayscale(.8) brightness(.75) }
+      38% { transform:scale(1.25); filter:brightness(1.55); box-shadow:0 0 22px var(--unlock-light) }
+      100% { transform:scale(1); filter:none }
+    }
     .focus-shell {
+      position:relative;
+      z-index:1;
       display: flex;
       flex-direction: column;
       width: 100%;
@@ -1685,11 +1717,18 @@
 
   <!-- Fullscreen Focus Stopwatch Overlay -->
   <div id="focus-overlay" role="dialog" aria-modal="true" aria-label="집중 스톱워치" tabindex="-1" class="fixed inset-0 z-50 hidden flex-col text-center overflow-y-auto">
+    <div class="focus-home-scene" aria-hidden="true"></div>
     <div class="focus-shell">
+      <div class="focus-theme-switch" id="focus-theme-switch" role="group" aria-label="타이머 화면 테마">
+        <button type="button" data-focus-theme-choice="plain" aria-pressed="true">기본</button>
+        <button type="button" data-focus-theme-choice="home" aria-pressed="false">홈 테마</button>
+      </div>
       <section class="focus-screen" id="focus-panel-timer" aria-labelledby="focus-view-timer">
         <div class="focus-time-stage">
+          <p id="focus-rest-label" class="hidden">남은 휴식</p>
           <div id="focus-timer-display">00:00:00</div>
           <p id="focus-today-total">오늘 누적 00:00:00</p>
+          <p id="focus-rest-note"></p>
         </div>
         <div class="focus-actions">
           <button id="focus-pause-btn" type="button">잠시 쉬기</button>
@@ -2481,7 +2520,7 @@
             <ul class="space-y-2.5 text-slate-700">
               <li class="space-y-0.5">
                 <div class="font-black text-slate-900">⏱️ 집중 스톱워치</div>
-                <p><code>00:00</code>부터 측정하며, 휴식이 10분을 넘기면 연속 집중만 초기화되고 누적 시간은 유지됩니다. <strong>휴식 중</strong>에는 미니 바로 축소해 다른 탭을 볼 수 있습니다.</p>
+                <p><code>00:00</code>부터 측정하며, 휴식 버튼을 누르면 10분 카운트다운이 시작됩니다. 재개 후 10분 연속 공부하면 휴식 시간이 다시 10분으로 충전됩니다. 그 전에 쉬면 남은 시간부터 이어지고, 휴식 시간이 끝난 뒤 공부를 재개하면 연속 집중이 새로 시작됩니다. <strong>휴식 중</strong>에는 미니 바로 축소해 다른 탭을 볼 수 있습니다.</p>
                 <p>오늘 누적 공부 시간은 매일 <strong>오전 5시(한국 시간)</strong>에 0분부터 다시 쌓입니다. 오전 5시를 걸쳐 공부하면 이전과 새 공부일에 각각 기록되고 스톱워치는 계속 흐릅니다. 타이머 화면의 스터디 탭에서는 공부 중인 부원을, 공부자극 탭에서는 짧은 문구를 볼 수 있습니다.</p>
               </li>
               <li class="space-y-0.5">
@@ -4621,12 +4660,12 @@
           guideBtn.classList.toggle('ring-2', showHint);
           guideBtn.classList.toggle('ring-rose-400', showHint);
         }
-        const myLpNow = meHdr ? (Number(meHdr.lp) || 0) : 0;
+        const myTierIndex = meHdr ? getMemberTier(meHdr).idx : 0;
         const activeThemeKey = prefs.theme || 'blue';
         const activeThemeLabelEl = document.getElementById('active-theme-label');
         document.querySelectorAll('[data-set-theme]').forEach(btn => {
-          const minLp = Number(btn.dataset.minLp || 0);
-          const unlocked = prefs.adminMode || myLpNow >= minLp;
+          const themeTier = LOL_TIERS.findIndex(tier => tier.name === btn.dataset.tierName);
+          const unlocked = prefs.adminMode || themeTier <= myTierIndex || btn.dataset.setTheme === activeThemeKey;
           btn.dataset.locked = unlocked ? 'false' : 'true';
           btn.style.opacity = '';
           const isCur = btn.dataset.setTheme === activeThemeKey;
@@ -8025,7 +8064,7 @@
         btn.addEventListener('click', ev => {
           if (btn.dataset.locked === 'true') {
             ev.stopPropagation();
-            showToast(`🔒 ${btn.dataset.tierName || ''} 티어 (${btn.dataset.minLp} LP) 달성 시 해금됩니다!`, 'warn');
+            showToast(`🔒 ${btn.dataset.tierName} 티어에 도달하면 열려요.`, 'warn');
             return;
           }
           prefs.theme = btn.dataset.setTheme;
@@ -8041,6 +8080,8 @@
 
 
       // Fullscreen Focus Stopwatch Logic (Counts up from 00:00)
+      const FOCUS_REST_LIMIT_MS = 10 * 60 * 1000;
+      let focusRestBudgetMs = FOCUS_REST_LIMIT_MS;
       let focusPaused = false;
       let focusElapsedSecs = 0;
       let focusSessionLp = 0;
@@ -8121,6 +8162,7 @@
             startedAt: focusStartedAt,
             paused: focusPaused,
             pauseStartedAt,
+            restBudgetMs: focusRestBudgetMs,
             syncedSecs: focusElapsedSecs,
             modeBeforeChange: focusModeBeforeChange
           }));
@@ -8149,11 +8191,10 @@
           focusElapsedSecs = Number(st.syncedSecs) || 0;
           focusPaused = !!st.paused;
           pauseStartedAt = st.pauseStartedAt || null;
+          focusRestBudgetMs = Number.isFinite(st.restBudgetMs)
+            ? Math.max(0, Math.min(FOCUS_REST_LIMIT_MS, st.restBudgetMs))
+            : FOCUS_REST_LIMIT_MS;
           focusStartedAt = st.startedAt || null;
-          if (focusPaused && pauseStartedAt && Math.floor((Date.now() - pauseStartedAt) / 1000) > 600) {
-            focusAccumulatedSecs = 0;
-            focusElapsedSecs = 0;
-          }
           openFocusOverlay(true);
           if (!focusPaused && syncFocusClock) syncFocusClock();
         } catch (e) {}
@@ -8239,10 +8280,56 @@
         return `${h}:${m}:${s}`;
       }
 
+      function setFocusTheme(theme) {
+        const selected = theme === 'home' ? 'home' : 'plain';
+        document.getElementById('focus-overlay').dataset.focusTheme = selected;
+        for (const button of focusThemeSwitch.querySelectorAll('[data-focus-theme-choice]')) {
+          button.setAttribute('aria-pressed', String(button.dataset.focusThemeChoice === selected));
+        }
+      }
+      const focusThemeSwitch = document.getElementById('focus-theme-switch');
+      focusThemeSwitch.addEventListener('click', event => {
+        const button = event.target.closest('[data-focus-theme-choice]');
+        if (!button) return;
+        prefs.focusTheme = button.dataset.focusThemeChoice;
+        setFocusTheme(prefs.focusTheme);
+        savePrefs();
+      });
+      setFocusTheme(prefs.focusTheme);
+
+      function restRemainingMs(now = Date.now()) {
+        if (focusPaused) return Math.max(0, focusRestBudgetMs - (pauseStartedAt == null ? 0 : Math.max(0, now - pauseStartedAt)));
+        if (focusStartedAt != null && now - focusStartedAt >= FOCUS_REST_LIMIT_MS) return FOCUS_REST_LIMIT_MS;
+        return focusRestBudgetMs;
+      }
+      function formatRestClock(ms) {
+        const seconds = Math.ceil(ms / 1000);
+        return `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`;
+      }
+
       function updateFocusDisplay() {
         const formatted = formatStopwatch(focusElapsedSecs);
-        document.getElementById('focus-timer-display').textContent = formatted;
-        document.getElementById('focus-mini-time').textContent = formatted;
+        const now = Date.now();
+        const remaining = restRemainingMs(now);
+        const rest = formatRestClock(remaining);
+        const screen = document.getElementById('focus-overlay');
+        screen.dataset.resting = String(focusPaused);
+        screen.dataset.restEmpty = String(remaining === 0);
+        const restLabel = document.getElementById('focus-rest-label');
+        restLabel.classList.toggle('hidden', !focusPaused);
+        document.getElementById('focus-timer-display').textContent = focusPaused ? rest : formatted;
+        document.getElementById('focus-mini-time').textContent = focusPaused ? `휴식 ${rest}` : formatted;
+        const restNote = document.getElementById('focus-rest-note');
+        if (focusPaused) {
+          restNote.textContent = remaining === 0
+            ? '휴식 시간이 끝났어요. 재개하면 연속 집중이 새로 시작돼요.'
+            : `연속 집중 ${formatted} · 10분 연속 공부하면 휴식 시간 충전`;
+        } else if (remaining < FOCUS_REST_LIMIT_MS && focusStartedAt != null) {
+          const recharge = FOCUS_REST_LIMIT_MS - Math.max(0, now - focusStartedAt);
+          restNote.textContent = `휴식 ${rest} 남음 · ${formatRestClock(recharge)} 더 공부하면 10분으로 충전`;
+        } else {
+          restNote.textContent = '남은 휴식 10:00';
+        }
         document.getElementById('focus-min-btn').classList.toggle('hidden', !focusPaused);
         document.getElementById('focus-pause-btn').textContent = focusPaused ? '공부 다시 시작하기' : '잠시 쉬기';
         document.getElementById('focus-today-total').textContent = `오늘 누적 ${formatStopwatch(studySeconds(prefs.currentUserId))}`;
@@ -8395,11 +8482,15 @@
             focusStartedAt = Date.now();
             focusPaused = false;
             pauseStartedAt = null;
+            focusRestBudgetMs = FOCUS_REST_LIMIT_MS;
             focusModeBeforeChange = null;
           }
           if (setMemberFocusStatus(meFocus, focusPaused ? 'resting' : 'studying')) saveSharedData();
           setFocusView('timer');
-          focusInterval = setInterval(() => syncFocusClock(false), 250);
+          focusInterval = setInterval(() => {
+            if (focusPaused) updateFocusDisplay();
+            else syncFocusClock(false);
+          }, 250);
           if (isRestoring !== true) { unlockChallengeFor(meFocus.id, 'ch_newbie', false); saveSharedData(); }
           if (isRestoring !== true) saveFocusState();
           if (typeof Notification !== 'undefined' && Notification.permission === 'default' && isRestoring !== true) {
@@ -8456,6 +8547,7 @@
         focusSessionLp = 0;
         focusStartedAt = null;
         pauseStartedAt = null;
+        focusRestBudgetMs = FOCUS_REST_LIMIT_MS;
         focusModeBeforeChange = null;
         focusPaused = false;
         clearFocusState();
@@ -8534,6 +8626,22 @@
       const promotionPrimary = document.getElementById('promotion-primary');
       const promotionCancel = document.getElementById('promotion-cancel');
 
+      function revealPromotedTheme(tier) {
+        closePromotion();
+        requestAnimationFrame(() => {
+          const menu = document.getElementById('header-more-menu');
+          const trigger = document.getElementById('header-more-btn');
+          const swatch = [...menu.querySelectorAll('[data-tier-name]')].find(button => button.dataset.tierName === tier.name);
+          if (!swatch || swatch.dataset.locked === 'true' || activeStudyDialog()) return;
+          if (!shown(menu)) trigger.click();
+          swatch.style.setProperty('--unlock-light', tier.gemColor);
+          swatch.setAttribute('data-just-unlocked', '');
+          swatch.focus({ preventScroll: true });
+          swatch.scrollIntoView({ block: 'nearest' });
+          setTimeout(() => swatch.removeAttribute('data-just-unlocked'), 2300);
+        });
+      }
+
       function showPromotion({ phase, fromTier, toTier, mission, targetDay, releasedBank = 0, confirm }) {
         const preview = phase === 'preview';
         const success = phase === 'success';
@@ -8569,12 +8677,12 @@
             : '미션을 달성한 뒤 승급전 완료 버튼을 눌러주세요. 도전 횟수는 매일 오전 5시에 초기화돼요.',
           started: '미션을 달성한 뒤 승급전 완료 버튼을 눌러주세요.',
           scheduled: '예정일 오전 5시부터 승급전을 진행할 수 있어요.',
-          success: '새로운 티어에 도달했어요!'
+          success: `${toTier.name} 테마가 열렸어요. 스터디원 카드의 불꽃과 테두리도 새 티어 색으로 바뀌었어요.`
         }[phase];
 
         promotionCancel.hidden = !preview;
-        promotionPrimary.textContent = preview ? (willSchedule ? '승급전 예약하기' : '승급전 시작하기') : '확인';
-        promotionPrimary.onclick = confirm || closePromotion;
+        promotionPrimary.textContent = preview ? (willSchedule ? '승급전 예약하기' : '승급전 시작하기') : success ? '해금된 테마 보기' : '확인';
+        promotionPrimary.onclick = confirm || (success ? () => revealPromotedTheme(toTier) : closePromotion);
         promotionOverlay.classList.remove('hidden');
         refreshStudyDialogs();
         promotionTitle.focus({ preventScroll: true });
@@ -8634,28 +8742,30 @@
 
       let pauseStartedAt = null;
       document.getElementById('focus-pause-btn').addEventListener('click', () => {
+        if (!focusInterval) return;
         if (!focusPaused) syncFocusClock(true);
+        const now = Date.now();
+        focusRestBudgetMs = restRemainingMs(now);
         focusPaused = !focusPaused;
-        const meP = shared.members.find(x => x.id === prefs.currentUserId);
-        if (setMemberFocusStatus(meP, focusPaused ? 'resting' : 'studying')) saveSharedData();
+        const me = shared.members.find(member => member.id === prefs.currentUserId);
+        setMemberFocusStatus(me, focusPaused ? 'resting' : 'studying');
         if (focusPaused) {
-          unlockChallengeFor(prefs.currentUserId, 'ch_pause1', false);
           focusAccumulatedSecs = focusElapsedSecs;
           focusStartedAt = null;
-          pauseStartedAt = Date.now();
+          pauseStartedAt = now;
+          unlockChallengeFor(prefs.currentUserId, 'ch_pause1', false);
           flushCelebrations();
         } else {
-          const pausedSecs = pauseStartedAt ? Math.floor((Date.now() - pauseStartedAt) / 1000) : 0;
           pauseStartedAt = null;
-          if (pausedSecs > 600) {
+          if (focusRestBudgetMs === 0) {
             focusElapsedSecs = 0;
             focusAccumulatedSecs = 0;
-            const meObj = shared.members.find(x => x.id === prefs.currentUserId);
-            if (meObj) { meObj.focusMins = 0; saveSharedData(); }
+            if (me) me.focusMins = 0;
           }
-          focusStartedAt = Date.now();
+          focusStartedAt = now;
           focusModeBeforeChange = null;
         }
+        saveSharedData();
         saveFocusState();
         renderAll();
       });
