@@ -382,7 +382,7 @@
     #focus-timer-box,#focus-mini-bar {background:linear-gradient(145deg,var(--hero-deep),var(--hero))!important;color:var(--hero-text)!important;border:1px solid #7da3e465!important;box-shadow:0 12px 30px #102a5933!important}
     #focus-timer-box {padding:clamp(1.3rem,5vw,2.5rem) 1rem 1.25rem}
     #focus-timer-box[data-paused="true"] {border-color:var(--accent)!important}
-    #focus-timer-display {font-family:'Space Grotesk',system-ui,sans-serif;font-size:clamp(3rem,14vw,7rem);font-variant-numeric:tabular-nums;line-height:1.02;letter-spacing:-.05em}
+    #focus-timer-display {font-family:'Space Grotesk',system-ui,sans-serif;font-size:clamp(2.4rem,11.5vw,6rem);font-variant-numeric:tabular-nums;line-height:1.02;letter-spacing:-.04em}
     #focus-timer-display::before {content:'집중 시간';display:block;color:var(--hero-muted);font:700 .74rem/1.3 Pretendard,'Noto Sans KR',sans-serif;letter-spacing:.07em;margin-bottom:.45rem}
     #focus-pause-label,#focus-cheer-msg {color:var(--hero-muted)}
     #focus-pause-btn,#focus-end-btn,#focus-mini-expand,#focus-min-btn {min-height:44px}
@@ -709,7 +709,7 @@
         <p id="focus-period-range" class="text-sm font-bold text-slate-500">스톱워치</p>
       </div>
       <div id="focus-timer-box" class="relative overflow-hidden py-6 rounded-3xl ed-banner select-none">
-        <div id="focus-timer-display" class="text-6xl sm:text-7xl font-mono font-black tracking-tighter">00:00</div>
+        <div id="focus-timer-display" class="text-5xl sm:text-7xl font-mono font-black tracking-tighter">00:00:00</div>
         <p id="focus-pause-label" class="hidden text-xs font-bold mt-2">잠시 쉬는 중 · 10분 초과 휴식 시 연속 집중이 초기화됩니다</p>
         <p id="focus-cheer-msg" class="text-xs font-bold mt-2 opacity-80 transition-opacity duration-500 min-h-[1rem]"></p>
       </div>
@@ -732,7 +732,7 @@
 
   <!-- Floating Mini Stopwatch Bar (when browsing other tabs) -->
   <div id="focus-mini-bar" class="fixed bottom-4 right-4 z-40 hidden items-center gap-3 px-4 py-2.5 rounded-2xl ed-banner">
-    <span id="focus-mini-time" class="font-mono font-black text-sm">00:00</span>
+    <span id="focus-mini-time" class="font-mono font-black text-sm">00:00:00</span>
     <button id="focus-mini-expand" type="button" class="px-2.5 py-1 rounded-lg bg-slate-950 text-white text-xs font-bold">크게 보기</button>
   </div>
 
@@ -3061,7 +3061,7 @@
         const cur = LOL_TIERS[idx];
         const next = LOL_TIERS[idx + 1] || null;
         const inPromo = next && (next.min - lp <= 15);
-        return { ...cur, lp, nextName: next ? next.name : null, inPromo };
+        return { ...cur, lp, nextName: next ? next.name : null, nextMin: next ? next.min : null, inPromo };
       }
 
       function checkStarterChallenge(memberId) {
@@ -3746,11 +3746,19 @@
               ? '<span class="inline-flex items-center gap-1 text-[9px] px-1.5 py-0.5 rounded-full bg-sky-100 text-sky-800 border border-sky-200 font-bold whitespace-nowrap shrink-0">수업중</span>'
               : '<span class="text-[10px] font-semibold text-slate-400 whitespace-nowrap">휴식중</span>');
           return `
-            <div class="relative pt-2.5 flex flex-col">
+            <div data-member-card-wrap="${m.id}" class="relative pt-2.5 flex flex-col">
               ${m.equippedTitle ? `<div class="absolute top-0 left-3 z-10 max-w-[calc(100%-24px)] px-2 py-0.5 rounded-t-lg rounded-b-sm bg-slate-100 border border-slate-300 text-[10px] font-bold text-slate-600 whitespace-nowrap truncate leading-none shadow-sm" title="${escapeHtml(m.equippedTitle)}"><span class="opacity-65">👑</span> ${escapeHtml(m.equippedTitle)}</div>` : ''}
+              ${hasMenu ? `<div class="absolute right-2.5 top-[22px] sm:top-[24px] z-40">
+                <button type="button" data-card-menu-btn="${m.id}" aria-label="스터디원 더보기" class="w-6 h-6 rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-900 flex items-center justify-center text-xs font-black">⋯</button>
+                <div data-card-menu-box="${m.id}" class="hidden absolute right-0 top-7 z-50 w-36 rounded-xl bg-white border border-slate-200 shadow-xl p-1 space-y-0.5 text-left">
+                  ${m.id !== prefs.currentUserId ? `<button type="button" data-respect-member="${m.id}" class="w-full flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg hover:bg-slate-100 text-[11px] font-bold text-slate-800 whitespace-nowrap">👏 리스펙 보내기</button>
+                  <button type="button" data-report-member="${m.id}" class="w-full flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg hover:bg-rose-50 text-[11px] font-bold text-rose-600 whitespace-nowrap">🚨 신고하기</button>` : ''}
+                  ${prefs.adminMode && shared.members.length > 1 ? `<button type="button" data-del-member="${m.id}" class="w-full flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg hover:bg-rose-50 text-[11px] font-bold text-rose-600 whitespace-nowrap">🗑️ 삭제하기</button>` : ''}
+                </div>
+              </div>` : ''}
               <div data-member-detail="${m.id}" class="flex-1 cursor-pointer rounded-2xl p-2.5 sm:p-3 bg-white flex flex-col justify-start gap-2 transition-all ${tierObj.frame} ${promoRing} ${flameCls} ${isStudying ? 'studying-live-card' : ''}">
                 <div class="space-y-1.5">
-                  <div class="flex items-center justify-between gap-1.5 min-h-[28px]">
+                  <div class="flex items-center justify-between gap-1.5 min-h-[28px] ${hasMenu ? 'pr-7' : ''}">
                     <div class="flex items-center gap-2 min-w-0">
                       <div class="relative w-7 h-7 shrink-0" title="${isUltra ? '울트라집중모드' : ''}">
                         ${isUltra ? '<span class="ultra-avatar-ring"></span>' : ''}
@@ -3759,14 +3767,6 @@
                       </div>
                       <span class="font-extrabold text-xs sm:text-sm text-slate-900 leading-tight truncate">${escapeHtml(m.name)}</span>
                     </div>
-                    ${hasMenu ? `<div class="relative shrink-0">
-                      <button type="button" data-card-menu-btn="${m.id}" aria-label="스터디원 더보기" class="w-6 h-6 rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-900 flex items-center justify-center text-xs font-black">⋯</button>
-                      <div data-card-menu-box="${m.id}" class="hidden absolute right-0 top-7 z-20 w-32 rounded-xl bg-white border border-slate-200 shadow-lg p-1 space-y-0.5 text-left">
-                        ${m.id !== prefs.currentUserId ? `<button type="button" data-respect-member="${m.id}" class="w-full flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg hover:bg-slate-100 text-[11px] font-bold text-slate-800 whitespace-nowrap">👏 리스펙 보내기</button>
-                        <button type="button" data-report-member="${m.id}" class="w-full flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg hover:bg-rose-50 text-[11px] font-bold text-rose-600 whitespace-nowrap">🚨 신고하기</button>` : ''}
-                        ${prefs.adminMode && shared.members.length > 1 ? `<button type="button" data-del-member="${m.id}" class="w-full flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg hover:bg-rose-50 text-[11px] font-bold text-rose-600 whitespace-nowrap">🗑️ 삭제하기</button>` : ''}
-                      </div>
-                    </div>` : ''}
                   </div>
                   <div class="flex items-center justify-between gap-1.5 rounded-xl bg-slate-50 border border-slate-100 px-2.5 py-1.5">
                     <span class="font-mono font-black text-xs sm:text-sm text-slate-900 whitespace-nowrap">⏱️ ${formatStudyMins(todayTotalMins)}</span>
@@ -4543,9 +4543,15 @@
           if (plannerEditSnapshot && plannerEditDateStr) {
             try {
               const restored = JSON.parse(plannerEditSnapshot);
-              if (!shared.motemote) shared.motemote = {};
-              if (!shared.motemote[plannerEditDateStr]) shared.motemote[plannerEditDateStr] = {};
-              shared.motemote[plannerEditDateStr][prefs.currentUserId] = restored;
+              const curM = (shared.members || []).find(m => m.id === prefs.currentUserId);
+              if (currentAuthUser && curM && curM.uid === currentAuthUser.uid && privateRef) {
+                if (!myPrivateData.motemote) myPrivateData.motemote = {};
+                myPrivateData.motemote[plannerEditDateStr] = restored;
+              } else {
+                if (!shared.motemote) shared.motemote = {};
+                if (!shared.motemote[plannerEditDateStr]) shared.motemote[plannerEditDateStr] = {};
+                shared.motemote[plannerEditDateStr][prefs.currentUserId] = restored;
+              }
               saveSharedData();
             } catch (e) {}
           }
@@ -5233,7 +5239,7 @@
 
       document.addEventListener('click', e => {
         if (!e.target.closest('[data-card-menu-btn]') && !e.target.closest('[data-card-menu-box]')) {
-          document.querySelectorAll('[data-card-menu-box]').forEach(box => box.classList.add('hidden'));
+          document.querySelectorAll('[data-card-menu-box]').forEach(box => { box.classList.add('hidden'); box.closest('[data-member-card-wrap]')?.classList.remove('z-50'); });
         }
       });
       document.getElementById('group-status-grid').addEventListener('click', e => {
@@ -5242,8 +5248,15 @@
           e.stopPropagation();
           const mid = menuBtn.dataset.cardMenuBtn;
           document.querySelectorAll('[data-card-menu-box]').forEach(box => {
-            if (box.dataset.cardMenuBox === mid) box.classList.toggle('hidden');
-            else box.classList.add('hidden');
+            const wrap = box.closest('[data-member-card-wrap]');
+            if (box.dataset.cardMenuBox === mid) {
+              const willOpen = box.classList.contains('hidden');
+              box.classList.toggle('hidden');
+              if (wrap) wrap.classList.toggle('z-50', willOpen);
+            } else {
+              box.classList.add('hidden');
+              if (wrap) wrap.classList.remove('z-50');
+            }
           });
           return;
         }
@@ -6084,8 +6097,27 @@
         focusLastNotifMin = mins;
         const h = Math.floor(mins / 60), m = mins % 60;
         const timeTxt = h > 0 ? `${h}시간 ${m}분` : `${m}분`;
-        const title = focusPaused ? `⏸️ 잠시 쉬는 중 (${timeTxt} 누적)` : `⏱️ 집중 중 · ${timeTxt} 경과`;
-        const body = focusPaused ? '10분 초과 휴식 시 연속 집중이 초기화됩니다.' : 'I LOVE STUDY 스톱워치가 실행 중입니다.';
+        const meN = shared.members.find(x => x.id === prefs.currentUserId);
+        const nowN = getNowParts(), dayN = todayStr(), phaseN = getCurrentPhase(nowN.totalMins);
+        const strictN = meN && getMemberMode(meN) === 'strict';
+        let title = `집중 중 · ${timeTxt} 경과`;
+        let body = '';
+        if (focusPaused) {
+          title = `일시정지 · ${timeTxt} 경과`;
+          body = '10분 초과 휴식 시 연속 집중 초기화';
+        } else if (strictN && phaseN?.type === 'study') {
+          const secsN = shared.periodStudySecs?.[dayN]?.[meN.id]?.[phaseN.id] || 0;
+          const statusN = getMemberDayStatus(meN.id, dayN, phaseN.id);
+          const leftAtt = Math.max(0, Math.ceil((Math.ceil(phaseN.mins * 60 * 0.75) - secsN) / 60));
+          const leftEnd = Math.max(0, phaseN.endMins - nowN.totalMins);
+          title = `${phaseN.label} 진행 중 · ${timeTxt} 경과`;
+          if (statusN === 'exempt') body = `수업 면제 · 종료 ${leftEnd}분 전 (${phaseN.end})`;
+          else if (statusN === 'present' || leftAtt === 0) body = `출석 인정 · 종료 ${leftEnd}분 전 (${phaseN.end})`;
+          else body = `출석까지 ${leftAtt}분 · 종료 ${leftEnd}분 전`;
+        } else {
+          const todayMinsN = (meN && shared.studyLogs?.[dayN]?.[meN.id]) || 0;
+          body = `오늘 누적 ${Math.floor(todayMinsN / 60)}시간 ${todayMinsN % 60}분`;
+        }
         const opts = {
           body,
           icon: './icon-192.png',
@@ -6159,10 +6191,10 @@
       }
 
       function formatStopwatch(secs) {
-        const h = Math.floor(secs / 3600);
+        const h = String(Math.floor(secs / 3600)).padStart(2, '0');
         const m = String(Math.floor((secs % 3600) / 60)).padStart(2, '0');
         const s = String(secs % 60).padStart(2, '0');
-        return h > 0 ? `${String(h).padStart(2, '0')}:${m}:${s}` : `${m}:${s}`;
+        return `${h}:${m}:${s}`;
       }
 
       function updateFocusDisplay() {
