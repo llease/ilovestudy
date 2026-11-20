@@ -4,8 +4,21 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>I LOVE STUDY (충남대 전자공학과)</title>
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://llease.github.io/ilovestudy/" />
   <meta property="og:title" content="I LOVE STUDY (충남대 전자공학과)" />
   <meta property="og:description" content="공부시간을 기록하는 나만의 공간" />
+  <meta property="og:image" content="https://llease.github.io/ilovestudy/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="theme-color" content="#142c54" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="I LOVE STUDY" />
+  <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png" />
+  <link rel="apple-touch-icon" href="./icon-512.png" />
+  <link rel="manifest" href="./manifest.json" />
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
@@ -945,6 +958,7 @@
           <button id="alert-toggle-btn" type="button" class="w-full flex items-center justify-between px-2.5 py-2 rounded-xl hover:bg-slate-100 text-xs font-bold text-slate-700 whitespace-nowrap">🔔 쉬는시간 알림 켜짐</button>
           <button id="encourage-menu-btn" type="button" class="w-full flex items-center justify-between px-2.5 py-2 rounded-xl hover:bg-slate-100 text-xs font-bold text-slate-700 whitespace-nowrap">💪 격려해주세요</button>
           <button id="suggest-btn" type="button" class="w-full flex items-center justify-between px-2.5 py-2 rounded-xl hover:bg-slate-100 text-xs font-bold text-slate-700 whitespace-nowrap">💬 관리자에게 건의하기</button>
+          <button id="pwa-menu-install-btn" type="button" class="hidden w-full flex items-center justify-between px-2.5 py-2 rounded-xl hover:bg-slate-100 text-xs font-bold text-indigo-600 whitespace-nowrap">📲 홈 화면에 앱 설치</button>
           <button id="admin-toggle-btn" type="button" class="w-full flex items-center justify-between px-2.5 py-2 rounded-xl hover:bg-slate-100 text-xs font-bold text-slate-700 whitespace-nowrap">🛡️ 관리자 모드</button>
           <div class="border-t border-slate-100 pt-1.5 space-y-1">
             <div id="auth-account-info" class="px-2.5 text-[10px] font-semibold text-slate-400 truncate">로컬 모드</div>
@@ -968,6 +982,17 @@
   </header>
 
   <main id="study-main" tabindex="-1" class="space-y-5">
+    <!-- Smart PWA Install & In-App Browser Guidance Banner -->
+    <div id="pwa-install-banner" class="hidden rounded-2xl border border-indigo-200 bg-indigo-50/90 px-3.5 py-2.5 flex items-center justify-between gap-2.5 text-xs">
+      <div class="min-w-0 flex-1">
+        <p id="pwa-install-title" class="font-black text-indigo-950 truncate">📲 홈 화면에 앱 아이콘으로 추가하기</p>
+        <p id="pwa-install-desc" class="text-[11px] text-indigo-800 leading-snug"></p>
+      </div>
+      <div class="flex items-center gap-1.5 shrink-0">
+        <button id="pwa-install-action" type="button" class="hidden px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-[11px] font-black whitespace-nowrap">앱 설치</button>
+        <button id="pwa-install-close" type="button" aria-label="설치 안내 닫기" class="px-2 py-1 rounded-lg text-indigo-500 hover:text-indigo-900 font-bold">✕</button>
+      </div>
+    </div>
     <!-- Admin Member-Inspection Return Bar -->
     <div id="admin-inspect-bar" class="hidden rounded-2xl border-2 border-indigo-600 bg-indigo-50 px-4 py-3 flex items-center justify-between gap-3">
       <span id="admin-inspect-label" class="text-xs sm:text-sm font-black text-indigo-950">👀 멤버 화면 보는 중</span>
@@ -6926,6 +6951,88 @@
       }
       setInterval(refreshScheduleMinute, 2000);
       document.addEventListener('visibilitychange', refreshScheduleMinute);
+
+      // PWA Service Worker & Smart Install Banner
+      if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+        navigator.serviceWorker.register('./sw.js', { scope: './' }).catch(() => {});
+      }
+      let deferredInstallPrompt = null;
+      const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+      const ua = navigator.userAgent || '';
+      const isKakaoInApp = /KAKAOTALK/i.test(ua);
+      const isIOS = /iPhone|iPad|iPod/i.test(ua);
+      const pwaBanner = document.getElementById('pwa-install-banner');
+      const pwaTitle = document.getElementById('pwa-install-title');
+      const pwaDesc = document.getElementById('pwa-install-desc');
+      const pwaAction = document.getElementById('pwa-install-action');
+      const pwaMenuBtn = document.getElementById('pwa-menu-install-btn');
+      const DISMISS_KEY = storageScope + 'iluvstudy_install_dismissed';
+
+      function showInstallBanner(mode) {
+        if (isStandalone || !pwaBanner) return;
+        let dismissed = false;
+        try { dismissed = localStorage.getItem(DISMISS_KEY) === '1'; } catch (e) {}
+        if (mode === 'kakao') {
+          pwaTitle.textContent = '🌐 카톡 밖(크롬·사파리)에서 열어주세요';
+          pwaDesc.textContent = '우측 하단(⋮) → 다른 브라우저로 열기를 누르면 홈 화면에 앱처럼 설치할 수 있어요.';
+          pwaAction.classList.add('hidden');
+          pwaBanner.classList.remove('hidden');
+          return;
+        }
+        if (pwaMenuBtn && (mode === 'android' || mode === 'ios')) {
+          pwaMenuBtn.classList.remove('hidden');
+        }
+        if (dismissed) return;
+        if (mode === 'android') {
+          pwaTitle.textContent = '📲 홈 화면에 앱 아이콘 추가하기';
+          pwaDesc.textContent = '버튼을 한 번만 누르면 플레이스토어 앱처럼 바탕화면에 바로가기가 설치됩니다.';
+          pwaAction.classList.remove('hidden');
+          pwaBanner.classList.remove('hidden');
+        } else if (mode === 'ios') {
+          pwaTitle.textContent = '📲 아이폰 홈 화면에 앱처럼 추가하기';
+          pwaDesc.textContent = '하단 공유 버튼(□↑) → "홈 화면에 추가"를 누르면 전체 화면 앱으로 열립니다.';
+          pwaAction.classList.add('hidden');
+          pwaBanner.classList.remove('hidden');
+        }
+      }
+
+      if (!isStandalone) {
+        if (isKakaoInApp) showInstallBanner('kakao');
+        else if (isIOS) showInstallBanner('ios');
+      }
+
+      window.addEventListener('beforeinstallprompt', e => {
+        e.preventDefault();
+        deferredInstallPrompt = e;
+        showInstallBanner('android');
+      });
+
+      window.addEventListener('appinstalled', () => {
+        deferredInstallPrompt = null;
+        if (pwaBanner) pwaBanner.classList.add('hidden');
+        if (pwaMenuBtn) pwaMenuBtn.classList.add('hidden');
+        showToast('🎉 I LOVE STUDY 앱이 홈 화면에 설치되었습니다!', 'success');
+      });
+
+      async function triggerPwaInstall() {
+        if (deferredInstallPrompt) {
+          deferredInstallPrompt.prompt();
+          const { outcome } = await deferredInstallPrompt.userChoice;
+          if (outcome === 'accepted') {
+            deferredInstallPrompt = null;
+            if (pwaBanner) pwaBanner.classList.add('hidden');
+          }
+        } else if (isIOS) {
+          openModal('📲 아이폰 앱 설치 방법', '<p class="text-xs text-slate-700 leading-relaxed">Safari 브라우저 하단의 <strong>공유 버튼(□↑)</strong>을 누른 뒤 <strong>"홈 화면에 추가"</strong>를 선택하면 바탕화면에 앱 아이콘이 생성됩니다.</p>');
+        }
+      }
+
+      pwaAction?.addEventListener('click', triggerPwaInstall);
+      pwaMenuBtn?.addEventListener('click', triggerPwaInstall);
+      document.getElementById('pwa-install-close')?.addEventListener('click', () => {
+        if (pwaBanner) pwaBanner.classList.add('hidden');
+        try { localStorage.setItem(DISMISS_KEY, '1'); } catch (e) {}
+      });
     })();
   </script>
 </body>
