@@ -196,10 +196,11 @@
       animation: ultraRingSpin 3s linear infinite;
       pointer-events: none;
     }
-    /* LoL-style Rank Crest Borders */
+    /* Tier-Specific Metallic & Armored Borders */
     .rank-frame-base {
       border: 3px solid transparent;
       border-top-width: 5px;
+      border-bottom-width: 4px;
       background-origin: border-box;
       background-clip: padding-box, border-box;
     }
@@ -479,157 +480,101 @@
     .subtab-track > button { position: relative; z-index: 1; background: transparent !important; }
     body[data-dark="true"] #tab-members [data-members-sub][aria-pressed="true"],
     body[data-dark="true"] #tab-admin [data-admin-sub][aria-pressed="true"] { background: transparent !important; color: var(--on-primary) !important; }
-    /* 5. Tier Promotion Ceremony */
-    #tier-promo-overlay {
-      position: fixed; inset: 0; z-index: 86;
-      display: none; align-items: center; justify-content: center; padding: 1.5rem;
-      background: rgba(9, 15, 29, 0.88); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-    }
-    #tier-promo-overlay.is-active { display: flex; }
-    @keyframes tierEmblemPop {
-      0% { opacity: 0; transform: scale(0.45) rotate(-14deg); }
-      60% { opacity: 1; transform: scale(1.12) rotate(4deg); }
-      100% { opacity: 1; transform: scale(1) rotate(0deg); }
-    }
-    @keyframes tierHaloSpin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-    @keyframes tierEmblemFlipPop {
-      0% { opacity: 0; transform: perspective(600px) rotateY(-160deg) scale(0.35); filter: brightness(2.2); }
-      55% { opacity: 1; transform: perspective(600px) rotateY(16deg) scale(1.16); filter: brightness(1.3); }
-      80% { transform: perspective(600px) rotateY(-6deg) scale(0.97); }
-      100% { opacity: 1; transform: perspective(600px) rotateY(0deg) scale(1); filter: brightness(1); }
-    }
-    @keyframes ceremonyFlash {
-      0% { opacity: 0.75; }
-      100% { opacity: 0; }
-    }
-    @keyframes ceremonyOrbitSpin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(-360deg); }
-    }
-    @keyframes ceremonyStaggerUp {
-      0% { opacity: 0; transform: translateY(14px) scale(0.96); }
-      100% { opacity: 1; transform: translateY(0) scale(1); }
-    }
-    @keyframes ceremonyBtnShine {
-      0% { transform: translateX(-140%) skewX(-22deg); }
-      45%, 100% { transform: translateX(240%) skewX(-22deg); }
-    }
-    @keyframes challengeCardImpact {
-      0%, 100% { transform: translate(0, 0) scale(1); }
-      25% { transform: translate(-3px, 3px) scale(1.015); }
-      50% { transform: translate(3px, -2px) scale(0.995); }
-      75% { transform: translate(-2px, 1px) scale(1.005); }
-    }
-    .tier-promo-emblem { animation: tierEmblemFlipPop 820ms cubic-bezier(.22, 1.15, .36, 1) both; }
-    .ceremony-flash {
-      position: fixed; inset: 0; z-index: 3; pointer-events: none;
-      background: radial-gradient(circle at 50% 44%, var(--flash-c, rgba(253, 224, 71, 0.55)), transparent 65%);
-      animation: ceremonyFlash 750ms ease-out forwards;
-    }
-    .ceremony-orbit {
-      position: absolute; inset: -24px; border-radius: 9999px;
-      border: 1.5px dashed var(--orbit-c, rgba(253, 224, 71, 0.55));
-      animation: ceremonyOrbitSpin 9s linear infinite; pointer-events: none;
-    }
-    .ceremony-orbit::before, .ceremony-orbit::after {
-      content: ''; position: absolute; width: 8px; height: 8px; border-radius: 9999px;
-      background: var(--orbit-dot, #fde047); box-shadow: 0 0 12px var(--orbit-dot, #fde047);
-    }
-    .ceremony-orbit::before { top: -4px; left: 50%; transform: translateX(-50%); }
-    .ceremony-orbit::after { bottom: -4px; left: 50%; transform: translateX(-50%); background: var(--orbit-dot2, #38bdf8); box-shadow: 0 0 12px var(--orbit-dot2, #38bdf8); }
-    .ceremony-stagger-1 { animation: ceremonyStaggerUp 480ms cubic-bezier(.22,1,.36,1) 180ms both; }
-    .ceremony-stagger-2 { animation: ceremonyStaggerUp 520ms cubic-bezier(.22,1,.36,1) 290ms both; }
-    .ceremony-stagger-3 { animation: ceremonyStaggerUp 520ms cubic-bezier(.22,1,.36,1) 400ms both; }
-    .ceremony-stagger-4 { animation: ceremonyStaggerUp 520ms cubic-bezier(.22,1,.36,1) 520ms both; }
-    .ceremony-btn-shine { position: relative; overflow: hidden; }
-    .ceremony-btn-shine::after {
-      content: ''; position: absolute; top: 0; bottom: 0; left: 0; width: 42%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.55), transparent);
-      animation: ceremonyBtnShine 2.6s ease-in-out 0.9s infinite; pointer-events: none;
-    }
-    .challenge-impact { animation: promoCardIn 550ms cubic-bezier(.22,1.15,.36,1) both, challengeCardImpact 360ms ease-out 340ms both; }
-    .tier-promo-halo {
-      position: absolute; inset: -14px; border-radius: 9999px;
-      background: conic-gradient(from 0deg, #fde047, #38bdf8, #a855f7, #f43f5e, #34d399, #fde047);
-      opacity: 0.85; filter: blur(8px); animation: tierHaloSpin 4s linear infinite; pointer-events: none;
-    }
-    @keyframes promoRaysSpin {
-      0% { transform: translate(-50%, -50%) rotate(0deg); }
-      100% { transform: translate(-50%, -50%) rotate(360deg); }
-    }
-    @keyframes promoShockwave {
-      0% { opacity: 0.9; transform: scale(0.5); }
-      100% { opacity: 0; transform: scale(3.2); }
-    }
-    @keyframes promoCardIn {
-      0% { opacity: 0; transform: scale(0.84) translateY(20px); }
-      65% { opacity: 1; transform: scale(1.03) translateY(-4px); }
-      100% { opacity: 1; transform: scale(1) translateY(0); }
-    }
-    @keyframes promoEmblemFloat {
-      0%, 100% { transform: translateY(0) scale(1); }
-      50% { transform: translateY(-6px) scale(1.04); }
-    }
-    .promo-rays {
-      position: fixed; left: 50%; top: 46%; width: 140vmax; height: 140vmax;
-      background: repeating-conic-gradient(from 0deg, rgba(250, 204, 21, 0.14) 0deg 10deg, transparent 10deg 24deg);
-      mask-image: radial-gradient(circle, rgba(0,0,0,0.95) 0%, transparent 62%);
-      -webkit-mask-image: radial-gradient(circle, rgba(0,0,0,0.95) 0%, transparent 62%);
-      animation: promoRaysSpin 18s linear infinite;
-      pointer-events: none; z-index: 0;
-    }
-    .promo-card-in { position: relative; z-index: 2; animation: promoCardIn 700ms cubic-bezier(.22, 1.15, .36, 1) both; }
-    .promo-shockwave {
-      position: absolute; inset: -6px; border-radius: 9999px;
-      border: 2.5px solid rgba(253, 224, 71, 0.85);
-      animation: promoShockwave 1.8s cubic-bezier(.16, 1, .3, 1) infinite;
-      pointer-events: none;
-    }
-    .promo-shockwave-2 { animation-delay: 0.9s; border-color: rgba(56, 189, 248, 0.75); }
-    .promo-emblem-wrap { animation: promoEmblemFloat 2.8s ease-in-out infinite; }
-    /* 5b. Tier Challenge Launch Ceremony */
-    #promo-challenge-overlay {
+    /* 5. Tier Promotion & Challenge Cinematics (Sleek Esports / LoL Style) */
+    #tier-promo-overlay, #promo-challenge-overlay {
       position: fixed; inset: 0; z-index: 87;
       display: none; align-items: center; justify-content: center; padding: 1.5rem;
-      background: radial-gradient(circle at 50% 42%, var(--ch-bg, rgba(30, 41, 59, 0.85)) 0%, rgba(4, 7, 16, 0.95) 72%);
-      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+      background: radial-gradient(circle at 50% 42%, var(--cine-bg, rgba(15, 23, 42, 0.9)) 0%, rgba(4, 6, 12, 0.97) 72%);
+      backdrop-filter: blur(18px) saturate(140%); -webkit-backdrop-filter: blur(18px) saturate(140%);
     }
-    #promo-challenge-overlay.is-active { display: flex; }
-    @keyframes challengeEmblemSlam {
-      0% { opacity: 0; transform: scale(2.2) translateY(-18px); filter: brightness(2); }
-      55% { opacity: 1; transform: scale(0.92) translateY(2px); filter: brightness(1.25); }
-      80% { transform: scale(1.06) translateY(-2px); filter: brightness(1.05); }
-      100% { opacity: 1; transform: scale(1) translateY(0); filter: brightness(1); }
+    #tier-promo-overlay { z-index: 86; --cine-bg: rgba(30, 27, 18, 0.92); --cine-c1: #facc15; --cine-c2: #38bdf8; }
+    #tier-promo-overlay.is-active, #promo-challenge-overlay.is-active { display: flex; }
+
+    @keyframes cineFlareSweep {
+      0% { opacity: 0; transform: translate(-50%, -50%) scaleX(0.05) scaleY(2.5); }
+      35% { opacity: 0.95; transform: translate(-50%, -50%) scaleX(1.1) scaleY(1); }
+      100% { opacity: 0.35; transform: translate(-50%, -50%) scaleX(1) scaleY(0.8); }
     }
-    .challenge-emblem-slam { animation: challengeEmblemSlam 720ms cubic-bezier(.16, 1, .3, 1) both; }
-    .challenge-rays {
-      position: fixed; left: 50%; top: 46%; width: 150vmax; height: 150vmax;
-      background: repeating-conic-gradient(from 0deg, var(--ch-glow, rgba(250, 204, 21, 0.16)) 0deg 8deg, transparent 8deg 22deg);
-      mask-image: radial-gradient(circle, rgba(0,0,0,0.95) 0%, transparent 64%);
-      -webkit-mask-image: radial-gradient(circle, rgba(0,0,0,0.95) 0%, transparent 64%);
-      animation: promoRaysSpin 14s linear infinite;
-      pointer-events: none; z-index: 0;
+    @keyframes cineCardReveal {
+      0% { opacity: 0; transform: translateY(18px) scale(0.95); filter: blur(8px); }
+      100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
     }
-    .challenge-halo {
-      position: absolute; inset: -16px; border-radius: 9999px;
-      background: conic-gradient(from 0deg, var(--ch-c1, #fde047), var(--ch-c2, #38bdf8), #ffffff, var(--ch-c1, #fde047));
-      opacity: 0.9; filter: blur(10px); animation: tierHaloSpin 3.2s linear infinite; pointer-events: none;
+    @keyframes cineCrestLock {
+      0% { opacity: 0; transform: scale(1.65); filter: brightness(2.2) blur(4px); }
+      60% { opacity: 1; transform: scale(0.95); filter: brightness(1.25) blur(0); }
+      100% { opacity: 1; transform: scale(1); filter: brightness(1) blur(0); }
     }
-    .challenge-ring-1 {
-      position: absolute; inset: -8px; border-radius: 9999px;
-      border: 3px solid var(--ch-c1, #fde047);
-      animation: promoShockwave 1.6s cubic-bezier(.16, 1, .3, 1) infinite;
+    @keyframes cineRingDraw {
+      0% { stroke-dashoffset: 360; opacity: 0; }
+      30% { opacity: 1; }
+      100% { stroke-dashoffset: 0; opacity: 0.85; }
+    }
+    @keyframes cineAstrolabeCW { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    @keyframes cineAstrolabeCCW { 0% { transform: rotate(360deg); } 100% { transform: rotate(0deg); } }
+    @keyframes cineTitleTrack {
+      0% { opacity: 0; letter-spacing: 0.24em; filter: blur(6px); transform: translateY(8px); }
+      100% { opacity: 1; letter-spacing: -0.02em; filter: blur(0); transform: translateY(0); }
+    }
+    @keyframes cineFadeUp {
+      0% { opacity: 0; transform: translateY(10px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes cineShockPulse {
+      0% { opacity: 0.75; transform: scale(0.65); }
+      100% { opacity: 0; transform: scale(2.6); }
+    }
+    @keyframes cineBtnSheen {
+      0% { transform: translateX(-140%) skewX(-24deg); }
+      40%, 100% { transform: translateX(260%) skewX(-24deg); }
+    }
+
+    .cine-flare {
+      position: fixed; left: 50%; top: 42%; width: min(92vw, 680px); height: 2px;
+      background: linear-gradient(90deg, transparent, var(--cine-c1, #facc15), #ffffff, var(--cine-c2, #38bdf8), transparent);
+      box-shadow: 0 0 28px 3px var(--cine-c1, #facc15);
+      animation: cineFlareSweep 1.1s cubic-bezier(.16, 1, .3, 1) both;
+      pointer-events: none; z-index: 1;
+    }
+    .cine-card {
+      position: relative; z-index: 2;
+      background: linear-gradient(165deg, rgba(15, 23, 42, 0.92), rgba(7, 10, 19, 0.96));
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      box-shadow: 0 28px 80px rgba(0, 0, 0, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.14);
+      animation: cineCardReveal 650ms cubic-bezier(.16, 1, .3, 1) both;
+    }
+    .cine-crest-stage { position: relative; width: 132px; height: 132px; margin: 0 auto; display: grid; place-items: center; }
+    .cine-astro-outer {
+      position: absolute; inset: 0;
+      animation: cineAstrolabeCW 22s linear infinite; pointer-events: none;
+    }
+    .cine-astro-inner {
+      position: absolute; inset: 12px;
+      animation: cineAstrolabeCCW 14s linear infinite; pointer-events: none;
+    }
+    .cine-ring-path {
+      stroke-dasharray: 360; stroke-dashoffset: 360;
+      animation: cineRingDraw 950ms cubic-bezier(.22, 1, .36, 1) 120ms forwards;
+    }
+    .cine-shock {
+      position: absolute; inset: 14px; border-radius: 9999px;
+      border: 1.5px solid var(--cine-c1, #facc15);
+      animation: cineShockPulse 1.8s cubic-bezier(.16, 1, .3, 1) 260ms infinite;
       pointer-events: none;
     }
-    .challenge-ring-2 {
-      position: absolute; inset: -8px; border-radius: 9999px;
-      border: 2.5px solid var(--ch-c2, #38bdf8);
-      animation: promoShockwave 1.6s cubic-bezier(.16, 1, .3, 1) infinite;
-      animation-delay: 0.8s;
-      pointer-events: none;
+    .cine-crest-core {
+      position: relative; z-index: 2; width: 82px; height: 82px;
+      display: grid; place-items: center;
+      animation: cineCrestLock 680ms cubic-bezier(.16, 1, .3, 1) 160ms both;
+    }
+    .cine-stagger-1 { animation: cineFadeUp 460ms cubic-bezier(.22,1,.36,1) 240ms both; }
+    .cine-title-anim { animation: cineTitleTrack 680ms cubic-bezier(.16,1,.3,1) 300ms both; }
+    .cine-stagger-3 { animation: cineFadeUp 500ms cubic-bezier(.22,1,.36,1) 430ms both; }
+    .cine-stagger-4 { animation: cineFadeUp 520ms cubic-bezier(.22,1,.36,1) 540ms both; }
+    .cine-btn-sheen { position: relative; overflow: hidden; }
+    .cine-btn-sheen::after {
+      content: ''; position: absolute; top: 0; bottom: 0; left: 0; width: 38%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.42), transparent);
+      animation: cineBtnSheen 3s ease-in-out 1s infinite; pointer-events: none;
     }
     /* Subtle Micro-Details */
     body { transition: background-color 240ms ease, color 240ms ease; }
@@ -1244,45 +1189,63 @@
   </div>
   <!-- Tier Promotion Emblem Ceremony Overlay -->
   <div id="tier-promo-overlay" role="dialog" aria-modal="true" aria-labelledby="tier-promo-title" aria-hidden="true">
-    <div class="promo-rays" aria-hidden="true"></div>
-    <div id="tier-promo-flash" class="ceremony-flash" aria-hidden="true"></div>
+    <div id="tier-promo-flare" class="cine-flare" aria-hidden="true"></div>
     <canvas id="promo-fx-canvas" class="fixed inset-0 z-[1] pointer-events-none"></canvas>
-    <div class="promo-card-in max-w-sm w-full rounded-3xl bg-slate-900/95 border-2 border-amber-300/60 p-7 text-center text-white shadow-[0_0_65px_rgba(250,204,21,0.38)] space-y-5">
-      <div class="promo-emblem-wrap relative mx-auto w-28 h-28 grid place-items-center">
-        <div class="promo-shockwave"></div>
-        <div class="promo-shockwave promo-shockwave-2"></div>
-        <div class="ceremony-orbit"></div>
-        <div class="tier-promo-halo"></div>
-        <div id="tier-promo-icon" class="tier-promo-emblem relative z-[1] w-24 h-24 rounded-full bg-slate-950 border-2 border-amber-300 grid place-items-center text-5xl shadow-2xl">👑</div>
+    <div id="tier-promo-card" class="cine-card max-w-sm w-full rounded-3xl p-7 text-center text-white space-y-5">
+      <div class="cine-crest-stage">
+        <div class="cine-shock"></div>
+        <svg class="cine-astro-outer" viewBox="0 0 132 132" fill="none" aria-hidden="true">
+          <circle cx="66" cy="66" r="62" stroke="rgba(250,204,21,0.28)" stroke-width="1" stroke-dasharray="4 6"/>
+          <circle cx="66" cy="66" r="56" stroke="url(#promoRingGrad)" stroke-width="1.5" class="cine-ring-path"/>
+          <defs><linearGradient id="promoRingGrad" x1="0" y1="0" x2="132" y2="132"><stop stop-color="#fde047"/><stop offset="1" stop-color="#38bdf8"/></linearGradient></defs>
+        </svg>
+        <svg class="cine-astro-inner" viewBox="0 0 108 108" fill="none" aria-hidden="true">
+          <polygon points="54,2 99,28 99,80 54,106 9,80 9,28" stroke="rgba(253,224,71,0.45)" stroke-width="1"/>
+        </svg>
+        <div id="tier-promo-crest-bg" class="cine-crest-core">
+          <svg class="absolute inset-0 w-full h-full drop-shadow-[0_0_18px_rgba(250,204,21,0.45)]" viewBox="0 0 82 82" fill="none" aria-hidden="true">
+            <polygon points="41,3 74,22 74,60 41,79 8,60 8,22" fill="rgba(15,23,42,0.95)" stroke="url(#promoHexGrad)" stroke-width="2.2"/>
+            <defs><linearGradient id="promoHexGrad" x1="8" y1="3" x2="74" y2="79"><stop stop-color="#fef08a"/><stop offset="0.5" stop-color="#eab308"/><stop offset="1" stop-color="#38bdf8"/></linearGradient></defs>
+          </svg>
+          <span id="tier-promo-icon" class="relative z-[1] text-4xl leading-none">👑</span>
+        </div>
       </div>
       <div class="space-y-2">
-        <p class="ceremony-stagger-1 inline-block px-3 py-0.5 rounded-full bg-amber-400/20 border border-amber-300/40 text-[11px] font-black tracking-widest uppercase text-amber-300">TIER PROMOTION</p>
-        <h3 id="tier-promo-title" class="ceremony-stagger-2 text-2xl font-black tracking-tight bg-gradient-to-r from-amber-200 via-white to-amber-300 bg-clip-text text-transparent">승급을 축하합니다!</h3>
-        <p id="tier-promo-sub" class="ceremony-stagger-3 text-xs text-slate-200 leading-relaxed"></p>
+        <p class="cine-stagger-1 inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-amber-400/15 border border-amber-300/35 text-[10px] font-black tracking-[0.22em] uppercase text-amber-300">RANK PROMOTED</p>
+        <h3 id="tier-promo-title" class="cine-title-anim text-2xl font-black bg-gradient-to-r from-amber-100 via-white to-amber-200 bg-clip-text text-transparent">승급을 축하합니다!</h3>
+        <p id="tier-promo-sub" class="cine-stagger-3 text-xs text-slate-300 leading-relaxed"></p>
       </div>
-      <button id="btn-tier-promo-close" type="button" class="ceremony-stagger-4 ceremony-btn-shine w-full py-3.5 rounded-2xl bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-400 text-slate-950 font-black text-sm shadow-lg">계속하기</button>
+      <button id="btn-tier-promo-close" type="button" class="cine-stagger-4 cine-btn-sheen w-full py-3.5 rounded-2xl bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-400 text-slate-950 font-black text-sm shadow-lg transition active:scale-[0.98]">계속하기</button>
     </div>
   </div>
   <!-- Tier Promotion Challenge Launch Overlay -->
   <div id="promo-challenge-overlay" role="dialog" aria-modal="true" aria-labelledby="promo-challenge-title" aria-hidden="true">
-    <div class="challenge-rays" aria-hidden="true"></div>
-    <div id="promo-challenge-flash" class="ceremony-flash" aria-hidden="true"></div>
+    <div id="promo-challenge-flare" class="cine-flare" aria-hidden="true"></div>
     <canvas id="promo-challenge-canvas" class="fixed inset-0 z-[1] pointer-events-none"></canvas>
-    <div id="promo-challenge-card" class="challenge-impact relative z-[2] max-w-sm w-full rounded-3xl bg-slate-950/92 border-2 p-7 text-center text-white space-y-5">
-      <div class="promo-emblem-wrap relative mx-auto w-28 h-28 grid place-items-center">
-        <div class="challenge-ring-1"></div>
-        <div class="challenge-ring-2"></div>
-        <div id="promo-challenge-orbit" class="ceremony-orbit"></div>
-        <div class="challenge-halo"></div>
-        <div id="promo-challenge-icon" class="challenge-emblem-slam relative z-[1] w-24 h-24 rounded-full bg-slate-950 border-2 grid place-items-center text-5xl shadow-2xl">⚔️</div>
+    <div id="promo-challenge-card" class="cine-card max-w-sm w-full rounded-3xl p-7 text-center text-white space-y-5">
+      <div class="cine-crest-stage">
+        <div id="promo-challenge-shock" class="cine-shock"></div>
+        <svg class="cine-astro-outer" viewBox="0 0 132 132" fill="none" aria-hidden="true">
+          <circle cx="66" cy="66" r="62" stroke="rgba(255,255,255,0.18)" stroke-width="1" stroke-dasharray="3 7"/>
+          <circle id="promo-challenge-ring" cx="66" cy="66" r="56" stroke="var(--cine-c1, #facc15)" stroke-width="1.5" class="cine-ring-path"/>
+        </svg>
+        <svg class="cine-astro-inner" viewBox="0 0 108 108" fill="none" aria-hidden="true">
+          <polygon points="54,2 99,28 99,80 54,106 9,80 9,28" stroke="var(--cine-c2, #38bdf8)" stroke-opacity="0.45" stroke-width="1"/>
+        </svg>
+        <div id="promo-challenge-crest-core" class="cine-crest-core">
+          <svg class="absolute inset-0 w-full h-full" viewBox="0 0 82 82" fill="none" aria-hidden="true">
+            <polygon id="promo-challenge-hex" points="41,3 74,22 74,60 41,79 8,60 8,22" fill="rgba(10,14,24,0.96)" stroke="var(--cine-c1, #facc15)" stroke-width="2.2"/>
+          </svg>
+          <span id="promo-challenge-icon" class="relative z-[1] text-4xl leading-none">⚔️</span>
+        </div>
       </div>
       <div class="space-y-2.5">
-        <p id="promo-challenge-badge" class="ceremony-stagger-1 inline-block px-3 py-0.5 rounded-full text-[11px] font-black tracking-widest uppercase">⚔️ PROMOTION CHALLENGE</p>
-        <h3 id="promo-challenge-title" class="ceremony-stagger-2 text-2xl font-black tracking-tight text-white">승급전 도전 개시!</h3>
-        <div id="promo-challenge-mission" class="ceremony-stagger-3 px-3.5 py-2.5 rounded-2xl bg-white/10 border border-white/15 text-xs font-bold text-slate-100 leading-relaxed"></div>
-        <p id="promo-challenge-sub" class="ceremony-stagger-3 text-xs text-slate-300 leading-relaxed"></p>
+        <p id="promo-challenge-badge" class="cine-stagger-1 inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-[10px] font-black tracking-[0.2em] uppercase">PROMOTION SERIES</p>
+        <h3 id="promo-challenge-title" class="cine-title-anim text-2xl font-black text-white">승급전 도전</h3>
+        <div id="promo-challenge-mission" class="cine-stagger-3 px-3.5 py-2.5 rounded-2xl bg-white/[0.06] border border-white/10 text-xs font-bold text-slate-100 leading-relaxed"></div>
+        <p id="promo-challenge-sub" class="cine-stagger-3 text-xs text-slate-300 leading-relaxed"></p>
       </div>
-      <button id="btn-promo-challenge-close" type="button" class="ceremony-stagger-4 ceremony-btn-shine w-full py-3.5 rounded-2xl font-black text-sm shadow-lg transition active:scale-[0.98]">도전 시작!</button>
+      <button id="btn-promo-challenge-close" type="button" class="cine-stagger-4 cine-btn-sheen w-full py-3.5 rounded-2xl font-black text-sm shadow-lg transition active:scale-[0.98]">도전 시작</button>
     </div>
   </div>
   <!-- Starter All-Clear Grand Celebration Overlay -->
@@ -3756,20 +3719,6 @@
         { name: '그랜드마스터', min: 930, icon: '🔥', cls: 'bg-rose-600 text-white border-rose-900', frame: 'rank-frame-base rank-frame-8', wingColor: '#be123c', gemColor: '#fb7185' },
         { name: '챌린저', min: 1200, icon: '👑', cls: 'bg-gradient-to-r from-amber-300 via-sky-300 to-amber-400 text-slate-950 border-slate-950', frame: 'rank-frame-base rank-frame-9', wingColor: '#eab308', gemColor: '#38bdf8' }
       ];
-      function renderRankCrestSvg(tierObj, hasTitle) {
-        const w = tierObj.wingColor || '#94a3b8';
-        const g = tierObj.gemColor || '#e2e8f0';
-        const posCls = hasTitle ? 'top-0.5 right-9' : 'top-0 left-1/2 -translate-x-1/2';
-        return `<div class="pointer-events-none absolute ${posCls} z-20 flex items-center justify-center" aria-hidden="true">
-          <svg width="56" height="16" viewBox="0 0 56 16" fill="none" xmlns="http://www.w3.org/2000/svg" class="drop-shadow-sm">
-            <path d="M2 6 L18 3 L24 8 L16 11 L6 10 Z" fill="${w}" stroke="#0f172a" stroke-width="0.9"/>
-            <path d="M54 6 L38 3 L32 8 L40 11 L50 10 Z" fill="${w}" stroke="#0f172a" stroke-width="0.9"/>
-            <polygon points="28,1 35,7.5 28,14.5 21,7.5" fill="${g}" stroke="#0f172a" stroke-width="1.1"/>
-            <polygon points="28,3.5 31.8,7.5 28,11.5 24.2,7.5" fill="#ffffff" fill-opacity="0.55"/>
-          </svg>
-        </div>`;
-      }
-
       function getMemberTier(lpOrMember) {
         const isObj = lpOrMember && typeof lpOrMember === 'object';
         const m = isObj ? lpOrMember : null;
@@ -4166,6 +4115,14 @@
           promoBadge.className = 'px-2 py-0.5 rounded-md text-[11px] font-black bg-slate-700 text-white';
           promoTitle.textContent = `오늘 승급전에 실패했습니다.`;
           promoDesc.textContent = `내일(${meHdr.promoCooldownUntil})부터 다시 승급전에 도전할 수 있습니다.`;
+          promoActs.innerHTML = '';
+        } else if (meHdr && tierInfo.inPromo && tierInfo.nextName && shared.promoHistory?.[meHdr.id]?.[tNow] && !String(shared.promoHistory[meHdr.id][tNow]).includes('관리자 건너뛰기')) {
+          document.body.removeAttribute('data-promo');
+          promoBar.classList.remove('hidden');
+          promoBadge.textContent = '오늘 승급 완료';
+          promoBadge.className = 'px-2 py-0.5 rounded-md text-[11px] font-black bg-emerald-600 text-white';
+          promoTitle.textContent = `오늘 이미 승급전을 통과했습니다!`;
+          promoDesc.textContent = `승급전은 하루 1회만 진행할 수 있습니다. 내일(${tomorrowStr()}) ${tierInfo.nextName} 승급전에 도전할 수 있습니다.`;
           promoActs.innerHTML = '';
         } else if (meHdr && tierInfo.inPromo && tierInfo.nextName) {
           document.body.setAttribute('data-promo', 'ready');
@@ -4806,7 +4763,6 @@
           return `
             <div data-member-card-wrap="${m.id}" class="relative pt-2.5 flex flex-col">
               ${m.equippedTitle ? `<div class="absolute top-0 left-3 z-10 max-w-[calc(100%-24px)] px-2 py-0.5 rounded-t-lg rounded-b-sm bg-slate-100 border border-slate-300 text-[10px] font-bold text-slate-600 whitespace-nowrap truncate leading-none shadow-sm" title="${escapeHtml(m.equippedTitle)}"><span class="opacity-65">👑</span> ${escapeHtml(m.equippedTitle)}</div>` : ''}
-              ${renderRankCrestSvg(tierObj, !!m.equippedTitle)}
               ${hasMenu ? `<div class="absolute right-2.5 top-[22px] sm:top-[24px] z-40">
                 <button type="button" data-card-menu-btn="${m.id}" aria-label="스터디원 더보기" class="w-6 h-6 rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-900 flex items-center justify-center text-xs font-black">⋯</button>
                 <div data-card-menu-box="${m.id}" class="hidden absolute right-0 top-7 z-50 w-36 rounded-xl bg-white border border-slate-200 shadow-xl p-1 space-y-0.5 text-left">
@@ -5811,6 +5767,10 @@
         if (e.target.id === 'btn-join-promo') {
           const tNow = todayStr();
           const tmr = tomorrowStr();
+          if (shared.promoHistory?.[me.id]?.[tNow] && !String(shared.promoHistory[me.id][tNow]).includes('관리자 건너뛰기')) {
+            showToast(`승급전은 하루에 1회만 가능합니다. 내일(${tmr}) 다시 도전해 주세요!`, 'warn');
+            return;
+          }
           const mission = getPromoMission(tierInfo.nextName);
           const needsTomorrow = mission.type === 'ultra' && getMemberMode(me) !== 'strict';
           const targetDay = needsTomorrow ? tmr : tNow;
@@ -7909,9 +7869,10 @@
         subEl.textContent = releasedBank > 0
           ? `보관 중이던 +${releasedBank} LP가 합산되어 새 티어에 등극했습니다!`
           : `축하합니다! 꾸준한 몰입으로 새로운 티어에 도달했습니다.`;
-        const flashEl = document.getElementById('tier-promo-flash');
-        if (flashEl) { flashEl.classList.remove('ceremony-flash'); void flashEl.offsetWidth; flashEl.classList.add('ceremony-flash'); }
-        iconEl.classList.remove('tier-promo-emblem'); void iconEl.offsetWidth; iconEl.classList.add('tier-promo-emblem');
+        const flareEl = document.getElementById('tier-promo-flare');
+        const crestCore = document.getElementById('tier-promo-crest-bg');
+        if (flareEl) { flareEl.classList.remove('cine-flare'); void flareEl.offsetWidth; flareEl.classList.add('cine-flare'); }
+        if (crestCore) { crestCore.classList.remove('cine-crest-core'); void crestCore.offsetWidth; crestCore.classList.add('cine-crest-core'); }
         ov.classList.add('is-active');
         ov.setAttribute('aria-hidden', 'false');
         triggerHaptic([25, 45, 35, 45, 50, 60, 40]);
@@ -7921,7 +7882,7 @@
           const ctx = cvs.getContext('2d');
           const W = cvs.width = window.innerWidth;
           const H = cvs.height = window.innerHeight;
-          const colors = ['#fde047', '#38bdf8', '#f43f5e', '#a855f7', '#34d399', '#fb923c', '#ffffff'];
+          const colors = ['#fef08a', '#facc15', '#eab308', '#e0f2fe', '#38bdf8', '#ffffff'];
           const sparks = [];
           const confetti = [];
           const stars = Array.from({ length: 28 }, () => ({
@@ -8069,40 +8030,31 @@
         if (!ov || !card || !iconEl || !titleEl) return;
 
         const theme = TIER_CHALLENGE_THEMES[tierObj.name] || TIER_CHALLENGE_THEMES['골드'];
-        ov.style.setProperty('--ch-c1', theme.c1);
-        ov.style.setProperty('--ch-c2', theme.c2);
-        ov.style.setProperty('--ch-glow', theme.glow);
-        ov.style.setProperty('--ch-bg', theme.bg);
-        ov.style.setProperty('--flash-c', theme.glow.replace(/0\.\d+/, '0.62'));
-        ov.style.setProperty('--orbit-c', `${theme.c1}99`);
-        ov.style.setProperty('--orbit-dot', theme.c1);
-        ov.style.setProperty('--orbit-dot2', theme.c2);
-        const chFlash = document.getElementById('promo-challenge-flash');
-        if (chFlash) { chFlash.classList.remove('ceremony-flash'); void chFlash.offsetWidth; chFlash.classList.add('ceremony-flash'); }
+        ov.style.setProperty('--cine-c1', theme.c1);
+        ov.style.setProperty('--cine-c2', theme.c2);
+        ov.style.setProperty('--cine-bg', theme.bg);
+        const chFlare = document.getElementById('promo-challenge-flare');
+        const chCrest = document.getElementById('promo-challenge-crest-core');
+        if (chFlare) { chFlare.classList.remove('cine-flare'); void chFlare.offsetWidth; chFlare.classList.add('cine-flare'); }
+        if (chCrest) { chCrest.classList.remove('cine-crest-core'); void chCrest.offsetWidth; chCrest.classList.add('cine-crest-core'); }
 
-        card.style.borderColor = theme.c1;
-        card.style.boxShadow = `0 0 65px ${theme.glow.replace(/0\.\d+/, '0.45')}`;
+        card.style.borderColor = `${theme.c1}45`;
+        card.style.boxShadow = `0 28px 80px rgba(0,0,0,0.8), 0 0 50px ${theme.glow}, inset 0 1px 0 ${theme.c1}35`;
         iconEl.textContent = tierObj.icon || '⚔️';
-        iconEl.style.borderColor = theme.c1;
-        badgeEl.textContent = needsTomorrow ? `⚔️ ${tierObj.name} 승급전 예약` : `⚔️ ${tierObj.name} 승급전 도전 개시`;
-        badgeEl.style.background = `${theme.c1}26`;
-        badgeEl.style.border = `1px solid ${theme.c1}80`;
+        badgeEl.textContent = needsTomorrow ? `${tierObj.name} PROMOTION · SCHEDULED` : `${tierObj.name} PROMOTION SERIES`;
+        badgeEl.style.background = `${theme.c1}1a`;
+        badgeEl.style.border = `1px solid ${theme.c1}55`;
         badgeEl.style.color = theme.c1;
 
-        titleEl.textContent = needsTomorrow ? `${tierObj.name} 승급전 출정 준비!` : `${tierObj.name} 승급전 도전!`;
-        missionEl.innerHTML = `<span class="opacity-75 text-[10px] block mb-0.5 uppercase tracking-wider">승급 미션</span>${escapeHtml(missionDesc || '')}`;
+        titleEl.textContent = needsTomorrow ? `${tierObj.name} 승급전 출정 예약` : `${tierObj.name} 승급전 개시`;
+        missionEl.innerHTML = `<span class="opacity-65 text-[10px] block mb-0.5 uppercase tracking-widest">MISSION</span>${escapeHtml(missionDesc || '')}`;
         subEl.textContent = needsTomorrow
           ? `${theme.tagline} (${targetDay} 울트라집중모드로 자동 시작)`
           : theme.tagline;
 
-        closeBtn.style.background = `linear-gradient(90deg, ${theme.c1}, ${theme.c2})`;
-        closeBtn.style.color = '#090f1d';
-        closeBtn.textContent = needsTomorrow ? '내일 출정 준비 완료!' : '지금 바로 도전 시작!';
-
-        // Re-trigger slam animation
-        iconEl.classList.remove('challenge-emblem-slam');
-        void iconEl.offsetWidth;
-        iconEl.classList.add('challenge-emblem-slam');
+        closeBtn.style.background = `linear-gradient(135deg, ${theme.c1}, ${theme.c2})`;
+        closeBtn.style.color = '#060913';
+        closeBtn.textContent = needsTomorrow ? '출정 준비 완료' : '도전 시작';
 
         ov.classList.add('is-active');
         ov.setAttribute('aria-hidden', 'false');
