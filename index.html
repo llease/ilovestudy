@@ -3834,40 +3834,92 @@
 
 
         document.getElementById('registered-classes-list').innerHTML = cls.length
-          ? cls.map(c => `<div class="flex items-center justify-between bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs"><span><strong>[${days[c.day]}] ${escapeHtml(c.name)}</strong> ${c.start}~${c.end}</span><div class="flex items-center gap-2"><button type="button" data-edit-class="${c.id}" class="text-indigo-600 font-bold">수정</button><button type="button" data-del-class="${c.id}" class="text-rose-500 font-bold">삭제</button></div></div>`).join('')
+          ? cls.map(c => `<div class="flex items-center justify-between gap-2 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs"><span class="min-w-0 truncate"><strong>[${days[c.day]}] ${escapeHtml(c.name)}</strong> <span class="text-slate-500">${c.start}~${c.end}</span></span><div class="flex items-center gap-2 shrink-0"><button type="button" data-add-time-class="${c.id}" class="text-emerald-600 font-bold whitespace-nowrap">+ 시간추가</button><button type="button" data-edit-class="${c.id}" class="text-indigo-600 font-bold whitespace-nowrap">수정</button><button type="button" data-del-class="${c.id}" class="text-rose-500 font-bold whitespace-nowrap">삭제</button></div></div>`).join('')
           : '<p class="text-xs text-slate-400">등록된 수업이 없습니다.</p>';
 
         const showRussellGrid = tm && (getMemberMode(tm) === 'strict' || tm.pendingMode === 'strict');
+        document.getElementById('weekly-grid-title').textContent = '내 대학 수업 시간표';
+        document.getElementById('weekly-grid-desc').textContent = showRussellGrid
+          ? '등록한 대학 수업을 시간표로 바로 확인하고, 아래에서 울트라집중모드 면제 여부도 조정할 수 있습니다.'
+          : '등록한 대학 수업이 에브리타임 스타일 시간표로 표시됩니다. (울트라집중모드 전환 시 자동 면제 연동)';
+
+        const hasSat = cls.some(c => Number(c.day) === 6);
+        const dayCols = hasSat ? [1, 2, 3, 4, 5, 6] : [1, 2, 3, 4, 5];
+        const minStartH = cls.length ? Math.min(9, ...cls.map(c => Math.floor(toMins(c.start) / 60))) : 9;
+        const maxEndH = cls.length ? Math.max(18, ...cls.map(c => Math.ceil(toMins(c.end) / 60))) : 18;
+        const startHour = Math.max(7, minStartH);
+        const endHour = Math.min(22, maxEndH);
+        const totalHours = Math.max(1, endHour - startHour);
+        const pxPerHour = 44;
+        const totalHeight = totalHours * pxPerHour;
+        const ETA_PALETTE = [
+          { bg: '#fef3c7', border: '#f59e0b', text: '#78350f' },
+          { bg: '#dbeafe', border: '#3b82f6', text: '#1e3a8a' },
+          { bg: '#dcfce7', border: '#22c55e', text: '#14532d' },
+          { bg: '#fce7f3', border: '#ec4899', text: '#831843' },
+          { bg: '#ede9fe', border: '#8b5cf6', text: '#4c1d95' },
+          { bg: '#ffedd5', border: '#f97316', text: '#7c2d12' },
+          { bg: '#cffafe', border: '#06b6d4', text: '#164e63' },
+          { bg: '#ffe4e6', border: '#f43f5e', text: '#881337' }
+        ];
+        function getSubjectPalette(name) {
+          let h = 0;
+          for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) >>> 0;
+          return ETA_PALETTE[h % ETA_PALETTE.length];
+        }
+
+        let etaHtml = `<div class="rounded-xl border border-slate-200 overflow-hidden bg-white">
+          <div class="grid border-b border-slate-200 bg-slate-100 text-[11px] font-bold text-slate-600" style="grid-template-columns:44px repeat(${dayCols.length}, minmax(0, 1fr))">
+            <div class="py-1.5 text-center">시간</div>
+            ${dayCols.map(d => `<div class="py-1.5 text-center border-l border-slate-200">${days[d]}</div>`).join('')}
+          </div>
+          <div class="grid relative" style="grid-template-columns:44px repeat(${dayCols.length}, minmax(0, 1fr)); height:${totalHeight}px">
+            <div class="relative border-r border-slate-200 bg-slate-50/70">
+              ${Array.from({ length: totalHours }, (_, i) => `<div class="absolute left-0 right-0 text-center text-[10px] font-mono font-bold text-slate-400 border-t border-slate-100 first:border-t-0" style="top:${i * pxPerHour}px; height:${pxPerHour}px; padding-top:2px">${startHour + i}</div>`).join('')}
+            </div>`;
+        for (const d of dayCols) {
+          const dayItems = cls.filter(c => Number(c.day) === d);
+          etaHtml += `<div class="relative border-l border-slate-200">`;
+          for (let i = 0; i < totalHours; i++) {
+            etaHtml += `<div class="absolute left-0 right-0 border-t border-slate-100 first:border-t-0 pointer-events-none" style="top:${i * pxPerHour}px; height:${pxPerHour}px"></div>`;
+          }
+          for (const c of dayItems) {
+            const sM = Math.max(startHour * 60, toMins(c.start));
+            const eM = Math.min(endHour * 60, toMins(c.end));
+            if (eM <= sM) continue;
+            const topPx = ((sM - startHour * 60) / 60) * pxPerHour;
+            const heightPx = Math.max(22, ((eM - sM) / 60) * pxPerHour - 2);
+            const pal = getSubjectPalette(c.name);
+            etaHtml += `<div class="absolute left-0.5 right-0.5 rounded-lg px-1.5 py-1 overflow-hidden border shadow-sm flex flex-col justify-start" style="top:${topPx + 1}px; height:${heightPx}px; background:${pal.bg}; border-color:${pal.border}; color:${pal.text}" title="${escapeHtml(c.name)} (${c.start}~${c.end})">
+              <div class="text-[10px] font-black leading-tight line-clamp-2 break-keep">${escapeHtml(c.name)}</div>
+              ${heightPx >= 36 ? `<div class="text-[9px] font-mono opacity-80 mt-0.5 leading-none">${c.start}~${c.end}</div>` : ''}
+            </div>`;
+          }
+          etaHtml += `</div>`;
+        }
+        etaHtml += `</div></div>`;
+
         if (showRussellGrid) {
-          document.getElementById('weekly-grid-title').textContent = '울트라집중모드 · 전용 시간표';
-          document.getElementById('weekly-grid-desc').innerHTML = '등록한 대학 수업이 자동 면제되며, 칸을 눌러 직접 <strong>수업면제</strong>를 켜고 끌 수도 있습니다.';
-          let html = '<table class="w-full text-xs border-collapse"><thead><tr class="bg-slate-100 text-slate-600"><th class="p-2 text-left">교시</th>';
-          for (let d = 1; d <= 6; d++) html += `<th class="p-2 text-center">${days[d]}</th>`;
-          html += '</tr></thead><tbody>';
+          let rHtml = `<div class="mt-5 pt-4 border-t border-slate-200 space-y-2">
+            <div>
+              <h4 class="text-sm font-black text-slate-900">⚡ 울트라집중모드 · 전용 면제 시간표</h4>
+              <p class="text-[11px] text-slate-500">등록한 대학 수업이 자동 면제되며, 칸을 눌러 직접 <strong>수업면제</strong>를 켜고 끌 수도 있습니다.</p>
+            </div>
+            <table class="w-full text-xs border-collapse"><thead><tr class="bg-slate-100 text-slate-600"><th class="p-2 text-left">교시</th>`;
+          for (let d = 1; d <= 6; d++) rHtml += `<th class="p-2 text-center">${days[d]}</th>`;
+          rHtml += '</tr></thead><tbody>';
           for (const p of STUDY_PERIODS.slice(0, 8)) {
-            html += `<tr class="border-b border-slate-100"><td class="p-2 font-semibold whitespace-nowrap">${p.label} <span class="text-[10px] text-slate-400 font-normal">${p.start}</span></td>`;
+            rHtml += `<tr class="border-b border-slate-100"><td class="p-2 font-semibold whitespace-nowrap">${p.label} <span class="text-[10px] text-slate-400 font-normal">${p.start}</span></td>`;
             for (let d = 1; d <= 6; d++) {
               const ex = getExemptPeriodIds(selId, d).has(p.id);
-              html += `<td class="p-1 text-center"><button type="button" data-toggle-exempt="${selId}|${d}|${p.id}" class="w-full py-1.5 rounded-lg text-[11px] font-bold border ${ex ? 'bg-sky-500 text-white border-sky-600' : 'bg-slate-50 text-slate-400 border-slate-200'}">${ex ? '면제' : '의무'}</button></td>`;
+              rHtml += `<td class="p-1 text-center"><button type="button" data-toggle-exempt="${selId}|${d}|${p.id}" class="w-full py-1.5 rounded-lg text-[11px] font-bold border ${ex ? 'bg-sky-500 text-white border-sky-600' : 'bg-slate-50 text-slate-400 border-slate-200'}">${ex ? '면제' : '의무'}</button></td>`;
             }
-            html += '</tr>';
+            rHtml += '</tr>';
           }
-          document.getElementById('weekly-exemption-grid').innerHTML = html + '</tbody></table>';
+          rHtml += '</tbody></table></div>';
+          document.getElementById('weekly-exemption-grid').innerHTML = etaHtml + rHtml;
         } else {
-          document.getElementById('weekly-grid-title').textContent = '내 대학 수업 시간표';
-          document.getElementById('weekly-grid-desc').textContent = '왼쪽에서 수업을 추가·수정하면 여기에 반영됩니다. (울트라집중모드 전환 시 전용 시간표로 자동 연동됩니다.)';
-          let html = '<table class="w-full table-fixed text-xs border-collapse"><thead><tr class="bg-slate-100 text-slate-600"><th class="p-1.5 text-left w-12">시간</th>';
-          for (let d = 1; d <= 5; d++) html += `<th class="p-1.5 text-center w-1/5">${days[d]}</th>`;
-          html += '</tr></thead><tbody>';
-          for (let h = 9; h <= 18; h++) {
-            html += `<tr class="border-b border-slate-100"><td class="p-2 font-mono font-bold text-slate-400">${String(h).padStart(2, '0')}:00</td>`;
-            for (let d = 1; d <= 5; d++) {
-              const match = cls.find(c => Number(c.day) === d && toMins(c.start) < (h + 1) * 60 && toMins(c.end) > h * 60);
-              html += `<td class="p-1 text-center align-middle">${match ? `<div class="px-1 py-1 rounded bg-sky-100 text-sky-900 font-bold text-[10px] leading-tight truncate border border-sky-200" title="${escapeHtml(match.name)}">${escapeHtml(match.name)}</div>` : '<div class="h-6"></div>'}</td>`;
-            }
-            html += '</tr>';
-          }
-          document.getElementById('weekly-exemption-grid').innerHTML = html + '</tbody></table>';
+          document.getElementById('weekly-exemption-grid').innerHTML = etaHtml;
         }
       }
 
@@ -5235,6 +5287,18 @@
 
       document.getElementById('registered-classes-list').addEventListener('click', e => {
         const mid = document.getElementById('class-member-select').value;
+        const addTimeId = e.target.dataset.addTimeClass;
+        if (addTimeId && shared.classes && shared.classes[mid]) {
+          const cls = shared.classes[mid].find(c => c.id === addTimeId);
+          if (!cls) return;
+          document.getElementById('class-name-input').value = cls.name;
+          document.getElementById('class-start-input').value = cls.start;
+          document.getElementById('class-end-input').value = cls.end;
+          const daySel = document.getElementById('class-day-select');
+          daySel.focus();
+          showToast(`'${cls.name}' 과목명이 채워졌습니다. 요일과 시간만 바꿔 등록하세요!`, 'info');
+          return;
+        }
         const editId = e.target.dataset.editClass;
         if (editId && shared.classes && shared.classes[mid]) {
           const cls = shared.classes[mid].find(c => c.id === editId);
