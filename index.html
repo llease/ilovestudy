@@ -805,6 +805,19 @@
       overflow-wrap: anywhere;
     }
     .promo-mission[hidden] + .promo-note { margin-top: 0; }
+    .promo-perks { margin:12px 0 0; }
+    .promo-perks figcaption { color:#e1e7f1; font-size:.75rem; line-height:1.5; }
+    .promo-card-pair { display:grid; grid-template-columns:minmax(0,1fr) auto minmax(0,1fr); align-items:center; gap:8px; margin-bottom:8px; }
+    .promo-card-pair .member-card-details { min-height:76px; display:grid; place-items:end center; padding:8px 4px; cursor:default; overflow:hidden; }
+    .promo-card-pair .member-card-details:hover { transform:none; }
+    .promo-card-pair .member-rank { position:relative; font-size:.75rem; }
+    .promo-card-pair .member-flame-space { inset:0; width:100%; height:100%; mask-image:linear-gradient(#000 60%,transparent); }
+    .promo-card-pair .member-portrait-flame { left:50%; top:50%; }
+    .promo-card-pair .member-card:last-child { animation:promoCardReveal 820ms var(--promo-ease) 520ms both; }
+    @keyframes promoCardReveal {
+      from { opacity:.45; transform:translateY(5px); filter:saturate(.25); }
+      to { opacity:1; transform:none; filter:none; }
+    }
     .promo-controls { display: flex; gap: 8px; margin-top: 19px; }
     .promo-button {
       min-height: 44px;
@@ -1178,6 +1191,13 @@
     #modal-overlay[data-variant="member-photo"] #modal-box {width:min(100%, 15rem)!important;max-width:15rem!important;padding:1rem!important;border-radius:16px!important;animation:study-appear 150ms ease-out both!important}
     #modal-overlay[data-variant="member-photo"] #modal-box > div:first-child {display:none}
     #modal-overlay[data-variant="member-photo"] #modal-title {font-size:.84rem}
+    #modal-overlay[data-variant="studygram-photo"] {align-items:center!important;padding:max(1rem,env(safe-area-inset-top)) max(1rem,env(safe-area-inset-right)) max(1rem,env(safe-area-inset-bottom)) max(1rem,env(safe-area-inset-left))!important}
+    #modal-overlay[data-variant="studygram-photo"] #modal-box {width:min(100%,54rem)!important;max-width:54rem!important;max-height:90dvh!important;border-radius:18px!important}
+    #modal-overlay[data-variant="studygram-photo"] #modal-box > div:first-child {display:none}
+    .studygram-full-photo {display:block;width:100%;height:auto;max-height:72dvh;margin-inline:auto;object-fit:contain}
+    .studygram-full-photo[hidden] {display:none}
+    .studygram-photo-button {display:block;width:100%;cursor:zoom-in;touch-action:manipulation}
+    .studygram-photo-button:focus-visible {outline:3px solid var(--focus-ring);outline-offset:-3px}
     #modal-close {min-width:44px;min-height:44px;color:var(--muted);border:1px solid var(--line);background:var(--soft);flex:none}
     #auth-overlay {z-index:65}
     #auth-overlay .study-logo {height:49px;width:49px}
@@ -1214,7 +1234,11 @@
     #focus-overlay[data-focus-theme="home"] .focus-home-scene {
       display:block; position:fixed; inset:0; height:100dvh; z-index:0; isolation:isolate; overflow:hidden;
       background:linear-gradient(118deg,var(--hero-deep),var(--hero));
-      border:1px solid var(--focus-divider); pointer-events:none;
+      pointer-events:none;
+    }
+    #focus-overlay[data-focus-theme="home"] .focus-home-scene::after {
+      content:''; position:absolute; inset:0 0 auto; height:calc(env(safe-area-inset-top, 0px) + clamp(3.5rem, 12dvh, 7rem));
+      background:linear-gradient(var(--focus-bg) 0 calc(env(safe-area-inset-top, 0px) + 1px), transparent);
     }
     .focus-theme-switch { display:flex; align-self:flex-end; gap:2px; border:1px solid var(--focus-divider); border-radius:9px; padding:2px; }
     .focus-theme-switch button { min-height:34px; padding:.35rem .65rem; font-size:.72rem; color:var(--focus-subtle); border-radius:6px; font-weight:700 }
@@ -1605,15 +1629,6 @@
       background:var(--tint)!important; border-color:var(--primary)!important; color:var(--link)!important;
       box-shadow:0 4px 12px rgba(36,83,204,.12);
     }
-    @keyframes igHeartPop {
-      0% { opacity:0; transform:scale(0.4); }
-      25% { opacity:1; transform:scale(1.18); }
-      55% { opacity:1; transform:scale(0.96); }
-      100% { opacity:0; transform:scale(1.25); }
-    }
-    .ig-heart-burst {
-      animation: igHeartPop 700ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
-    }
   </style>
 </head>
 <body data-theme="blue" class="bg-white text-slate-950 min-h-screen antialiased">
@@ -1677,6 +1692,10 @@
           <p id="promotion-mission-value" class="promo-mission-value"></p>
         </div>
         <p id="promotion-note" class="promo-note"></p>
+        <figure id="promotion-perks" class="promo-perks" hidden>
+          <div class="promo-card-pair" id="promotion-card-pair" aria-hidden="true"></div>
+          <figcaption>스터디원 카드의 불꽃과 테두리가 새 티어 색으로 바뀌었어요. 같은 공부 시간으로 비교한 미리보기예요.</figcaption>
+        </figure>
       </div>
       <div class="promo-controls">
         <button id="promotion-cancel" class="promo-button" type="button">취소</button>
@@ -1934,7 +1953,7 @@
       </div>
       <div class="study-status-group">
         <button id="sync-info-btn" type="button" aria-haspopup="dialog" title="연동 상태 확인" class="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 border border-slate-900/20 whitespace-nowrap shrink-0">연결중</button>
-        <button id="study-mode-btn" type="button" title="공부 모드 전환 (내일부터 적용)" class="px-2 py-0.5 rounded-full text-[10px] font-black bg-rose-600 text-white whitespace-nowrap shrink-0">울트라집중</button>
+        <button id="study-mode-btn" type="button" title="공부 모드 전환 (다음 공부일 오전 5시 적용)" class="px-2 py-0.5 rounded-full text-[10px] font-black bg-rose-600 text-white whitespace-nowrap shrink-0">울트라집중</button>
       </div>
 
       <div id="header-tools" class="flex items-center shrink-0 relative">
@@ -2153,7 +2172,7 @@
         <div class="flex flex-wrap items-center justify-between gap-2">
           <div>
             <h3 class="text-sm sm:text-base font-black text-slate-950">🏅 티어별 스터디원 랭킹</h3>
-            <p class="text-xs text-slate-500">스터디에 참가 중인 멤버만 티어별로 분류되어 표시됩니다.</p>
+            <p class="text-xs text-slate-500">공부 시작·마지막 시각은 한국 시간 오전 5시부터 다음 날 오전 5시까지 집계합니다.</p>
           </div>
         </div>
         <div id="tier-grouped-rankings-list" class="space-y-2.5"></div>
@@ -2328,7 +2347,7 @@
             <h3 class="text-base sm:text-lg font-black text-slate-900">👤 내 프로필</h3>
             <p id="profile-account-email" class="text-xs text-slate-500 mt-0.5">별명과 프로필 사진을 설정할 수 있습니다.</p>
           </div>
-          <button id="profile-mode-pill" type="button" title="클릭하여 공부 모드 전환 (내일부터 적용)" class="px-2.5 py-1 rounded-full text-[11px] font-black bg-emerald-100 text-emerald-800 whitespace-nowrap cursor-pointer hover:opacity-80 transition">자율모드</button>
+          <button id="profile-mode-pill" type="button" title="클릭하여 공부 모드 전환 (다음 공부일 오전 5시 적용)" class="px-2.5 py-1 rounded-full text-[11px] font-black bg-emerald-100 text-emerald-800 whitespace-nowrap cursor-pointer hover:opacity-80 transition">자율모드</button>
         </div>
         <div class="flex items-center gap-4">
           <div id="profile-avatar-preview" class="w-14 h-14 rounded-full bg-slate-200 border border-slate-300 overflow-hidden flex items-center justify-center text-base font-black text-slate-600 shrink-0"></div>
@@ -2507,7 +2526,7 @@
               </li>
               <li class="space-y-0.5">
                 <div class="font-black text-slate-900">🔄 모드 전환</div>
-                <p>상단 모드 배지 또는 <strong>👤 내 프로필</strong>의 모드 버튼을 눌러 전환하며, 공정성을 위해 <strong>내일 00:00부터</strong> 적용됩니다.</p>
+                <p>상단 모드 배지 또는 <strong>👤 내 프로필</strong>의 모드 버튼을 눌러 전환하며, <strong>다음 공부일 오전 5시(한국 시간)</strong>에 적용됩니다. 자정 이후 오전 5시 전에 예약하면 그날 오전 5시에 전환됩니다.</p>
               </li>
             </ul>
           </section>
@@ -2802,8 +2821,8 @@
         <div class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-sm space-y-2">
           <h4 class="text-xs sm:text-sm font-black text-slate-900">✉️ 부원에게 다이렉트 메시지 보내기</h4>
           <form id="admin-dm-form" class="flex flex-wrap sm:flex-nowrap gap-2 bg-slate-50 p-3 rounded-xl border border-slate-200">
-            <select id="admin-dm-target" class="rounded-xl border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-semibold shrink-0"></select>
-            <input id="admin-dm-text" type="text" placeholder="부원에게 보낼 메시지 입력..." class="flex-1 min-w-[140px] rounded-xl border border-slate-300 bg-white px-2.5 py-1.5 text-xs" required />
+            <select id="admin-dm-target" aria-label="메시지 받는 부원" required class="rounded-xl border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-semibold shrink-0"></select>
+            <input id="admin-dm-text" type="text" maxlength="1500" placeholder="부원에게 보낼 메시지 입력..." class="flex-1 min-w-[140px] rounded-xl border border-slate-300 bg-white px-2.5 py-1.5 text-xs" required />
             <button type="submit" class="px-3.5 py-1.5 rounded-xl bg-indigo-600 text-white text-xs font-bold whitespace-nowrap shrink-0">보내기</button>
           </form>
         </div>
@@ -2912,6 +2931,9 @@
         // Korean time is UTC+9, and the study day starts five hours after midnight.
         return new Date(date.getTime() + 4 * 3600000).toISOString().slice(0, 10);
       }
+      function nextStudyDay(day = studyDayKey()) { return addDaysStr(day, 1); }
+      function studyDayStartLabel(day) { return `${day} 오전 5시(한국 시간)`; }
+      function modeLabel(mode) { return mode === 'strict' ? '울트라집중모드' : '자율모드'; }
       function promotionStudyDay(member) {
         return member.promoActiveStudyDay || member.promoActiveDate;
       }
@@ -2979,17 +3001,17 @@
         m.lastActiveStudyDate = dateKey;
       }
 
-      function syncMemberPendingModes(t = todayStr(), attendanceDay = studyDayKey()) {
-        const studyDay = studyDayKey();
+      function syncMemberPendingModes(studyDay = studyDayKey()) {
         let changed = false;
         (shared.members || []).forEach(m => {
           if (currentAuthUser && !prefs.adminMode && m.uid !== currentAuthUser.uid) return;
-          if (syncDailyStreak(m, attendanceDay)) changed = true;
-          if (m.pendingMode && m.pendingDate && t >= m.pendingDate) {
+          if (syncDailyStreak(m, studyDay)) changed = true;
+          if (m.pendingMode && m.pendingDate && studyDay >= m.pendingDate) {
             if (focusInterval && m.id === prefs.currentUserId) focusModeBeforeChange = { date:m.pendingDate, mode:getMemberMode(m) };
             m.mode = m.pendingMode;
             m.pendingMode = null;
             m.pendingDate = null;
+            m.promoReservedMode = false;
             changed = true;
           }
           if (m.promoPendingDate && studyDay >= m.promoPendingDate) {
@@ -3159,10 +3181,11 @@
           maxFocusLogs: {},
           periodStudySecs: {},
           studyBlocks: {},
+          studyRankTimes: {},
           studySlotMins: {},
-          suggestions: [],
-          encouragements: [],
-          reports: [],
+          suggestions: {},
+          encouragements: {},
+          reports: {},
           directMessages: {},
           lpHistory: {},
           respectLpRewarded: {},
@@ -3242,9 +3265,10 @@
             }
             parsed.challenges = mergedCh;
             if (!parsed.periodStudySecs) parsed.periodStudySecs = {};
-            if (!Array.isArray(parsed.reports)) parsed.reports = [];
-            if (!Array.isArray(parsed.encouragements)) parsed.encouragements = [];
-            if (!parsed.directMessages) parsed.directMessages = {};
+            parsed.reports = inboxRecords(parsed.reports);
+            parsed.suggestions = inboxRecords(parsed.suggestions);
+            parsed.encouragements = inboxRecords(parsed.encouragements);
+            parsed.directMessages = memberMailboxes(parsed.directMessages);
             if (!parsed.lpHistory) parsed.lpHistory = {};
             if (!parsed.respectLpRewarded) parsed.respectLpRewarded = {};
             if (!parsed.periodLpRewarded) parsed.periodLpRewarded = {};
@@ -3287,7 +3311,7 @@
         }
       })();
 
-      let activeChallengeCat = 'special';
+      let activeChallengeCat = null;
       // Planner UI state
       let selectedTaskColor = PLANNER_COLORS[0];
       let activeBrushTaskId = null;
@@ -3298,6 +3322,26 @@
       let plannerEditDateStr = null;
 
       function savePrefs() { try { localStorage.setItem(LOCAL_PREFS_KEY, JSON.stringify(prefs)); } catch (e) {} }
+      function inboxRecords(records) {
+        // Keep Firebase's existing child keys, including numeric keys from older lists.
+        return Object.fromEntries(Object.entries(records || {}).filter(([, record]) => record && typeof record === 'object'));
+      }
+      function memberMailboxes(mailboxes) {
+        return Object.fromEntries(Object.entries(mailboxes || {}).map(([id, records]) => [id, inboxRecords(records)]));
+      }
+      function sortedInbox(records) {
+        const timestamp = record => Number(record.createdAt) || Number(String(record.id || '').match(/\d{10,}/)?.[0]) || 0;
+        return Object.entries(records || {}).filter(([, record]) => record).sort((a, b) => timestamp(b[1]) - timestamp(a[1]));
+      }
+      function inboxMessage(fields, key = 'msg_' + Date.now() + '_' + (globalThis.crypto?.randomUUID?.() || Math.random().toString(36).slice(2))) {
+        const now = new Date();
+        return { ...fields, id:key, createdAt:+now, date:localDateKey(now), time:`${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`, read:false };
+      }
+      function addDirectMessage(memberId, text, key) {
+        const message = inboxMessage({ text }, key);
+        const mailbox = ((shared.directMessages ||= {})[memberId] ||= {});
+        mailbox[message.id] = message;
+      }
       const PHOTO_CLEANUP_DAYS = 7;
       function cleanupOldPhotos(maxDays = PHOTO_CLEANUP_DAYS) {
         if (!Array.isArray(shared.photos)) return 0;
@@ -3322,8 +3366,8 @@
       function snapshotSharedState(obj) {
         const snap = {};
         if (!obj) return snap;
-        const twoLevel = ['studyLogs', 'studySubminuteMs', 'maxFocusLogs', 'periodStudySecs', 'studyBlocks', 'motemote', 'records', 'manualExempt', 'respectSentByDate', 'periodLpRewarded', 'hourlyLpGiven', 'studySlotMins'];
-        const oneLevel = ['classes', 'praises', 'directMessages', 'promoHistory', 'customBadges', 'memberChallenges', 'challengeLpGranted', 'respectLpRewarded', 'lpHistory'];
+        const twoLevel = ['studyLogs', 'studySubminuteMs', 'maxFocusLogs', 'periodStudySecs', 'studyBlocks', 'studyRankTimes', 'motemote', 'records', 'manualExempt', 'respectSentByDate', 'periodLpRewarded', 'hourlyLpGiven', 'studySlotMins', 'directMessages'];
+        const oneLevel = ['classes', 'praises', 'promoHistory', 'customBadges', 'memberChallenges', 'challengeLpGranted', 'respectLpRewarded', 'lpHistory', 'reports', 'suggestions', 'encouragements'];
         Object.keys(obj).forEach(k => {
           if (twoLevel.includes(k) && obj[k] && typeof obj[k] === 'object') {
             Object.keys(obj[k]).forEach(k1 => {
@@ -3836,10 +3880,11 @@
               maxFocusLogs: v.maxFocusLogs || {},
               periodStudySecs: v.periodStudySecs || {},
               studyBlocks: v.studyBlocks || {},
-              suggestions: Array.isArray(v.suggestions) ? v.suggestions : (v.suggestions ? Object.values(v.suggestions) : []),
-              reports: Array.isArray(v.reports) ? v.reports : (v.reports ? Object.values(v.reports) : []),
-              encouragements: Array.isArray(v.encouragements) ? v.encouragements : (v.encouragements ? Object.values(v.encouragements) : []),
-              directMessages: normArrMap(v.directMessages),
+              studyRankTimes: v.studyRankTimes || {},
+              suggestions: inboxRecords(v.suggestions),
+              reports: inboxRecords(v.reports),
+              encouragements: inboxRecords(v.encouragements),
+              directMessages: memberMailboxes(v.directMessages),
               lpHistory: normArrMap(v.lpHistory),
               respectLpRewarded: v.respectLpRewarded || {},
               periodLpRewarded: v.periodLpRewarded || {},
@@ -3984,6 +4029,13 @@
       let onboardingBusy = false;
       const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
       const shown = el => !!el && !el.classList.contains('hidden');
+      const browserThemeColor = document.querySelector('meta[name="theme-color"]');
+      const defaultBrowserThemeColor = browserThemeColor.content;
+      function syncFocusBrowserColor() {
+        const timer = document.getElementById('focus-overlay');
+        const color = shown(timer) ? getComputedStyle(timer).backgroundColor : defaultBrowserThemeColor;
+        if (browserThemeColor.content !== color) browserThemeColor.content = color;
+      }
       function activeStudyDialog() {
         return ['promotion-overlay', 'auth-overlay', 'modal-overlay', 'focus-overlay'].map(id => document.getElementById(id)).find(shown);
       }
@@ -3995,6 +4047,7 @@
           node.inert = !!active && node !== active;
         });
         document.querySelector('.skip-link').inert = !!active;
+        syncFocusBrowserColor();
       }
       document.addEventListener('keydown', e => {
         const dialog = activeStudyDialog();
@@ -4027,7 +4080,8 @@
         o.classList.add('hidden'); o.classList.remove('flex');
         delete o.dataset.variant;
         refreshStudyDialogs();
-        if (previousModalFocus?.isConnected && !previousModalFocus.closest('[inert]')) previousModalFocus.focus({preventScroll:true});
+        const returnTarget = previousModalFocus?.isConnected ? previousModalFocus : document.getElementById(previousModalFocus?.id || '');
+        if (returnTarget && !returnTarget.closest('[inert]')) returnTarget.focus({preventScroll:true});
         previousModalFocus = null;
       }
 
@@ -4159,7 +4213,7 @@
           ['classes', 'manualExempt', 'customBadges', 'memberChallenges', 'challengeLpGranted', 'praises', 'directMessages', 'lpHistory', 'promoHistory', 'respectLpRewarded'].forEach(k => {
             if (shared[k]) delete shared[k][memberId];
           });
-          ['records', 'studyLogs', 'studySubminuteMs', 'maxFocusLogs', 'periodStudySecs', 'studyBlocks', 'studySlotMins', 'hourlyLpGiven', 'motemote', 'periodLpRewarded', 'respectSentByDate'].forEach(k => {
+          ['records', 'studyLogs', 'studySubminuteMs', 'maxFocusLogs', 'periodStudySecs', 'studyBlocks', 'studyRankTimes', 'studySlotMins', 'hourlyLpGiven', 'motemote', 'periodLpRewarded', 'respectSentByDate'].forEach(k => {
             if (shared[k]) Object.keys(shared[k]).forEach(d => { if (shared[k][d]) delete shared[k][d][memberId]; });
           });
           if (shared.photos) shared.photos = shared.photos.filter(p => p.memberId !== memberId);
@@ -4256,7 +4310,7 @@
       }
 
       function recordEarlyMorningCheck(m, dateStr, hhmm) {
-        if (!m || !hhmm || toMins(hhmm) >= toMins('07:50')) return;
+        if (!m || !hhmm || toMins(hhmm) < toMins('05:00') || toMins(hhmm) >= toMins('07:50')) return;
         if (!Array.isArray(m.earlyMorningDates)) m.earlyMorningDates = [];
         if (!m.earlyMorningDates.includes(dateStr)) m.earlyMorningDates.push(dateStr);
         if (m.earlyMorningDates.length >= 3) unlockChallengeFor(m.id, 'ch1', false);
@@ -4304,7 +4358,7 @@
         if (!shared.challengeLpGranted[memberId]) shared.challengeLpGranted[memberId] = {};
         shared.challengeLpGranted[memberId][chId] = ch.lp || 20;
         addMemberLp(memberId, ch.lp || 20, `챌린지: ${ch.title}`);
-        const starterIdsAll = (shared.challenges || []).filter(c => c.cat === 'starter' || STARTER_ACTIONS[c.id]).map(c => c.id);
+        const starterIdsAll = (shared.challenges || []).filter(c => challengeCategory(c) === 'starter').map(c => c.id);
         const mClearObj = shared.members.find(x => x.id === memberId);
         const allStarterDone = starterIdsAll.length > 0 && starterIdsAll.every(id => shared.memberChallenges[memberId].includes(id));
         const justClearedAllStarter = !!(allStarterDone && mClearObj && !mClearObj.starterAllCleared);
@@ -4426,7 +4480,7 @@
 
       function getBadgesForMember(member, dateStr) {
         const b = [];
-        if (member.firstTime && member.firstTimeDate === dateStr && toMins(member.firstTime) < toMins('08:00')) {
+        if (member.firstTime && member.firstTimeDate === dateStr && toMins(member.firstTime) >= toMins('05:00') && toMins(member.firstTime) < toMins('08:00')) {
           b.push({ label: '🌅 얼리버드', customCls: BADGE_THEMES.neon });
         }
         const st = Number(member.streak) || 0;
@@ -4521,9 +4575,11 @@
         }
         const adminBtn = document.getElementById('admin-toggle-btn');
         if (adminBtn) adminBtn.classList.toggle('hidden', !isAdminUser());
-        const repCnt = (shared.reports || []).filter(r => !r.read).length;
+        const repCnt = Object.values(shared.reports || {}).filter(r => !r.read).length;
+        const newSuggestions = Object.values(shared.suggestions || {}).filter(s => !s.read).length;
+        const inboxCount = repCnt + newSuggestions;
         const pendingJoinCnt = (shared.joinRequests || []).filter(r => r.status === 'pending').length;
-        const adminAlertCnt = repCnt + pendingJoinCnt;
+        const adminAlertCnt = inboxCount + pendingJoinCnt;
         if (adminBtn) {
           adminBtn.innerHTML = `<span>🛡️ ${prefs.adminMode ? '관리자 모드 ON' : '관리자 모드'}</span>${adminAlertCnt > 0 && prefs.adminMode ? `<span class="px-1.5 py-0.5 rounded-full bg-rose-600 text-white text-[10px] font-black">${adminAlertCnt}</span>` : ''}`;
         }
@@ -4538,8 +4594,8 @@
         }
         const inboxSubBadge = document.getElementById('admin-sub-badge-inbox');
         if (inboxSubBadge) {
-          inboxSubBadge.textContent = repCnt;
-          inboxSubBadge.classList.toggle('hidden', repCnt === 0);
+          inboxSubBadge.textContent = inboxCount;
+          inboxSubBadge.classList.toggle('hidden', inboxCount === 0);
         }
         const repAlertBanner = document.getElementById('admin-report-alert-banner');
         const repAlertText = document.getElementById('admin-report-alert-text');
@@ -4575,7 +4631,10 @@
         const mode = getMemberMode(meHdr);
         document.body.setAttribute('data-mode', mode);
         const modeBtn = document.getElementById('study-mode-btn');
-        const pendTxt = meHdr && meHdr.pendingMode ? (meHdr.pendingMode === 'strict' ? ' → 내일 울트라집중' : ' → 내일 자율') : '';
+        modeBtn.title = meHdr?.pendingMode
+          ? `${studyDayStartLabel(meHdr.pendingDate)}부터 ${modeLabel(meHdr.pendingMode)} 적용`
+          : '공부 모드 전환 (다음 공부일 오전 5시 적용)';
+        const pendTxt = meHdr && meHdr.pendingMode ? ' · 05:00 전환 예약' : '';
         if (mode === 'strict') {
           modeBtn.textContent = `울트라집중${pendTxt}`;
           modeBtn.className = 'px-2 py-0.5 rounded-full text-[10px] font-black bg-rose-600 text-white hover:opacity-90 whitespace-nowrap shrink-0';
@@ -4618,7 +4677,7 @@
           promoBar.classList.remove('hidden');
           promoBadge.textContent = '승급전 예약됨';
           promoBadge.className = 'px-2 py-0.5 rounded-md text-[11px] font-black bg-indigo-600 text-white';
-          promoTitle.textContent = `${meHdr.promoPendingDate} 오전 5시 ${tierInfo.nextName || ''} 승급전 시작`;
+          promoTitle.textContent = `${studyDayStartLabel(meHdr.promoPendingDate)} ${tierInfo.nextName || ''} 승급전 시작`;
           promoDesc.textContent = `예정 미션: ${mission.desc}`;
           promoActs.innerHTML = `<button type="button" id="btn-cancel-promo" class="px-3 py-1.5 rounded-xl bg-white border border-slate-300 text-slate-700 text-xs font-bold">예약 취소</button>`;
         } else if (meHdr && tierInfo.inPromo && tierInfo.nextName && promotionAttemptUsed(meHdr)) {
@@ -4637,8 +4696,8 @@
           promoBadge.textContent = '승급전';
           promoBadge.className = 'px-2 py-0.5 rounded-md text-[11px] font-black bg-amber-400 text-slate-950';
           promoTitle.textContent = `${tierInfo.nextName} 승급전 도전 가능`;
-          promoDesc.textContent = `${needsTomorrow ? '울트라집중모드 필요(내일 시작) · ' : '지금 바로 시작 가능 · '}${mission.desc}${tierInfo.banked > 0 ? ` · 보관 LP +${tierInfo.banked}` : ''}`;
-          promoActs.innerHTML = `<button type="button" id="btn-join-promo" class="px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 border border-slate-950 text-xs font-black">${needsTomorrow ? '승급전 도전하기 (내일)' : '승급전 도전하기'}</button>`;
+          promoDesc.textContent = `${needsTomorrow ? `울트라집중모드 필요 · ${studyDayStartLabel(nextStudyDay())} 시작 · ` : '지금 바로 시작 가능 · '}${mission.desc}${tierInfo.banked > 0 ? ` · 보관 LP +${tierInfo.banked}` : ''}`;
+          promoActs.innerHTML = `<button type="button" id="btn-join-promo" class="px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 border border-slate-950 text-xs font-black">${needsTomorrow ? '승급전 예약하기' : '승급전 도전하기'}</button>`;
         } else {
           document.body.removeAttribute('data-promo');
           promoBar.classList.add('hidden');
@@ -4648,7 +4707,7 @@
         }
 
         const myPraises = (shared.praises && shared.praises[prefs.currentUserId]) || [];
-        const myDms = (shared.directMessages && shared.directMessages[prefs.currentUserId]) || [];
+        const myDms = Object.values(shared.directMessages?.[prefs.currentUserId] || {});
         const unreadCnt = myPraises.filter(p => !p.read).length + myDms.filter(d => !d.read).length;
         const mbBadge = document.getElementById('mailbox-badge');
         mbBadge.classList.toggle('hidden', unreadCnt === 0);
@@ -4953,7 +5012,7 @@
             guideEl.classList.add('hidden');
           } else {
             const needStudyJoin = !prefs.joinedMemberId && me.inStudy === false;
-            const STARTER_LIST = (shared.challenges || []).filter(c => c.cat === 'starter' || STARTER_ACTIONS[c.id]);
+            const STARTER_LIST = (shared.challenges || []).filter(c => challengeCategory(c) === 'starter');
             const doneSet = new Set((shared.memberChallenges && shared.memberChallenges[me.id]) || []);
             if (me.inStudy !== false && !doneSet.has('ch_join_study')) {
               unlockChallengeFor(me.id, 'ch_join_study', true);
@@ -5172,10 +5231,9 @@
                   ${(prefs.adminMode || p.memberId === prefs.currentUserId) ? `<button type="button" data-del-photo="${p.id}" class="px-2 py-1 rounded-lg text-[11px] font-bold text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition shrink-0">${(prefs.adminMode && p.memberId !== prefs.currentUserId) ? '강제 삭제' : '삭제'}</button>` : ''}
                 </div>
 
-                <!-- IG Full-bleed Photo (Double-tap to Like) -->
-                <div class="relative bg-slate-100 select-none overflow-hidden" data-photo-stage="${p.id}">
-                  <img src="${escapeHtml(p.dataUrl)}" loading="lazy" decoding="async" alt="${escapeHtml(authorName)}" data-like-dbl="${p.id}" class="w-full max-h-[460px] object-cover cursor-pointer" />
-                </div>
+                <button type="button" class="studygram-photo-button bg-slate-100 select-none overflow-hidden" id="studygram-photo-${escapeHtml(p.id)}" data-view-studygram-photo="${escapeHtml(p.id)}" aria-haspopup="dialog" aria-label="${escapeHtml(authorName)}님의 사진 크게 보기">
+                  <img src="${escapeHtml(p.dataUrl)}" loading="lazy" decoding="async" alt="" class="w-full max-h-[460px] object-cover" />
+                </button>
 
                 <!-- IG Action Icons -->
                 <div class="px-3.5 pt-2.5 pb-1 flex items-center justify-between">
@@ -5342,7 +5400,7 @@
           return;
         }
         const now = getNowParts();
-        const date = todayStr();
+        const date = studyDayKey();
         const members = shared.members.filter(m => m.inStudy !== false)
           .map(m => ({ member: m, mins: studyMinutes(m.id) }))
           .sort((a, b) => b.mins - a.mins);
@@ -5577,7 +5635,7 @@
           const modePill = document.getElementById('profile-mode-pill');
           if (modePill) {
             const isStrict = getMemberMode(tm) === 'strict';
-            const pendP = tm.pendingMode ? (tm.pendingMode === 'strict' ? ' → 내일 울트라집중' : ' → 내일 자율') : '';
+            const pendP = tm.pendingMode ? (` → ${studyDayStartLabel(tm.pendingDate)} ${modeLabel(tm.pendingMode)}`) : '';
             modePill.textContent = (isStrict ? '울트라집중모드' : '자율모드') + pendP;
             modePill.className = isStrict
               ? 'px-2.5 py-1 rounded-full text-[11px] font-black bg-rose-100 text-rose-800 whitespace-nowrap cursor-pointer hover:opacity-80 transition'
@@ -5601,7 +5659,7 @@
           }
           const badgesEl = document.getElementById('profile-badges-list');
           if (badgesEl) {
-            const allB = getBadgesForMember(tm, todayStr());
+            const allB = getBadgesForMember(tm, studyDayKey());
             badgesEl.innerHTML = allB.length
               ? allB.map(renderBadgePill).join('')
               : '<span class="text-xs text-slate-400">아직 획득한 뱃지가 없습니다.</span>';
@@ -5748,8 +5806,65 @@
         }
       }
 
+      function getStudyRankTimes(memberId, day) {
+        const saved = shared.studyRankTimes?.[day]?.[memberId];
+        let first = Number(saved?.first) || null, last = Number(saved?.last) || null;
+        const slotMs = 10 * 60000;
+        const start = Date.parse(day + 'T05:00:00+09:00');
+        const followingDate = nextStudyDay(day);
+        for (const date of [day, followingDate]) {
+          const midnight = Date.parse(date + 'T00:00:00+09:00');
+          const slots = shared.studySlotMins?.[date]?.[memberId] || shared.studyBlocks?.[date]?.[memberId] || {};
+          for (const [key, amount] of Object.entries(slots)) {
+            if (!amount || !/^([01]\d|2[0-3])_[0-5]$/.test(key)) continue;
+            const [hours, slot] = key.split('_').map(Number);
+            const time = midnight + (hours * 6 + slot) * slotMs;
+            if (time < start || time >= start + 24 * 3600000) continue;
+            // Earlier releases only retained the ten-minute slot. Prefer an exact time in that slot.
+            if (first == null || Math.floor(first / slotMs) * slotMs > time) first = time;
+            if (last == null || last < time) last = time;
+          }
+        }
+        return { first, last };
+      }
+
+      function renderStudyTimeRankings() {
+        const day = studyDayKey();
+        const members = prefs.adminMode || prefs.joinedMemberId ? shared.members.filter(m => m.inStudy !== false) : [];
+        const rows = members.map(member => ({ member, ...getStudyRankTimes(member.id, day) }));
+        const showTime = timestamp => new Date(timestamp + 9 * 3600000).toISOString().slice(11, 16);
+        for (const [key, order] of [['first', 1], ['last', -1]]) {
+          const ranked = rows.filter(row => row[key] != null).sort((a, b) => order * (a[key] - b[key]));
+          document.getElementById(`rank-${key}-list`).innerHTML = ranked.length
+            ? ranked.map((row, i) => `<div class="flex justify-between bg-slate-50 rounded-xl px-3 py-2 text-xs"><span><strong>${i + 1}위</strong> ${escapeHtml(row.member.name)}</span><span class="font-mono font-bold">${showTime(row[key])}</span></div>`).join('')
+            : '<p class="text-xs text-slate-400">기록 없음</p>';
+        }
+      }
+
+      const STARTER_CHALLENGE_IDS = new Set(['ch_newbie','ch_join_study','ch_avatar','ch_timetable','ch_equip','ch_respect1','ch_brag1','ch_mailbox','ch_guide','ch_encourage','ch_todo_v','ch_cal_day','ch_spy','ch_rank_bottom','ch_ultra_reserve','ch_rename','ch_banner_bg','ch_flipflop','ch_minimal','ch_pause1','ch_timetravel','ch_justice','ch_theme']);
+      function challengeCategory(ch) {
+        if (STARTER_CHALLENGE_IDS.has(ch.id) || ch.cat === 'starter') return 'starter';
+        if (ch.cat) return ch.cat;
+        if (!ch.focusSecs) return 'special';
+        return ch.focusSecs >= 46800 ? 'focus_high' : 'focus_mid';
+      }
+
+      function defaultChallengeCategory(challenges, completed) {
+        return challenges.some(ch => challengeCategory(ch) === 'starter' && !completed.includes(ch.id)) ? 'starter' : 'special';
+      }
+
+      function renderChallengeCategoryTabs(category) {
+        document.querySelectorAll('.ch-cat-btn').forEach(btn => {
+          const active = btn.dataset.chCat === category;
+          btn.setAttribute('aria-pressed', String(active));
+          btn.classList.toggle('bg-slate-950', active);
+          btn.classList.toggle('text-white', active);
+          btn.classList.toggle('bg-slate-100', !active);
+          btn.classList.toggle('text-slate-700', !active);
+        });
+      }
+
       function renderRankingsTab() {
-        const t = todayStr();
         const canViewGroup = prefs.adminMode || !!prefs.joinedMemberId;
         const activeMembers = canViewGroup ? shared.members.filter(m => m.inStudy !== false) : [];
         const tierGrpEl = document.getElementById('tier-grouped-rankings-list');
@@ -5785,10 +5900,7 @@
             tierGrpEl.innerHTML = blocks.length ? blocks.join('') : '<p class="text-xs text-slate-400">참가 중인 스터디원이 없습니다.</p>';
           }
         }
-        const fSort = activeMembers.filter(m => m.firstTime && (!m.firstTimeDate || m.firstTimeDate === t)).sort((a, b) => toMins(a.firstTime) - toMins(b.firstTime));
-        document.getElementById('rank-first-list').innerHTML = fSort.length ? fSort.map((m, i) => `<div class="flex justify-between bg-slate-50 rounded-xl px-3 py-2 text-xs"><span><strong>${i + 1}위</strong> ${escapeHtml(m.name)}</span><span class="font-mono font-bold">${m.firstTime}</span></div>`).join('') : '<p class="text-xs text-slate-400">기록 없음</p>';
-        const lSort = activeMembers.filter(m => m.lastTime).sort((a, b) => toMins(b.lastTime) - toMins(a.lastTime));
-        document.getElementById('rank-last-list').innerHTML = lSort.length ? lSort.map((m, i) => `<div class="flex justify-between bg-slate-50 rounded-xl px-3 py-2 text-xs"><span><strong>${i + 1}위</strong> ${escapeHtml(m.name)}</span><span class="font-mono font-bold">${m.lastTime}</span></div>`).join('') : '<p class="text-xs text-slate-400">기록 없음</p>';
+        renderStudyTimeRankings();
 
         const me = shared.members.find(m => m.id === prefs.currentUserId) || shared.members[0];
         if (!me) return;
@@ -5853,22 +5965,17 @@
         }
         const myDoneIds = (shared.memberChallenges && shared.memberChallenges[me.id]) || [];
         document.getElementById('my-equipped-title-pill').textContent = `장착 칭호: ${me.equippedTitle || '없음'}`;
-        const STARTER_IDS = new Set(['ch_newbie','ch_join_study','ch_avatar','ch_timetable','ch_equip','ch_respect1','ch_brag1','ch_mailbox','ch_guide','ch_encourage','ch_todo_v','ch_cal_day','ch_spy','ch_rank_bottom','ch_ultra_reserve','ch_rename','ch_banner_bg','ch_flipflop','ch_minimal','ch_pause1','ch_timetravel','ch_justice','ch_theme']);
-        function getChCat(ch) {
-          if (STARTER_IDS.has(ch.id) || ch.cat === 'starter') return 'starter';
-          if (ch.cat) return ch.cat;
-          if (ch.focusSecs && ch.focusSecs >= 46800) return 'focus_high';
-          if (ch.focusSecs) return 'focus_mid';
-          return 'special';
-        }
-        const filteredChs = (shared.challenges || []).filter(ch => getChCat(ch) === activeChallengeCat);
+        const challenges = shared.challenges || [];
+        const category = activeChallengeCat || defaultChallengeCategory(challenges, myDoneIds);
+        renderChallengeCategoryTabs(category);
+        const filteredChs = challenges.filter(ch => challengeCategory(ch) === category);
         const focusNoteEl = document.getElementById('challenge-focus-note');
-        if (focusNoteEl) focusNoteEl.classList.toggle('hidden', activeChallengeCat === 'special' || activeChallengeCat === 'starter');
+        if (focusNoteEl) focusNoteEl.classList.toggle('hidden', category === 'special' || category === 'starter');
         document.getElementById('challenges-grid').innerHTML = filteredChs.map(ch => {
           const unlocked = myDoneIds.includes(ch.id);
           const cleanTitle = (ch.title.replace(/^[^\w가-힣A-Za-z0-9]+\s*/, '').trim() || ch.title.trim());
           const isEquipped = me.equippedTitle === cleanTitle;
-          const isStarter = getChCat(ch) === 'starter';
+          const isStarter = challengeCategory(ch) === 'starter';
           const stAct = isStarter && !unlocked ? STARTER_ACTIONS[ch.id] : null;
           const goAct = stAct ? (ch.id === 'ch_rank_bottom' ? 'scroll:bottom' : stAct.action) : '';
           const goLabel = stAct ? (ch.id === 'ch_rank_bottom' ? '맨 아래로 이동' : stAct.label) : '';
@@ -5969,40 +6076,44 @@
 
         const dmTargetSel = document.getElementById('admin-dm-target');
         if (dmTargetSel) {
-          const prevDmT = dmTargetSel.value || 'all';
-          dmTargetSel.innerHTML = `<option value="all" ${prevDmT === 'all' ? 'selected' : ''}>전체 부원</option>` + shared.members.map(m => `<option value="${m.id}" ${m.id === prevDmT ? 'selected' : ''}>${escapeHtml(m.name)}</option>`).join('');
+          const prevDmT = dmTargetSel.value;
+          const recipients = shared.members.filter(m => m.inStudy !== false);
+          dmTargetSel.innerHTML = '<option value="">받는 부원 선택</option><option value="all">전체 부원</option>' +
+            recipients.map(m => `<option value="${escapeHtml(m.id)}">${escapeHtml(m.name)}</option>`).join('');
+          dmTargetSel.value = prevDmT === 'all' || recipients.some(m => m.id === prevDmT) ? prevDmT : '';
         }
         const repListEl = document.getElementById('admin-reports-list');
         if (repListEl) {
-          const repList = (shared.reports || []).slice().reverse();
+          const repList = sortedInbox(shared.reports);
           repListEl.innerHTML = repList.length
-            ? repList.map(rp => `<div class="flex items-start justify-between gap-2 ${rp.read ? 'bg-slate-50 border-slate-200' : 'bg-rose-50 border-rose-300'} border rounded-xl p-2.5 text-xs">
+            ? repList.map(([key, rp]) => `<div class="flex items-start justify-between gap-2 ${rp.read ? 'bg-slate-50 border-slate-200' : 'bg-rose-50 border-rose-300'} border rounded-xl p-2.5 text-xs">
                 <div class="min-w-0">
                   <div class="flex items-center gap-1.5 flex-wrap">
                     <span class="font-black ${rp.read ? 'text-slate-700' : 'text-rose-700'}">대상: ${escapeHtml(rp.targetName)}</span>
-                    <span class="text-slate-500">· 신고자: ${escapeHtml(rp.reporterName)} (${rp.date} ${rp.time})</span>
+                    <span class="text-slate-500">· 신고자: ${escapeHtml(rp.reporterName)} (${escapeHtml(rp.date)} ${escapeHtml(rp.time)})</span>
                     ${rp.read ? '<span class="px-1.5 py-0.5 rounded bg-slate-200 text-slate-600 text-[10px] font-bold">읽음</span>' : '<span class="px-1.5 py-0.5 rounded bg-rose-600 text-white text-[10px] font-black">미확인</span>'}
                   </div>
                   <p class="text-slate-800 mt-0.5 break-words">${escapeHtml(rp.reason)}</p>
                 </div>
                 <div class="flex items-center gap-1.5 shrink-0">
-                  ${!rp.read ? `<button type="button" data-read-report="${rp.id}" class="text-[10px] px-2 py-1 rounded bg-slate-900 text-white font-bold whitespace-nowrap">✓ 읽음</button>` : ''}
-                  <button type="button" data-del-report="${rp.id}" class="text-[10px] px-2 py-1 rounded bg-rose-600 text-white font-bold whitespace-nowrap">삭제</button>
+                  ${!rp.read ? `<button type="button" data-read-report="${escapeHtml(key)}" class="text-[10px] px-2 py-1 rounded bg-slate-900 text-white font-bold whitespace-nowrap">✓ 읽음</button>` : ''}
+                  ${rp.replied ? '<span class="text-[10px] text-emerald-700">답장 완료</span>' : inboxReplyButton('reports', key, rp.reporterId)}
+                  <button type="button" data-del-report="${escapeHtml(key)}" class="text-[10px] px-2 py-1 rounded bg-rose-600 text-white font-bold whitespace-nowrap">삭제</button>
                 </div>
               </div>`).join('')
             : '<p class="text-xs text-slate-400">접수된 신고가 없습니다.</p>';
         }
         const encListEl = document.getElementById('admin-encouragements-list');
         if (encListEl) {
-          const encList = (shared.encouragements || []).slice().reverse();
+          const encList = sortedInbox(shared.encouragements);
           encListEl.innerHTML = encList.length
-            ? encList.map(eq => `
+            ? encList.map(([key, eq]) => `
               <div class="rounded-xl border ${eq.replied ? 'border-slate-200 bg-slate-50' : 'border-indigo-300 bg-indigo-50/70'} p-3 text-xs space-y-2">
                 <div class="flex items-center justify-between gap-2">
                   <span class="font-black text-slate-900 truncate">${escapeHtml(eq.fromName)}</span>
                   <div class="flex items-center gap-2 shrink-0">
-                    <span class="text-[10px] text-slate-400">${eq.date} ${eq.time}</span>
-                    <button type="button" data-del-enc="${eq.id}" class="text-[10px] text-rose-600 font-bold">삭제</button>
+                    <span class="text-[10px] text-slate-400">${escapeHtml(eq.date)} ${escapeHtml(eq.time)}</span>
+                    <button type="button" data-del-enc="${escapeHtml(key)}" class="text-[10px] text-rose-600 font-bold">삭제</button>
                   </div>
                 </div>
                 <div class="flex items-center gap-1.5 flex-wrap">
@@ -6012,17 +6123,22 @@
                 ${eq.note ? `<p class="text-slate-700">${escapeHtml(eq.note)}</p>` : ''}
                 ${eq.replied
                   ? `<div class="rounded-lg bg-white border border-emerald-200 px-2.5 py-1.5 text-[11px] text-emerald-800 font-semibold">✓ 답장 완료: ${escapeHtml(eq.replyText)}</div>`
-                  : `<form data-reply-enc-form="${eq.id}" class="flex gap-1.5">
-                      <input type="text" placeholder="따뜻한 격려 답장을 입력하세요..." class="flex-1 min-w-0 rounded-lg border border-slate-300 bg-white px-2.5 py-1 text-xs" required />
-                      <button type="submit" class="px-3 py-1 rounded-lg bg-indigo-600 text-white text-[11px] font-bold whitespace-nowrap shrink-0">답장</button>
-                    </form>`}
+                  : inboxReplyButton('encouragements', key, eq.fromId)}
               </div>
             `).join('')
             : '<p class="text-xs text-slate-400">들어온 격려 요청이 없습니다.</p>';
         }
-        const sugList = (shared.suggestions || []).slice().reverse();
+        const sugList = sortedInbox(shared.suggestions);
         document.getElementById('admin-suggestions-list').innerHTML = sugList.length
-          ? sugList.map(sg => `<div class="flex items-start justify-between gap-2 bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs"><div><span class="font-bold text-slate-900">${escapeHtml(sg.fromName)}</span> <span class="text-[10px] text-slate-400">${sg.date} ${sg.time}</span><p class="text-slate-700 mt-0.5">${escapeHtml(sg.text)}</p></div><button type="button" data-del-sug="${sg.id}" class="text-[10px] px-2 py-0.5 rounded bg-slate-200 text-slate-700 font-bold shrink-0">확인</button></div>`).join('')
+          ? sugList.map(([key, sg]) => `<div class="rounded-xl border ${sg.read ? 'border-slate-200 bg-slate-50' : 'border-indigo-200 bg-indigo-50/70'} p-2.5 text-xs space-y-1.5">
+              <div class="flex items-center gap-2 flex-wrap"><span class="font-bold text-slate-900">${escapeHtml(sg.fromName)}</span><span class="text-[10px] text-slate-400">${escapeHtml(sg.date)} ${escapeHtml(sg.time)}</span></div>
+              <p class="text-slate-700 break-words whitespace-pre-wrap">${escapeHtml(sg.text)}</p>
+              <div class="flex justify-end items-center gap-2">
+                ${sg.read ? '<span class="text-[10px] text-slate-500">확인함</span>' : `<button type="button" data-read-sug="${escapeHtml(key)}" class="text-[10px] px-2 py-1 rounded bg-slate-900 text-white font-bold">확인</button>`}
+                ${sg.replied ? '<span class="text-[10px] text-emerald-700">답장 완료</span>' : inboxReplyButton('suggestions', key, sg.fromId)}
+                <button type="button" data-del-sug="${escapeHtml(key)}" class="text-[10px] px-2 py-1 rounded text-rose-600 font-bold">삭제</button>
+              </div>
+            </div>`).join('')
           : '<p class="text-xs text-slate-400">들어온 건의사항이 없습니다.</p>';
 
         // Signup mode buttons & Join requests inbox
@@ -6209,6 +6325,7 @@
           if (prefs.guideHintUnread) prefs.guideHintUnread = false;
           if (!prefs.adminMode) { unlockChallengeFor(prefs.currentUserId, 'ch_guide', false); saveSharedData(); }
         }
+        if (tab === 'members' && prefs.activeTab !== tab) activeChallengeCat = null;
         prefs.activeTab = tab;
         document.querySelectorAll('.nav-tab').forEach(b => {
           const isCurTab = b.dataset.tab === tab;
@@ -6245,7 +6362,10 @@
               : 'members-sub-btn py-2 px-2 rounded-xl text-[11px] sm:text-xs font-bold text-slate-600 hover:text-slate-950 whitespace-nowrap transition';
           });
           updateSubTabSlider('members-sub-bar', 'members-sub-slider', '[data-members-sub]', 'membersSub', targetSub);
-          if (targetSub === 'rank') renderRankingsTab();
+          if (targetSub === 'rank') {
+            activeChallengeCat = null;
+            renderRankingsTab();
+          }
           if (targetSub === 'brag') renderBragTab();
         });
       });
@@ -6256,11 +6376,33 @@
         if (!me) return;
         const curMode = getMemberMode(me);
         const targetMode = curMode === 'strict' ? 'free' : 'strict';
-        const tmr = tomorrowStr();
+        const tmr = nextStudyDay();
+        const applyLabel = studyDayStartLabel(tmr);
+        const reserveMode = () => {
+          if (nextStudyDay() !== tmr) {
+            closeModal(); renderAll();
+            document.getElementById('study-mode-btn').click();
+            return;
+          }
+          const member = shared.members.find(m => m.id === me.id);
+          if (!member || member.pendingMode || getMemberMode(member) !== curMode) {
+            closeModal(); renderAll();
+            showToast('모드가 변경됐어요. 현재 상태를 다시 확인해 주세요.', 'warn');
+            return;
+          }
+          member.pendingMode = targetMode; member.pendingDate = tmr;
+          if (targetMode === 'strict') unlockChallengeFor(member.id, 'ch_ultra_reserve', false);
+          saveSharedData(); closeModal();
+          showToast(`${applyLabel}부터 ${modeLabel(targetMode)}가 적용돼요.`, 'success');
+          renderAll();
+        };
 
         if (me.pendingMode) {
+          const pendingMode = me.pendingMode;
+          const pendingDate = me.pendingDate;
           openModal('모드 변경 예약 관리', `
-            <p class="text-sm text-slate-700">현재 <strong>내일(${me.pendingDate})</strong>부터 <strong>${me.pendingMode === 'strict' ? '울트라집중모드' : '자율모드'}</strong>로 전환되도록 예약되어 있습니다.</p>
+            <p class="text-sm text-slate-700">현재 <strong>${studyDayStartLabel(me.pendingDate)}</strong>부터 <strong>${modeLabel(me.pendingMode)}</strong>로 전환돼요.</p>
+            ${me.promoPendingDate && me.pendingMode === 'strict' ? '<p class="mt-2 text-xs text-slate-500">울트라집중모드 예약을 취소하면 연결된 승급전 예약도 취소돼요.</p>' : ''}
             <div class="flex justify-end gap-2 pt-3">
               <button id="cancel-pending-mode" class="px-3.5 py-2 rounded-xl bg-rose-50 text-rose-700 border border-rose-200 text-xs font-bold">예약 취소하기</button>
               <button id="keep-pending-mode" class="px-3.5 py-2 rounded-xl bg-slate-950 text-white text-xs font-bold">닫기</button>
@@ -6268,8 +6410,16 @@
           `);
           document.getElementById('keep-pending-mode').addEventListener('click', closeModal);
           document.getElementById('cancel-pending-mode').addEventListener('click', () => {
-            me.pendingMode = null; me.pendingDate = null;
-            saveSharedData(); closeModal(); showToast('모드 변경 예약이 취소되었습니다.', 'info'); renderAll();
+            const member = shared.members.find(m => m.id === me.id);
+            if (member?.pendingMode === pendingMode && member.pendingDate === pendingDate) {
+              if (member.pendingMode === 'strict' && member.promoPendingDate) {
+                member.promoPendingDate = null; member.promoTargetTier = null;
+              }
+              member.pendingMode = null; member.pendingDate = null; member.promoReservedMode = false;
+              saveSharedData();
+              showToast('모드 변경 예약을 취소했어요.', 'info');
+            }
+            closeModal(); renderAll();
           });
           return;
         }
@@ -6299,38 +6449,27 @@
                   <li><strong>미체크 / 무단이탈</strong>: 의무 교시 미달 시 미출석으로 기록됩니다. (LP 감점 없음) 단, 해당 일에 출석한 교시가 있다면 연속출석은 그대로 인정됩니다.</li>
                 </ul>
               </div>
-              <p class="text-slate-500">공정한 반영을 위해 <strong>내일(${tmr}) 00:00부터</strong> 울트라집중모드가 적용됩니다.</p>
+              <p class="text-slate-500"><strong>${applyLabel}</strong>부터 울트라집중모드가 적용돼요.</p>
               <div class="flex flex-wrap justify-end gap-2 pt-2">
                 <button id="go-timetable-before-strict" type="button" class="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold">시간표 먼저 등록하기</button>
-                <button id="confirm-strict-tmr" type="button" class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold">확인 · 내일부터 울트라집중모드</button>
+                <button id="confirm-strict-tmr" type="button" class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold">울트라집중모드 예약하기</button>
               </div>
             </div>
           `);
           document.getElementById('go-timetable-before-strict').addEventListener('click', () => {
             closeModal(); switchTab('timetable');
           });
-          document.getElementById('confirm-strict-tmr').addEventListener('click', () => {
-            me.pendingMode = 'strict'; me.pendingDate = tmr;
-            unlockChallengeFor(me.id, 'ch_ultra_reserve', false);
-            saveSharedData(); closeModal();
-            showToast(`내일(${tmr})부터 울트라집중모드가 적용됩니다. 시간표를 꼭 확인해 주세요!`, 'success');
-            renderAll();
-          });
+          document.getElementById('confirm-strict-tmr').addEventListener('click', reserveMode);
         } else {
           openModal('자율모드 전환 안내', `
-            <p class="text-xs sm:text-sm text-slate-700">오늘 일정 도중에는 모드를 바꿀 수 없으며, <strong>내일(${tmr}) 00:00부터</strong> 지각·무단이탈이 없는 <strong>자율모드</strong>로 전환됩니다.</p>
+            <p class="text-xs sm:text-sm text-slate-700">오늘 일정 도중에는 모드를 바꿀 수 없으며, <strong>${applyLabel}</strong>부터 <strong>자율모드</strong>로 전환됩니다.</p>
             <div class="flex justify-end gap-2 pt-3">
               <button id="cancel-free-tmr" type="button" class="px-3.5 py-2 rounded-xl bg-slate-100 text-slate-700 text-xs font-bold">취소</button>
-              <button id="confirm-free-tmr" type="button" class="px-4 py-2 rounded-xl bg-emerald-600 text-white text-xs font-bold">내일부터 자율모드 적용</button>
+              <button id="confirm-free-tmr" type="button" class="px-4 py-2 rounded-xl bg-emerald-600 text-white text-xs font-bold">자율모드 예약하기</button>
             </div>
           `);
           document.getElementById('cancel-free-tmr').addEventListener('click', closeModal);
-          document.getElementById('confirm-free-tmr').addEventListener('click', () => {
-            me.pendingMode = 'free'; me.pendingDate = tmr;
-            saveSharedData(); closeModal();
-            showToast(`내일(${tmr})부터 자율모드가 적용됩니다.`, 'info');
-            renderAll();
-          });
+          document.getElementById('confirm-free-tmr').addEventListener('click', reserveMode);
         }
       });
       document.getElementById('promo-action-bar').addEventListener('click', e => {
@@ -6338,16 +6477,16 @@
         if (!me) return;
         const tierInfo = getMemberTier(me);
         if (e.target.id === 'btn-join-promo') {
-          const tNow = koreaDateKey();
-          const tmr = addDaysStr(tNow, 1);
+          const requestDay = studyDayKey();
+          const tmr = nextStudyDay(requestDay);
           if (me.promoActiveDate || me.promoPendingDate || promotionAttemptUsed(me)) {
             showToast('승급전 도전 횟수는 오전 5시에 초기화돼요.', 'warn');
             return;
           }
           const mission = getPromoMission(tierInfo.nextName);
           const needsTomorrow = mission.type === 'ultra' && getMemberMode(me) !== 'strict';
-          const targetDay = needsTomorrow ? tmr : tNow;
-          const missionDay = needsTomorrow ? targetDay : studyDayKey();
+          const targetDay = needsTomorrow ? tmr : requestDay;
+          const missionDay = targetDay;
           if (mission.type === 'ultra' && new Date(missionDay).getUTCDay() === 0) {
             showToast('울트라집중모드가 필요한 승급전은 일요일에 진행할 수 없습니다. 월~토요일에 도전해 주세요!', 'warn');
             return;
@@ -6367,7 +6506,7 @@
               syncMemberPendingModes();
               const member = shared.members.find(m => m.id === me.id);
               if (!member || member.promoActiveDate || member.promoPendingDate || promotionAttemptUsed(member) ||
-                  getMemberTier(member).nextName !== targetTier.name || koreaDateKey() !== tNow) {
+                  getMemberTier(member).nextName !== targetTier.name || studyDayKey() !== requestDay) {
                 closePromotion();
                 renderAll();
                 showToast('승급전 상태가 바뀌었어요. 다시 확인해 주세요.', 'warn');
@@ -6375,10 +6514,11 @@
               }
               if (needsTomorrow) {
                 member.promoPendingDate = tmr;
+                member.promoReservedMode = !(member.pendingMode === 'strict' && member.pendingDate === tmr);
                 member.pendingMode = 'strict';
                 member.pendingDate = tmr;
               } else {
-                member.promoActiveDate = tNow;
+                member.promoActiveDate = koreaDateKey();
                 member.promoActiveStudyDay = studyDayKey();
                 member.promoAttemptDay = member.promoActiveStudyDay;
               }
@@ -6389,6 +6529,10 @@
             }
           });
         } else if (e.target.id === 'btn-cancel-promo') {
+          if (me.promoReservedMode && me.pendingMode === 'strict' && me.pendingDate === me.promoPendingDate) {
+            me.pendingMode = null; me.pendingDate = null;
+          }
+          me.promoReservedMode = false;
           me.promoPendingDate = null;
           me.promoTargetTier = null;
           saveSharedData();
@@ -6461,7 +6605,7 @@
         const mBox = document.getElementById('modal-box');
         let sheetStartY = 0, sheetCurY = 0, sheetDragging = false;
         mBox.addEventListener('touchstart', e => {
-          if (document.getElementById('modal-overlay').dataset.variant === 'member-photo' ||
+          if (['member-photo', 'studygram-photo'].includes(document.getElementById('modal-overlay').dataset.variant) ||
               window.innerWidth > 640 || mBox.scrollTop > 0 || e.touches.length !== 1) return;
           if (e.target.closest('input, textarea, select, canvas')) return;
           sheetStartY = e.touches[0].clientY;
@@ -6516,7 +6660,7 @@
           savePrefs(); showToast('관리자 모드 OFF', 'info'); switchTab('dashboard'); return;
         }
         prefs.adminMode = true; prefs.inspectingMember = false; savePrefs();
-        const rCnt = (shared.reports || []).length;
+        const rCnt = Object.values(shared.reports || {}).filter(report => !report.read).length;
         showToast(rCnt > 0 ? `관리자 모드 ON (🚨 미처리 신고 ${rCnt}건)` : '관리자 전용 화면으로 전환되었습니다.', rCnt > 0 ? 'warn' : 'success');
         switchTab('admin');
       });
@@ -6842,76 +6986,107 @@
         document.getElementById('encourage-req-form').addEventListener('submit', ev => {
           ev.preventDefault();
           const note = document.getElementById('enc-note-input').value.trim();
-          if (!shared.encouragements) shared.encouragements = [];
-          unlockChallengeFor(me.id, 'ch_encourage', false);
-          shared.encouragements.push({
-            id: 'enc_' + Date.now(),
+          const request = inboxMessage({
             fromId: me.id,
             fromName: me.name,
             type: selType,
             mood: selMood,
             note,
-            date: todayStr(),
-            time: getNowParts().hhmm,
             replied: false,
             replyText: ''
           });
+          (shared.encouragements ||= {})[request.id] = request;
+          unlockChallengeFor(me.id, 'ch_encourage', false);
           saveSharedData();
           closeModal();
-          showToast('관리자에게 격려 요청을 보냈습니다! 답장이 오면 💌 우편함으로 도착해요.', 'success');
+          showMessageSaveStatus('격려 요청을 보냈어요. 답장은 우편함으로 도착해요.');
         });
       }
       document.getElementById('encourage-menu-btn').addEventListener('click', openEncourageModal);
 
-      document.getElementById('admin-encouragements-list').addEventListener('click', e => {
-        const delB = e.target.closest('[data-del-enc]');
-        if (!delB) return;
-        shared.encouragements = (shared.encouragements || []).filter(x => x.id !== delB.dataset.delEnc);
-        saveSharedData();
-        renderAdminTab();
-      });
-      document.getElementById('admin-encouragements-list').addEventListener('submit', e => {
-        const form = e.target.closest('[data-reply-enc-form]');
-        if (!form) return;
-        e.preventDefault();
-        const encId = form.dataset.replyEncForm;
-        const eq = (shared.encouragements || []).find(x => x.id === encId);
-        const inp = form.querySelector('input');
-        const reply = inp ? inp.value.trim() : '';
-        if (!eq || !reply) return;
-        eq.replied = true;
-        eq.replyText = reply;
-        if (!shared.directMessages) shared.directMessages = {};
-        if (!shared.directMessages[eq.fromId]) shared.directMessages[eq.fromId] = [];
-        shared.directMessages[eq.fromId].push({
-          id: 'dm_enc_' + Date.now(),
-          text: `[💪 ${eq.type} 답장] ${reply}`,
-          date: todayStr(),
-          time: getNowParts().hhmm,
-          read: false
+      const inboxLabels = { reports:'신고', suggestions:'건의', encouragements:'격려 요청' };
+      function inboxReplyButton(inbox, key, recipientId) {
+        if (!recipientId || !shared.members.some(m => m.id === recipientId)) return '';
+        return `<button type="button" data-reply-inbox="${inbox}" data-reply-key="${escapeHtml(key)}" class="text-[10px] px-2 py-1 rounded bg-indigo-600 text-white font-bold">답장</button>`;
+      }
+
+      function showMessageSaveStatus(onlineText) {
+        if (filePreview) showToast('미리보기에 저장했어요.', 'info');
+        else if (cloudLinkLive === false) showToast('전송 대기 중이에요. 연결되면 자동으로 보내요.', 'info');
+        else if (!cloudConnected) showToast('이 기기에 저장했어요. 서버 연결을 확인해 주세요.', 'warn');
+        else showToast(onlineText, 'info');
+      }
+
+      function openInboxReply(inbox, key) {
+        if (!prefs.adminMode || !Object.hasOwn(inboxLabels, inbox)) return;
+        const row = shared[inbox]?.[key];
+        const memberId = row?.reporterId || row?.fromId;
+        const recipient = shared.members.find(m => m.id === memberId);
+        if (!row || row.replied || !recipient) return;
+        openModal(`${inboxLabels[inbox]} 답장`, `
+          <form id="admin-inbox-reply-form" class="space-y-3">
+            <p class="text-xs text-slate-500">${escapeHtml(recipient.name)}님의 우편함으로 보냅니다.</p>
+            <textarea id="admin-inbox-reply-text" aria-label="답장 내용" rows="3" maxlength="1500" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm" required></textarea>
+            <button type="submit" class="w-full py-2.5 rounded-xl ed-btn-accent text-xs font-bold">답장 보내기</button>
+          </form>
+        `);
+        document.getElementById('admin-inbox-reply-form').addEventListener('submit', event => {
+          event.preventDefault();
+          const text = document.getElementById('admin-inbox-reply-text').value.trim();
+          if (!text || !prefs.adminMode) return;
+          const latest = shared[inbox]?.[key];
+          if (!latest || latest.replied || (latest.reporterId || latest.fromId) !== memberId || !shared.members.some(m => m.id === memberId)) {
+            closeModal();
+            showToast('이미 처리됐거나 받는 부원을 찾을 수 없어요.', 'warn');
+            return;
+          }
+          latest.read = true;
+          latest.replied = true;
+          latest.replyText = text;
+          addDirectMessage(memberId, `[${inboxLabels[inbox]} 답장] ${text}`, `reply_${inbox}_${key}`);
+          saveSharedData();
+          closeModal();
+          showMessageSaveStatus(`${recipient.name}님의 우편함으로 답장을 보내고 있어요.`);
+          renderAll();
         });
+      }
+
+      function handleAdminInboxClick(e, inbox, actionKey) {
+        if (!prefs.adminMode) return;
+        const reply = e.target.closest('[data-reply-inbox]');
+        if (reply) { openInboxReply(inbox, reply.dataset.replyKey); return; }
+        const read = e.target.closest(`[data-read-${actionKey}]`);
+        const remove = e.target.closest(`[data-del-${actionKey}]`);
+        if (!read && !remove) return;
+        const key = (read || remove).getAttribute(`data-${read ? 'read' : 'del'}-${actionKey}`);
+        if (!Object.hasOwn(shared[inbox] || {}, key)) return;
+        if (read) shared[inbox][key].read = true;
+        else delete shared[inbox][key];
         saveSharedData();
-        showToast(`${eq.fromName}님의 우편함으로 격려 답장을 보냈습니다!`, 'success');
-        renderAdminTab();
-      });
+        renderAll();
+      }
+      document.getElementById('admin-encouragements-list').addEventListener('click', e => handleAdminInboxClick(e, 'encouragements', 'enc'));
+      document.getElementById('admin-reports-list').addEventListener('click', e => handleAdminInboxClick(e, 'reports', 'report'));
+      document.getElementById('admin-suggestions-list').addEventListener('click', e => handleAdminInboxClick(e, 'suggestions', 'sug'));
 
       document.getElementById('suggest-btn').addEventListener('click', () => {
         const me = shared.members.find(m => m.id === prefs.currentUserId);
+        if (!me || prefs.adminMode) return;
         openModal('💬 관리자에게 다이렉트 건의하기', `
           <form id="direct-suggest-form" class="space-y-3">
-            <p class="text-xs text-slate-500">불편한 점이나 추가하고 싶은 기능을 방장에게 바로 보낼 수 있습니다.</p>
-            <textarea id="direct-suggest-text" rows="3" placeholder="건의 내용을 입력하세요..." class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm" required></textarea>
+            <p class="text-xs text-slate-500">불편한 점이나 원하는 기능을 알려주세요. 관리자 답장은 우편함에서 확인할 수 있어요.</p>
+            <textarea id="direct-suggest-text" rows="3" maxlength="1500" placeholder="건의 내용을 입력하세요..." class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm" required></textarea>
             <button type="submit" class="w-full py-2.5 rounded-xl bg-slate-950 text-white text-sm font-bold">관리자에게 전송</button>
           </form>
         `);
         document.getElementById('direct-suggest-form').addEventListener('submit', ev => {
           ev.preventDefault();
           const txt = document.getElementById('direct-suggest-text').value.trim();
-          if (!txt) return;
-          if (!shared.suggestions) shared.suggestions = [];
-          shared.suggestions.push({ id: 'sg_' + Date.now(), fromName: me ? me.name : '스터디원', date: todayStr(), time: getNowParts().hhmm, text: txt });
-          unlockChallengeFor(prefs.currentUserId, 'ch_suggest', false);
-          saveSharedData(); closeModal(); showToast('관리자에게 건의사항을 보냈습니다!', 'success');
+          if (!txt || prefs.adminMode || me.id !== prefs.currentUserId) return;
+          const suggestion = inboxMessage({ fromId: me.id, fromName: me.name, text: txt });
+          (shared.suggestions ||= {})[suggestion.id] = suggestion;
+          unlockChallengeFor(me.id, 'ch_suggest', false);
+          saveSharedData(); closeModal(); showMessageSaveStatus('관리자에게 건의사항을 보내고 있어요.');
         });
       });
 
@@ -6919,17 +7094,13 @@
         e.preventDefault();
         const target = document.getElementById('admin-dm-target').value;
         const text = document.getElementById('admin-dm-text').value.trim();
-        if (!text) return;
-        if (!shared.directMessages) shared.directMessages = {};
-        const targets = target === 'all' ? shared.members : shared.members.filter(m => m.id === target);
-        const nowP = getNowParts(), dStr = todayStr();
-        targets.forEach(m => {
-          if (!shared.directMessages[m.id]) shared.directMessages[m.id] = [];
-          shared.directMessages[m.id].push({ id: 'dm_' + Date.now() + '_' + m.id, text, date: dStr, time: nowP.hhmm, read: false });
-        });
+        if (!target || !text || !prefs.adminMode) return;
+        const targets = shared.members.filter(m => m.inStudy !== false && (target === 'all' || m.id === target));
+        if (!targets.length) { showToast('받는 부원을 찾을 수 없어요.', 'warn'); return; }
+        targets.forEach(m => addDirectMessage(m.id, text));
         document.getElementById('admin-dm-text').value = '';
         saveSharedData();
-        showToast(target === 'all' ? '전체 부원에게 다이렉트 메시지를 보냈습니다!' : '다이렉트 메시지를 보냈습니다!', 'success');
+        showMessageSaveStatus(target === 'all' ? '전체 부원에게 메시지를 보내고 있어요.' : '메시지를 보내고 있어요.');
       });
 
       function switchAdminSubTab(targetSub) {
@@ -6957,28 +7128,11 @@
           if (sec) sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
         });
       }
-      document.getElementById('admin-reports-list').addEventListener('click', e => {
-        const rb = e.target.closest('[data-read-report]');
-        if (rb) {
-          const rp = (shared.reports || []).find(r => r.id === rb.dataset.readReport);
-          if (rp) { rp.read = true; saveSharedData(); renderHeaderControls(); renderAdminTab(); }
-          return;
-        }
-        const b = e.target.closest('[data-del-report]'); if (!b) return;
-        shared.reports = (shared.reports || []).filter(r => r.id !== b.dataset.delReport);
-        saveSharedData(); renderHeaderControls(); renderAdminTab();
-      });
-
-      document.getElementById('admin-suggestions-list').addEventListener('click', e => {
-        const b = e.target.closest('[data-del-sug]'); if (!b) return;
-        shared.suggestions = (shared.suggestions || []).filter(s => s.id !== b.dataset.delSug);
-        saveSharedData(); renderAdminTab();
-      });
       document.getElementById('mailbox-btn').addEventListener('click', () => {
         const list = (shared.praises && shared.praises[prefs.currentUserId]) || [];
-        const dmList = (shared.directMessages && shared.directMessages[prefs.currentUserId]) || [];
+        const dmList = sortedInbox(shared.directMessages?.[prefs.currentUserId]).map(([, message]) => message);
         const dmHtml = dmList.length
-          ? `<div class="space-y-2 mb-3"><div class="text-[11px] font-black text-indigo-600">👑 관리자 다이렉트 메시지</div>${dmList.slice().reverse().map(d => `<div class="p-3 rounded-xl bg-indigo-50 border border-indigo-200 text-xs"><p class="font-bold text-slate-900">✉️ ${escapeHtml(d.text)}</p><span class="text-[10px] text-slate-500">${d.date || ''} ${d.time || ''}</span></div>`).join('')}</div>`
+          ? `<div class="space-y-2 mb-3"><div class="text-[11px] font-black text-indigo-600">👑 관리자 다이렉트 메시지</div>${dmList.map(d => `<div class="p-3 rounded-xl bg-indigo-50 border border-indigo-200 text-xs"><p class="font-bold text-slate-900">✉️ ${escapeHtml(d.text)}</p><span class="text-[10px] text-slate-500">${escapeHtml(d.date)} ${escapeHtml(d.time)}</span></div>`).join('')}</div>`
           : '';
         const praiseHtml = list.length
           ? `<div class="space-y-2">${list.slice().reverse().map(p => `<div class="p-3 rounded-xl bg-amber-50 border border-amber-200 text-xs"><p class="font-bold text-slate-900">💌 ${escapeHtml(p.msg)}</p><span class="text-[10px] text-slate-500">${p.time}</span></div>`).join('')}</div>`
@@ -7067,12 +7221,13 @@
         if (repBtn) {
           const target = shared.members.find(m => m.id === repBtn.dataset.reportMember);
           const reporter = shared.members.find(m => m.id === prefs.currentUserId);
-          if (!target) return;
-          if (!prefs.adminMode) { unlockChallengeFor(prefs.currentUserId, 'ch_justice', false); saveSharedData(); }
+          if (!target || !reporter || target.id === reporter.id || prefs.adminMode) return;
+          unlockChallengeFor(reporter.id, 'ch_justice', false);
+          saveSharedData();
           openModal(`🚨 ${target.name} 신고하기`, `
             <form id="member-report-form" class="space-y-3">
               <p class="text-xs text-slate-600">신고 내용은 관리자에게 바로 전달됩니다.</p>
-              <textarea id="member-report-reason" rows="3" placeholder="신고 사유를 구체적으로 입력해 주세요." class="w-full rounded-xl border border-slate-300 px-3 py-2 text-xs" required></textarea>
+              <textarea id="member-report-reason" rows="3" maxlength="1500" placeholder="신고 사유를 구체적으로 입력해 주세요." class="w-full rounded-xl border border-slate-300 px-3 py-2 text-xs" required></textarea>
               <div class="flex justify-end gap-2">
                 <button type="button" id="cancel-report-btn" class="px-3 py-1.5 rounded-xl bg-slate-100 text-xs font-bold">취소</button>
                 <button type="submit" class="px-4 py-1.5 rounded-xl bg-rose-600 text-white text-xs font-bold">신고 제출</button>
@@ -7083,21 +7238,12 @@
           document.getElementById('member-report-form').addEventListener('submit', ev => {
             ev.preventDefault();
             const reason = document.getElementById('member-report-reason').value.trim();
-            if (!reason) return;
-            if (!shared.reports) shared.reports = [];
-            shared.reports.push({
-              id: 'rp_' + Date.now(),
-              reporterName: reporter ? reporter.name : '스터디원',
-              targetId: target.id,
-              targetName: target.name,
-              reason,
-              date: todayStr(),
-              time: getNowParts().hhmm,
-              read: false
-            });
+            if (!reason || prefs.currentUserId !== reporter.id || prefs.adminMode) return;
+            const report = inboxMessage({ reporterId: reporter.id, reporterName: reporter.name, targetId: target.id, targetName: target.name, reason });
+            (shared.reports ||= {})[report.id] = report;
             saveSharedData();
             closeModal();
-            showToast(`${target.name}님에 대한 신고가 관리자에게 접수되었습니다.`, 'success');
+            showMessageSaveStatus('관리자에게 신고를 보내고 있어요. 답장은 우편함에서 확인할 수 있어요.');
           });
           return;
         }
@@ -7111,7 +7257,7 @@
           const todayTotalMins = studyMinutes(m.id);
           const maxF = shared.maxFocusLogs?.[studyDayKey()]?.[m.id] || 0;
           const todayRespect = ((shared.praises && shared.praises[m.id]) || []).filter(p => p.date === t).length;
-          const allB = getBadgesForMember(m, t);
+          const allB = getBadgesForMember(m, studyDayKey());
           openModal(`${m.name} 상세 기록`, `
             <div class="space-y-3 text-xs">
               ${m.equippedTitle ? `<p class="text-sm font-bold text-slate-900"><span class="mr-1 text-xs text-slate-500">장착 칭호</span> ${escapeHtml(m.equippedTitle)}</p>` : ''}
@@ -7144,10 +7290,6 @@
       document.getElementById('challenge-cat-tabs').addEventListener('click', e => {
         const b = e.target.closest('[data-ch-cat]'); if (!b) return;
         activeChallengeCat = b.dataset.chCat;
-        document.querySelectorAll('.ch-cat-btn').forEach(btn => {
-          const active = btn.dataset.chCat === activeChallengeCat;
-          btn.className = `ch-cat-btn px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap ${active ? 'bg-slate-950 text-white' : 'bg-slate-100 text-slate-700'}`;
-        });
         renderRankingsTab();
       });
 
@@ -7366,7 +7508,7 @@
         e.preventDefault();
         const mid = document.getElementById('profile-member-select').value, nm = document.getElementById('profile-nickname-input').value.trim();
         const m = shared.members.find(x => x.id === mid);
-        if (m && nm) { m.name = nm; if (!prefs.adminMode) unlockChallengeFor(mid, 'ch_rename', false); if (shared.photos) shared.photos.forEach(p => { if (p.memberId === mid) p.memberName = nm; }); if (shared.reports) shared.reports.forEach(r => { if (r.targetId === mid) r.targetName = nm; }); saveSharedData(); showToast('별명 저장됨', 'success'); renderAll(); renderMembersTab(); renderWeeklyReportCards(); }
+        if (m && nm) { m.name = nm; if (!prefs.adminMode) unlockChallengeFor(mid, 'ch_rename', false); if (shared.photos) shared.photos.forEach(p => { if (p.memberId === mid) p.memberName = nm; }); saveSharedData(); showToast('별명 저장됨', 'success'); renderAll(); renderMembersTab(); renderWeeklyReportCards(); }
       });
 
       function makeSlotRowHtml(day = 1, start = '10:30', end = '12:00', removable = false) {
@@ -7610,37 +7752,38 @@
         switchTab('admin');
       });
 
-      function togglePhotoLike(pid, forceLike = false) {
+      function togglePhotoLike(pid) {
         const p = (shared.photos || []).find(x => x.id === pid);
         if (!p) return;
         const likesMap = getPhotoLikesMap(p);
-        if (forceLike && likesMap[prefs.currentUserId]) return;
         if (likesMap[prefs.currentUserId]) delete likesMap[prefs.currentUserId];
         else { likesMap[prefs.currentUserId] = true; triggerHaptic(14); }
         p.likes = likesMap;
         saveSharedData();
         renderBragTab();
       }
-      function showHeartBurst(pid) {
-        const stage = document.querySelector(`[data-photo-stage="${pid}"]`);
-        if (!stage) return;
-        const burst = document.createElement('div');
-        burst.className = 'ig-heart-burst pointer-events-none absolute inset-0 flex items-center justify-center text-white drop-shadow-[0_4px_14px_rgba(0,0,0,0.45)]';
-        burst.innerHTML = '<svg class="w-16 h-16 text-rose-500" viewBox="0 0 24 24" fill="currentColor"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>';
-        stage.appendChild(burst);
-        setTimeout(() => burst.remove(), 750);
+      function openStudygramPhoto(photoId) {
+        if (!prefs.adminMode && !prefs.joinedMemberId) return;
+        const photo = (shared.photos || []).find(item => item.id === photoId);
+        if (!photo?.dataUrl) return;
+        const name = shared.members.find(member => member.id === photo.memberId)?.name || photo.memberName || '스터디원';
+        openModal(name + '님의 사진', `
+          <img id="studygram-full-photo" class="studygram-full-photo" alt="${escapeHtml(name)}님의 스터디그램 사진">
+          <p id="studygram-photo-error" class="hidden text-center text-sm text-slate-500" role="status">사진을 불러오지 못했어요.</p>
+        `, 'studygram-photo');
+        const image = document.getElementById('studygram-full-photo');
+        image.addEventListener('error', () => {
+          image.hidden = true;
+          document.getElementById('studygram-photo-error')?.classList.remove('hidden');
+        }, { once: true });
+        image.src = photo.dataUrl;
       }
       const feedListEl = document.getElementById('photo-feed-list');
-      feedListEl.addEventListener('dblclick', e => {
-        const img = e.target.closest('[data-like-dbl]');
-        if (!img) return;
-        const pid = img.dataset.likeDbl;
-        togglePhotoLike(pid, true);
-        showHeartBurst(pid);
-      });
       feedListEl.addEventListener('click', e => {
+        const viewPhoto = e.target.closest('[data-view-studygram-photo]');
+        if (viewPhoto) { openStudygramPhoto(viewPhoto.dataset.viewStudygramPhoto); return; }
         const likeBtn = e.target.closest('[data-toggle-like]');
-        if (likeBtn) { togglePhotoLike(likeBtn.dataset.toggleLike, false); return; }
+        if (likeBtn) { togglePhotoLike(likeBtn.dataset.toggleLike); return; }
         const focusCm = e.target.closest('[data-focus-comment]');
         if (focusCm) { document.getElementById(`comment-input-${focusCm.dataset.focusComment}`)?.focus(); return; }
         const expCm = e.target.closest('[data-expand-comments]');
@@ -7699,13 +7842,13 @@
       document.getElementById('admin-set-strict-btn').addEventListener('click', () => {
         const m = shared.members.find(x => x.id === document.getElementById('admin-mode-member').value);
         if (!m) return;
-        m.mode = 'strict'; m.pendingMode = null; m.pendingDate = null;
+        m.mode = 'strict'; m.pendingMode = null; m.pendingDate = null; m.promoReservedMode = false;
         saveSharedData(); showToast(`${m.name}님을 즉시 울트라집중모드로 전환했습니다.`, 'success'); renderAll();
       });
       document.getElementById('admin-set-free-btn').addEventListener('click', () => {
         const m = shared.members.find(x => x.id === document.getElementById('admin-mode-member').value);
         if (!m) return;
-        m.mode = 'free'; m.pendingMode = null; m.pendingDate = null;
+        m.mode = 'free'; m.pendingMode = null; m.pendingDate = null; m.promoReservedMode = false;
         saveSharedData(); showToast(`${m.name}님을 즉시 자율모드로 전환했습니다.`, 'info'); renderAll();
       });
 
@@ -7944,7 +8087,7 @@
           const mins = (shared.studyLogs && shared.studyLogs[dStr] && shared.studyLogs[dStr][me.id]) || 0;
           const promoEvt = (shared.promoHistory && shared.promoHistory[me.id] && shared.promoHistory[me.id][dStr]) || null;
           const isPromoSched = (me.promoPendingDate === dStr || me.promoActiveDate === dStr);
-          const isUltraSched = (me.pendingMode === 'strict' && me.pendingDate === dStr) || (dStr === todayStr() && getMemberMode(me) === 'strict');
+          const isUltraSched = (me.pendingMode === 'strict' && me.pendingDate === dStr) || (dStr === studyDayKey() && getMemberMode(me) === 'strict');
           const icons = [];
           if (mins > 0) icons.push('⏱️');
           if (isUltraSched) icons.push('🔥');
@@ -8302,6 +8445,7 @@
         if (!button) return;
         prefs.focusTheme = button.dataset.focusThemeChoice;
         setFocusTheme(prefs.focusTheme);
+        syncFocusBrowserColor();
         savePrefs();
       });
       setFocusTheme(prefs.focusTheme);
@@ -8358,6 +8502,9 @@
       function creditStudySlice(member, startMs, endMs, segmentStartMs, accumulatedSecs) {
         const date = new Date(endMs - 1);
         const day = studyDayKey(date);
+        const times = (((shared.studyRankTimes ||= {})[day] ||= {})[member.id] ||= { first: startMs, last: +date });
+        times.first = Math.min(times.first, startMs);
+        times.last = Math.max(times.last, +date);
         const remainder = ((shared.studySubminuteMs ||= {})[day] ||= {});
         const elapsed = (Number(remainder[member.id]) || 0) + endMs - startMs;
         remainder[member.id] = elapsed % 60000;
@@ -8389,7 +8536,7 @@
         recordMemberActivityForStreak(member, day);
         if (hours === 4) unlockChallengeFor(id, 'ch_4am', false);
         if (hours === 0 && mins <= 5 && continuousMins >= 6) unlockChallengeFor(id, 'ch_cinderella', false);
-        if (hours < 5) member.nightOwlDate = localDay;
+        if (koreaDateKey(date) !== day) member.nightOwlDate = day;
         const slot = `${String(hours).padStart(2, '0')}_${Math.floor(mins / 10)}`;
         const blocks = ((shared.studyBlocks[localDay] ||= {})[id] ||= {});
         const slotMinutes = ((shared.studySlotMins[localDay] ||= {})[id] ||= {});
@@ -8419,10 +8566,9 @@
           const simulated = prefs.simTime ? toMins(prefs.simTime) : null;
           focusTimeSlices(start, end, (d, a, b) => {
             if (creditStudySlice(me, a, b, focusStartedAt, focusAccumulatedSecs)) creditedStudyMinute = true;
-            const civilDay = localDateKey(d);
             const day = studyDayKey(d);
-            syncMemberPendingModes(civilDay, day);
-            const mode = focusModeBeforeChange && civilDay < focusModeBeforeChange.date ? focusModeBeforeChange.mode : getMemberMode(me);
+            syncMemberPendingModes(day);
+            const mode = focusModeBeforeChange && day < focusModeBeforeChange.date ? focusModeBeforeChange.mode : getMemberMode(me);
             if (mode !== 'strict') return;
             const phase = getCurrentPhase(simulated ?? (d.getHours() * 60 + d.getMinutes()));
             if (phase?.type !== 'study') return;
@@ -8469,7 +8615,7 @@
         const meFocus = shared.members.find(m => m.id === prefs.currentUserId);
         if (!meFocus) return;
         const tEarly = studyDayKey();
-        if (!focusInterval && isRestoring !== true && meFocus && now.totalMins < toMins('08:00')) {
+        if (!focusInterval && isRestoring !== true && meFocus && now.totalMins >= toMins('05:00') && now.totalMins < toMins('08:00')) {
           let earlyChanged = false;
           if (meFocus.firstTimeDate !== tEarly || !meFocus.firstTime || toMins(now.hhmm) < toMins(meFocus.firstTime)) {
             meFocus.firstTime = now.hhmm;
@@ -8655,19 +8801,29 @@
         });
       }
 
+      function renderPromotionCardPreview(tier) {
+        const idx = LOL_TIERS.findIndex(entry => entry.name === tier.name);
+        const previewTier = { ...tier, idx };
+        return `<div class="member-card" data-member-tier="${idx}"${idx >= 6 ? ' data-elite' : ''} style="--rank-deep:${tier.wingColor};--rank-gem:${tier.gemColor}">
+          <div class="member-card-details">${renderMemberFlame(previewTier, 300)}<span class="member-rank">${escapeHtml(tier.name)}</span></div>
+        </div>`;
+      }
+
       function showPromotion({ phase, fromTier, toTier, mission, targetDay, releasedBank = 0, confirm }) {
         const preview = phase === 'preview';
         const success = phase === 'success';
         const scheduled = phase === 'scheduled';
         const willSchedule = preview && !!targetDay;
-        const startDate = targetDay ? new Intl.DateTimeFormat('ko-KR', {
-          month: 'long', day: 'numeric'
-        }).format(new Date(targetDay + 'T12:00:00')) : '';
+        const startDate = targetDay ? studyDayStartLabel(targetDay) : '';
         promotionOverlay.dataset.phase = phase;
         promotionOverlay.dataset.tier = toTier.name;
         promotionOverlay.style.setProperty('--promo-accent', toTier.gemColor);
         promotionOverlay.style.setProperty('--promo-deep', toTier.wingColor);
         document.getElementById('promotion-burst').hidden = !success;
+        document.getElementById('promotion-perks').hidden = !success;
+        document.getElementById('promotion-card-pair').innerHTML = success
+          ? `${renderPromotionCardPreview(fromTier)}<span class="promo-route-arrow">→</span>${renderPromotionCardPreview(toTier)}`
+          : '';
 
         document.getElementById('promotion-status').textContent = {
           preview: willSchedule ? startDate + ' 시작' : '오늘 시작',
@@ -8690,7 +8846,7 @@
             : '미션을 달성한 뒤 승급전 완료 버튼을 눌러주세요. 도전 횟수는 매일 오전 5시에 초기화돼요.',
           started: '미션을 달성한 뒤 승급전 완료 버튼을 눌러주세요.',
           scheduled: '예정일 오전 5시부터 승급전을 진행할 수 있어요.',
-          success: `${toTier.name} 테마가 열렸어요. 스터디원 카드의 불꽃과 테두리도 새 티어 색으로 바뀌었어요.`
+          success: `${toTier.name} 테마가 열렸어요.`
         }[phase];
 
         promotionCancel.hidden = !preview;
@@ -9212,7 +9368,7 @@
             ['classes', 'manualExempt', 'customBadges', 'memberChallenges', 'praises', 'directMessages', 'lpHistory', 'promoHistory', 'respectLpRewarded'].forEach(k => {
               if (shared[k]) delete shared[k][mid];
             });
-            ['records', 'studyLogs', 'studySubminuteMs', 'maxFocusLogs', 'periodStudySecs', 'studyBlocks', 'studySlotMins', 'hourlyLpGiven', 'motemote', 'periodLpRewarded', 'respectSentByDate'].forEach(k => {
+            ['records', 'studyLogs', 'studySubminuteMs', 'maxFocusLogs', 'periodStudySecs', 'studyBlocks', 'studyRankTimes', 'studySlotMins', 'hourlyLpGiven', 'motemote', 'periodLpRewarded', 'respectSentByDate'].forEach(k => {
               if (shared[k]) {
                 Object.keys(shared[k]).forEach(d => {
                   if (shared[k][d]) delete shared[k][d][mid];
@@ -9394,6 +9550,7 @@
         if (prefs.activeTab === 'dashboard') renderDashboard();
         if (prefs.activeTab === 'members') {
           renderMembersTab();
+          if (shown(document.getElementById('members-sub-rank'))) renderStudyTimeRankings();
           if (dayChanged) renderWeeklyReportCards();
         }
         if (dayChanged && prefs.activeTab === 'admin') renderAdminTab();
