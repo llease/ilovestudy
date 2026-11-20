@@ -359,29 +359,16 @@
     }
     .member-photo-preview { display: grid; justify-items: center; gap: 10px; padding: 3px 0 2px; text-align: center; }
     .member-photo-preview [hidden] { display: none; }
-    .member-photo-preview img {
-      display: block;
-      width: 100%;
+    .member-photo-preview img, .member-photo-initial {
+      width: min(96px, 44vw);
       height: auto;
-      max-height: 58vh;
-      max-height: 58dvh;
-      object-fit: contain;
-      border: 1px solid var(--line);
-      border-radius: 13px;
-      background: var(--soft);
-    }
-    .member-photo-initial {
-      display: grid;
-      place-items: center;
-      width: min(40vw, 142px);
       aspect-ratio: 1;
       border: 1px solid var(--line);
-      border-radius: 24px;
+      border-radius: 12px;
       background: var(--soft);
-      color: var(--ink);
-      font-size: 3rem;
-      font-weight: 900;
     }
+    .member-photo-preview img { display: block; object-fit: cover; }
+    .member-photo-initial { display: grid; place-items: center; color: var(--ink); font-size: 2rem; font-weight: 900; }
     .member-photo-note { margin: 0; color: var(--muted); font-size: .82rem; }
     .member-badges { display: flex; align-items: center; gap: 4px; min-width: 0; margin-top: auto; }
     .member-badges .badge-pill { display: block; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: .64rem; padding-inline: 6px; }
@@ -556,7 +543,6 @@
       0%, 100% { box-shadow: 0 12px 30px rgba(16, 42, 89, 0.24), 0 0 0 0 rgba(104, 166, 255, 0.25); }
       50% { box-shadow: 0 16px 38px rgba(16, 42, 89, 0.36), 0 0 0 5px rgba(104, 166, 255, 0.14); }
     }
-    #focus-timer-box[data-paused="false"] { animation: focusBoxBreathe 3s ease-in-out infinite; }
     @keyframes igLikeBounce {
       0% { transform: scale(1); }
       35% { transform: scale(1.32); }
@@ -1190,36 +1176,96 @@
     #modal-overlay,#auth-overlay {background:#0c172dbb;backdrop-filter:none}
     #modal-box,#auth-overlay > .ed-card {border:1px solid var(--line)!important;border-radius:22px;background:var(--surface)!important;color:var(--ink)!important;box-shadow:0 24px 80px #03102363;overflow:auto;max-height:90vh;max-height:90dvh;animation:study-appear 150ms ease-out both}
     #modal-title {font-size:1.08rem;white-space:normal;overflow-wrap:anywhere}
+    #modal-overlay[data-variant="member-photo"] {align-items:center!important;padding:1rem!important}
+    #modal-overlay[data-variant="member-photo"] #modal-box {width:min(100%, 15rem)!important;max-width:15rem!important;padding:1rem!important;border-radius:16px!important;animation:study-appear 150ms ease-out both!important}
+    #modal-overlay[data-variant="member-photo"] #modal-box > div:first-child {display:none}
+    #modal-overlay[data-variant="member-photo"] #modal-title {font-size:.84rem}
     #modal-close {min-width:44px;min-height:44px;color:var(--muted);border:1px solid var(--line);background:var(--soft);flex:none}
     #auth-overlay {z-index:65}
     #auth-overlay .study-logo {height:49px;width:49px}
     #auth-overlay h2 {font-family:'Space Grotesk',sans-serif;font-size:1.36rem}
     #btn-google-login {background:var(--surface);color:var(--ink);border:1px solid var(--line);box-shadow:var(--shadow-card);min-height:48px}
     #btn-google-login:hover:not(:disabled) {background:var(--tint);border-color:var(--focus-ring)}
-    #focus-overlay {background:var(--page)!important;color:var(--ink)!important;min-height:100%;padding-block:max(1rem,env(safe-area-inset-top)) max(1rem,env(safe-area-inset-bottom))}
-    #focus-overlay > div {max-width:39rem}
-    .focus-view-switch {display:flex;justify-content:center;gap:.25rem}
-    .focus-view-switch button {
-      min-height:36px;padding:.35rem .65rem;border:1px solid transparent;border-radius:9px;
-      background:transparent;color:var(--muted);font-size:.73rem;font-weight:600
+    #focus-overlay {
+      --focus-bg: #f7f8fa;
+      --focus-fg: #192131;
+      --focus-subtle: #586174;
+      --focus-divider: #dce0e7;
+      background: var(--focus-bg) !important;
+      color: var(--focus-fg) !important;
+      padding: max(1rem, env(safe-area-inset-top)) max(1rem, env(safe-area-inset-right)) max(.65rem, env(safe-area-inset-bottom)) max(1rem, env(safe-area-inset-left));
     }
-    .focus-view-switch button[aria-pressed="true"] {border-color:var(--line);color:var(--ink)}
-    .focus-view-switch button:hover {background:var(--soft)}
-    .focus-view-switch button:focus-visible {outline:2px solid var(--focus-ring);outline-offset:2px}
-    #focus-study-grid {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;text-align:left}
-    @media (max-width:365px) {#focus-study-grid {grid-template-columns:minmax(0,1fr)}}
-    .focus-quote-card {padding:clamp(1.25rem,5vw,2rem);border:1px solid var(--line);border-radius:16px;background:var(--surface)}
-    #focus-quote-text {min-height:4em;display:grid;align-items:center;margin:0;color:var(--ink);font-size:clamp(1.05rem,4vw,1.4rem);font-weight:700;line-height:1.65;word-break:keep-all;overflow-wrap:anywhere}
-    #focus-timer-box,#focus-mini-bar {background:linear-gradient(145deg,var(--hero-deep),var(--hero))!important;color:var(--hero-text)!important;border:1px solid #7da3e465!important;box-shadow:0 12px 30px #102a5933!important}
-    #focus-timer-box {padding:clamp(1.3rem,5vw,2.5rem) 1rem 1.25rem}
-    #focus-timer-box[data-paused="true"] {border-color:var(--accent)!important}
-    #focus-timer-display {font-family:'Space Grotesk',system-ui,sans-serif;font-size:clamp(2.4rem,11.5vw,6rem);font-variant-numeric:tabular-nums;line-height:1.02;letter-spacing:-.04em}
-    #focus-timer-display::before {content:'집중 시간';display:block;color:var(--hero-muted);font:700 .74rem/1.3 Pretendard,'Noto Sans KR',sans-serif;letter-spacing:.07em;margin-bottom:.45rem}
-    #focus-pause-label,#focus-cheer-msg {color:var(--hero-muted)}
-    #focus-pause-btn,#focus-end-btn,#focus-mini-expand,#focus-min-btn {min-height:44px}
-    #focus-pause-btn {background:var(--surface);color:var(--ink);border:1px solid var(--line)}
-    #focus-end-btn {background:var(--primary);color:var(--on-primary)}
-    #focus-mini-expand {background:#e9f0ff;color:#182d50}
+    body[data-dark="true"] #focus-overlay {
+      --focus-bg: #0b1120;
+      --focus-fg: #f1f4fa;
+      --focus-subtle: #a6afc1;
+      --focus-divider: #2e374b;
+    }
+    .focus-shell {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      max-width: 64rem;
+      min-height: 100%;
+      margin-inline: auto;
+    }
+    .focus-screen { flex: 1 0 auto; }
+    .focus-screen.hidden { display: none; }
+    #focus-panel-timer:not(.hidden) { display: flex; flex-direction: column; }
+    .focus-time-stage {
+      display: grid;
+      flex: 1;
+      place-content: center;
+      justify-items: center;
+      gap: clamp(.55rem, 2vh, 1.15rem);
+      min-height: 11rem;
+      padding-block: 1rem;
+    }
+    #focus-timer-display {
+      font: 700 clamp(2.5rem, 15vw, 10rem)/.96 'Space Grotesk', system-ui, sans-serif;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -.055em;
+      white-space: nowrap;
+    }
+    #focus-today-total { margin: 0; color: var(--focus-subtle); font-size: clamp(.75rem, 2.2vw, .95rem); font-variant-numeric: tabular-nums; font-weight: 500; }
+    .focus-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: .55rem; }
+    #focus-overlay .focus-actions button {
+      min-height: 44px; min-width: 7rem; padding: .65rem .85rem;
+      border: 1px solid var(--focus-divider); border-radius: 12px;
+      color: var(--focus-fg); background: transparent; font-size: .83rem; font-weight: 700;
+    }
+    #focus-overlay #focus-pause-btn { background: var(--focus-fg); color: var(--focus-bg); border-color: var(--focus-fg); }
+    #focus-min-btn { align-self: center; min-height: 36px; padding-inline: .5rem; color: var(--focus-subtle); font-size: .7rem; text-decoration: underline; text-underline-offset: .16em; }
+    .focus-view-switch { display: flex; justify-content: center; gap: clamp(.2rem, 2vw, .65rem); padding-top: .5rem; }
+    .focus-view-switch button {
+      min-height: 44px; padding: .4rem .65rem; border: 1px solid transparent;
+      border-radius: 9px; background: transparent; color: var(--focus-subtle);
+      font-size: .73rem; font-weight: 600;
+    }
+    .focus-view-switch button[aria-pressed="true"] { color: var(--focus-fg); text-decoration: underline; text-underline-offset: .28em; }
+    .focus-view-switch button:hover { border-color: var(--focus-divider); }
+    #focus-overlay button:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 3px; }
+    #focus-panel-study:not(.hidden), #focus-panel-quotes:not(.hidden) { display: grid; align-content: center; padding-block: clamp(1rem, 5vh, 2rem); }
+    #focus-study-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(82px, 110px));
+      justify-content: center;
+      gap: .65rem;
+    }
+    .focus-study-member { gap: .3rem; justify-items: center; --member-portrait-size: 44px; }
+    .focus-study-portrait { position: relative; width: 100%; height: 100px; }
+    .focus-study-member .member-flame-space {
+      inset: 0; width: 100%; height: 100%;
+      mask-image: linear-gradient(#000 82%, transparent);
+    }
+    .focus-study-member .member-portrait-flame { top: 63px; left: 50%; transform: translate(-50%, -57%) scale(.87); }
+    .focus-study-member .member-avatar { top: calc(63px - var(--member-portrait-size) / 2); left: 50%; transform: translateX(-50%); }
+    .focus-study-total { color: var(--focus-fg); font-size: .8rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+    .focus-quote-card { width: min(100%, 32rem); margin-inline: auto; justify-items: center; gap: 1.2rem; }
+    #focus-quote-text { min-height: 4em; display: grid; align-items: center; margin: 0; color: var(--focus-fg); font-size: clamp(1.1rem, 4vw, 1.6rem); font-weight: 700; line-height: 1.65; word-break: keep-all; overflow-wrap: anywhere; }
+    #focus-next-quote { min-height:44px; padding: .55rem .9rem; border: 1px solid var(--focus-divider); border-radius: 10px; color: var(--focus-subtle); font-size: .76rem; }
+    #focus-mini-bar {background:linear-gradient(145deg,var(--hero-deep),var(--hero))!important;color:var(--hero-text)!important;border:1px solid #7da3e465!important;box-shadow:0 12px 30px #102a5933!important}
+    #focus-mini-expand {min-height:44px;background:#e9f0ff;color:#182d50}
     .fancy-badge {animation:none!important}
     .fancy-badge {box-shadow:none!important}
     .scrollbar-thin::-webkit-scrollbar-thumb {background:var(--line)}
@@ -1329,14 +1375,8 @@
     }
     body[data-promo] #promo-bar-actions button:hover { filter: brightness(1.13); }
     #schedule-list-wrap > [aria-current="time"] {background:var(--tint);color:var(--link);border-color:var(--line)}
-    #focus-overlay {justify-content:flex-start}
-    #focus-period-badge {background:var(--tint);color:var(--link);border:1px solid var(--line)}
-    #focus-timer-box[data-paused="true"] #focus-timer-display {color:var(--hero-muted)}
-    .study-period-tile {display:flex;justify-content:space-between;align-items:center;gap:.35rem;padding:.4rem .55rem;border:1px solid var(--line);border-radius:10px;background:var(--soft);font-size:.75rem;line-height:1.4}
-    .study-period-tile.is-current {background:var(--tint);border-color:var(--focus-ring)}
-    .study-period-clock {display:block;font-size:.68rem;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
     body[data-dark="true"] #study-main .ed-card {background:var(--surface)!important}
-    body[data-dark="true"] #btn-checkin:hover:not(:disabled),body[data-dark="true"] #focus-pause-btn:hover:not(:disabled){color:var(--link)}
+    body[data-dark="true"] #btn-checkin:hover:not(:disabled){color:var(--link)}
     body[data-dark="true"] #btn-google-login:not(:disabled) {color:var(--ink)}
     body[data-dark="true"] #study-main .nav-tab.tab-active,body[data-dark="true"] #tab-members [data-members-sub][aria-pressed="true"],body[data-dark="true"] #tab-admin [data-admin-sub][aria-pressed="true"] {background:var(--primary);color:var(--on-primary)}
     #header-more-menu [data-set-theme][aria-pressed="true"] {outline:2px solid var(--focus-ring);outline-offset:2px}
@@ -1644,46 +1684,31 @@
   </div>
 
   <!-- Fullscreen Focus Stopwatch Overlay -->
-  <div id="focus-overlay" role="dialog" aria-modal="true" aria-label="집중 스톱워치" tabindex="-1" class="fixed inset-0 bg-white z-50 hidden flex-col items-center justify-center p-4 sm:p-6 text-center overflow-y-auto">
-    <div class="max-w-lg w-full space-y-5 my-auto py-2">
+  <div id="focus-overlay" role="dialog" aria-modal="true" aria-label="집중 스톱워치" tabindex="-1" class="fixed inset-0 z-50 hidden flex-col text-center overflow-y-auto">
+    <div class="focus-shell">
+      <section class="focus-screen" id="focus-panel-timer" aria-labelledby="focus-view-timer">
+        <div class="focus-time-stage">
+          <div id="focus-timer-display">00:00:00</div>
+          <p id="focus-today-total">오늘 누적 00:00:00</p>
+        </div>
+        <div class="focus-actions">
+          <button id="focus-pause-btn" type="button">잠시 쉬기</button>
+          <button id="focus-end-btn" type="button">집중 끝내기</button>
+        </div>
+        <button id="focus-min-btn" type="button" class="hidden">미니 타이머</button>
+      </section>
+      <section class="focus-screen hidden" id="focus-panel-study" aria-labelledby="focus-view-study">
+        <div id="focus-study-grid"></div>
+      </section>
+      <section class="focus-screen hidden focus-quote-card" id="focus-panel-quotes" aria-labelledby="focus-view-quotes">
+        <p id="focus-quote-text" aria-live="polite">공부법 알아 볼 시간에 공부를 해라.</p>
+        <button id="focus-next-quote" type="button">다른 문구</button>
+      </section>
       <nav class="focus-view-switch" id="focus-view-switch" aria-label="타이머 화면 전환">
         <button id="focus-view-timer" type="button" data-focus-view="timer" aria-pressed="true" aria-controls="focus-panel-timer">타이머</button>
         <button id="focus-view-study" type="button" data-focus-view="study" aria-pressed="false" aria-controls="focus-panel-study">스터디</button>
         <button id="focus-view-quotes" type="button" data-focus-view="quotes" aria-pressed="false" aria-controls="focus-panel-quotes">공부자극</button>
       </nav>
-      <section class="space-y-5" id="focus-panel-timer" aria-labelledby="focus-view-timer">
-      <div class="space-y-1.5">
-        <span id="focus-period-badge" class="inline-block px-3.5 py-1 rounded-full text-xs font-black bg-slate-950 text-white">집중 중</span>
-        <p id="focus-period-range" class="text-sm font-bold text-slate-500">스톱워치</p>
-      </div>
-      <div id="focus-timer-box" class="relative overflow-hidden py-6 rounded-3xl ed-banner select-none">
-        <div id="focus-timer-display" class="text-5xl sm:text-7xl font-mono font-black tracking-tighter">00:00:00</div>
-        <p id="focus-pause-label" class="hidden text-xs font-bold mt-2">잠시 쉬는 중 · 10분 초과 휴식 시 연속 집중이 초기화됩니다</p>
-        <p id="focus-today-total" class="text-xs mt-2"></p>
-        <p id="focus-cheer-msg" class="text-xs font-bold mt-2 opacity-85 transition-opacity duration-500 min-h-[1rem]"></p>
-      </div>
-      <div class="grid grid-cols-2 gap-3">
-        <button id="focus-pause-btn" type="button" class="py-3.5 px-4 rounded-2xl border-2 border-slate-950 bg-slate-100 hover:bg-slate-200 text-slate-950 font-black text-sm">잠시 쉬기</button>
-        <button id="focus-end-btn" type="button" class="py-3.5 px-4 rounded-2xl ed-btn-accent font-black text-sm">집중 끝내기</button>
-      </div>
-      <button id="focus-min-btn" type="button" class="hidden text-xs font-bold text-slate-500 hover:text-slate-950 underline underline-offset-4">잠깐 다른 화면 보기 (휴식 중에만 가능)</button>
-
-      <!-- Ultra Focus Mode Timetable At-a-Glance -->
-      <div id="focus-timetable-wrap" class="hidden text-left ed-card p-3.5 sm:p-4 space-y-2.5">
-        <div class="flex flex-wrap items-center justify-between gap-1">
-          <span class="text-xs font-black text-slate-900">📅 울트라집중 시간표</span>
-          <span class="text-[11px] font-semibold text-slate-500">점심 12:20~13:30 · 저녁 17:20~18:30 · 귀가 22:00</span>
-        </div>
-        <div id="focus-timetable-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-1.5"></div>
-      </div>
-      </section>
-      <section class="hidden" id="focus-panel-study" aria-labelledby="focus-view-study">
-        <div id="focus-study-grid"></div>
-      </section>
-      <section class="hidden focus-quote-card space-y-3" id="focus-panel-quotes" aria-labelledby="focus-view-quotes">
-        <p id="focus-quote-text" aria-live="polite">공부법 알아 볼 시간에 공부를 해라.</p>
-        <button id="focus-next-quote" type="button" class="rounded-lg border border-slate-200 px-3 py-2 text-xs font-bold text-slate-600">다른 문구</button>
-      </section>
     </div>
   </div>
 
@@ -2412,7 +2437,7 @@
             <ul class="space-y-2.5 text-slate-700">
               <li class="space-y-0.5">
                 <div class="font-black text-slate-900">👤 내 프로필</div>
-                <p>별명·프로필 사진(원형 크롭 및 기본 복원), 내 LP 내역·칭호·뱃지 확인, <strong>홈 배너 명언·배경 설정</strong>, 모드 전환을 할 수 있습니다.</p>
+                <p>별명·프로필 사진(정사각형 크롭 및 기본 복원), 내 LP 내역·칭호·뱃지 확인, <strong>홈 배너 명언·배경 설정</strong>, 모드 전환을 할 수 있습니다.</p>
               </li>
               <li class="space-y-0.5">
                 <div class="font-black text-slate-900">🗓️ 수업 시간표</div>
@@ -3947,11 +3972,12 @@
           (e.shiftKey ? last : first).focus();
         }
       });
-      function openModal(title, html) {
+      function openModal(title, html, variant = '') {
         if (!shown(document.getElementById('modal-overlay'))) previousModalFocus = document.activeElement;
         document.getElementById('modal-title').textContent = title;
         document.getElementById('modal-body').innerHTML = html;
         const o = document.getElementById('modal-overlay');
+        o.dataset.variant = variant;
         o.classList.remove('hidden'); o.classList.add('flex');
         refreshStudyDialogs();
         document.getElementById('modal-title').focus({preventScroll:true});
@@ -3960,6 +3986,7 @@
         if (typeof modalCleanupFn === 'function') { try { modalCleanupFn(); } catch (e) {} modalCleanupFn = null; }
         const o = document.getElementById('modal-overlay');
         o.classList.add('hidden'); o.classList.remove('flex');
+        delete o.dataset.variant;
         refreshStudyDialogs();
         if (previousModalFocus?.isConnected && !previousModalFocus.closest('[inert]')) previousModalFocus.focus({preventScroll:true});
         previousModalFocus = null;
@@ -4412,6 +4439,10 @@
       function studyMinutes(memberId, day = studyDayKey()) {
         return Math.max(0, Math.floor(Number(shared.studyLogs?.[day]?.[memberId]) || 0));
       }
+      function studySeconds(memberId, day = studyDayKey()) {
+        const remainderMs = Number(shared.studySubminuteMs?.[day]?.[memberId]) || 0;
+        return studyMinutes(memberId, day) * 60 + Math.floor(remainderMs / 1000);
+      }
       function formatStudyMins(totalMins) {
         const h = Math.floor(totalMins / 60), m = totalMins % 60;
         return `${h}H ${m}M`;
@@ -4624,9 +4655,7 @@
         const miniEl = document.getElementById('live-studying-mini');
         const canSeeStudying = prefs.adminMode || !!prefs.joinedMemberId;
         if (canSeeStudying) {
-          const activePid = phase && phase.type === 'study' ? phase.id : 'p1';
-          const t = todayStr();
-          const studyingNowCnt = shared.members.filter(m => m.inStudy !== false && !!m.isFocusing).length;
+          const studyingNowCnt = shared.members.filter(m => m.inStudy !== false && memberStatus(m, now) === 'studying').length;
           miniEl.textContent = `현재 ${studyingNowCnt}명 공부 중`;
           miniEl.classList.remove('hidden');
         } else {
@@ -5148,58 +5177,72 @@
           : '<div class="ed-card p-10 text-center space-y-1.5"><span class="empty-float-icon text-2xl">📸</span><p class="text-sm font-bold text-slate-500">아직 올라온 게시물이 없습니다</p><p class="text-xs text-slate-400">위에서 오늘의 공부 기록을 첫 번째로 공유해 보세요!</p></div>';
       }
 
-      function renderMemberCard(m, date, mins, now, inFocus = false) {
+      const MEMBER_STATUS_LABELS = { studying: '공부 중', class: '수업 중', resting: '휴식 중' };
+
+      function memberStatus(member, now = getNowParts()) {
+        const inClass = (shared.classes?.[member.id] || []).some(c =>
+          Number(c.day) === now.day && toMins(c.start) <= now.totalMins && now.totalMins < toMins(c.end)
+        );
+        if (inClass) return 'class';
+        if (member.isFocusing) return 'studying';
+        return member.isFocusPaused ? 'resting' : '';
+      }
+
+      function renderMemberFlame(tier, mins) {
+        const strength = getStudyFlameStrength(mins);
+        if (!strength) return '';
+        return `<span class="member-flame-space" aria-hidden="true">
+          <span class="member-portrait-flame" style="--flame-rank:${tier.idx};--flame-strength:${strength}">
+            ${tier.idx >= 4 && mins >= 120
+              ? `<span class="member-flame-embers"${tier.idx >= 6 && mins >= 300 ? ' data-bright' : ''}></span>`
+              : ''}
+          </span>
+        </span>`;
+      }
+
+      function renderMemberCard(m, date, mins, now) {
         const id = escapeHtml(m.id);
-        const key = inFocus ? `focus-${id}` : id;
         const name = escapeHtml(m.name);
         const title = escapeHtml(m.equippedTitle);
         const tier = getMemberTier(m);
         const badges = getBadgesForMember(m, date);
         const featured = badges.find(b => b.isCustom) || badges[0];
         const isUltra = getMemberMode(m) === 'strict';
-        const inClass = (shared.classes?.[m.id] || []).some(c => Number(c.day) === now.day && toMins(c.start) <= now.totalMins && now.totalMins < toMins(c.end));
-        const status = m.isFocusing ? 'studying' : inClass ? 'class' : 'resting';
+        const status = memberStatus(m, now);
         const isMe = m.id === prefs.currentUserId;
         const canRemove = prefs.adminMode && shared.members.length > 1;
-        const hasMenu = !inFocus && (!isMe || canRemove);
-        const flameStrength = getStudyFlameStrength(mins);
+        const hasMenu = !isMe || canRemove;
         const hours = Math.floor(mins / 60);
 
         return `<article class="member-card" data-member-card-wrap="${id}" data-member-tier="${tier.idx}"${tier.idx >= 6 ? ' data-elite' : ''}${hasMenu ? ' data-has-menu' : ''}
             style="--rank-deep:${tier.wingColor};--rank-gem:${tier.gemColor}">
-          <button class="member-avatar" id="member-avatar-${key}" type="button" data-member-avatar="${id}" aria-haspopup="dialog"
+          <button class="member-avatar" id="member-avatar-${id}" type="button" data-member-avatar="${id}" aria-haspopup="dialog"
             aria-label="${name} 프로필 사진 보기"${isUltra ? ' data-ultra title="울트라집중모드 · 프로필 사진 보기"' : ' title="프로필 사진 보기"'}>
             ${m.avatarUrl ? `<img src="${escapeHtml(m.avatarUrl)}" alt="" loading="lazy">` : escapeHtml(String(m.name || '').slice(0, 1))}
             ${isUltra ? '<span class="member-avatar-bolt" aria-hidden="true">⚡</span>' : ''}
           </button>
-          <button class="member-card-details" id="member-card-${key}" type="button" data-member-detail="${id}"
+          <button class="member-card-details" id="member-card-${id}" type="button" data-member-detail="${id}"
             aria-label="${name} 상세 기록"
-            aria-describedby="member-rank-${key} member-status-${key} member-study-${key}${title ? ` member-title-${key}` : ''}${featured ? ` member-badges-${key}` : ''}">
-            ${flameStrength ? `<span class="member-flame-space" aria-hidden="true">
-              <span class="member-portrait-flame" style="--flame-rank:${tier.idx};--flame-strength:${flameStrength}">
-                ${tier.idx >= 4 && mins >= 120
-                  ? `<span class="member-flame-embers"${tier.idx >= 6 && mins >= 300 ? ' data-bright' : ''}></span>`
-                  : ''}
-              </span>
-            </span>` : ''}
+            aria-describedby="member-rank-${id} member-study-${id}${status ? ` member-status-${id}` : ''}${title ? ` member-title-${id}` : ''}${featured ? ` member-badges-${id}` : ''}">
+            ${renderMemberFlame(tier, mins)}
             <span class="member-identity">
               <span class="member-nameplate">
                 <strong class="member-name" title="${name}">${name}</strong>
-                ${title ? `<span class="member-title" id="member-title-${key}" title="${title}">${title}</span>` : ''}
+                ${title ? `<span class="member-title" id="member-title-${id}" title="${title}">${title}</span>` : ''}
               </span>
             </span>
             <span class="member-rank-line">
-              <span id="member-rank-${key}"><span class="member-rank">${tier.name}</span> ${tier.lp} LP</span>
-              <span id="member-status-${key}" class="member-status" data-status="${status}">${{ studying: '공부 중', class: '수업 중', resting: '휴식 중' }[status]}</span>
+              <span id="member-rank-${id}"><span class="member-rank">${tier.name}</span> ${tier.lp} LP</span>
+              ${status ? `<span id="member-status-${id}" class="member-status" data-status="${status}">${MEMBER_STATUS_LABELS[status]}</span>` : ''}
               ${promotionIsActive(m) && tier.nextName ? '<span class="member-promo">승급전 진행 중</span>'
                 : m.promoPendingDate ? '<span class="member-promo">승급전 예약</span>'
                 : tier.inPromo ? '<span class="member-promo">승급 LP 충족</span>' : ''}
             </span>
-            <span class="member-study" id="member-study-${key}">
+            <span class="member-study" id="member-study-${id}">
               <span class="member-study-label">오늘 누적 공부</span>
               <strong class="member-study-time">${hours ? `${hours}<small>시간</small> ` : ''}${mins % 60}<small>분</small></strong>
             </span>
-            ${featured ? `<span class="member-badges" id="member-badges-${key}">
+            ${featured ? `<span class="member-badges" id="member-badges-${id}">
               ${renderBadgePill(featured)}
               ${badges.length > 1 ? `<span class="member-badge-count" aria-label="뱃지 ${badges.length - 1}개 더 보기">+${badges.length - 1}</span>` : ''}
             </span>` : ''}
@@ -5224,7 +5267,7 @@
             <span id="member-photo-initial" class="member-photo-initial" aria-hidden="true"${photo ? ' hidden' : ''}>${escapeHtml(String(member.name || '').slice(0, 1))}</span>
             <p id="member-photo-note" class="member-photo-note" role="status"${photo ? ' hidden' : ''}>등록된 프로필 사진이 없어요.</p>
           </div>
-        `);
+        `, 'member-photo');
         const image = document.getElementById('member-photo-image');
         if (!image) return;
         const initial = document.getElementById('member-photo-initial');
@@ -5264,7 +5307,7 @@
         const members = shared.members.filter(m => m.inStudy !== false)
           .map(m => ({ member: m, mins: studyMinutes(m.id) }))
           .sort((a, b) => b.mins - a.mins);
-        const studying = members.filter(({ member }) => member.isFocusing).length;
+        const studying = members.filter(({ member }) => memberStatus(member, now) === 'studying').length;
         summary.innerHTML = `<span>참가 ${members.length}명</span><span class="member-roster-live" data-active="${studying > 0}">공부 중 ${studying}명</span>`;
         const markup = members.length
           ? members.map(({ member, mins }) => renderMemberCard(member, date, mins, now)).join('')
@@ -6034,6 +6077,7 @@
       }
 
       function renderAll() {
+        if (focusInterval) updateFocusDisplay();
         renderHeaderControls();
         renderFocusStudy();
         renderLiveBanner();
@@ -6373,7 +6417,8 @@
         const mBox = document.getElementById('modal-box');
         let sheetStartY = 0, sheetCurY = 0, sheetDragging = false;
         mBox.addEventListener('touchstart', e => {
-          if (window.innerWidth > 640 || mBox.scrollTop > 0 || e.touches.length !== 1) return;
+          if (document.getElementById('modal-overlay').dataset.variant === 'member-photo' ||
+              window.innerWidth > 640 || mBox.scrollTop > 0 || e.touches.length !== 1) return;
           if (e.target.closest('input, textarea, select, canvas')) return;
           sheetStartY = e.touches[0].clientY;
           sheetCurY = 0;
@@ -8003,7 +8048,6 @@
       let focusStartedAt = null;
       let focusInterval = null;
       let focusModeBeforeChange = null;
-      let focusLastGridMinute = '';
       let focusOsNotifShown = false;
       let focusOsNotifRef = null;
 
@@ -8057,6 +8101,16 @@
       }
       let focusRestoredOnce = false;
 
+      function setMemberFocusStatus(member, activity) {
+        if (!member) return false;
+        const studying = activity === 'studying';
+        const paused = activity === 'resting';
+        if (!!member.isFocusing === studying && !!member.isFocusPaused === paused) return false;
+        member.isFocusing = studying;
+        member.isFocusPaused = paused;
+        return true;
+      }
+
       function saveFocusState() {
         try {
           if (!focusInterval) return;
@@ -8080,13 +8134,14 @@
         focusRestoredOnce = true;
         try {
           const raw = localStorage.getItem(FOCUS_STATE_KEY);
-          if (!raw) return;
-          const st = JSON.parse(raw);
+          const st = raw ? JSON.parse(raw) : null;
           const tToday = todayStr();
           const tYesterday = addDaysStr(tToday, -1);
           if (!st || st.memberId !== memberId || (st.date !== tToday && st.date !== tYesterday)) {
             clearFocusState();
-        closeFocusOsNotification();
+            if (raw) closeFocusOsNotification();
+            const member = shared.members.find(m => m.id === memberId && m.id === prefs.currentUserId);
+            if (setMemberFocusStatus(member, '')) { saveSharedData(); renderAll(); }
             return;
           }
           focusModeBeforeChange = st.modeBeforeChange || null;
@@ -8123,17 +8178,35 @@
       let focusStudyMarkup = '';
       const focusViewSwitch = document.getElementById('focus-view-switch');
 
+      function renderFocusPeer(member, mins, status) {
+        const tier = getMemberTier(member);
+        const id = escapeHtml(member.id);
+        const name = escapeHtml(member.name);
+        const time = mins < 60 ? `${mins}분` : `${Math.floor(mins / 60)}시간 ${mins % 60}분`;
+        return `<article class="member-card focus-study-member" data-member-tier="${tier.idx}"
+            style="--rank-deep:${tier.wingColor};--rank-gem:${tier.gemColor}">
+          <div class="focus-study-portrait">
+            ${renderMemberFlame(tier, mins)}
+            <button class="member-avatar" type="button" id="member-avatar-focus-${id}" data-member-avatar="${id}" aria-haspopup="dialog"
+              aria-label="${name}, ${MEMBER_STATUS_LABELS[status]} · 프로필 사진 보기" title="${name}">
+              ${member.avatarUrl ? `<img src="${escapeHtml(member.avatarUrl)}" alt="" loading="lazy">` : escapeHtml(String(member.name || '').slice(0, 1))}
+            </button>
+          </div>
+          <span class="focus-study-total" aria-label="오늘 누적 ${time}">${time}</span>
+        </article>`;
+      }
+
       function renderFocusStudy() {
         if (!shown(document.getElementById('focus-overlay')) || !shown(document.getElementById('focus-panel-study'))) return;
         const grid = document.getElementById('focus-study-grid');
         const day = studyDayKey();
-        const date = todayStr();
         const now = getNowParts();
-        const peers = prefs.joinedMemberId ? shared.members.filter(m => m.inStudy !== false && m.isFocusing && m.id !== prefs.currentUserId) : [];
-        const cards = peers.map(member => ({ member, mins: studyMinutes(member.id, day) })).sort((a, b) => b.mins - a.mins);
+        const peers = prefs.joinedMemberId ? shared.members.filter(m => m.inStudy !== false && m.id !== prefs.currentUserId) : [];
+        const cards = peers.map(member => ({ member, mins: studyMinutes(member.id, day), status: memberStatus(member, now) }))
+          .filter(card => card.status).sort((a, b) => b.mins - a.mins);
         const markup = cards.length
-          ? cards.map(({ member, mins }) => renderMemberCard(member, date, mins, now, true)).join('')
-          : '<p class="member-roster-empty">지금 공부 중인 다른 스터디원이 없어요.</p>';
+          ? cards.map(({ member, mins, status }) => renderFocusPeer(member, mins, status)).join('')
+          : '<p class="member-roster-empty">지금 활동 중인 다른 스터디원이 없어요.</p>';
         if (markup === focusStudyMarkup) return;
         const focusedId = grid.contains(document.activeElement) ? document.activeElement.id : '';
         const modalFocusId = previousModalFocus && grid.contains(previousModalFocus) ? previousModalFocus.id : '';
@@ -8170,11 +8243,9 @@
         const formatted = formatStopwatch(focusElapsedSecs);
         document.getElementById('focus-timer-display').textContent = formatted;
         document.getElementById('focus-mini-time').textContent = formatted;
-        document.getElementById('focus-pause-label').classList.toggle('hidden', !focusPaused);
         document.getElementById('focus-min-btn').classList.toggle('hidden', !focusPaused);
         document.getElementById('focus-pause-btn').textContent = focusPaused ? '공부 다시 시작하기' : '잠시 쉬기';
-        document.getElementById('focus-timer-box').dataset.paused = String(focusPaused);
-        document.getElementById('focus-today-total').textContent = `오늘 누적 ${formatStudyMins(studyMinutes(prefs.currentUserId))}`;
+        document.getElementById('focus-today-total').textContent = `오늘 누적 ${formatStopwatch(studySeconds(prefs.currentUserId))}`;
       }
 
       // Split real elapsed time at local minute boundaries. Endpoints are half-open [start, end).
@@ -8230,46 +8301,12 @@
         slotMinutes[slot] = Math.min(10, (slotMinutes[slot] || 0) + 1);
       }
 
-      function refreshFocusAttendance(force = false) {
-        const member = shared.members.find(m => m.id === prefs.currentUserId);
-        const now = getNowParts(), day = todayStr(), phase = getCurrentPhase(now.totalMins);
-        const strict = getMemberMode(member) === 'strict';
-        const badge = document.getElementById('focus-period-badge');
-        const range = document.getElementById('focus-period-range');
-        if (!strict || phase?.type !== 'study') {
-          badge.textContent = strict ? '집중 스톱워치' : '자율 집중 중';
-          range.textContent = strict ? '교시 외 시간 · 누적 공부시간에 기록' : '교시 제한 없이 측정 중';
-        } else {
-          const secs = shared.periodStudySecs?.[day]?.[member.id]?.[phase.id] || 0;
-          const status = getMemberDayStatus(member.id, day, phase.id);
-          badge.textContent = `${phase.label} 집중 중`;
-          const left = Math.max(0, Math.ceil((Math.ceil(phase.mins * 60 * .75) - secs) / 60));
-          const state = status === 'exempt' ? '수업 면제' : status === 'present' ? '출석 인정 ✓' : status === 'late' ? '지각 기록됨' : left ? `출석까지 약 ${left}분` : '출석 기준 달성';
-          range.textContent = `${phase.start} ~ ${phase.end} · ${state}`;
-        }
-        if (force || focusLastGridMinute !== `${day} ${now.hhmm} ${strict}`) {
-          focusLastGridMinute = `${day} ${now.hhmm} ${strict}`;
-          const grid = document.getElementById('focus-timetable-grid');
-          document.getElementById('focus-timetable-wrap').classList.toggle('hidden', !strict);
-          if (!strict) return;
-          grid.innerHTML = STUDY_PERIODS.map(p => {
-            const st = getMemberDayStatus(member.id, day, p.id);
-            const isActive = phase?.id === p.id;
-            const seconds = shared.periodStudySecs?.[day]?.[member.id]?.[p.id] || 0;
-            const percent = Math.min(100, Math.floor(seconds / Math.ceil(p.mins * 60 * .75) * 100));
-            const labels = { present:'출석', late:'지각', exempt:'면제', absent:'결석', awol:'무단이탈', early:'조퇴' };
-            const classes = { present:'text-emerald-600', late:'text-amber-700', exempt:'text-indigo-600', absent:'text-rose-600', awol:'text-rose-600' };
-            return `<div class="study-period-tile ${isActive ? 'is-current' : ''}"${isActive ? ' aria-current="time"' : ''}><div><strong>${p.label.replace('(심야)', '')}</strong><span class="study-period-clock">${p.start}–${p.end}</span></div><span class="${classes[st] || 'text-slate-500'} font-bold">${labels[st] || (isActive || seconds ? `${percent}%` : '대기')}</span></div>`;
-          }).join('');
-        }
-      }
-
       function syncFocusClock(force = false) {
         if (focusPaused || focusStartedAt == null) return;
         const target = focusAccumulatedSecs + Math.max(0, Math.floor((Date.now() - focusStartedAt) / 1000));
         const from = focusElapsedSecs;
         if (target <= from) {
-          if (force) { saveSharedData(); saveFocusState(); refreshFocusAttendance(true); }
+          if (force) { updateFocusDisplay(); saveSharedData(); saveFocusState(); }
           return;
         }
         const me = shared.members.find(m => m.id === prefs.currentUserId);
@@ -8307,7 +8344,6 @@
             const status = getMemberDayStatus(me.id, day, phase.id);
             if (secs >= Math.ceil(phase.mins * 60 * .75) && (status === 'none' || status === 'awol')) {
               setMemberDayStatus(me.id, day, phase.id, 'present', 'strict');
-              document.getElementById('focus-cheer-msg').textContent = `${phase.label} · 출석 인정 ✓`;
               markedAttendance = true;
             }
           }
@@ -8318,12 +8354,8 @@
           (shared.challenges || []).forEach(ch => {
             if (!claimed.has(ch.id) && ch.focusSecs && target >= ch.focusSecs) unlockChallengeFor(me.id, ch.id, false);
           });
-          if (!markedAttendance && Math.floor(target / 600) > Math.floor(from / 600)) {
-            document.getElementById('focus-cheer-msg').textContent = `${newMins}분 집중했어요. 지금 페이스를 이어가 보세요.`;
-          }
         } finally { focusWriteBatch = false; }
         updateFocusDisplay();
-        refreshFocusAttendance(force || markedAttendance);
         if (force || gainedMinute || creditedStudyMinute || markedAttendance || Math.floor(target / 15) > Math.floor(from / 15)) {
           saveSharedData();
           saveFocusState();
@@ -8365,12 +8397,8 @@
             pauseStartedAt = null;
             focusModeBeforeChange = null;
           }
-          if (meFocus && meFocus.isFocusing !== !focusPaused) {
-            meFocus.isFocusing = !focusPaused;
-            saveSharedData();
-          }
+          if (setMemberFocusStatus(meFocus, focusPaused ? 'resting' : 'studying')) saveSharedData();
           setFocusView('timer');
-          document.getElementById('focus-cheer-msg').textContent = '';
           focusInterval = setInterval(() => syncFocusClock(false), 250);
           if (isRestoring !== true) { unlockChallengeFor(meFocus.id, 'ch_newbie', false); saveSharedData(); }
           if (isRestoring !== true) saveFocusState();
@@ -8387,7 +8415,6 @@
         ov.classList.remove('hidden');
         ov.classList.add('flex');
         renderFocusStudy();
-        refreshFocusAttendance(true);
         refreshStudyDialogs();
         ov.focus({preventScroll:true});
         try {
@@ -8436,7 +8463,10 @@
         if (discard) pendingCelebrations.length = 0;
         if (wasOpen && !discard && !prefs.adminMode) {
           const meObj = shared.members.find(x => x.id === prefs.currentUserId);
-          if (meObj && (meObj.focusMins || meObj.isFocusing)) { meObj.focusMins = 0; meObj.isFocusing = false; saveSharedData(); }
+          if (meObj) {
+            const changed = setMemberFocusStatus(meObj, '');
+            if (meObj.focusMins || changed) { meObj.focusMins = 0; saveSharedData(); }
+          }
         }
         const ov = document.getElementById('focus-overlay');
         ov.classList.add('hidden');
@@ -8607,7 +8637,7 @@
         if (!focusPaused) syncFocusClock(true);
         focusPaused = !focusPaused;
         const meP = shared.members.find(x => x.id === prefs.currentUserId);
-        if (meP) { meP.isFocusing = !focusPaused; saveSharedData(); }
+        if (setMemberFocusStatus(meP, focusPaused ? 'resting' : 'studying')) saveSharedData();
         if (focusPaused) {
           unlockChallengeFor(prefs.currentUserId, 'ch_pause1', false);
           focusAccumulatedSecs = focusElapsedSecs;
@@ -8622,13 +8652,12 @@
             focusAccumulatedSecs = 0;
             const meObj = shared.members.find(x => x.id === prefs.currentUserId);
             if (meObj) { meObj.focusMins = 0; saveSharedData(); }
-            document.getElementById('focus-cheer-msg').textContent = '휴식 10분 초과로 연속 집중이 초기화되었습니다 (누적 시간 유지)';
           }
           focusStartedAt = Date.now();
           focusModeBeforeChange = null;
         }
         saveFocusState();
-        updateFocusDisplay();
+        renderAll();
       });
 
 
@@ -9237,9 +9266,9 @@
         renderLiveBanner();
         if (prefs.activeTab === 'dashboard') renderDashboard();
         if (prefs.activeTab === 'members') renderMembersTab();
-        if (focusInterval && focusPaused) { updateFocusDisplay(); refreshFocusAttendance(true); }
+        if (focusInterval && focusPaused) updateFocusDisplay();
       }
-      setInterval(refreshScheduleMinute, 2000);
+      setInterval(refreshScheduleMinute, 1000);
       document.addEventListener('visibilitychange', refreshScheduleMinute);
 
       // PWA Service Worker & Smart Install Banner
