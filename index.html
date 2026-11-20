@@ -480,101 +480,73 @@
     .subtab-track > button { position: relative; z-index: 1; background: transparent !important; }
     body[data-dark="true"] #tab-members [data-members-sub][aria-pressed="true"],
     body[data-dark="true"] #tab-admin [data-admin-sub][aria-pressed="true"] { background: transparent !important; color: var(--on-primary) !important; }
-    /* 5. Tier Promotion & Challenge Cinematics (Sleek Esports / LoL Style) */
+    /* 5. Tier Promotion & Challenge (Minimal Metallic Material Animation) */
     #tier-promo-overlay, #promo-challenge-overlay {
       position: fixed; inset: 0; z-index: 87;
       display: none; align-items: center; justify-content: center; padding: 1.5rem;
-      background: radial-gradient(circle at 50% 42%, var(--cine-bg, rgba(15, 23, 42, 0.9)) 0%, rgba(4, 6, 12, 0.97) 72%);
-      backdrop-filter: blur(18px) saturate(140%); -webkit-backdrop-filter: blur(18px) saturate(140%);
+      background: rgba(8, 11, 18, 0.86);
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
     }
-    #tier-promo-overlay { z-index: 86; --cine-bg: rgba(30, 27, 18, 0.92); --cine-c1: #facc15; --cine-c2: #38bdf8; }
+    #tier-promo-overlay { z-index: 86; }
     #tier-promo-overlay.is-active, #promo-challenge-overlay.is-active { display: flex; }
 
-    @keyframes cineFlareSweep {
-      0% { opacity: 0; transform: translate(-50%, -50%) scaleX(0.05) scaleY(2.5); }
-      35% { opacity: 0.95; transform: translate(-50%, -50%) scaleX(1.1) scaleY(1); }
-      100% { opacity: 0.35; transform: translate(-50%, -50%) scaleX(1) scaleY(0.8); }
+    @keyframes metalCardIn {
+      0% { opacity: 0; transform: translateY(14px) scale(0.96); }
+      100% { opacity: 1; transform: translateY(0) scale(1); }
     }
-    @keyframes cineCardReveal {
-      0% { opacity: 0; transform: translateY(18px) scale(0.95); filter: blur(8px); }
-      100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+    @keyframes metalEmblemSettle {
+      0% { opacity: 0; transform: scale(1.22); }
+      65% { opacity: 1; transform: scale(0.97); }
+      100% { opacity: 1; transform: scale(1); }
     }
-    @keyframes cineCrestLock {
-      0% { opacity: 0; transform: scale(1.65); filter: brightness(2.2) blur(4px); }
-      60% { opacity: 1; transform: scale(0.95); filter: brightness(1.25) blur(0); }
-      100% { opacity: 1; transform: scale(1); filter: brightness(1) blur(0); }
+    @keyframes metalSheenSweep {
+      0% { transform: translateX(-140%) rotate(25deg); opacity: 0; }
+      20% { opacity: 0.75; }
+      80% { opacity: 0.75; }
+      100% { transform: translateX(180%) rotate(25deg); opacity: 0; }
     }
-    @keyframes cineRingDraw {
-      0% { stroke-dashoffset: 360; opacity: 0; }
-      30% { opacity: 1; }
-      100% { stroke-dashoffset: 0; opacity: 0.85; }
-    }
-    @keyframes cineAstrolabeCW { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-    @keyframes cineAstrolabeCCW { 0% { transform: rotate(360deg); } 100% { transform: rotate(0deg); } }
-    @keyframes cineTitleTrack {
-      0% { opacity: 0; letter-spacing: 0.24em; filter: blur(6px); transform: translateY(8px); }
-      100% { opacity: 1; letter-spacing: -0.02em; filter: blur(0); transform: translateY(0); }
-    }
-    @keyframes cineFadeUp {
-      0% { opacity: 0; transform: translateY(10px); }
-      100% { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes cineShockPulse {
-      0% { opacity: 0.75; transform: scale(0.65); }
-      100% { opacity: 0; transform: scale(2.6); }
-    }
-    @keyframes cineBtnSheen {
-      0% { transform: translateX(-140%) skewX(-24deg); }
-      40%, 100% { transform: translateX(260%) skewX(-24deg); }
+    @keyframes metalRingOnce {
+      0% { opacity: 0.65; transform: scale(0.88); }
+      100% { opacity: 0; transform: scale(1.55); }
     }
 
-    .cine-flare {
-      position: fixed; left: 50%; top: 42%; width: min(92vw, 680px); height: 2px;
-      background: linear-gradient(90deg, transparent, var(--cine-c1, #facc15), #ffffff, var(--cine-c2, #38bdf8), transparent);
-      box-shadow: 0 0 28px 3px var(--cine-c1, #facc15);
-      animation: cineFlareSweep 1.1s cubic-bezier(.16, 1, .3, 1) both;
-      pointer-events: none; z-index: 1;
+    .metal-card {
+      position: relative;
+      background: linear-gradient(170deg, rgba(20, 25, 38, 0.96), rgba(10, 13, 21, 0.98));
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+      animation: metalCardIn 420ms cubic-bezier(.16, 1, .3, 1) both;
     }
-    .cine-card {
-      position: relative; z-index: 2;
-      background: linear-gradient(165deg, rgba(15, 23, 42, 0.92), rgba(7, 10, 19, 0.96));
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      box-shadow: 0 28px 80px rgba(0, 0, 0, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.14);
-      animation: cineCardReveal 650ms cubic-bezier(.16, 1, .3, 1) both;
+    .metal-medallion-wrap {
+      position: relative; width: 96px; height: 96px; margin: 0 auto;
+      display: grid; place-items: center;
     }
-    .cine-crest-stage { position: relative; width: 132px; height: 132px; margin: 0 auto; display: grid; place-items: center; }
-    .cine-astro-outer {
-      position: absolute; inset: 0;
-      animation: cineAstrolabeCW 22s linear infinite; pointer-events: none;
-    }
-    .cine-astro-inner {
-      position: absolute; inset: 12px;
-      animation: cineAstrolabeCCW 14s linear infinite; pointer-events: none;
-    }
-    .cine-ring-path {
-      stroke-dasharray: 360; stroke-dashoffset: 360;
-      animation: cineRingDraw 950ms cubic-bezier(.22, 1, .36, 1) 120ms forwards;
-    }
-    .cine-shock {
-      position: absolute; inset: 14px; border-radius: 9999px;
-      border: 1.5px solid var(--cine-c1, #facc15);
-      animation: cineShockPulse 1.8s cubic-bezier(.16, 1, .3, 1) 260ms infinite;
+    .metal-ring-once {
+      position: absolute; inset: -4px; border-radius: 9999px;
+      border: 1.5px solid var(--metal-c1, #cbd5e1);
+      animation: metalRingOnce 900ms cubic-bezier(.16, 1, .3, 1) 120ms forwards;
       pointer-events: none;
     }
-    .cine-crest-core {
-      position: relative; z-index: 2; width: 82px; height: 82px;
-      display: grid; place-items: center;
-      animation: cineCrestLock 680ms cubic-bezier(.16, 1, .3, 1) 160ms both;
+    .metal-medallion {
+      position: relative; width: 88px; height: 88px; border-radius: 9999px;
+      display: grid; place-items: center; overflow: hidden;
+      background: var(--metal-grad, linear-gradient(145deg, #475569, #94a3b8 48%, #334155));
+      border: 2px solid var(--metal-c1, #e2e8f0);
+      box-shadow: inset 0 2px 6px rgba(255,255,255,0.45), inset 0 -4px 8px rgba(0,0,0,0.45), 0 10px 26px var(--metal-glow, rgba(148,163,184,0.28));
+      animation: metalEmblemSettle 540ms cubic-bezier(.16, 1, .3, 1) 80ms both;
     }
-    .cine-stagger-1 { animation: cineFadeUp 460ms cubic-bezier(.22,1,.36,1) 240ms both; }
-    .cine-title-anim { animation: cineTitleTrack 680ms cubic-bezier(.16,1,.3,1) 300ms both; }
-    .cine-stagger-3 { animation: cineFadeUp 500ms cubic-bezier(.22,1,.36,1) 430ms both; }
-    .cine-stagger-4 { animation: cineFadeUp 520ms cubic-bezier(.22,1,.36,1) 540ms both; }
-    .cine-btn-sheen { position: relative; overflow: hidden; }
-    .cine-btn-sheen::after {
-      content: ''; position: absolute; top: 0; bottom: 0; left: 0; width: 38%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.42), transparent);
-      animation: cineBtnSheen 3s ease-in-out 1s infinite; pointer-events: none;
+    .metal-medallion::after {
+      content: ''; position: absolute; top: -40%; bottom: -40%; left: 0; width: 42%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.65), transparent);
+      animation: metalSheenSweep 1.15s ease-in-out 220ms forwards;
+      pointer-events: none;
+    }
+    .metal-medallion-inner {
+      position: relative; z-index: 1; width: 72px; height: 72px; border-radius: 9999px;
+      background: rgba(10, 14, 24, 0.88);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      display: grid; place-items: center;
+      box-shadow: inset 0 2px 8px rgba(0,0,0,0.65);
     }
     /* Subtle Micro-Details */
     body { transition: background-color 240ms ease, color 240ms ease; }
@@ -1189,63 +1161,41 @@
   </div>
   <!-- Tier Promotion Emblem Ceremony Overlay -->
   <div id="tier-promo-overlay" role="dialog" aria-modal="true" aria-labelledby="tier-promo-title" aria-hidden="true">
-    <div id="tier-promo-flare" class="cine-flare" aria-hidden="true"></div>
-    <canvas id="promo-fx-canvas" class="fixed inset-0 z-[1] pointer-events-none"></canvas>
-    <div id="tier-promo-card" class="cine-card max-w-sm w-full rounded-3xl p-7 text-center text-white space-y-5">
-      <div class="cine-crest-stage">
-        <div class="cine-shock"></div>
-        <svg class="cine-astro-outer" viewBox="0 0 132 132" fill="none" aria-hidden="true">
-          <circle cx="66" cy="66" r="62" stroke="rgba(250,204,21,0.28)" stroke-width="1" stroke-dasharray="4 6"/>
-          <circle cx="66" cy="66" r="56" stroke="url(#promoRingGrad)" stroke-width="1.5" class="cine-ring-path"/>
-          <defs><linearGradient id="promoRingGrad" x1="0" y1="0" x2="132" y2="132"><stop stop-color="#fde047"/><stop offset="1" stop-color="#38bdf8"/></linearGradient></defs>
-        </svg>
-        <svg class="cine-astro-inner" viewBox="0 0 108 108" fill="none" aria-hidden="true">
-          <polygon points="54,2 99,28 99,80 54,106 9,80 9,28" stroke="rgba(253,224,71,0.45)" stroke-width="1"/>
-        </svg>
-        <div id="tier-promo-crest-bg" class="cine-crest-core">
-          <svg class="absolute inset-0 w-full h-full drop-shadow-[0_0_18px_rgba(250,204,21,0.45)]" viewBox="0 0 82 82" fill="none" aria-hidden="true">
-            <polygon points="41,3 74,22 74,60 41,79 8,60 8,22" fill="rgba(15,23,42,0.95)" stroke="url(#promoHexGrad)" stroke-width="2.2"/>
-            <defs><linearGradient id="promoHexGrad" x1="8" y1="3" x2="74" y2="79"><stop stop-color="#fef08a"/><stop offset="0.5" stop-color="#eab308"/><stop offset="1" stop-color="#38bdf8"/></linearGradient></defs>
-          </svg>
-          <span id="tier-promo-icon" class="relative z-[1] text-4xl leading-none">👑</span>
+    <div id="tier-promo-card" class="metal-card max-w-xs w-full rounded-3xl p-7 text-center text-white space-y-5">
+      <div class="metal-medallion-wrap">
+        <div id="tier-promo-ring" class="metal-ring-once"></div>
+        <div id="tier-promo-medallion" class="metal-medallion">
+          <div class="metal-medallion-inner">
+            <span id="tier-promo-icon" class="text-4xl leading-none">👑</span>
+          </div>
         </div>
       </div>
-      <div class="space-y-2">
-        <p class="cine-stagger-1 inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-amber-400/15 border border-amber-300/35 text-[10px] font-black tracking-[0.22em] uppercase text-amber-300">RANK PROMOTED</p>
-        <h3 id="tier-promo-title" class="cine-title-anim text-2xl font-black bg-gradient-to-r from-amber-100 via-white to-amber-200 bg-clip-text text-transparent">승급을 축하합니다!</h3>
-        <p id="tier-promo-sub" class="cine-stagger-3 text-xs text-slate-300 leading-relaxed"></p>
+      <div class="space-y-1.5">
+        <p id="tier-promo-badge" class="text-[10px] font-black tracking-[0.2em] uppercase text-slate-400">TIER PROMOTED</p>
+        <h3 id="tier-promo-title" class="text-xl font-black tracking-tight text-white">승급을 축하합니다!</h3>
+        <p id="tier-promo-sub" class="text-xs text-slate-300 leading-relaxed"></p>
       </div>
-      <button id="btn-tier-promo-close" type="button" class="cine-stagger-4 cine-btn-sheen w-full py-3.5 rounded-2xl bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-400 text-slate-950 font-black text-sm shadow-lg transition active:scale-[0.98]">계속하기</button>
+      <button id="btn-tier-promo-close" type="button" class="w-full py-3 rounded-2xl font-black text-sm text-slate-950 shadow-md transition active:scale-[0.98]">확인</button>
     </div>
   </div>
   <!-- Tier Promotion Challenge Launch Overlay -->
   <div id="promo-challenge-overlay" role="dialog" aria-modal="true" aria-labelledby="promo-challenge-title" aria-hidden="true">
-    <div id="promo-challenge-flare" class="cine-flare" aria-hidden="true"></div>
-    <canvas id="promo-challenge-canvas" class="fixed inset-0 z-[1] pointer-events-none"></canvas>
-    <div id="promo-challenge-card" class="cine-card max-w-sm w-full rounded-3xl p-7 text-center text-white space-y-5">
-      <div class="cine-crest-stage">
-        <div id="promo-challenge-shock" class="cine-shock"></div>
-        <svg class="cine-astro-outer" viewBox="0 0 132 132" fill="none" aria-hidden="true">
-          <circle cx="66" cy="66" r="62" stroke="rgba(255,255,255,0.18)" stroke-width="1" stroke-dasharray="3 7"/>
-          <circle id="promo-challenge-ring" cx="66" cy="66" r="56" stroke="var(--cine-c1, #facc15)" stroke-width="1.5" class="cine-ring-path"/>
-        </svg>
-        <svg class="cine-astro-inner" viewBox="0 0 108 108" fill="none" aria-hidden="true">
-          <polygon points="54,2 99,28 99,80 54,106 9,80 9,28" stroke="var(--cine-c2, #38bdf8)" stroke-opacity="0.45" stroke-width="1"/>
-        </svg>
-        <div id="promo-challenge-crest-core" class="cine-crest-core">
-          <svg class="absolute inset-0 w-full h-full" viewBox="0 0 82 82" fill="none" aria-hidden="true">
-            <polygon id="promo-challenge-hex" points="41,3 74,22 74,60 41,79 8,60 8,22" fill="rgba(10,14,24,0.96)" stroke="var(--cine-c1, #facc15)" stroke-width="2.2"/>
-          </svg>
-          <span id="promo-challenge-icon" class="relative z-[1] text-4xl leading-none">⚔️</span>
+    <div id="promo-challenge-card" class="metal-card max-w-xs w-full rounded-3xl p-7 text-center text-white space-y-5">
+      <div class="metal-medallion-wrap">
+        <div id="promo-challenge-ring" class="metal-ring-once"></div>
+        <div id="promo-challenge-medallion" class="metal-medallion">
+          <div class="metal-medallion-inner">
+            <span id="promo-challenge-icon" class="text-4xl leading-none">⚔️</span>
+          </div>
         </div>
       </div>
-      <div class="space-y-2.5">
-        <p id="promo-challenge-badge" class="cine-stagger-1 inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-[10px] font-black tracking-[0.2em] uppercase">PROMOTION SERIES</p>
-        <h3 id="promo-challenge-title" class="cine-title-anim text-2xl font-black text-white">승급전 도전</h3>
-        <div id="promo-challenge-mission" class="cine-stagger-3 px-3.5 py-2.5 rounded-2xl bg-white/[0.06] border border-white/10 text-xs font-bold text-slate-100 leading-relaxed"></div>
-        <p id="promo-challenge-sub" class="cine-stagger-3 text-xs text-slate-300 leading-relaxed"></p>
+      <div class="space-y-2">
+        <p id="promo-challenge-badge" class="text-[10px] font-black tracking-[0.2em] uppercase text-slate-400">PROMOTION CHALLENGE</p>
+        <h3 id="promo-challenge-title" class="text-xl font-black tracking-tight text-white">승급전 도전</h3>
+        <div id="promo-challenge-mission" class="px-3 py-2 rounded-xl bg-white/[0.06] border border-white/10 text-xs font-semibold text-slate-200 leading-relaxed"></div>
+        <p id="promo-challenge-sub" class="text-[11px] text-slate-400 leading-relaxed"></p>
       </div>
-      <button id="btn-promo-challenge-close" type="button" class="cine-stagger-4 cine-btn-sheen w-full py-3.5 rounded-2xl font-black text-sm shadow-lg transition active:scale-[0.98]">도전 시작</button>
+      <button id="btn-promo-challenge-close" type="button" class="w-full py-3 rounded-2xl font-black text-sm text-slate-950 shadow-md transition active:scale-[0.98]">도전 시작</button>
     </div>
   </div>
   <!-- Starter All-Clear Grand Celebration Overlay -->
@@ -7127,15 +7077,9 @@
       });
       document.getElementById('admin-rank-lp-input').addEventListener('input', e => {
         const val = Math.max(0, Number(e.target.value) || 0);
-        const tierSel = document.getElementById('admin-rank-tier-preset');
-        const curMin = Number(tierSel.value) || 0;
-        // LP 입력만으로는 티어를 자동 승급시키지 않음 (승급전 도전하기를 거쳐야 승급)
-        // 단, 현재 선택된 티어의 최소 LP보다 낮아진 경우에만 하위 티어로 맞춤
-        if (val < curMin) {
-          let matchIdx = 0;
-          for (let i = 0; i < LOL_TIERS.length; i++) if (val >= LOL_TIERS[i].min) matchIdx = i;
-          tierSel.value = String(LOL_TIERS[matchIdx].min);
-        }
+        let matchIdx = 0;
+        for (let i = 0; i < LOL_TIERS.length; i++) if (val >= LOL_TIERS[i].min) matchIdx = i;
+        document.getElementById('admin-rank-tier-preset').value = String(LOL_TIERS[matchIdx].min);
       });
       document.getElementById('admin-rank-form').addEventListener('submit', e => {
         e.preventDefault();
@@ -7388,6 +7332,9 @@
         if (!shared.studyLogs) shared.studyLogs = {};
         if (!shared.studyLogs[dStr]) shared.studyLogs[dStr] = {};
         shared.studyLogs[dStr][mid] = mins;
+        if (!shared.maxFocusLogs) shared.maxFocusLogs = {};
+        if (!shared.maxFocusLogs[dStr]) shared.maxFocusLogs[dStr] = {};
+        shared.maxFocusLogs[dStr][mid] = mins;
         saveSharedData();
         const m = shared.members.find(x => x.id === mid);
         showToast(`${m ? m.name : ''} ${dStr} 누적 공부시간이 ${formatStudyMins(mins)}로 변경되었습니다.`, 'success');
@@ -7855,353 +7802,76 @@
           ov.setAttribute('aria-hidden', 'true');
         };
       }
-      let promoFxFrame = 0;
+      const TIER_METAL_MATERIALS = {
+        '아이언': { c1: '#a1a1aa', c2: '#52525b', grad: 'linear-gradient(145deg, #52525b, #d4d4d8 45%, #3f3f46)', glow: 'rgba(161,161,170,0.28)', tagline: '단단한 무쇠의 기본기로 첫 관문을 돌파하세요.' },
+        '브론즈': { c1: '#f59e0b', c2: '#92400e', grad: 'linear-gradient(145deg, #78350f, #fbbf24 42%, #92400e)', glow: 'rgba(217,119,6,0.32)', tagline: '단련된 청동처럼 묵직하게 집중을 이어가세요.' },
+        '실버': { c1: '#f1f5f9', c2: '#64748b', grad: 'linear-gradient(145deg, #64748b, #f8fafc 45%, #475569)', glow: 'rgba(203,213,225,0.34)', tagline: '매끈한 은빛 강철의 몰입을 보여줄 때입니다.' },
+        '골드': { c1: '#fde047', c2: '#ca8a04', grad: 'linear-gradient(145deg, #a16207, #fef08a 44%, #ca8a04)', glow: 'rgba(250,204,21,0.38)', tagline: '빛나는 순금의 무게감을 증명해 보세요.' },
+        '플래티넘': { c1: '#5eead4', c2: '#0f766e', grad: 'linear-gradient(145deg, #115e59, #99f6e4 44%, #0d9488)', glow: 'rgba(45,212,191,0.36)', tagline: '차가운 백금의 정교함으로 목표를 달성하세요.' },
+        '에메랄드': { c1: '#6ee7b7', c2: '#047857', grad: 'linear-gradient(145deg, #065f46, #a7f3d0 44%, #059669)', glow: 'rgba(52,211,153,0.36)', tagline: '비취빛 원석처럼 선명한 집중력을 발휘하세요.' },
+        '다이아몬드': { c1: '#bae6fd', c2: '#0284c7', grad: 'linear-gradient(145deg, #0369a1, #e0f2fe 45%, #38bdf8)', glow: 'rgba(56,189,248,0.42)', tagline: '다이아몬드처럼 흔들리지 않는 집중을 펼쳐보세요.' },
+        '마스터': { c1: '#e9d5ff', c2: '#7e22ce', grad: 'linear-gradient(145deg, #581c87, #f3e8ff 44%, #9333ea)', glow: 'rgba(192,132,252,0.42)', tagline: '자수정과 백금이 어우러진 마스터의 영역입니다.' },
+        '그랜드마스터': { c1: '#fda4af', c2: '#be123c', grad: 'linear-gradient(145deg, #881337, #fecdd3 44%, #e11d48)', glow: 'rgba(244,63,94,0.44)', tagline: '진홍빛 흑요석의 투지로 정상에 도전하세요.' },
+        '챌린저': { c1: '#fef08a', c2: '#38bdf8', grad: 'linear-gradient(145deg, #ca8a04, #ffffff 42%, #38bdf8 78%, #eab308)', glow: 'rgba(253,224,71,0.48)', tagline: '최정상의 황금과 하늘빛 백금이 만나는 자리입니다.' }
+      };
+      function applyMetalTheme(ov, medallionEl, ringEl, btnEl, tierName) {
+        const mat = TIER_METAL_MATERIALS[tierName] || TIER_METAL_MATERIALS['골드'];
+        ov.style.setProperty('--metal-c1', mat.c1);
+        ov.style.setProperty('--metal-grad', mat.grad);
+        ov.style.setProperty('--metal-glow', mat.glow);
+        if (medallionEl) { medallionEl.classList.remove('metal-medallion'); void medallionEl.offsetWidth; medallionEl.classList.add('metal-medallion'); }
+        if (ringEl) { ringEl.classList.remove('metal-ring-once'); void ringEl.offsetWidth; ringEl.classList.add('metal-ring-once'); }
+        if (btnEl) { btnEl.style.background = `linear-gradient(135deg, ${mat.c1}, ${mat.c2})`; }
+        return mat;
+      }
       function playTierPromoCeremony(tierObj, releasedBank = 0) {
         const ov = document.getElementById('tier-promo-overlay');
         const iconEl = document.getElementById('tier-promo-icon');
         const titleEl = document.getElementById('tier-promo-title');
         const subEl = document.getElementById('tier-promo-sub');
+        const badgeEl = document.getElementById('tier-promo-badge');
         const closeBtn = document.getElementById('btn-tier-promo-close');
-        const cvs = document.getElementById('promo-fx-canvas');
         if (!ov || !iconEl || !titleEl || !subEl) return;
+        const mat = applyMetalTheme(ov, document.getElementById('tier-promo-medallion'), document.getElementById('tier-promo-ring'), closeBtn, tierObj.name);
         iconEl.textContent = tierObj.icon || '👑';
-        titleEl.textContent = `${tierObj.name} 티어 승급!`;
+        if (badgeEl) badgeEl.style.color = mat.c1;
+        titleEl.textContent = `${tierObj.name} 티어 승급`;
         subEl.textContent = releasedBank > 0
-          ? `보관 중이던 +${releasedBank} LP가 합산되어 새 티어에 등극했습니다!`
-          : `축하합니다! 꾸준한 몰입으로 새로운 티어에 도달했습니다.`;
-        const flareEl = document.getElementById('tier-promo-flare');
-        const crestCore = document.getElementById('tier-promo-crest-bg');
-        if (flareEl) { flareEl.classList.remove('cine-flare'); void flareEl.offsetWidth; flareEl.classList.add('cine-flare'); }
-        if (crestCore) { crestCore.classList.remove('cine-crest-core'); void crestCore.offsetWidth; crestCore.classList.add('cine-crest-core'); }
+          ? `보관 중이던 +${releasedBank} LP가 합산되었습니다.`
+          : `꾸준한 몰입으로 새로운 티어에 도달했습니다.`;
         ov.classList.add('is-active');
         ov.setAttribute('aria-hidden', 'false');
-        triggerHaptic([25, 45, 35, 45, 50, 60, 40]);
-
-        if (promoFxFrame) { cancelAnimationFrame(promoFxFrame); promoFxFrame = 0; }
-        if (cvs && !reduceMotion.matches) {
-          const ctx = cvs.getContext('2d');
-          const W = cvs.width = window.innerWidth;
-          const H = cvs.height = window.innerHeight;
-          const colors = ['#fef08a', '#facc15', '#eab308', '#e0f2fe', '#38bdf8', '#ffffff'];
-          const sparks = [];
-          const confetti = [];
-          const stars = Array.from({ length: 28 }, () => ({
-            x: Math.random() * W, y: Math.random() * H,
-            r: 1.5 + Math.random() * 2.5, ph: Math.random() * Math.PI * 2,
-            c: colors[Math.floor(Math.random() * colors.length)]
-          }));
-          const promoRings = [{ r: 18, maxR: Math.max(W, H) * 0.65, alpha: 0.95, c: '#fde047' }];
-          function spawnBurst(bx, by, count) {
-            for (let i = 0; i < count; i++) {
-              const ang = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.25;
-              const spd = 120 + Math.random() * 280;
-              sparks.push({
-                x: bx, y: by,
-                vx: Math.cos(ang) * spd, vy: Math.sin(ang) * spd,
-                r: 2 + Math.random() * 3,
-                c: colors[Math.floor(Math.random() * colors.length)],
-                life: 0, maxLife: 1.2 + Math.random() * 0.7
-              });
-            }
-          }
-          function spawnRain(n) {
-            for (let i = 0; i < n; i++) {
-              confetti.push({
-                x: Math.random() * W, y: -10 - Math.random() * 60,
-                w: 5 + Math.random() * 6, h: 7 + Math.random() * 7,
-                vx: (Math.random() - 0.5) * 90, vy: 110 + Math.random() * 170,
-                rot: Math.random() * Math.PI * 2, vrot: (Math.random() - 0.5) * 8,
-                c: colors[Math.floor(Math.random() * colors.length)]
-              });
-            }
-          }
-          const burstSchedule = [
-            { t: 0.0, x: W * 0.5, y: H * 0.36, n: 56, done: false },
-            { t: 0.75, x: W * 0.22, y: H * 0.26, n: 44, done: false },
-            { t: 1.45, x: W * 0.78, y: H * 0.28, n: 44, done: false },
-            { t: 2.35, x: W * 0.34, y: H * 0.22, n: 48, done: false },
-            { t: 2.65, x: W * 0.66, y: H * 0.22, n: 48, done: false },
-            { t: 3.6, x: W * 0.5, y: H * 0.24, n: 60, done: false }
-          ];
-          spawnRain(45);
-          let lastTime = performance.now();
-          const startTime = lastTime;
-          let lastRain = 0;
-          function tick(now) {
-            if (!ov.classList.contains('is-active') || reduceMotion.matches) {
-              ctx.clearRect(0, 0, W, H); promoFxFrame = 0; return;
-            }
-            const dt = Math.min(0.05, (now - lastTime) / 1000);
-            const elapsed = (now - startTime) / 1000;
-            lastTime = now;
-            ctx.clearRect(0, 0, W, H);
-            for (const st of stars) {
-              const tw = 0.25 + 0.75 * Math.abs(Math.sin(elapsed * 3.5 + st.ph));
-              ctx.globalAlpha = elapsed > 4.6 ? tw * Math.max(0, (5.4 - elapsed) / 0.8) : tw * 0.8;
-              ctx.fillStyle = st.c;
-              ctx.beginPath(); ctx.arc(st.x, st.y, st.r, 0, Math.PI * 2); ctx.fill();
-            }
-            for (let i = promoRings.length - 1; i >= 0; i--) {
-              const rg = promoRings[i];
-              rg.r += 540 * dt; rg.alpha -= 0.72 * dt;
-              if (rg.alpha <= 0 || rg.r >= rg.maxR) { promoRings.splice(i, 1); continue; }
-              ctx.save(); ctx.globalAlpha = Math.max(0, rg.alpha);
-              ctx.strokeStyle = rg.c; ctx.lineWidth = 3;
-              ctx.beginPath(); ctx.arc(W * 0.5, H * 0.44, rg.r, 0, Math.PI * 2); ctx.stroke(); ctx.restore();
-            }
-            for (const b of burstSchedule) {
-              if (!b.done && elapsed >= b.t) {
-                b.done = true; spawnBurst(b.x, b.y, b.n);
-                if (b.t >= 3.5) promoRings.push({ r: 18, maxR: Math.max(W, H) * 0.6, alpha: 0.9, c: '#38bdf8' });
-              }
-            }
-            if (elapsed < 4.3 && elapsed - lastRain > 0.28) {
-              lastRain = elapsed;
-              spawnRain(12);
-            }
-            for (let i = sparks.length - 1; i >= 0; i--) {
-              const s = sparks[i];
-              s.life += dt;
-              if (s.life >= s.maxLife) { sparks.splice(i, 1); continue; }
-              s.vy += 220 * dt;
-              s.vx *= 0.985;
-              s.x += s.vx * dt;
-              s.y += s.vy * dt;
-              const alpha = Math.max(0, 1 - s.life / s.maxLife);
-              ctx.globalAlpha = alpha;
-              ctx.fillStyle = s.c;
-              ctx.beginPath();
-              ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-              ctx.fill();
-            }
-            for (let i = confetti.length - 1; i >= 0; i--) {
-              const p = confetti[i];
-              p.x += p.vx * dt;
-              p.y += p.vy * dt;
-              p.rot += p.vrot * dt;
-              if (p.y > H + 30) { confetti.splice(i, 1); continue; }
-              ctx.save();
-              ctx.globalAlpha = elapsed > 4.6 ? Math.max(0, (5.4 - elapsed) / 0.8) : 0.92;
-              ctx.translate(p.x, p.y);
-              ctx.rotate(p.rot);
-              ctx.fillStyle = p.c;
-              ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
-              ctx.restore();
-            }
-            ctx.globalAlpha = 1;
-            if (elapsed < 5.4 || sparks.length || confetti.length) {
-              promoFxFrame = requestAnimationFrame(tick);
-            } else {
-              promoFxFrame = 0;
-            }
-          }
-          promoFxFrame = requestAnimationFrame(tick);
-        }
-
+        triggerHaptic([20, 40, 30]);
         if (closeBtn) closeBtn.onclick = () => {
           ov.classList.remove('is-active');
           ov.setAttribute('aria-hidden', 'true');
-          if (promoFxFrame) { cancelAnimationFrame(promoFxFrame); promoFxFrame = 0; }
         };
       }
-      const TIER_CHALLENGE_THEMES = {
-        '아이언': { c1: '#a1a1aa', c2: '#71717a', glow: 'rgba(161,161,170,0.16)', bg: 'rgba(39,39,42,0.86)', colors: ['#d4d4d8', '#a1a1aa', '#71717a', '#ffffff'], intensity: 1.0, tagline: '강철 같은 기본기로 첫 관문을 돌파하세요!' },
-        '브론즈': { c1: '#f59e0b', c2: '#b45309', glow: 'rgba(217,119,6,0.18)', bg: 'rgba(69,26,3,0.86)', colors: ['#fbbf24', '#d97706', '#fcd34d', '#ffffff'], intensity: 1.1, tagline: '단련된 청동의 불꽃으로 승격을 쟁취하세요!' },
-        '실버': { c1: '#e2e8f0', c2: '#64748b', glow: 'rgba(203,213,225,0.2)', bg: 'rgba(30,41,59,0.88)', colors: ['#f8fafc', '#cbd5e1', '#94a3b8', '#38bdf8'], intensity: 1.2, tagline: '서늘하고 날카로운 은빛 몰입을 보여줄 때입니다!' },
-        '골드': { c1: '#facc15', c2: '#eab308', glow: 'rgba(250,204,21,0.22)', bg: 'rgba(66,32,6,0.88)', colors: ['#fde047', '#facc15', '#fb923c', '#ffffff'], intensity: 1.35, tagline: '찬란한 황금빛 왕관을 향한 도전을 시작합니다!' },
-        '플래티넘': { c1: '#2dd4bf', c2: '#0d9488', glow: 'rgba(45,212,191,0.22)', bg: 'rgba(17,58,56,0.88)', colors: ['#5eead4', '#2dd4bf', '#14b8a6', '#e0f2fe'], intensity: 1.5, tagline: '흔들리지 않는 청록의 집중력으로 한계를 넘으세요!' },
-        '에메랄드': { c1: '#34d399', c2: '#059669', glow: 'rgba(52,211,153,0.24)', bg: 'rgba(6,55,40,0.88)', colors: ['#6ee7b7', '#34d399', '#10b981', '#fef08a'], intensity: 1.65, tagline: '비취빛 폭풍처럼 압도적인 공부량을 증명하세요!' },
-        '다이아몬드': { c1: '#38bdf8', c2: '#0284c7', glow: 'rgba(56,189,248,0.25)', bg: 'rgba(12,45,72,0.9)', colors: ['#7dd3fc', '#38bdf8', '#e0f2fe', '#ffffff'], intensity: 1.8, tagline: '다이아몬드처럼 단단하고 눈부신 몰입을 펼쳐보세요!' },
-        '마스터': { c1: '#c084fc', c2: '#9333ea', glow: 'rgba(192,132,252,0.26)', bg: 'rgba(46,16,101,0.9)', colors: ['#d8b4fe', '#c084fc', '#a855f7', '#fde047'], intensity: 1.95, tagline: '신비로운 마스터의 영역! 극한의 울트라집중이 시작됩니다.' },
-        '그랜드마스터': { c1: '#fb7185', c2: '#e11d48', glow: 'rgba(251,113,133,0.28)', bg: 'rgba(76,5,25,0.9)', colors: ['#fda4af', '#fb7185', '#f43f5e', '#fbbf24'], intensity: 2.1, tagline: '타오르는 진홍빛 투지로 최상위 포식자의 자격을 증명하세요!' },
-        '챌린저': { c1: '#fde047', c2: '#38bdf8', glow: 'rgba(253,224,71,0.28)', bg: 'rgba(15,23,42,0.92)', colors: ['#fde047', '#38bdf8', '#fb923c', '#ffffff'], intensity: 2.3, tagline: '정점의 왕좌를 향한 마지막 전설이 지금 시작됩니다!' }
-      };
-      let challengeFxFrame = 0;
       function playTierChallengeCeremony(tierObj, missionDesc, needsTomorrow, targetDay) {
         const ov = document.getElementById('promo-challenge-overlay');
-        const card = document.getElementById('promo-challenge-card');
         const iconEl = document.getElementById('promo-challenge-icon');
         const badgeEl = document.getElementById('promo-challenge-badge');
         const titleEl = document.getElementById('promo-challenge-title');
         const missionEl = document.getElementById('promo-challenge-mission');
         const subEl = document.getElementById('promo-challenge-sub');
         const closeBtn = document.getElementById('btn-promo-challenge-close');
-        const cvs = document.getElementById('promo-challenge-canvas');
-        if (!ov || !card || !iconEl || !titleEl) return;
-
-        const theme = TIER_CHALLENGE_THEMES[tierObj.name] || TIER_CHALLENGE_THEMES['골드'];
-        ov.style.setProperty('--cine-c1', theme.c1);
-        ov.style.setProperty('--cine-c2', theme.c2);
-        ov.style.setProperty('--cine-bg', theme.bg);
-        const chFlare = document.getElementById('promo-challenge-flare');
-        const chCrest = document.getElementById('promo-challenge-crest-core');
-        if (chFlare) { chFlare.classList.remove('cine-flare'); void chFlare.offsetWidth; chFlare.classList.add('cine-flare'); }
-        if (chCrest) { chCrest.classList.remove('cine-crest-core'); void chCrest.offsetWidth; chCrest.classList.add('cine-crest-core'); }
-
-        card.style.borderColor = `${theme.c1}45`;
-        card.style.boxShadow = `0 28px 80px rgba(0,0,0,0.8), 0 0 50px ${theme.glow}, inset 0 1px 0 ${theme.c1}35`;
+        if (!ov || !iconEl || !titleEl) return;
+        const mat = applyMetalTheme(ov, document.getElementById('promo-challenge-medallion'), document.getElementById('promo-challenge-ring'), closeBtn, tierObj.name);
         iconEl.textContent = tierObj.icon || '⚔️';
-        badgeEl.textContent = needsTomorrow ? `${tierObj.name} PROMOTION · SCHEDULED` : `${tierObj.name} PROMOTION SERIES`;
-        badgeEl.style.background = `${theme.c1}1a`;
-        badgeEl.style.border = `1px solid ${theme.c1}55`;
-        badgeEl.style.color = theme.c1;
-
-        titleEl.textContent = needsTomorrow ? `${tierObj.name} 승급전 출정 예약` : `${tierObj.name} 승급전 개시`;
-        missionEl.innerHTML = `<span class="opacity-65 text-[10px] block mb-0.5 uppercase tracking-widest">MISSION</span>${escapeHtml(missionDesc || '')}`;
-        subEl.textContent = needsTomorrow
-          ? `${theme.tagline} (${targetDay} 울트라집중모드로 자동 시작)`
-          : theme.tagline;
-
-        closeBtn.style.background = `linear-gradient(135deg, ${theme.c1}, ${theme.c2})`;
-        closeBtn.style.color = '#060913';
-        closeBtn.textContent = needsTomorrow ? '출정 준비 완료' : '도전 시작';
-
+        if (badgeEl) {
+          badgeEl.textContent = needsTomorrow ? `${tierObj.name} PROMOTION · SCHEDULED` : `${tierObj.name} PROMOTION`;
+          badgeEl.style.color = mat.c1;
+        }
+        titleEl.textContent = needsTomorrow ? `${tierObj.name} 승급전 예약` : `${tierObj.name} 승급전 시작`;
+        missionEl.textContent = missionDesc || '';
+        subEl.textContent = needsTomorrow ? `${mat.tagline} (${targetDay} 시작)` : mat.tagline;
+        if (closeBtn) closeBtn.textContent = needsTomorrow ? '준비 완료' : '도전 시작';
         ov.classList.add('is-active');
         ov.setAttribute('aria-hidden', 'false');
-        triggerHaptic([35, 40, 60, 40, 85]);
-
-        if (challengeFxFrame) { cancelAnimationFrame(challengeFxFrame); challengeFxFrame = 0; }
-        if (cvs && !reduceMotion.matches) {
-          const ctx = cvs.getContext('2d');
-          const W = cvs.width = window.innerWidth;
-          const H = cvs.height = window.innerHeight;
-          const embers = [];
-          const sparks = [];
-          const streaks = [];
-          const rings = [{ r: 20, maxR: Math.max(W, H) * 0.55, alpha: 0.9, c: theme.c1 }];
-          function spawnStreaks(n) {
-            for (let i = 0; i < n; i++) {
-              streaks.push({
-                x: Math.random() * W, y: H + 30 + Math.random() * 80,
-                len: 35 + Math.random() * 65, vy: -(520 + Math.random() * 480),
-                w: 1.5 + Math.random() * 2,
-                c: theme.colors[Math.floor(Math.random() * theme.colors.length)],
-                life: 0, maxLife: 0.8 + Math.random() * 0.5
-              });
-            }
-          }
-          spawnStreaks(Math.round(14 * theme.intensity));
-
-          function spawnRadialBurst(bx, by, count, speedMul = 1) {
-            for (let i = 0; i < count; i++) {
-              const ang = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.3;
-              const spd = (140 + Math.random() * 260) * speedMul;
-              sparks.push({
-                x: bx, y: by, vx: Math.cos(ang) * spd, vy: Math.sin(ang) * spd,
-                r: 2 + Math.random() * 3.2,
-                c: theme.colors[Math.floor(Math.random() * theme.colors.length)],
-                life: 0, maxLife: 0.9 + Math.random() * 0.7
-              });
-            }
-          }
-          function spawnRisingEmbers(n) {
-            for (let i = 0; i < n; i++) {
-              embers.push({
-                x: Math.random() * W, y: H + 10 + Math.random() * 40,
-                vx: (Math.random() - 0.5) * 45,
-                vy: -(120 + Math.random() * 210 * Math.min(1.5, theme.intensity * 0.75)),
-                r: 1.8 + Math.random() * 3.2,
-                c: theme.colors[Math.floor(Math.random() * theme.colors.length)],
-                life: 0, maxLife: 2.0 + Math.random() * 1.5
-              });
-            }
-          }
-
-          spawnRadialBurst(W * 0.5, H * 0.44, Math.round(42 * theme.intensity), 1.1);
-          spawnRisingEmbers(Math.round(28 * theme.intensity));
-          const waveSchedule = [
-            { t: 0.85, x: W * 0.28, y: H * 0.34, done: false },
-            { t: 1.75, x: W * 0.72, y: H * 0.34, done: false },
-            { t: 2.85, x: W * 0.5, y: H * 0.44, done: false }
-          ];
-
-          let lastTime = performance.now();
-          const startTime = lastTime;
-          let lastEmber = 0;
-          function tick(now) {
-            if (!ov.classList.contains('is-active') || reduceMotion.matches) {
-              ctx.clearRect(0, 0, W, H); challengeFxFrame = 0; return;
-            }
-            const dt = Math.min(0.05, (now - lastTime) / 1000);
-            const elapsed = (now - startTime) / 1000;
-            lastTime = now;
-            ctx.clearRect(0, 0, W, H);
-
-            for (const w of waveSchedule) {
-              if (!w.done && elapsed >= w.t) {
-                w.done = true;
-                spawnRadialBurst(w.x, w.y, Math.round(28 * theme.intensity), 0.9);
-                rings.push({ r: 16, maxR: Math.max(W, H) * 0.45, alpha: 0.75, c: theme.c2 });
-              }
-            }
-            if (elapsed < 3.9 && elapsed - lastEmber > 0.22) {
-              lastEmber = elapsed;
-              spawnRisingEmbers(Math.round(9 * theme.intensity));
-              spawnStreaks(Math.round(4 * theme.intensity));
-            }
-            for (let i = streaks.length - 1; i >= 0; i--) {
-              const st = streaks[i];
-              st.life += dt;
-              if (st.life >= st.maxLife || st.y < -st.len) { streaks.splice(i, 1); continue; }
-              st.y += st.vy * dt;
-              ctx.save();
-              ctx.globalAlpha = Math.max(0, (1 - st.life / st.maxLife) * 0.65);
-              ctx.strokeStyle = st.c; ctx.lineWidth = st.w; ctx.lineCap = 'round';
-              ctx.beginPath(); ctx.moveTo(st.x, st.y); ctx.lineTo(st.x, st.y + st.len); ctx.stroke();
-              ctx.restore();
-            }
-            for (let i = rings.length - 1; i >= 0; i--) {
-              const rg = rings[i];
-              rg.r += 560 * dt;
-              rg.alpha -= 0.75 * dt;
-              if (rg.alpha <= 0 || rg.r >= rg.maxR) { rings.splice(i, 1); continue; }
-              ctx.save();
-              ctx.globalAlpha = Math.max(0, rg.alpha);
-              ctx.strokeStyle = rg.c;
-              ctx.lineWidth = 3;
-              ctx.beginPath();
-              ctx.arc(W * 0.5, H * 0.44, rg.r, 0, Math.PI * 2);
-              ctx.stroke();
-              ctx.restore();
-            }
-            for (let i = sparks.length - 1; i >= 0; i--) {
-              const s = sparks[i];
-              s.life += dt;
-              if (s.life >= s.maxLife) { sparks.splice(i, 1); continue; }
-              s.vx *= 0.96; s.vy *= 0.96;
-              s.x += s.vx * dt; s.y += s.vy * dt;
-              ctx.globalAlpha = Math.max(0, 1 - s.life / s.maxLife);
-              ctx.fillStyle = s.c;
-              ctx.beginPath();
-              ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-              ctx.fill();
-            }
-            for (let i = embers.length - 1; i >= 0; i--) {
-              const e = embers[i];
-              e.life += dt;
-              if (e.life >= e.maxLife || e.y < -20) { embers.splice(i, 1); continue; }
-              e.x += e.vx * dt + Math.sin(elapsed * 3 + i) * 0.35;
-              e.y += e.vy * dt;
-              ctx.globalAlpha = Math.max(0, (1 - e.life / e.maxLife) * 0.88);
-              ctx.fillStyle = e.c;
-              ctx.beginPath();
-              ctx.arc(e.x, e.y, e.r, 0, Math.PI * 2);
-              ctx.fill();
-            }
-            ctx.globalAlpha = 1;
-            if (elapsed < 4.8 || sparks.length || embers.length || rings.length) {
-              challengeFxFrame = requestAnimationFrame(tick);
-            } else {
-              challengeFxFrame = 0;
-            }
-          }
-          challengeFxFrame = requestAnimationFrame(tick);
-        }
-
+        triggerHaptic([25, 35, 45]);
         if (closeBtn) closeBtn.onclick = () => {
           ov.classList.remove('is-active');
           ov.setAttribute('aria-hidden', 'true');
-          if (challengeFxFrame) { cancelAnimationFrame(challengeFxFrame); challengeFxFrame = 0; }
         };
       }
       function triggerChallengeCelebration(ch) {
