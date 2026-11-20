@@ -47,230 +47,296 @@
     .scrollbar-thin::-webkit-scrollbar-thumb { background: #111111; border-radius: 9999px; }
     .time-cell { touch-action: pan-y; }
     #planner-grid.is-editing .time-cell { touch-action: none; user-select: none; -webkit-user-select: none; cursor: crosshair; }
-    #group-status-grid [data-member-detail] { position: relative; overflow: hidden; }
-    #group-status-grid [data-member-detail] > * { position: relative; z-index: 1; }
-    .flame-lv1::before, .flame-lv2::before, .flame-lv3::before, .flame-lv4::before, .flame-lv5::before, .flame-lv6::before, .flame-lv7::before, .flame-lv8::before, .flame-lv9::before, .flame-lv10::before {
-      content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 0;
+    /* Study member cards */
+    .member-roster-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px 18px;
+      padding: 13px 16px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: var(--surface);
     }
-    /* Lv1 (10m+): Subtle warm ember */
-    .flame-lv1 { box-shadow: 0 3px 10px rgba(249, 115, 22, 0.14); }
-    .flame-lv1::before { background: linear-gradient(to top, rgba(249, 115, 22, 0.08), transparent 52%); }
-    /* Lv2 (30m+): Soft crimson-orange glow */
-    @keyframes flamePulseRed {
-      0%, 100% { box-shadow: 0 4px 14px rgba(239, 68, 68, 0.18), 0 0 0 1px rgba(249, 115, 22, 0.16); }
-      50% { box-shadow: 0 5px 20px rgba(239, 68, 68, 0.32), 0 0 0 1.5px rgba(249, 115, 22, 0.28); }
+    .member-roster-header h3 { margin: 0; color: var(--ink); font-size: 1rem; font-weight: 900; }
+    .member-roster-summary { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; color: var(--muted); font-size: .75rem; font-weight: 700; }
+    .member-roster-live { display: inline-flex; align-items: center; gap: 5px; }
+    .member-roster-live::before, .member-status::before {
+      content: '';
+      flex: 0 0 6px;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
     }
-    .flame-lv2 { animation: flamePulseRed 2.8s ease-in-out infinite; }
-    .flame-lv2::before { background: radial-gradient(circle at 85% 92%, rgba(249, 115, 22, 0.15), transparent 58%), linear-gradient(to top, rgba(239, 68, 68, 0.12), transparent 58%); }
-    /* Lv3 (1h+): Cobalt-sky plasma flame */
-    @keyframes flamePulseBlue {
-      0%, 100% { box-shadow: 0 5px 16px rgba(37, 99, 235, 0.24), 0 0 0 1px rgba(56, 189, 248, 0.25); }
-      50% { box-shadow: 0 7px 24px rgba(56, 189, 248, 0.42), 0 0 0 2px rgba(56, 189, 248, 0.4); }
+    .member-roster-live[data-active="true"], .member-status[data-status="studying"] { color: #047857; }
+    .member-status[data-status="class"] { color: #0369a1; }
+    body[data-dark="true"] :is(.member-roster-live[data-active="true"], .member-status[data-status="studying"]) { color: #6ee7b7; }
+    body[data-dark="true"] .member-status[data-status="class"] { color: #7dd3fc; }
+
+    #group-status-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: clamp(9px, 1.4vw, 16px);
     }
-    .flame-lv3 { animation: flamePulseBlue 2.5s ease-in-out infinite; }
-    .flame-lv3::before { background: radial-gradient(circle at 82% 88%, rgba(37, 99, 235, 0.2), transparent 62%), linear-gradient(to top, rgba(56, 189, 248, 0.16), transparent 62%); }
-    /* Lv4 (2h+): Electric violet-magenta aura */
-    @keyframes flamePulsePurple {
-      0%, 100% { box-shadow: 0 6px 20px rgba(147, 51, 234, 0.3), 0 0 0 1.5px rgba(192, 132, 252, 0.35); }
-      50% { box-shadow: 0 8px 30px rgba(192, 132, 252, 0.54), 0 0 0 2.5px rgba(236, 72, 153, 0.42); }
+    .member-card {
+      position: relative;
+      display: grid;
+      min-width: 0;
+      --rank-ink: color-mix(in srgb, var(--rank-deep) 63%, var(--ink));
+      --rank-edge: color-mix(in srgb, var(--rank-deep) 32%, var(--line));
     }
-    .flame-lv4 { animation: flamePulsePurple 2.2s ease-in-out infinite; }
-    .flame-lv4::before { background: radial-gradient(circle at 80% 85%, rgba(168, 85, 247, 0.25), transparent 65%), linear-gradient(to top, rgba(236, 72, 153, 0.16), rgba(168, 85, 247, 0.06) 62%, transparent); }
-    /* Lv5 (4h+): Golden amber aura + light shimmer */
-    @keyframes flamePulseGold {
-      0%, 100% { box-shadow: 0 7px 22px rgba(234, 179, 8, 0.36), 0 0 0 2px rgba(250, 204, 21, 0.52); }
-      50% { box-shadow: 0 9px 34px rgba(250, 204, 21, 0.64), 0 0 0 3px rgba(253, 224, 71, 0.72); }
+    body[data-dark="true"] .member-card {
+      --rank-ink: color-mix(in srgb, var(--rank-gem) 76%, #fff);
+      --rank-edge: color-mix(in srgb, var(--rank-gem) 31%, var(--line));
+    }
+    .member-card-details {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      position: relative;
+      isolation: isolate;
+      min-width: 0;
+      padding: clamp(9px, 1.35vw, 15px);
+      border: 1px solid transparent;
+      border-radius: 16px;
+      background:
+        linear-gradient(var(--surface), var(--surface)) padding-box,
+        linear-gradient(140deg, var(--rank-edge), var(--line) 46%, var(--rank-edge)) border-box;
+      box-shadow: 0 2px 8px #0b14290b;
+      color: var(--ink);
+      text-align: left;
+      cursor: pointer;
+      transition: box-shadow 160ms ease, transform 160ms ease;
+    }
+    .member-card-details::before {
+      content: '';
+      position: absolute;
+      inset: -1px 11px auto;
+      height: 2px;
+      border-radius: 0 0 3px 3px;
+      background: linear-gradient(90deg, transparent, var(--rank-deep) 27%, var(--rank-gem) 67%, transparent);
+      pointer-events: none;
+    }
+    .member-card[data-elite] .member-card-details {
+      background:
+        linear-gradient(var(--surface), var(--surface)) padding-box,
+        linear-gradient(142deg, var(--rank-edge), var(--rank-gem) 22%, var(--line) 54%, var(--rank-edge) 75%, var(--rank-deep)) border-box;
+    }
+    .member-card[data-elite] .member-card-details::after {
+      content: '';
+      position: absolute;
+      right: 4px;
+      bottom: 4px;
+      width: 19px;
+      height: 19px;
+      border-right: 1px solid var(--rank-edge);
+      border-bottom: 1px solid var(--rank-edge);
+      border-radius: 0 0 11px 0;
+      pointer-events: none;
+    }
+    @media (hover: hover) {
+      .member-card-details:hover { box-shadow: 0 5px 14px color-mix(in srgb, var(--rank-deep) 17%, transparent); transform: translateY(-2px); }
+    }
+    .member-card-details:focus-visible, .member-card-menu:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+    .member-card[data-has-menu] .member-identity { padding-right: 31px; }
+    .member-identity { display: flex; align-items: center; gap: 8px; min-height: 34px; min-width: 0; }
+    .member-avatar {
+      display: grid;
+      place-items: center;
+      position: relative;
+      flex: 0 0 32px;
+      width: 32px;
+      height: 32px;
+      border: 1px solid var(--rank-edge);
+      border-radius: 10px;
+      background: color-mix(in srgb, var(--rank-gem) 16%, var(--soft));
+      color: var(--rank-ink);
+      font-size: .75rem;
+      font-weight: 900;
+    }
+    .member-avatar img { width: 100%; height: 100%; border-radius: inherit; object-fit: cover; }
+    .member-avatar[data-ultra] { border-color: #fb923c; box-shadow: 0 0 0 2px #fb923c33; }
+    .member-avatar-bolt {
+      position: absolute;
+      right: -4px;
+      bottom: -4px;
+      display: grid;
+      place-items: center;
+      width: 13px;
+      height: 13px;
+      border: 1px solid #fdba74;
+      border-radius: 50%;
+      background: #292014;
+      color: #fde68a;
+      font-size: 8px;
+      line-height: 1;
+    }
+    .member-nameplate { display: grid; min-width: 0; line-height: 1.3; gap: 2px; }
+    .member-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: .9rem; font-weight: 900; }
+    .member-title {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: var(--rank-ink);
+      font-size: .68rem;
+      font-weight: 700;
+    }
+    .member-card-actions { position: absolute; top: clamp(8px, 1.25vw, 13px); right: clamp(8px, 1.25vw, 13px); z-index: 2; }
+    .member-card-menu {
+      display: grid;
+      place-items: center;
+      width: 32px;
+      height: 32px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: var(--surface);
+      color: var(--muted);
+      font-size: 1rem;
+      font-weight: 900;
+      cursor: pointer;
+    }
+    .member-card-menu:hover, .member-card-menu[aria-expanded="true"] { background: var(--soft); color: var(--ink); }
+    .member-card [data-card-menu-box] { top: calc(100% + 4px); }
+    .member-rank-line { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; color: var(--muted); font-size: .65rem; font-weight: 700; line-height: 1.3; }
+    .member-rank {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      color: var(--rank-ink);
+      font-weight: 900;
+    }
+    .member-rank::before {
+      content: '';
+      width: 8px;
+      height: 9px;
+      background: linear-gradient(135deg, var(--rank-gem), var(--rank-deep));
+      clip-path: polygon(50% 0, 100% 26%, 87% 71%, 50% 100%, 13% 71%, 0 26%);
+    }
+    .member-promo { color: var(--rank-ink); border-bottom: 1px solid var(--rank-edge); }
+    .member-status { display: inline-flex; align-items: center; gap: 4px; min-width: max-content; }
+    .member-status::before { opacity: .65; }
+    .member-status[data-status="studying"]::before { opacity: 1; }
+
+    .member-study {
+      --flame-color: #71849c;
+      --flame-core: #bac9dc;
+      --flame-line: color-mix(in srgb, var(--flame-color) 44%, #263448);
+      position: relative;
+      display: grid;
+      gap: 5px;
+      isolation: isolate;
+      overflow: hidden;
+      padding: 8px 9px 9px;
+      border: 1px solid var(--flame-line);
+      border-radius: 11px;
+      background:
+        radial-gradient(ellipse at 90% 70%, color-mix(in srgb, var(--flame-color) 26%, transparent), transparent 64%),
+        linear-gradient(145deg, #1b2a40, #0d1727 68%);
+      color: #f3f6fc;
+    }
+    .member-study[data-flame-level="1"] { --flame-color: #fb923c; --flame-core: #fed7aa; }
+    .member-study[data-flame-level="2"] { --flame-color: #fb7185; --flame-core: #fed7aa; }
+    .member-study[data-flame-level="3"] { --flame-color: #38bdf8; --flame-core: #bae6fd; }
+    .member-study[data-flame-level="4"] { --flame-color: #c084fc; --flame-core: #f5d0fe; }
+    .member-study[data-flame-level="5"] { --flame-color: #fbbf24; --flame-core: #fef3c7; }
+    .member-study[data-flame-level="6"] { --flame-color: #fb7185; --flame-core: #fde68a; }
+    .member-study[data-flame-level="7"] { --flame-color: #2dd4bf; --flame-core: #a5f3fc; }
+    .member-study[data-flame-level="8"] { --flame-color: #a78bfa; --flame-core: #67e8f9; }
+    .member-study[data-flame-level="9"] { --flame-color: #818cf8; --flame-core: #fde68a; }
+    .member-study[data-flame-level="10"] { --flame-color: #fbbf24; --flame-core: #fff4bf; border-color: #fbbf2499; }
+    .member-study-label, .member-study-time, .member-flame-caption, .member-flame-track { position: relative; z-index: 1; }
+    .member-study-label { color: #becbdf; font-size: .65rem; font-weight: 700; line-height: 1.2; }
+    .member-study-time {
+      color: #fff;
+      font-size: clamp(.96rem, 3.4vw, 1.35rem);
+      font-weight: 900;
+      font-variant-numeric: tabular-nums;
+      line-height: 1.08;
+      letter-spacing: -.045em;
+      white-space: nowrap;
+    }
+    .member-flame-caption { color: var(--flame-core); font-size: .65rem; font-weight: 800; line-height: 1.2; }
+    .member-flame-track { display: grid; grid-template-columns: repeat(10, 1fr); gap: 2px; margin-top: 2px; }
+    .member-flame-track i { height: 3px; background: #ffffff32; border-radius: 2px; }
+    .member-flame-track .is-lit { background: var(--flame-color); }
+    .member-flame-track .is-peak { background: var(--flame-core); box-shadow: 0 0 5px var(--flame-color); }
+    .member-flame-art {
+      position: absolute;
+      right: 1px;
+      bottom: 13px;
+      width: 62px;
+      height: 63px;
+      pointer-events: none;
+    }
+    .member-flame-art::before {
+      content: '';
+      position: absolute;
+      inset: 6px 4px 0;
+      background: radial-gradient(ellipse at 50% 66%, color-mix(in srgb, var(--flame-color) 54%, transparent), transparent 70%);
+      opacity: calc(.14 + var(--flame-level) * .078);
+    }
+    .member-flame-shape {
+      --fire-outline: path('M 26 1 C 29 13 42 16 36 29 C 41 27 44 23 44 21 C 52 34 49 48 41 54 C 32 61 16 60 8 53 C 0 46 0 34 8 25 C 7 33 11 37 14 36 C 9 21 25 16 26 1 Z');
+      position: absolute;
+      bottom: 3px;
+      right: 4px;
+      width: 50px;
+      height: 60px;
+      transform: scale(calc(.30 + var(--flame-level) * .085));
+      transform-origin: 50% 100%;
+      filter: drop-shadow(0 0 6px color-mix(in srgb, var(--flame-color) 60%, transparent));
+    }
+    .member-flame-shape::before, .member-flame-shape::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      clip-path: var(--fire-outline);
+      transform-origin: 50% 95%;
+    }
+    .member-flame-shape::before { background: linear-gradient(155deg, var(--flame-core), var(--flame-color) 59%, color-mix(in srgb, var(--flame-color) 42%, #441623)); }
+    .member-flame-shape::after { background: linear-gradient(0deg, #fff7de, var(--flame-core) 72%, transparent); transform: scale(.56, .73) scaleX(-1); }
+    .member-study[data-flame-level="0"] .member-flame-shape { opacity: .54; filter: none; }
+    .member-flame-sparks {
+      position: absolute;
+      inset: 5px 0;
+      background:
+        radial-gradient(circle at 22% 55%, var(--flame-color) 0 1px, transparent 2px),
+        radial-gradient(circle at 71% 22%, var(--flame-core) 0 1px, transparent 2px),
+        radial-gradient(circle at 81% 42%, var(--flame-color) 0 1px, transparent 2px),
+        radial-gradient(circle at 18% 23%, var(--flame-core) 0 1px, transparent 2px);
+    }
+    .member-study[data-flame-level="10"] .member-flame-art::before {
+      inset: 0 -4px -4px;
+      background: radial-gradient(ellipse at 50% 63%, #fde68acc, #fb718568 44%, transparent 73%);
+    }
+    .member-card[data-studying] .member-flame-sparks { animation: memberEmbers 2.8s ease-in-out infinite alternate; }
+    @keyframes memberEmbers {
+      from { opacity: .45; transform: translateY(2px); }
+      to { opacity: 1; transform: translateY(-3px); }
+    }
+    .member-badges { display: flex; align-items: center; gap: 4px; min-width: 0; margin-top: auto; }
+    .member-badges .badge-pill { display: block; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: .64rem; padding-inline: 6px; }
+    .member-badge-count { flex: none; color: var(--muted); font-size: .67rem; font-weight: 800; }
+    .member-roster-empty { grid-column: 1 / -1; margin: 0; padding: 10px 16px; color: var(--muted); font-size: .82rem; }
+
+    @media (max-width: 365px) { #group-status-grid { grid-template-columns: minmax(0, 1fr); } }
+    @media (min-width: 650px) { #group-status-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+    @media (min-width: 1020px) { #group-status-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+    @media (max-width: 470px) {
+      .member-flame-art { right: -7px; transform: scale(.84); transform-origin: bottom right; }
+      .member-card[data-has-menu] .member-identity { padding-right: 27px; }
+      .member-rank-line { min-height: 2.9em; align-content: flex-start; }
+    }
+    .member-study-time small { margin-left: 1px; color: #d4dfef; font-size: .64em; letter-spacing: 0; }
+    @media (prefers-reduced-motion: reduce) {
+      .member-card-details { transition: none; transform: none !important; }
+      .member-card[data-studying] .member-flame-sparks { animation: none; }
     }
     @keyframes flameShimmer {
       0% { transform: translateX(-120%) skewX(-20deg); }
       45%, 100% { transform: translateX(240%) skewX(-20deg); }
-    }
-    .flame-lv5 { animation: flamePulseGold 2s ease-in-out infinite; }
-    .flame-lv5::before { background: radial-gradient(circle at 80% 80%, rgba(250, 204, 21, 0.28), transparent 66%), linear-gradient(to top, rgba(245, 158, 11, 0.2), transparent 68%); }
-    .flame-lv5::after {
-      content: ''; position: absolute; top: 0; bottom: 0; left: 0; width: 42%; pointer-events: none; z-index: 0;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.36), transparent);
-      animation: flameShimmer 3.2s ease-in-out infinite;
-    }
-    /* Lv6 (5h+): Crimson-gold phoenix flare + faster shimmer */
-    @keyframes flamePulsePhoenix {
-      0%, 100% { box-shadow: 0 8px 26px rgba(244, 63, 94, 0.42), 0 0 0 2px rgba(251, 146, 60, 0.65), 0 0 18px rgba(250, 204, 21, 0.3); }
-      50% { box-shadow: 0 10px 38px rgba(244, 63, 94, 0.68), 0 0 0 3px rgba(253, 224, 71, 0.8), 0 0 28px rgba(249, 115, 22, 0.48); }
-    }
-    .flame-lv6 { animation: flamePulsePhoenix 1.8s ease-in-out infinite; }
-    .flame-lv6::before { background: radial-gradient(circle at 82% 82%, rgba(244, 63, 94, 0.28), transparent 65%), radial-gradient(circle at 18% 22%, rgba(251, 191, 36, 0.22), transparent 58%), linear-gradient(to top, rgba(249, 115, 22, 0.24), transparent 72%); }
-    .flame-lv6::after {
-      content: ''; position: absolute; top: 0; bottom: 0; left: 0; width: 48%; pointer-events: none; z-index: 0;
-      background: linear-gradient(90deg, transparent, rgba(254, 240, 138, 0.45), transparent);
-      animation: flameShimmer 2.6s ease-in-out infinite;
-    }
-    /* Lv7 (6h+): Cyan-prism aurora flame */
-    @keyframes flamePulseAurora {
-      0%, 100% { box-shadow: 0 8px 28px rgba(6, 182, 212, 0.45), 0 0 0 2.5px rgba(56, 189, 248, 0.72), 0 0 24px rgba(168, 85, 247, 0.36); }
-      50% { box-shadow: 0 12px 44px rgba(56, 189, 248, 0.75), 0 0 0 3.5px rgba(167, 139, 250, 0.85), 0 0 36px rgba(45, 212, 191, 0.55); }
-    }
-    .flame-lv7 { animation: flamePulseAurora 1.65s ease-in-out infinite; }
-    .flame-lv7::before { background: radial-gradient(circle at 80% 85%, rgba(45, 212, 191, 0.34), transparent 65%), radial-gradient(circle at 20% 20%, rgba(168, 85, 247, 0.26), transparent 60%), linear-gradient(135deg, rgba(56, 189, 248, 0.22), rgba(168, 85, 247, 0.16) 55%, rgba(250, 204, 21, 0.14)); }
-    .flame-lv7::after {
-      content: ''; position: absolute; top: 0; bottom: 0; left: 0; width: 52%; pointer-events: none; z-index: 0;
-      background: linear-gradient(90deg, transparent, rgba(224, 242, 254, 0.55), transparent);
-      animation: flameShimmer 2.3s ease-in-out infinite;
-    }
-    /* Lv8 (7h+): Mythic cosmic rainbow supernova */
-    @keyframes flamePulseMythic {
-      0%, 100% { box-shadow: 0 10px 32px rgba(250, 204, 21, 0.55), 0 0 0 2.5px rgba(253, 224, 71, 0.88), 0 0 28px rgba(56, 189, 248, 0.5), 0 0 42px rgba(236, 72, 153, 0.38); }
-      50% { box-shadow: 0 14px 48px rgba(250, 204, 21, 0.85), 0 0 0 4px rgba(56, 189, 248, 0.9), 0 0 40px rgba(168, 85, 247, 0.68), 0 0 56px rgba(244, 63, 94, 0.52); }
-    }
-    .flame-lv8 { animation: flamePulseMythic 1.45s ease-in-out infinite; }
-    .flame-lv8::before { background: conic-gradient(from 120deg at 80% 75%, rgba(250, 204, 21, 0.34), rgba(244, 63, 94, 0.28), rgba(168, 85, 247, 0.28), rgba(56, 189, 248, 0.32), rgba(52, 211, 153, 0.24), rgba(250, 204, 21, 0.34)); }
-    .flame-lv8::after {
-      content: ''; position: absolute; top: 0; bottom: 0; left: 0; width: 58%; pointer-events: none; z-index: 0;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.68), transparent);
-      animation: flameShimmer 1.9s ease-in-out infinite;
-    }
-    /* Lv9 (8h+): Celestial Hypernova */
-    @keyframes flamePulseLv9 {
-      0%, 100% { box-shadow: 0 12px 36px rgba(99, 102, 241, 0.58), 0 0 0 3px rgba(129, 140, 248, 0.88), 0 0 34px rgba(56, 189, 248, 0.58), 0 0 50px rgba(250, 204, 21, 0.42); }
-      50% { box-shadow: 0 16px 54px rgba(56, 189, 248, 0.88), 0 0 0 4px rgba(250, 204, 21, 0.92), 0 0 48px rgba(168, 85, 247, 0.72), 0 0 64px rgba(244, 63, 94, 0.55); }
-    }
-    .flame-lv9 { animation: flamePulseLv9 1.25s ease-in-out infinite; }
-    .flame-lv9::before {
-      background: conic-gradient(from 45deg at 50% 50%, rgba(99, 102, 241, 0.36), rgba(56, 189, 248, 0.34), rgba(250, 204, 21, 0.34), rgba(244, 63, 94, 0.3), rgba(99, 102, 241, 0.36));
-    }
-    .flame-lv9::after {
-      content: ''; position: absolute; top: 0; bottom: 0; left: 0; width: 64%; pointer-events: none; z-index: 0;
-      background: linear-gradient(90deg, transparent, rgba(224, 242, 254, 0.76), transparent);
-      animation: flameShimmer 1.6s ease-in-out infinite;
-    }
-    /* Lv10 (9h+): Transcendent Godlike Supernova */
-    @keyframes flamePulseLv10 {
-      0% {
-        box-shadow: 0 0 0 3.5px #fde047, 0 0 26px rgba(253, 224, 71, 0.95), 0 0 48px rgba(56, 189, 248, 0.8), 0 0 72px rgba(244, 63, 94, 0.65);
-      }
-      33% {
-        box-shadow: 0 0 0 4.5px #38bdf8, 0 0 34px rgba(56, 189, 248, 0.98), 0 0 60px rgba(168, 85, 247, 0.85), 0 0 86px rgba(250, 204, 21, 0.72);
-      }
-      66% {
-        box-shadow: 0 0 0 4.5px #f43f5e, 0 0 34px rgba(244, 63, 94, 0.98), 0 0 60px rgba(250, 204, 21, 0.88), 0 0 86px rgba(52, 211, 153, 0.72);
-      }
-      100% {
-        box-shadow: 0 0 0 3.5px #fde047, 0 0 26px rgba(253, 224, 71, 0.95), 0 0 48px rgba(56, 189, 248, 0.8), 0 0 72px rgba(244, 63, 94, 0.65);
-      }
-    }
-    @keyframes flameLv10Vortex {
-      0% { transform: rotate(0deg) scale(1); }
-      50% { transform: rotate(180deg) scale(1.08); }
-      100% { transform: rotate(360deg) scale(1); }
-    }
-    .flame-lv10 {
-      animation: flamePulseLv10 1.8s ease-in-out infinite;
-    }
-    .flame-lv10::before {
-      inset: -65%;
-      background: conic-gradient(
-        from 0deg,
-        rgba(253, 224, 71, 0.42),
-        rgba(244, 63, 94, 0.36),
-        rgba(168, 85, 247, 0.38),
-        rgba(56, 189, 248, 0.42),
-        rgba(52, 211, 153, 0.34),
-        rgba(251, 146, 60, 0.38),
-        rgba(253, 224, 71, 0.42)
-      );
-      animation: flameLv10Vortex 5.5s linear infinite;
-    }
-    .flame-lv10::after {
-      content: ''; position: absolute; top: 0; bottom: 0; left: 0; width: 72%; pointer-events: none; z-index: 0;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.9), rgba(253, 224, 71, 0.55), transparent);
-      animation: flameShimmer 1.25s ease-in-out infinite;
-    }
-    @keyframes ultraRingSpin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-    .ultra-avatar-ring {
-      position: absolute;
-      inset: -2.5px;
-      border-radius: 9999px;
-      background: conic-gradient(from 0deg, #ef4444, #f97316, #fde047, #ef4444);
-      animation: ultraRingSpin 3s linear infinite;
-      pointer-events: none;
-    }
-    /* Tier-Specific Metallic & Armored Borders */
-    .rank-frame-base {
-      border: 3px solid transparent;
-      border-top-width: 5px;
-      border-bottom-width: 4px;
-      background-origin: border-box;
-      background-clip: padding-box, border-box;
-    }
-    .rank-frame-0 {
-      background-image: linear-gradient(var(--surface, #fff), var(--surface, #fff)), linear-gradient(145deg, #71717a 0%, #d4d4d8 35%, #3f3f46 70%, #a1a1aa 100%);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.45), 0 3px 10px rgba(63,63,70,0.18);
-    }
-    .rank-frame-1 {
-      background-image: linear-gradient(var(--surface, #fff), var(--surface, #fff)), linear-gradient(145deg, #92400e 0%, #f59e0b 32%, #451a03 68%, #d97706 100%);
-      box-shadow: inset 0 1px 0 rgba(254,243,199,0.5), 0 4px 12px rgba(180,83,9,0.22);
-    }
-    .rank-frame-2 {
-      background-image: linear-gradient(var(--surface, #fff), var(--surface, #fff)), linear-gradient(145deg, #64748b 0%, #f8fafc 30%, #475569 65%, #cbd5e1 100%);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.85), 0 4px 14px rgba(100,116,139,0.25);
-    }
-    .rank-frame-3 {
-      background-image: linear-gradient(var(--surface, #fff), var(--surface, #fff)), linear-gradient(145deg, #b45309 0%, #fef08a 28%, #ca8a04 58%, #fde047 84%, #92400e 100%);
-      box-shadow: inset 0 1px 0 rgba(254,249,195,0.9), 0 5px 16px rgba(234,179,8,0.28);
-    }
-    .rank-frame-4 {
-      background-image: linear-gradient(var(--surface, #fff), var(--surface, #fff)), linear-gradient(145deg, #0f766e 0%, #99f6e4 30%, #115e59 62%, #2dd4bf 86%, #134e4a 100%);
-      box-shadow: inset 0 1px 0 rgba(204,251,241,0.85), 0 5px 18px rgba(20,184,166,0.3);
-    }
-    .rank-frame-5 {
-      background-image: linear-gradient(var(--surface, #fff), var(--surface, #fff)), linear-gradient(145deg, #047857 0%, #a7f3d0 28%, #065f46 60%, #34d399 86%, #064e3b 100%);
-      box-shadow: inset 0 1px 0 rgba(209,250,229,0.9), 0 6px 20px rgba(16,185,129,0.32);
-    }
-    .rank-frame-6 {
-      border-width: 3.5px; border-top-width: 5.5px;
-      background-image: linear-gradient(var(--surface, #fff), var(--surface, #fff)), linear-gradient(135deg, #0369a1 0%, #e0f2fe 26%, #38bdf8 52%, #bae6fd 78%, #0284c7 100%);
-      box-shadow: inset 0 1px 0 rgba(224,242,254,0.95), 0 6px 22px rgba(56,189,248,0.36);
-    }
-    .rank-frame-7 {
-      border-width: 3.5px; border-top-width: 5.5px;
-      background-image: linear-gradient(var(--surface, #fff), var(--surface, #fff)), linear-gradient(135deg, #6b21a8 0%, #f0abfc 26%, #9333ea 52%, #fde047 76%, #581c87 100%);
-      box-shadow: inset 0 1px 0 rgba(250,232,255,0.9), 0 7px 24px rgba(147,51,234,0.38);
-    }
-    .rank-frame-8 {
-      border-width: 3.5px; border-top-width: 6px;
-      background-image: linear-gradient(var(--surface, #fff), var(--surface, #fff)), linear-gradient(135deg, #9f1239 0%, #fda4af 24%, #e11d48 52%, #fbbf24 78%, #881337 100%);
-      box-shadow: inset 0 1px 0 rgba(255,228,230,0.9), 0 8px 26px rgba(225,29,72,0.42);
-    }
-    @keyframes challengerBorderPulse {
-      0%, 100% { filter: drop-shadow(0 0 6px rgba(250,204,21,0.55)); }
-      50% { filter: drop-shadow(0 0 12px rgba(56,189,248,0.75)); }
-    }
-    .rank-frame-9 {
-      border-width: 4px; border-top-width: 6px;
-      background-image: linear-gradient(var(--surface, #fff), var(--surface, #fff)), linear-gradient(135deg, #fde047 0%, #ffffff 22%, #38bdf8 48%, #f59e0b 74%, #fde047 100%);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.98), 0 8px 28px rgba(250,204,21,0.45);
-      animation: challengerBorderPulse 2.6s ease-in-out infinite;
-    }
-    .ultra-avatar-bolt {
-      position: absolute;
-      right: -3px;
-      bottom: -3px;
-      width: 14px;
-      height: 14px;
-      border-radius: 9999px;
-      background: #0f172a;
-      color: #fde047;
-      border: 1px solid #ef4444;
-      font-size: 8px;
-      line-height: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 0 6px rgba(239, 68, 68, 0.65);
-      pointer-events: none;
-      z-index: 2;
     }
     body[data-mode="strict"] { background-color: #f8fafc; }
     body[data-mode="strict"] header { background-color: #0f172a; color: #ffffff; border-bottom-color: #ef4444; }
@@ -425,9 +491,6 @@
       100% { transform: scale(1.1); }
     }
     .ig-like-active { animation: igLikeBounce 340ms cubic-bezier(.22, 1, .36, 1) forwards; }
-    /* 1. Subtle Member Card Tactile Hover & Body Scroll Lock */
-    #group-status-grid [data-member-detail] { transition: transform 160ms cubic-bezier(.22, 1, .36, 1), box-shadow 200ms ease; }
-    #group-status-grid [data-member-detail]:active { transform: scale(0.98); }
     body.has-dialog-open { overflow: hidden; }
     /* 2. Todo V Strikethrough Drawing & Check Pop */
     .todo-strike { position: relative; display: inline-block; max-width: 100%; }
@@ -1893,15 +1956,18 @@
 
       <!-- Sub-Tab 1: Study Members & Weekly Report -->
       <div id="members-sub-live" class="space-y-3.5">
-        <div class="bg-white rounded-2xl border border-slate-200 p-3.5 shadow-sm flex flex-wrap items-center justify-between gap-2.5">
-          <div class="flex flex-wrap items-center gap-2" id="group-live-summary"></div>
+        <div class="member-roster-header">
+          <div>
+            <h3 id="member-roster-title">스터디원</h3>
+            <div class="member-roster-summary" id="group-live-summary"></div>
+          </div>
           <div class="flex items-center gap-2">
             <button id="add-member-btn" class="px-3 py-1.5 rounded-xl bg-white border border-slate-300 hover:bg-slate-50 text-slate-800 text-xs font-bold whitespace-nowrap">🙋 스터디 참가하기</button>
             <button id="btn-leave-study" type="button" class="hidden px-3 py-1.5 rounded-xl bg-white border border-rose-200 hover:bg-rose-50 text-rose-600 text-xs font-bold whitespace-nowrap">탈퇴하기</button>
           </div>
         </div>
 
-        <div id="group-status-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5"></div>
+        <div id="group-status-grid" role="region" aria-labelledby="member-roster-title"></div>
 
         <div class="ed-card p-4 sm:p-5">
           <h3 class="text-sm sm:text-base font-black text-slate-950 mb-1">🏅 주간 성적표</h3>
@@ -2327,7 +2393,8 @@
               </li>
               <li class="space-y-0.5">
                 <div class="font-black text-slate-900">🏅 뱃지 · 카드 이펙트</div>
-                <p><strong>🌅 얼리버드</strong>(08시 전 · 당일 유지), <strong>🦉 심야 올빼미</strong>(자정~04:59 공부 · 당일 유지), <strong>🌱~👑 연속출석</strong>(2일~10일+ 진화) 뱃지와 함께, 울트라집중 <strong>⚡ 회전 링</strong> 및 누적 공부량(10분~7h+, 8단계)에 따른 <strong>카드 불꽃 오라</strong>가 점점 화려하게 표시됩니다.</p>
+                <p>스터디원 카드의 테두리는 티어 색으로 표시하고, 울트라집중모드는 프로필에 번개를 표시합니다. 불꽃은 오늘 누적 공부 10분부터 켜지며 30분, 1·2·4·5·6·7·8·9시간에 다음 단계로 올라갑니다. 카드를 누르면 다음 불꽃까지 남은 시간과 전체 뱃지를 볼 수 있습니다.</p>
+                <p>활동 뱃지에는 <strong>🌅 얼리버드</strong>(08시 전 · 당일 유지), <strong>🦉 심야 올빼미</strong>(자정~04:59 공부 · 당일 유지), <strong>연속 출석</strong>(2일~10일+ 진화)이 있습니다. 관리자가 수여한 뱃지가 있으면 카드에 먼저 표시합니다.</p>
               </li>
             </ul>
           </section>
@@ -3934,16 +4001,16 @@
       ];
 
       const LOL_TIERS = [
-        { name: '아이언', min: 0, icon: '🔩', cls: 'bg-zinc-200 text-zinc-800 border-zinc-400', frame: 'rank-frame-base rank-frame-0', wingColor: '#71717a', gemColor: '#a1a1aa' },
-        { name: '브론즈', min: 80, icon: '🥉', cls: 'bg-amber-800 text-amber-50 border-amber-950', frame: 'rank-frame-base rank-frame-1', wingColor: '#b45309', gemColor: '#f59e0b' },
-        { name: '실버', min: 170, icon: '🥈', cls: 'bg-slate-200 text-slate-800 border-slate-400', frame: 'rank-frame-base rank-frame-2', wingColor: '#64748b', gemColor: '#e2e8f0' },
-        { name: '골드', min: 270, icon: '🥇', cls: 'bg-yellow-300 text-yellow-950 border-yellow-600', frame: 'rank-frame-base rank-frame-3', wingColor: '#ca8a04', gemColor: '#fde047' },
-        { name: '플래티넘', min: 380, icon: '💠', cls: 'bg-teal-200 text-teal-950 border-teal-500', frame: 'rank-frame-base rank-frame-4', wingColor: '#0d9488', gemColor: '#5eead4' },
-        { name: '에메랄드', min: 500, icon: '💚', cls: 'bg-emerald-300 text-emerald-950 border-emerald-600', frame: 'rank-frame-base rank-frame-5', wingColor: '#059669', gemColor: '#6ee7b7' },
-        { name: '다이아몬드', min: 630, icon: '💎', cls: 'bg-sky-300 text-sky-950 border-sky-600', frame: 'rank-frame-base rank-frame-6', wingColor: '#0284c7', gemColor: '#bae6fd' },
-        { name: '마스터', min: 770, icon: '🔮', cls: 'bg-purple-500 text-white border-purple-800', frame: 'rank-frame-base rank-frame-7', wingColor: '#7e22ce', gemColor: '#f0abfc' },
-        { name: '그랜드마스터', min: 930, icon: '🔥', cls: 'bg-rose-600 text-white border-rose-900', frame: 'rank-frame-base rank-frame-8', wingColor: '#be123c', gemColor: '#fb7185' },
-        { name: '챌린저', min: 1200, icon: '👑', cls: 'bg-gradient-to-r from-amber-300 via-sky-300 to-amber-400 text-slate-950 border-slate-950', frame: 'rank-frame-base rank-frame-9', wingColor: '#eab308', gemColor: '#38bdf8' }
+        { name: '아이언', min: 0, icon: '🔩', cls: 'bg-zinc-200 text-zinc-800 border-zinc-400', wingColor: '#71717a', gemColor: '#a1a1aa' },
+        { name: '브론즈', min: 80, icon: '🥉', cls: 'bg-amber-800 text-amber-50 border-amber-950', wingColor: '#b45309', gemColor: '#f59e0b' },
+        { name: '실버', min: 170, icon: '🥈', cls: 'bg-slate-200 text-slate-800 border-slate-400', wingColor: '#64748b', gemColor: '#e2e8f0' },
+        { name: '골드', min: 270, icon: '🥇', cls: 'bg-yellow-300 text-yellow-950 border-yellow-600', wingColor: '#ca8a04', gemColor: '#fde047' },
+        { name: '플래티넘', min: 380, icon: '💠', cls: 'bg-teal-200 text-teal-950 border-teal-500', wingColor: '#0d9488', gemColor: '#5eead4' },
+        { name: '에메랄드', min: 500, icon: '💚', cls: 'bg-emerald-300 text-emerald-950 border-emerald-600', wingColor: '#059669', gemColor: '#6ee7b7' },
+        { name: '다이아몬드', min: 630, icon: '💎', cls: 'bg-sky-300 text-sky-950 border-sky-600', wingColor: '#0284c7', gemColor: '#bae6fd' },
+        { name: '마스터', min: 770, icon: '🔮', cls: 'bg-purple-500 text-white border-purple-800', wingColor: '#7e22ce', gemColor: '#f0abfc' },
+        { name: '그랜드마스터', min: 930, icon: '🔥', cls: 'bg-rose-600 text-white border-rose-900', wingColor: '#be123c', gemColor: '#fb7185' },
+        { name: '챌린저', min: 1200, icon: '👑', cls: 'bg-gradient-to-r from-amber-300 via-sky-300 to-amber-400 text-slate-950 border-slate-950', wingColor: '#eab308', gemColor: '#38bdf8' }
       ];
       function getMemberTier(lpOrMember) {
         const isObj = lpOrMember && typeof lpOrMember === 'object';
@@ -4152,7 +4219,7 @@
         }
         const st = Number(member.streak) || 0;
         if (st >= 2) {
-          const evo = STREAK_EVOLUTION[Math.min(10, st)];
+          const evo = STREAK_EVOLUTION[Math.min(10, Math.floor(st))];
           b.push({ label: `${evo.icon} 연속 ${st}일`, customCls: evo.cls });
         }
 
@@ -4161,12 +4228,13 @@
         }
         const customList = (shared.customBadges && shared.customBadges[member.id]) || [];
         customList.forEach(cb => {
-          b.push({ label: cb.label, customCls: BADGE_THEMES[cb.theme || 'gold'] });
+          b.push({ label: cb.label, customCls: BADGE_THEMES[cb.theme || 'gold'], isCustom: true });
         });
         return b;
       }
       function renderBadgePill(b) {
-        return `<span class="badge-pill inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-extrabold border ${b.customCls || BADGE_THEMES.gold}">${escapeHtml(b.label)}</span>`;
+        const label = escapeHtml(b.label);
+        return `<span title="${label}" class="badge-pill inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-extrabold border ${b.customCls || BADGE_THEMES.gold}">${label}</span>`;
       }
 
       // Motemote Planner Helpers (isolated in privateData per UID when signed in)
@@ -4942,88 +5010,116 @@
           : '<div class="ed-card p-10 text-center space-y-1.5"><span class="empty-float-icon text-2xl">📸</span><p class="text-sm font-bold text-slate-500">아직 올라온 게시물이 없습니다</p><p class="text-xs text-slate-400">위에서 오늘의 공부 기록을 첫 번째로 공유해 보세요!</p></div>';
       }
 
+      function renderMemberStudy(mins, id) {
+        const level = getFlameLevel(mins);
+        const stages = STUDY_FLAME_THRESHOLDS.length;
+        const hours = Math.floor(mins / 60);
+        const ticks = STUDY_FLAME_THRESHOLDS.map((_, i) => {
+          const state = i + 1 === level ? 'is-peak' : i < level ? 'is-lit' : '';
+          return `<i class="${state}"></i>`;
+        }).join('');
+        return `<span class="member-study" id="member-study-${id}" data-flame-level="${level}" style="--flame-level:${level}">
+          <span class="member-study-label">오늘 누적 공부</span>
+          <strong class="member-study-time">${hours ? `${hours}<small>시간</small> ` : ''}${mins % 60}<small>분</small></strong>
+          <span class="member-flame-art" aria-hidden="true">
+            ${level >= 6 ? '<span class="member-flame-sparks"></span>' : ''}
+            <span class="member-flame-shape"></span>
+          </span>
+          <span class="member-flame-caption">불꽃 ${level}/${stages}</span>
+          <span class="member-flame-track" aria-hidden="true">${ticks}</span>
+        </span>`;
+      }
+
+      function renderMemberCard(m, date, mins, now) {
+        const id = escapeHtml(m.id);
+        const name = escapeHtml(m.name);
+        const title = escapeHtml(m.equippedTitle);
+        const tier = getMemberTier(m);
+        const badges = getBadgesForMember(m, date);
+        const featured = badges.find(b => b.isCustom) || badges[0];
+        const isUltra = getMemberMode(m) === 'strict';
+        const inClass = (shared.classes?.[m.id] || []).some(c => Number(c.day) === now.day && toMins(c.start) <= now.totalMins && now.totalMins < toMins(c.end));
+        const status = m.isFocusing ? 'studying' : inClass ? 'class' : 'resting';
+        const isMe = m.id === prefs.currentUserId;
+        const canRemove = prefs.adminMode && shared.members.length > 1;
+        const hasMenu = !isMe || canRemove;
+
+        return `<article class="member-card" data-member-card-wrap="${id}"${tier.idx >= 6 ? ' data-elite' : ''}${hasMenu ? ' data-has-menu' : ''}${m.isFocusing ? ' data-studying' : ''}
+            style="--rank-deep:${tier.wingColor};--rank-gem:${tier.gemColor}">
+          <button class="member-card-details" id="member-card-${id}" type="button" data-member-detail="${id}"
+            aria-label="${name} 상세 기록"
+            aria-describedby="member-rank-${id} member-status-${id} member-study-${id}${title ? ` member-title-${id}` : ''}${featured ? ` member-badges-${id}` : ''}">
+            <span class="member-identity">
+              <span class="member-avatar"${isUltra ? ' data-ultra title="울트라집중모드"' : ''} aria-hidden="true">
+                ${m.avatarUrl ? `<img src="${escapeHtml(m.avatarUrl)}" alt="" loading="lazy">` : escapeHtml(String(m.name || '').slice(0, 1))}
+                ${isUltra ? '<span class="member-avatar-bolt">⚡</span>' : ''}
+              </span>
+              <span class="member-nameplate">
+                <strong class="member-name" title="${name}">${name}</strong>
+                ${title ? `<span class="member-title" id="member-title-${id}" title="${title}">${title}</span>` : ''}
+              </span>
+            </span>
+            <span class="member-rank-line">
+              <span id="member-rank-${id}"><span class="member-rank">${tier.name}</span> ${tier.lp} LP</span>
+              <span id="member-status-${id}" class="member-status" data-status="${status}">${{ studying: '공부 중', class: '수업 중', resting: '휴식 중' }[status]}</span>
+              ${m.promoActiveDate === date && tier.nextName ? '<span class="member-promo">승급전 진행 중</span>'
+                : m.promoPendingDate ? '<span class="member-promo">승급전 예약</span>'
+                : tier.inPromo ? '<span class="member-promo">승급 LP 충족</span>' : ''}
+            </span>
+            ${renderMemberStudy(mins, id)}
+            ${featured ? `<span class="member-badges" id="member-badges-${id}">
+              ${renderBadgePill(featured)}
+              ${badges.length > 1 ? `<span class="member-badge-count" aria-label="뱃지 ${badges.length - 1}개 더 보기">+${badges.length - 1}</span>` : ''}
+            </span>` : ''}
+          </button>
+          ${hasMenu ? `<div class="member-card-actions">
+            <button type="button" id="member-menu-${id}" class="member-card-menu" data-card-menu-btn="${id}" aria-label="${name} 더보기" aria-expanded="false" aria-controls="member-menu-box-${id}">⋯</button>
+            <div id="member-menu-box-${id}" data-card-menu-box="${id}" class="hidden absolute right-0 z-50 w-40 rounded-xl bg-white border border-slate-200 shadow-xl p-1 space-y-0.5 text-left">
+              ${!isMe ? `<button type="button" id="member-respect-${id}" data-respect-member="${id}" class="w-full px-2.5 py-2 rounded-lg hover:bg-slate-100 text-[11px] font-bold text-slate-800 text-left">👏 리스펙 보내기</button>
+              <button type="button" id="member-report-${id}" data-report-member="${id}" class="w-full px-2.5 py-2 rounded-lg hover:bg-rose-50 text-[11px] font-bold text-rose-600 text-left">🚨 신고하기</button>` : ''}
+              ${canRemove ? `<button type="button" id="member-remove-${id}" data-del-member="${id}" class="w-full px-2.5 py-2 rounded-lg hover:bg-rose-50 text-[11px] font-bold text-rose-600 text-left">스터디에서 내보내기</button>` : ''}
+            </div>
+          </div>` : ''}
+        </article>`;
+      }
+
+      function setMemberCardMenu(button, open) {
+        if (!button) return;
+        button.setAttribute('aria-expanded', String(open));
+        button.nextElementSibling.classList.toggle('hidden', !open);
+        button.closest('[data-member-card-wrap]').classList.toggle('z-50', open);
+      }
+
+      let memberCardsMarkup = '';
       function renderMembersTab() {
-        const now = getNowParts(), t = todayStr(), phase = getCurrentPhase(now.totalMins);
-        const joinBtn = document.getElementById('add-member-btn');
-        joinBtn.classList.toggle('hidden', !prefs.adminMode && !!prefs.joinedMemberId);
+        const grid = document.getElementById('group-status-grid');
+        const summary = document.getElementById('group-live-summary');
+        const canSeeMembers = prefs.adminMode || !!prefs.joinedMemberId;
+        document.getElementById('add-member-btn').classList.toggle('hidden', !prefs.adminMode && !!prefs.joinedMemberId);
         document.getElementById('btn-leave-study').classList.toggle('hidden', !prefs.joinedMemberId);
 
-        if (!prefs.adminMode && !prefs.joinedMemberId) {
-          document.getElementById('group-live-summary').innerHTML = '<span class="text-xs font-bold text-slate-600 whitespace-nowrap">🔒 참가 후 스터디원 현황 확인 가능</span>';
-          document.getElementById('group-status-grid').innerHTML = '';
+        if (!canSeeMembers) {
+          summary.textContent = '참가 후 스터디원 현황을 볼 수 있어요.';
+          grid.innerHTML = memberCardsMarkup = '';
           return;
         }
-        const activePid = phase && phase.type === 'study' ? phase.id : 'p1';
-        let studying = 0;
-        shared.members.filter(m => m.inStudy !== false).forEach(m => {
-          if (m.isFocusing) studying++;
-        });
-        document.getElementById('group-live-summary').innerHTML = `
-          <span class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 whitespace-nowrap">🔥 공부 중 ${studying}명</span>
-        `;
-
-        const sortedMembers = shared.members.filter(m => m.inStudy !== false).sort((a, b) => {
-          const aM = (shared.studyLogs && shared.studyLogs[t] && shared.studyLogs[t][a.id]) || 0;
-          const bM = (shared.studyLogs && shared.studyLogs[t] && shared.studyLogs[t][b.id]) || 0;
-          return bM - aM;
-        });
-
-        document.getElementById('group-status-grid').innerHTML = sortedMembers.map(m => {
-          const rawSt = getMemberDayStatus(m.id, t, activePid);
-          const st = rawSt === 'exempt' ? 'none' : rawSt;
-          const fMins = Number(m.focusMins) || 0;
-          const todayTotalMins = (shared.studyLogs && shared.studyLogs[t] && shared.studyLogs[t][m.id]) || 0;
-          const isStudying = !!m.isFocusing;
-          const allBadges = getBadgesForMember(m, t);
-          const badges = allBadges;
-          const tierObj = getMemberTier(m);
-          const flameLvCard = getFlameLevel(todayTotalMins); const flameCls = flameLvCard > 0 ? `flame-lv${flameLvCard}` : '';
-          const isPromoNow = m.promoActiveDate === t;
-          const isUltra = getMemberMode(m) === 'strict';
-          const inClassNow = ((shared.classes && shared.classes[m.id]) || []).some(c => Number(c.day) === now.day && toMins(c.start) <= now.totalMins && now.totalMins < toMins(c.end));
-          const promoRing = isPromoNow ? 'ring-2 ring-amber-400' : '';
-          const hasMenu = (m.id !== prefs.currentUserId) || (prefs.adminMode && shared.members.length > 1);
-          const statusBadgeHtml = isStudying
-            ? '<span class="inline-flex items-center gap-1 text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-600 text-white font-bold whitespace-nowrap shrink-0"><span class="relative flex h-1.5 w-1.5"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-200 opacity-75"></span><span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-white"></span></span>공부중</span>'
-            : (inClassNow
-              ? '<span class="inline-flex items-center gap-1 text-[9px] px-1.5 py-0.5 rounded-full bg-sky-100 text-sky-800 border border-sky-200 font-bold whitespace-nowrap shrink-0">수업중</span>'
-              : '<span class="text-[10px] font-semibold text-slate-400 whitespace-nowrap">휴식중</span>');
-          return `
-            <div data-member-card-wrap="${m.id}" class="relative pt-2.5 flex flex-col">
-              ${m.equippedTitle ? `<div class="absolute top-0 left-3 z-10 max-w-[calc(100%-24px)] px-2 py-0.5 rounded-t-lg rounded-b-sm bg-slate-100 border border-slate-300 text-[10px] font-bold text-slate-600 whitespace-nowrap truncate leading-none shadow-sm" title="${escapeHtml(m.equippedTitle)}"><span class="opacity-65">👑</span> ${escapeHtml(m.equippedTitle)}</div>` : ''}
-              ${hasMenu ? `<div class="absolute right-2.5 top-[22px] sm:top-[24px] z-40">
-                <button type="button" data-card-menu-btn="${m.id}" aria-label="스터디원 더보기" class="w-6 h-6 rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-900 flex items-center justify-center text-xs font-black">⋯</button>
-                <div data-card-menu-box="${m.id}" class="hidden absolute right-0 top-7 z-50 w-36 rounded-xl bg-white border border-slate-200 shadow-xl p-1 space-y-0.5 text-left">
-                  ${m.id !== prefs.currentUserId ? `<button type="button" data-respect-member="${m.id}" class="w-full flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg hover:bg-slate-100 text-[11px] font-bold text-slate-800 whitespace-nowrap">👏 리스펙 보내기</button>
-                  <button type="button" data-report-member="${m.id}" class="w-full flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg hover:bg-rose-50 text-[11px] font-bold text-rose-600 whitespace-nowrap">🚨 신고하기</button>` : ''}
-                  ${prefs.adminMode && shared.members.length > 1 ? `<button type="button" data-del-member="${m.id}" class="w-full flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg hover:bg-rose-50 text-[11px] font-bold text-rose-600 whitespace-nowrap">🗑️ 삭제하기</button>` : ''}
-                </div>
-              </div>` : ''}
-              <div data-member-detail="${m.id}" class="flex-1 cursor-pointer rounded-2xl p-2.5 sm:p-3 bg-white flex flex-col justify-start gap-2 transition-all ${tierObj.frame} ${promoRing} ${flameCls}">
-                <div class="space-y-1.5">
-                  <div class="flex items-center justify-between gap-1.5 min-h-[28px] ${hasMenu ? 'pr-7' : ''}">
-                    <div class="flex items-center gap-2 min-w-0">
-                      <div class="relative w-7 h-7 shrink-0" title="${isUltra ? '울트라집중모드' : ''}">
-                        ${isUltra ? '<span class="ultra-avatar-ring"></span>' : ''}
-                        <div class="relative z-[1] w-full h-full rounded-full bg-slate-200 ${isUltra ? 'border border-white' : 'border border-slate-300'} overflow-hidden flex items-center justify-center text-[11px] font-black text-slate-600">${m.avatarUrl ? `<img src="${escapeHtml(m.avatarUrl)}" class="w-full h-full object-cover" alt="${escapeHtml(m.name)}" />` : escapeHtml(m.name.slice(0, 1))}</div>
-                        ${isUltra ? '<span class="ultra-avatar-bolt" aria-label="울트라집중">⚡</span>' : ''}
-                      </div>
-                      <span class="font-extrabold text-xs sm:text-sm text-slate-900 leading-tight truncate">${escapeHtml(m.name)}</span>
-                    </div>
-                  </div>
-                  <div class="flex items-center justify-between gap-1.5 rounded-xl bg-slate-50 border border-slate-100 px-2.5 py-1.5">
-                    <span class="font-mono font-black text-xs sm:text-sm text-slate-900 whitespace-nowrap">⏱️ ${formatStudyMins(todayTotalMins)}</span>
-                    ${statusBadgeHtml}
-                  </div>
-                </div>
-                <div class="space-y-1.5">
-                  <div class="flex items-center gap-1 flex-wrap min-w-0">${renderTierPill(m)}</div>
-                  ${badges.length ? `<div class="flex flex-wrap gap-1">${badges.map(renderBadgePill).join('')}</div>` : ''}
-                </div>
-              </div>
-            </div>
-          `;
-        }).join('');
+        const now = getNowParts();
+        const date = todayStr();
+        const totals = shared.studyLogs?.[date] || {};
+        const members = shared.members.filter(m => m.inStudy !== false)
+          .map(m => ({ member: m, mins: Math.max(0, Math.floor(Number(totals[m.id]) || 0)) }))
+          .sort((a, b) => b.mins - a.mins);
+        const studying = members.filter(({ member }) => member.isFocusing).length;
+        summary.innerHTML = `<span>참가 ${members.length}명</span><span class="member-roster-live" data-active="${studying > 0}">공부 중 ${studying}명</span>`;
+        const markup = members.length
+          ? members.map(({ member, mins }) => renderMemberCard(member, date, mins, now)).join('')
+          : '<p class="member-roster-empty">현재 참가 중인 스터디원이 없어요.</p>';
+        if (markup === memberCardsMarkup) return;
+        const openMenu = grid.querySelector('[data-card-menu-btn][aria-expanded="true"]');
+        const focused = grid.contains(document.activeElement) ? document.activeElement : null;
+        grid.innerHTML = memberCardsMarkup = markup;
+        if (openMenu) setMemberCardMenu(document.getElementById(openMenu.id), true);
+        if (focused?.id) document.getElementById(focused.id)?.focus({ preventScroll: true });
       }
 
       function renderPlannerTab() {
@@ -6627,27 +6723,31 @@
       });
 
       document.addEventListener('click', e => {
-        if (!e.target.closest('[data-card-menu-btn]') && !e.target.closest('[data-card-menu-box]')) {
-          document.querySelectorAll('[data-card-menu-box]').forEach(box => { box.classList.add('hidden'); box.closest('[data-member-card-wrap]')?.classList.remove('z-50'); });
+        if (!e.target.closest('[data-card-menu-btn], [data-card-menu-box]')) {
+          setMemberCardMenu(document.querySelector('[data-card-menu-btn][aria-expanded="true"]'), false);
         }
       });
-      document.getElementById('group-status-grid').addEventListener('click', e => {
+      const memberGrid = document.getElementById('group-status-grid');
+      memberGrid.addEventListener('keydown', e => {
+        if (e.key !== 'Escape') return;
+        const menu = memberGrid.querySelector('[data-card-menu-btn][aria-expanded="true"]');
+        if (!menu) return;
+        e.preventDefault();
+        setMemberCardMenu(menu, false);
+        menu.focus({ preventScroll: true });
+      });
+      memberGrid.addEventListener('click', e => {
         const menuBtn = e.target.closest('[data-card-menu-btn]');
+        const openMenu = memberGrid.querySelector('[data-card-menu-btn][aria-expanded="true"]');
         if (menuBtn) {
           e.stopPropagation();
-          const mid = menuBtn.dataset.cardMenuBtn;
-          document.querySelectorAll('[data-card-menu-box]').forEach(box => {
-            const wrap = box.closest('[data-member-card-wrap]');
-            if (box.dataset.cardMenuBox === mid) {
-              const willOpen = box.classList.contains('hidden');
-              box.classList.toggle('hidden');
-              if (wrap) wrap.classList.toggle('z-50', willOpen);
-            } else {
-              box.classList.add('hidden');
-              if (wrap) wrap.classList.remove('z-50');
-            }
-          });
+          if (openMenu && openMenu !== menuBtn) setMemberCardMenu(openMenu, false);
+          setMemberCardMenu(menuBtn, openMenu !== menuBtn);
           return;
+        }
+        if (openMenu && e.target.closest('[data-card-menu-box] button')) {
+          setMemberCardMenu(openMenu, false);
+          openMenu.focus({ preventScroll: true });
         }
         const rb = e.target.closest('[data-respect-member]');
         if (rb) {
@@ -6730,25 +6830,32 @@
           if (!m) return;
           if (!prefs.adminMode) { unlockChallengeFor(prefs.currentUserId, 'ch_spy', false); saveSharedData(); }
           const t = todayStr();
-          const todayTotalMins = (shared.studyLogs && shared.studyLogs[t] && shared.studyLogs[t][m.id]) || 0;
+          const todayTotalMins = Math.max(0, Math.floor(Number(shared.studyLogs?.[t]?.[m.id]) || 0));
           const maxF = (shared.maxFocusLogs && shared.maxFocusLogs[t] && shared.maxFocusLogs[t][m.id]) || 0;
           const todayRespect = ((shared.praises && shared.praises[m.id]) || []).filter(p => p.date === t).length;
           const allB = getBadgesForMember(m, t);
-          openModal(`${m.equippedTitle ? `[${escapeHtml(m.equippedTitle)}] ` : ''}${escapeHtml(m.name)} 상세 기록`, `
+          const flameLevel = getFlameLevel(todayTotalMins);
+          const nextFlame = STUDY_FLAME_THRESHOLDS[flameLevel];
+          openModal(`${m.name} 상세 기록`, `
             <div class="space-y-3 text-xs">
+              ${m.equippedTitle ? `<p class="text-sm font-bold text-slate-900"><span class="mr-1 text-xs text-slate-500">장착 칭호</span> ${escapeHtml(m.equippedTitle)}</p>` : ''}
               <div class="flex flex-wrap items-center gap-1.5">${renderTierPill(m)} ${getMemberMode(m) === 'strict' ? '<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-black text-amber-300 border border-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.45)]" style="background:linear-gradient(90deg,#0f172a,#7f1d1d,#0f172a)"><span class="inline-block animate-pulse">⚡</span>울트라집중모드</span>' : '<span class="px-2 py-0.5 rounded bg-slate-100 font-bold">자율모드</span>'}</div>
               <div class="grid grid-cols-2 gap-2">
                 <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200"><div class="text-slate-400">오늘 누적 공부</div><div class="text-sm font-black text-slate-900 mt-0.5">${formatStudyMins(todayTotalMins)}</div></div>
                 <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200"><div class="text-slate-400">오늘 최장 연속</div><div class="text-sm font-black text-slate-900 mt-0.5">${maxF}분</div></div>
-                <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200"><div class="text-slate-400">연속 출석</div><div class="text-sm font-black text-slate-900 mt-0.5">${m.streak}일</div></div>
+                <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200"><div class="text-slate-400">연속 출석</div><div class="text-sm font-black text-slate-900 mt-0.5">${Number(m.streak) || 0}일</div></div>
                 <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200"><div class="text-slate-400">오늘 받은 리스펙</div><div class="text-sm font-black text-slate-900 mt-0.5">👏 ${todayRespect}회</div></div>
+              </div>
+              <div class="rounded-xl bg-slate-50 border border-slate-200 px-3 py-2 flex flex-wrap items-center justify-between gap-1.5">
+                <strong class="text-slate-900">불꽃 ${flameLevel}/${STUDY_FLAME_THRESHOLDS.length}</strong>
+                <span class="text-slate-600">${nextFlame === undefined ? '최고 단계 달성' : `다음 단계까지 ${nextFlame - todayTotalMins}분`}</span>
               </div>
               ${m.id === prefs.currentUserId ? `<div>
                 <div class="font-bold text-slate-700 mb-1.5">👑 보유 칭호</div>
                 <div class="flex flex-wrap gap-1">${(() => {
                   const doneIds = (shared.memberChallenges && shared.memberChallenges[m.id]) || [];
                   const chs = (shared.challenges || []).filter(c => doneIds.includes(c.id));
-                  return chs.length ? chs.map(c => `<span class="px-2 py-0.5 rounded-md bg-slate-100 border border-slate-200 text-[11px] font-bold text-slate-800">${c.title}</span>`).join('') : '<span class="text-slate-400">없음</span>';
+                  return chs.length ? chs.map(c => `<span class="px-2 py-0.5 rounded-md bg-slate-100 border border-slate-200 text-[11px] font-bold text-slate-800">${escapeHtml(c.title)}</span>`).join('') : '<span class="text-slate-400">없음</span>';
                 })()}</div>
               </div>` : ''}
               <div>
@@ -7771,7 +7878,7 @@
         if (cheerEl && !cheerEl.textContent) {
           const meD = shared.members.find(x => x.id === prefs.currentUserId);
           const todayM = (meD && shared.studyLogs?.[todayStr()]?.[meD.id]) || 0;
-          const nextFlame = [10, 30, 60, 120, 240, 300, 360, 420, 480, 540].find(m => m > todayM);
+          const nextFlame = STUDY_FLAME_THRESHOLDS[getFlameLevel(todayM)];
           cheerEl.textContent = nextFlame
             ? `오늘 누적 ${formatStudyMins(todayM)} · 다음 불꽃 오라까지 ${nextFlame - todayM}분`
             : `오늘 누적 ${formatStudyMins(todayM)} · 🔥 최고 단계 불꽃 오라 달성!`;
@@ -7998,8 +8105,12 @@
         document.getElementById('focus-mini-expand').focus({preventScroll:true});
       }
 
+      const STUDY_FLAME_THRESHOLDS = [10, 30, 60, 120, 240, 300, 360, 420, 480, 540];
+
       function getFlameLevel(mins) {
-        return mins >= 540 ? 10 : mins >= 480 ? 9 : mins >= 420 ? 8 : mins >= 360 ? 7 : mins >= 300 ? 6 : mins >= 240 ? 5 : mins >= 120 ? 4 : mins >= 60 ? 3 : mins >= 30 ? 2 : mins >= 10 ? 1 : 0;
+        const minutes = Number(mins) || 0;
+        const nextStage = STUDY_FLAME_THRESHOLDS.findIndex(threshold => minutes < threshold);
+        return nextStage === -1 ? STUDY_FLAME_THRESHOLDS.length : nextStage;
       }
 
       function closeFocusOverlay(discard = false) {
@@ -8052,7 +8163,7 @@
                     <div class="font-mono font-black text-sm text-emerald-600 mt-0.5">${earnedSessionLp > 0 ? `+${earnedSessionLp} LP` : '기록 저장 ✓'}</div>
                   </div>
                 </div>
-                ${flameLv > 0 ? `<div class="rounded-xl bg-amber-50 border border-amber-200 px-3 py-2 text-xs font-bold text-amber-900">🔥 현재 카드 불꽃 오라 <strong>Lv.${flameLv}</strong> 적용 중!</div>` : ''}
+                ${flameLv > 0 ? `<div class="rounded-xl bg-amber-50 border border-amber-200 px-3 py-2 text-xs font-bold text-amber-900">스터디원 카드 <strong>불꽃 ${flameLv}/${STUDY_FLAME_THRESHOLDS.length}</strong></div>` : ''}
                 <button type="button" id="btn-focus-summary-ok" class="w-full py-2.5 rounded-xl ed-btn-accent text-xs font-black">확인</button>
               </div>
             `);
@@ -8819,6 +8930,7 @@
         if (!focusInterval || focusPaused) syncMemberPendingModes();
         renderLiveBanner();
         if (prefs.activeTab === 'dashboard') renderDashboard();
+        if (prefs.activeTab === 'members') renderMembersTab();
         if (focusInterval && focusPaused) refreshFocusAttendance(true);
       }
       setInterval(refreshScheduleMinute, 2000);
