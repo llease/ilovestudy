@@ -754,6 +754,11 @@
         </div>
       </div>
 
+            <div id="auth-loading-step" class="hidden py-6 text-center space-y-2">
+        <div class="mx-auto w-7 h-7 rounded-full border-2 border-slate-300 border-t-indigo-600 animate-spin"></div>
+        <p class="text-xs font-bold text-slate-600">로그인 정보를 불러오는 중입니다…</p>
+      </div>
+
       <div id="auth-login-step" class="space-y-4">
         <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">Google 계정으로 로그인하면 휴대폰·태블릿·PC에서 같은 공부 기록과 시간표를 확인할 수 있어요.</p>
         <p id="auth-error-msg" class="hidden text-xs font-bold text-rose-600 bg-rose-50 border border-rose-200 rounded-xl p-2.5"></p>
@@ -1900,7 +1905,7 @@
           }
           if (m.promoActiveDate && t > m.promoActiveDate) {
             // Promotion day passed without completion -> 2-day cooldown
-            m.promoCooldownUntil = addDaysStr(m.promoActiveDate, 2);
+            m.promoCooldownUntil = addDaysStr(m.promoActiveDate, 1);
             m.promoActiveDate = null;
             m.promoTargetTier = null;
             m.promoWinStreak = 0;
@@ -2369,14 +2374,17 @@
       function showAuthOverlay(step, errText) {
         const ov = document.getElementById('auth-overlay');
         const loginStep = document.getElementById('auth-login-step');
+        const loadingStep = document.getElementById('auth-loading-step');
         const onboardStep = document.getElementById('auth-onboard-step');
         const pendingStep = document.getElementById('auth-pending-step');
         const errEl = document.getElementById('auth-error-msg');
         if (!ov) return;
         ov.classList.remove('hidden');
         ov.classList.add('flex');
-        [loginStep, onboardStep, pendingStep].forEach(el => el && el.classList.add('hidden'));
-        if (step === 'onboard') {
+        [loginStep, loadingStep, onboardStep, pendingStep].forEach(el => el && el.classList.add('hidden'));
+        if (step === 'loading') {
+          if (loadingStep) loadingStep.classList.remove('hidden');
+        } else if (step === 'onboard') {
           onboardStep.classList.remove('hidden');
           const sMode = shared.signupMode || 'open';
           const sBtn = document.getElementById('btn-onboard-submit');
@@ -2777,6 +2785,7 @@
             auth.onAuthStateChanged(user => {
               currentAuthUser = user || null;
               if (user) {
+                if (!dbLoadedOnce) showAuthOverlay('loading');
                 attachRealtimeDb();
                 if (dbLoadedOnce) syncAuthUserMember(user);
               } else {
@@ -3052,16 +3061,23 @@
         { name: '챌린저', min: 1200, icon: '👑', cls: 'bg-gradient-to-r from-amber-300 via-sky-300 to-amber-400 text-slate-950 border-slate-950', frame: 'border-2 border-t-4 border-amber-400 ring-2 ring-sky-400' }
       ];
 
-      function getMemberTier(lpVal) {
-        const lp = Math.max(0, Number(lpVal) || 0);
-        let idx = 0;
+      function getMemberTier(lpOrMember) {
+        const isObj = lpOrMember && typeof lpOrMember === 'object';
+        const m = isObj ? lpOrMember : null;
+        const lp = Math.max(0, Number(m ? m.lp : lpOrMember) || 0);
+        let naturalIdx = 0;
         for (let i = 0; i < LOL_TIERS.length; i++) {
-          if (lp >= LOL_TIERS[i].min) idx = i;
+          if (lp >= LOL_TIERS[i].min) naturalIdx = i;
+        }
+        let idx = naturalIdx;
+        if (m && typeof m.tierIdx === 'number') {
+          idx = Math.max(0, Math.min(LOL_TIERS.length - 1, m.tierIdx));
         }
         const cur = LOL_TIERS[idx];
         const next = LOL_TIERS[idx + 1] || null;
-        const inPromo = next && (next.min - lp <= 15);
-        return { ...cur, lp, nextName: next ? next.name : null, nextMin: next ? next.min : null, inPromo };
+        const banked = m ? (Number(m.bankedLp) || 0) : 0;
+        const inPromo = !!(next && (lp >= next.min - 15));
+        return { ...cur, idx, lp, banked, nextName: next ? next.name : null, nextMin: next ? next.min : null, inPromo };
       }
 
       function checkStarterChallenge(memberId) {
@@ -3133,7 +3149,26 @@
       function addMemberLp(memberId, delta, reason) {
         const m = shared.members.find(x => x.id === memberId);
         if (!m || !delta) return;
-        m.lp = Math.max(0, (Number(m.lp) || 0) + delta);
+        if (typeof m.tierIdx !== 'number') {
+          let nIdx = 0;
+          const curVal = Number(m.lp) || 0;
+          for (let i = 0; i < LOL_TIERS.length; i++) if (curVal >= LOL_TIERS[i].min) nIdx = i;
+          m.tierIdx = nIdx;
+        }
+        const nextTier = LOL_TIERS[m.tierIdx + 1] || null;
+        if (delta > 0 && nextTier) {
+          const curLp = Number(m.lp) || 0;
+          if (curLp >= nextTier.min) {
+            m.bankedLp = (Number(m.bankedLp) || 0) + delta;
+          } else if (curLp + delta > nextTier.min) {
+            m.lp = nextTier.min;
+            m.bankedLp = (Number(m.bankedLp) || 0) + (curLp + delta - nextTier.min);
+          } else {
+            m.lp = curLp + delta;
+          }
+        } else {
+          m.lp = Math.max(0, (Number(m.lp) || 0) + delta);
+        }
         if (!shared.lpHistory) shared.lpHistory = {};
         if (!shared.lpHistory[memberId]) shared.lpHistory[memberId] = [];
         shared.lpHistory[memberId].push({
@@ -3163,9 +3198,10 @@
         '오늘의 MVP는 무조건 너다 🏆'
       ];
 
-      function renderTierPill(lpVal) {
-        const t = getMemberTier(lpVal);
-        return `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-black border ${t.cls}">${t.icon} ${t.name} ${t.lp}LP</span>${t.inPromo ? `<span class="inline-flex items-center px-1.5 py-0.5 rounded-md text-[10px] font-black bg-rose-600 text-white">⚔️ ${t.nextName} 승급전</span>` : ''}`;
+      function renderTierPill(lpOrMember) {
+        const t = getMemberTier(lpOrMember);
+        const bankTxt = t.banked > 0 ? ` (+${t.banked} 보관)` : '';
+        return `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-black border ${t.cls}">${t.icon} ${t.name} ${t.lp}LP${bankTxt}</span>${t.inPromo ? `<span class="inline-flex items-center px-1.5 py-0.5 rounded-md text-[10px] font-black bg-rose-600 text-white">⚔️ ${t.nextName} 승급전</span>` : ''}`;
       }
 
       const STREAK_EVOLUTION = {
@@ -3303,7 +3339,7 @@
         }
         const ab = document.getElementById('alert-toggle-btn'); ab.textContent = prefs.alertEnabled ? '🔔 쉬는시간 알림 켜짐' : '🔕 쉬는시간 알림 꺼짐';
         const tNow = todayStr();
-        const tierInfo = getMemberTier(meHdr ? (meHdr.lp || 0) : 0);
+        const tierInfo = getMemberTier(meHdr || 0);
         const promoBar = document.getElementById('promo-action-bar');
         const promoBadge = document.getElementById('promo-bar-badge');
         const promoTitle = document.getElementById('promo-bar-title');
@@ -3326,9 +3362,9 @@
             promoBar.classList.remove('hidden');
             promoBadge.textContent = '승급전 진행 중';
             promoBadge.className = 'px-2 py-0.5 rounded-md text-[11px] font-black bg-slate-950 text-amber-300';
-            promoTitle.textContent = `${tierInfo.nextName} 승급전 당일입니다!`;
-            promoDesc.textContent = `오늘의 미션: ${mission.desc}`;
-            promoActs.innerHTML = `<button type="button" id="btn-complete-promo" class="px-3.5 py-2 rounded-xl bg-slate-950 hover:bg-slate-800 text-amber-300 text-xs font-black">승급전 완료하기</button>`;
+            promoTitle.textContent = `${tierInfo.nextName} 승급전 도전 중!`;
+            promoDesc.textContent = `미션: ${mission.desc}${tierInfo.banked > 0 ? ` · 승급 시 보관된 +${tierInfo.banked} LP 합산` : ''}`;
+            promoActs.innerHTML = `<button type="button" id="btn-fail-promo" class="px-2.5 py-1.5 rounded-xl bg-white border border-rose-200 text-rose-600 text-xs font-bold">포기</button><button type="button" id="btn-complete-promo" class="px-3.5 py-2 rounded-xl bg-slate-950 hover:bg-slate-800 text-amber-300 text-xs font-black">승급전 완료하기</button>`;
           }
         } else if (meHdr && meHdr.promoPendingDate) {
           document.body.setAttribute('data-promo', 'ready');
@@ -3344,20 +3380,24 @@
           promoBar.classList.remove('hidden');
           promoBadge.textContent = '승급전 재도전 대기';
           promoBadge.className = 'px-2 py-0.5 rounded-md text-[11px] font-black bg-slate-700 text-white';
-          promoTitle.textContent = `승급전 실패 후 재정비 기간입니다.`;
-          promoDesc.textContent = `이틀 뒤(${meHdr.promoCooldownUntil})부터 다시 승급전에 도전할 수 있습니다.`;
+          promoTitle.textContent = `오늘 승급전에 실패했습니다.`;
+          promoDesc.textContent = `내일(${meHdr.promoCooldownUntil})부터 다시 승급전에 도전할 수 있습니다.`;
           promoActs.innerHTML = '';
         } else if (meHdr && tierInfo.inPromo && tierInfo.nextName) {
           document.body.setAttribute('data-promo', 'ready');
           const mission = getPromoMission(tierInfo.nextName);
+          const needsTomorrow = mission.type === 'ultra' && getMemberMode(meHdr) !== 'strict';
           promoBar.classList.remove('hidden');
           promoBadge.textContent = '승급전';
           promoBadge.className = 'px-2 py-0.5 rounded-md text-[11px] font-black bg-amber-400 text-slate-950';
           promoTitle.textContent = `${tierInfo.nextName} 승급전 도전 가능`;
-          promoDesc.textContent = `내일 시작 · ${mission.desc}`;
-          promoActs.innerHTML = `<button type="button" id="btn-join-promo" class="px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 border border-slate-950 text-xs font-black">승급전 참여하기 (내일)</button>`;
+          promoDesc.textContent = `${needsTomorrow ? '울트라집중모드 필요(내일 시작) · ' : '지금 바로 시작 가능 · '}${mission.desc}${tierInfo.banked > 0 ? ` · 보관 LP +${tierInfo.banked}` : ''}`;
+          promoActs.innerHTML = `<button type="button" id="btn-join-promo" class="px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 border border-slate-950 text-xs font-black">${needsTomorrow ? '승급전 도전하기 (내일)' : '승급전 도전하기'}</button>`;
         } else {
           document.body.removeAttribute('data-promo');
+          promoBar.classList.add('hidden');
+        }
+        if (prefs.activeTab !== 'dashboard') {
           promoBar.classList.add('hidden');
         }
 
@@ -3652,7 +3692,7 @@
           const tiersTopDown = LOL_TIERS.slice().reverse();
           const tierBlocks = tiersTopDown.map(tObj => {
             const names = activeMembers
-              .filter(m => getMemberTier(m.lp || 0).name === tObj.name)
+              .filter(m => getMemberTier(m).name === tObj.name)
               .sort((a, b) => (b.lp || 0) - (a.lp || 0))
               .map(m => m.name);
             if (!names.length) return '';
@@ -3733,7 +3773,7 @@
           const isStudying = !!m.isFocusing;
           const allBadges = getBadgesForMember(m, t);
           const badges = allBadges;
-          const tierObj = getMemberTier(m.lp || 0);
+          const tierObj = getMemberTier(m);
           const flameCls = todayTotalMins >= 600 ? 'flame-lv5' : todayTotalMins >= 420 ? 'flame-lv4' : todayTotalMins >= 300 ? 'flame-lv3' : todayTotalMins >= 180 ? 'flame-lv2' : todayTotalMins >= 60 ? 'flame-lv1' : '';
           const isPromoNow = m.promoActiveDate === t;
           const isUltra = getMemberMode(m) === 'strict';
@@ -3774,7 +3814,7 @@
                   </div>
                 </div>
                 <div class="space-y-1.5">
-                  <div class="flex items-center gap-1 flex-wrap min-w-0">${renderTierPill(m.lp || 0)}</div>
+                  <div class="flex items-center gap-1 flex-wrap min-w-0">${renderTierPill(m)}</div>
                   ${badges.length ? `<div class="flex flex-wrap gap-1">${badges.map(renderBadgePill).join('')}</div>` : ''}
                 </div>
               </div>
@@ -4003,7 +4043,7 @@
               : 'px-2.5 py-1 rounded-full text-[11px] font-black bg-emerald-100 text-emerald-800 whitespace-nowrap cursor-pointer hover:opacity-80 transition';
           }
           const tierEl = document.getElementById('profile-tier-lp');
-          if (tierEl) tierEl.innerHTML = renderTierPill(tm.lp || 0);
+          if (tierEl) tierEl.innerHTML = renderTierPill(tm);
           const eqEl = document.getElementById('profile-equipped-title');
           if (eqEl) eqEl.textContent = `장착 중: ${tm.equippedTitle || '없음'}`;
           const uneqBtn = document.getElementById('btn-profile-unequip');
@@ -4181,7 +4221,7 @@
             const tiersTopDown = LOL_TIERS.slice().reverse();
             const blocks = tiersTopDown.map(tObj => {
               const inTier = activeMembers
-                .filter(m => getMemberTier(m.lp || 0).name === tObj.name)
+                .filter(m => getMemberTier(m).name === tObj.name)
                 .sort((a, b) => (b.lp || 0) - (a.lp || 0));
               if (!inTier.length) return '';
               return `<div class="rounded-xl border border-slate-200 bg-slate-50 p-3 space-y-2">
@@ -4215,11 +4255,11 @@
 
         const me = shared.members.find(m => m.id === prefs.currentUserId) || shared.members[0];
         if (!me) return;
-        const myTier = getMemberTier(me.lp || 0);
+        const myTier = getMemberTier(me);
         const sumEl = document.getElementById('my-rank-tier-summary');
         if (sumEl) {
           const leftTxt = myTier.nextMin != null ? `다음 티어(${myTier.nextName})까지 ${Math.max(0, myTier.nextMin - myTier.lp)} LP` : '최고 티어 달성!';
-          sumEl.innerHTML = `${renderTierPill(me.lp || 0)} <span class="text-xs font-bold text-slate-500">${leftTxt}</span>`;
+          sumEl.innerHTML = `${renderTierPill(me)} <span class="text-xs font-bold text-slate-500">${leftTxt}</span>`;
         }
         const tblEl = document.getElementById('rank-tier-table-wrap');
         if (tblEl) {
@@ -4264,7 +4304,7 @@
                   ${aura.sub ? `<span class="text-[10px] font-extrabold text-amber-700">${aura.sub}</span>` : ''}
                 </div>
                 <div class="shrink-0">
-                  ${isMine ? '<span class="px-2.5 py-1 rounded-full bg-indigo-600 text-white text-[10px] font-black shadow-sm">📍 현재 내 위치</span>' : (myTier.lp >= tObj.min ? '<span class="text-[11px] font-bold text-emerald-600">달성 ✓</span>' : '<span class="text-[11px] text-slate-400">-</span>')}
+                  ${isMine ? '<span class="px-2.5 py-1 rounded-full bg-indigo-600 text-white text-[10px] font-black shadow-sm">📍 현재 내 위치</span>' : (origIdx < myTier.idx ? '<span class="text-[11px] font-bold text-emerald-600">달성 ✓</span>' : '<span class="text-[11px] text-slate-400">-</span>')}
                 </div>
               </div>`;
             }).join('')}
@@ -4704,60 +4744,101 @@
       document.getElementById('promo-action-bar').addEventListener('click', e => {
         const me = shared.members.find(m => m.id === prefs.currentUserId);
         if (!me) return;
-        const tierInfo = getMemberTier(me.lp || 0);
+        const tierInfo = getMemberTier(me);
         if (e.target.id === 'btn-join-promo') {
+          const tNow = todayStr();
           const tmr = tomorrowStr();
-          if (getNowParts().day === 0 || new Date(tmr + 'T00:00:00').getDay() === 0) {
-            showToast('일요일에는 승급전에 도전할 수 없습니다. 월~토요일에 도전해 주세요!', 'warn');
+          const mission = getPromoMission(tierInfo.nextName);
+          const needsTomorrow = mission.type === 'ultra' && getMemberMode(me) !== 'strict';
+          const targetDay = needsTomorrow ? tmr : tNow;
+          if (new Date(targetDay + 'T12:00:00').getDay() === 0) {
+            showToast('일요일에는 승급전을 진행할 수 없습니다. 월~토요일에 도전해 주세요!', 'warn');
             return;
           }
-          const mission = getPromoMission(tierInfo.nextName);
-          openModal(`${tierInfo.nextName} 승급전 참여 안내`, `
+          openModal(`${tierInfo.nextName} 승급전 도전 안내`, `
             <div class="space-y-3 text-xs sm:text-sm text-slate-700">
-              <p><strong>내일(${tmr})</strong>부터 <strong>${tierInfo.nextName} 승급전</strong>에 도전합니다!</p>
+              <p><strong>${needsTomorrow ? `내일(${tmr})` : '지금 바로'}</strong> <strong>${tierInfo.nextName} 승급전</strong>을 시작합니다!</p>
               <div class="p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-950 space-y-1">
                 <p class="font-black">승급전 미션 (${tierInfo.nextName})</p>
                 <p class="text-xs">${mission.desc}</p>
               </div>
-              <p class="text-xs text-slate-500">연속 집중 미션은 스톱워치 <strong>잠시 쉬기</strong>가 10분 이내일 때 끊기지 않고 이어지며, 실패해도 LP가 깎이지 않습니다.</p>
+              <p class="text-xs text-slate-500">${needsTomorrow ? '울트라집중모드가 필요한 승급전은 내일부터 울트라집중모드와 함께 시작됩니다.' : '미션 달성 후 승급전 완료하기를 누르면 보관된 LP와 함께 즉시 승급됩니다.'} 실패 시 당일은 재도전할 수 없으며 내일부터 다시 도전할 수 있습니다.</p>
               <div class="flex justify-end gap-2 pt-2">
                 <button id="promo-modal-cancel" type="button" class="px-3 py-2 rounded-xl bg-slate-100 text-xs font-bold">취소</button>
-                <button id="promo-modal-confirm" type="button" class="px-4 py-2 rounded-xl bg-amber-500 text-slate-950 border border-slate-950 text-xs font-black">내일부터 승급전 참여</button>
+                <button id="promo-modal-confirm" type="button" class="px-4 py-2 rounded-xl bg-amber-500 text-slate-950 border border-slate-950 text-xs font-black">${needsTomorrow ? '내일부터 승급전 시작' : '지금 바로 시작하기'}</button>
               </div>
             </div>
           `);
           document.getElementById('promo-modal-cancel').addEventListener('click', closeModal);
           document.getElementById('promo-modal-confirm').addEventListener('click', () => {
-            me.promoPendingDate = tmr;
-            me.promoTargetTier = tierInfo.nextName;
-            saveSharedData(); closeModal();
-            showToast(`내일(${tmr}) ${tierInfo.nextName} 승급전이 예약되었습니다!`, 'success');
+            if (needsTomorrow) {
+              me.promoPendingDate = tmr;
+              me.pendingMode = 'strict';
+              me.pendingDate = tmr;
+              me.promoTargetTier = tierInfo.nextName;
+              saveSharedData(); closeModal();
+              showToast(`내일(${tmr}) 울트라집중모드와 함께 ${tierInfo.nextName} 승급전이 시작됩니다!`, 'success');
+            } else {
+              me.promoActiveDate = tNow;
+              me.promoTargetTier = tierInfo.nextName;
+              saveSharedData(); closeModal();
+              showToast(`${tierInfo.nextName} 승급전이 시작되었습니다! 미션을 달성해 보세요.`, 'success');
+            }
             renderAll();
           });
         } else if (e.target.id === 'btn-cancel-promo') {
           me.promoPendingDate = null;
           me.promoTargetTier = null;
           saveSharedData();
-          showToast('승급전 참여 예약이 취소되었습니다.', 'info');
+          showToast('승급전 예약이 취소되었습니다.', 'info');
+          renderAll();
+        } else if (e.target.id === 'btn-fail-promo') {
+          const tNow = todayStr();
+          me.promoActiveDate = null;
+          me.promoTargetTier = null;
+          me.promoWinStreak = 0;
+          me.promoCooldownUntil = addDaysStr(tNow, 1);
+          saveSharedData();
+          showToast(`승급전을 포기했습니다. 내일(${me.promoCooldownUntil})부터 다시 도전할 수 있습니다.`, 'warn');
           renderAll();
         } else if (e.target.id === 'btn-complete-promo') {
           if (getNowParts().day === 0) {
             showToast('일요일에는 승급전을 완료할 수 없습니다.', 'warn');
             return;
           }
+          const tNow = todayStr();
+          const mission = getPromoMission(tierInfo.nextName);
+          const todayMins = (shared.studyLogs?.[tNow]?.[me.id]) || 0;
+          const todayMaxCont = Math.max((shared.maxFocusLogs?.[tNow]?.[me.id]) || 0, Math.floor(focusElapsedSecs / 60));
+          let missionOk = false;
+          if (mission.type === 'continuous') missionOk = todayMaxCont >= mission.mins;
+          else if (mission.type === 'total') missionOk = todayMins >= mission.mins;
+          else if (mission.type === 'ultra') {
+            missionOk = STUDY_PERIODS.slice(0, 8).every(p => {
+              const st = getMemberDayStatus(me.id, tNow, p.id);
+              return st === 'present' || st === 'exempt';
+            });
+          }
+          if (!missionOk) {
+            showToast(`아직 미션을 달성하지 못했습니다! (${mission.desc})`, 'warn');
+            return;
+          }
           const nextObj = LOL_TIERS.find(t => t.name === tierInfo.nextName);
+          const releasedBank = Number(me.bankedLp) || 0;
           if (nextObj) {
-            me.lp = Math.max(me.lp || 0, nextObj.min);
+            me.tierIdx = LOL_TIERS.findIndex(t => t.name === nextObj.name);
+            me.lp = Math.max(me.lp || 0, nextObj.min) + releasedBank;
+            me.bankedLp = 0;
           }
           if (!shared.promoHistory) shared.promoHistory = {};
           if (!shared.promoHistory[me.id]) shared.promoHistory[me.id] = {};
-          shared.promoHistory[me.id][todayStr()] = `${tierInfo.nextName} 승급`;
+          shared.promoHistory[me.id][tNow] = `${tierInfo.nextName} 승급`;
           me.promoWinStreak = (me.promoWinStreak || 0) + 1;
           if (me.promoWinStreak >= 2) unlockChallengeFor(me.id, 'ch_promo_streak', false);
           me.promoActiveDate = null;
           me.promoTargetTier = null;
           saveSharedData();
-          showToast(`축하합니다! ${tierInfo.nextName} 티어로 승급했습니다!`, 'success');
+          showToast(`축하합니다! ${tierInfo.nextName} 티어로 승급했습니다!${releasedBank > 0 ? ` (보관 LP +${releasedBank} 합산)` : ''}`, 'success');
           renderAll();
         }
       });
@@ -5345,7 +5426,7 @@
           const allB = getBadgesForMember(m, t);
           openModal(`${m.equippedTitle ? `[${escapeHtml(m.equippedTitle)}] ` : ''}${escapeHtml(m.name)} 상세 기록`, `
             <div class="space-y-3 text-xs">
-              <div class="flex flex-wrap items-center gap-1.5">${renderTierPill(m.lp || 0)} ${getMemberMode(m) === 'strict' ? '<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-black text-amber-300 border border-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.45)]" style="background:linear-gradient(90deg,#0f172a,#7f1d1d,#0f172a)"><span class="inline-block animate-pulse">⚡</span>울트라집중모드</span>' : '<span class="px-2 py-0.5 rounded bg-slate-100 font-bold">자율모드</span>'}</div>
+              <div class="flex flex-wrap items-center gap-1.5">${renderTierPill(m)} ${getMemberMode(m) === 'strict' ? '<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-black text-amber-300 border border-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.45)]" style="background:linear-gradient(90deg,#0f172a,#7f1d1d,#0f172a)"><span class="inline-block animate-pulse">⚡</span>울트라집중모드</span>' : '<span class="px-2 py-0.5 rounded bg-slate-100 font-bold">자율모드</span>'}</div>
               <div class="grid grid-cols-2 gap-2">
                 <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200"><div class="text-slate-400">오늘 누적 공부</div><div class="text-sm font-black text-slate-900 mt-0.5">${formatStudyMins(todayTotalMins)}</div></div>
                 <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200"><div class="text-slate-400">오늘 최장 연속</div><div class="text-sm font-black text-slate-900 mt-0.5">${maxF}분</div></div>
@@ -5866,8 +5947,12 @@
         const m = shared.members.find(x => x.id === mid);
         if (!m) return;
         m.lp = Math.max(0, Number(document.getElementById('admin-rank-lp-input').value) || 0);
+        let newTIdx = 0;
+        for (let i = 0; i < LOL_TIERS.length; i++) if (m.lp >= LOL_TIERS[i].min) newTIdx = i;
+        m.tierIdx = newTIdx;
+        m.bankedLp = 0;
         saveSharedData();
-        const tInfo = getMemberTier(m.lp);
+        const tInfo = getMemberTier(m);
         showToast(`${escapeHtml(m.name)}님의 랭크가 ${tInfo.icon} ${tInfo.name} (${m.lp} LP)로 변경되었습니다!`, 'success');
         renderAll();
       });
@@ -6586,7 +6671,9 @@
       document.getElementById('focus-min-btn').addEventListener('click', minimizeFocusOverlay);
       document.getElementById('focus-mini-expand').addEventListener('click', openFocusOverlay);
       document.getElementById('focus-end-btn').addEventListener('click', () => { closeFocusOverlay(); flushCelebrations(); });
+      let googleLoginBusy = false;
       document.getElementById('btn-google-login').addEventListener('click', () => {
+        if (googleLoginBusy) return;
         if (typeof firebase === 'undefined' || typeof firebase.auth !== 'function') {
           showAuthOverlay('login', 'Firebase 인증 모듈을 불러오지 못했습니다. 인터넷 연결을 확인하세요.');
           return;
@@ -6595,15 +6682,26 @@
           showAuthOverlay('login', '이 파일을 직접 열면 Google 로그인은 사용할 수 없습니다. 기존에 연결해 둔 웹 주소에 이 파일을 올려서 접속해 주세요.');
           return;
         }
+        const loginBtn = document.getElementById('btn-google-login');
+        const labelSpan = loginBtn.querySelector('span');
+        googleLoginBusy = true;
+        loginBtn.disabled = true;
+        if (labelSpan) labelSpan.textContent = 'Google 로그인 중…';
         const provider = new firebase.auth.GoogleAuthProvider();
-        firebase.auth().signInWithPopup(provider).catch(err => {
+        firebase.auth().signInWithPopup(provider).then(() => {
+          showAuthOverlay('loading');
+        }).catch(err => {
           if (err && (err.code === 'auth/popup-blocked' || err.code === 'auth/operation-not-supported-in-this-environment')) {
             firebase.auth().signInWithRedirect(provider).catch(rErr => {
               showAuthOverlay('login', '로그인 오류: ' + (rErr?.message || '호스팅된 웹 주소(https://)에서 접속해 주세요.'));
             });
-          } else {
+          } else if (err && err.code !== 'auth/popup-closed-by-user' && err.code !== 'auth/cancelled-popup-request') {
             showAuthOverlay('login', '로그인 실패: ' + (err?.message || 'Firebase 콘솔에서 Google 로그인을 활성화했는지 확인하세요.'));
           }
+        }).finally(() => {
+          googleLoginBusy = false;
+          loginBtn.disabled = false;
+          if (labelSpan) labelSpan.textContent = 'Google로 로그인하기';
         });
       });
 
