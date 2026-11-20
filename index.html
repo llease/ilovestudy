@@ -3838,6 +3838,10 @@
             unlockChallengeFor(found.id, 'ch_join_study', true);
             saveSharedData();
           }
+          if (focusInterval && !prefs.adminMode && !found.isFocusing && !found.isFocusPaused && found.forceStoppedAt && (!focusStartedAt || found.forceStoppedAt >= focusStartedAt)) {
+            closeFocusOverlay(true);
+            showToast('관리자에 의해 타이머가 종료되었습니다. 종료 시점까지의 공부 시간이 반영되었습니다.', 'info');
+          }
           renderAll();
           if (found.justApproved) {
             found.justApproved = false;
@@ -5325,6 +5329,7 @@
 
       const expandedBragComments = new Set();
       const bragCommentDrafts = new Map();
+      const bragAnonComments = new Set();
       let bragFeedRefreshPending = false;
       let lastBragFeedMarkup = '';
       function bragDraftKey(photoId) { return prefs.currentUserId + '/' + photoId; }
@@ -5455,20 +5460,29 @@
                   ${likeSummary ? `<p class="font-bold text-slate-900 text-xs">${likeSummary}</p>` : ''}
                   ${p.caption ? `<p class="text-slate-800 whitespace-pre-line break-words leading-relaxed"><span class="font-black text-slate-950 mr-1.5">${escapeHtml(authorName)}</span>${escapeHtml(p.caption)}</p>` : ''}
                   ${comments.length > 2 && !isExpanded ? `<button type="button" data-expand-comments="${p.id}" class="text-[11px] font-semibold text-slate-400 hover:text-slate-600">댓글 ${comments.length}개 모두 보기</button>` : ''}
-                  ${visibleComments.length ? `<div class="space-y-1 pt-0.5">${visibleComments.map(cm => `
-                    <div class="flex items-start justify-between gap-2">
+                  ${visibleComments.length ? `<div class="space-y-1 pt-0.5">${visibleComments.map(cm => {
+                    const cmAuthor = cm.anonymous ? (shared.members || []).find(m => m.id === cm.memberId) : null;
+                    const cmLabel = cm.anonymous
+                      ? (prefs.adminMode && isAdminUser() ? `익명 (${cmAuthor ? cmAuthor.name : (cm.realAuthorName || '알 수 없음')})` : '익명')
+                      : (cm.memberName || '스터디원');
+                    return `<div class="flex items-start justify-between gap-2">
                       <p class="text-slate-700 leading-snug break-words min-w-0 flex-1">
-                        <span class="font-bold text-slate-900 mr-1.5">${escapeHtml(cm.memberName || '스터디원')}</span>${escapeHtml(cm.text)}
+                        <span class="font-bold text-slate-900 mr-1.5">${escapeHtml(cmLabel)}</span>${escapeHtml(cm.text)}
                         <span class="text-[10px] text-slate-400 ml-1">${escapeHtml(cm.time || '')}</span>
                       </p>
                       ${(prefs.adminMode || cm.memberId === prefs.currentUserId) ? `<button type="button" data-del-comment="${p.id}|${cm.id}" class="text-[10px] text-slate-400 hover:text-rose-500 shrink-0 px-1" aria-label="댓글 삭제">✕</button>` : ''}
-                    </div>`).join('')}</div>` : ''}
+                    </div>`;
+                  }).join('')}</div>` : ''}
                 </div>
 
                 <!-- IG Comment Composer -->
                 <form data-comment-form="${p.id}" class="border-t border-slate-100 px-3.5 py-2 flex items-center gap-2 bg-slate-50/40">
-                  <div class="w-6 h-6 rounded-full bg-slate-200 overflow-hidden flex items-center justify-center text-[10px] font-black text-slate-700 shrink-0">${meAvSmall}</div>
-                  <input id="comment-input-${p.id}" type="text" maxlength="200" value="${escapeHtml(bragCommentDrafts.get(bragDraftKey(p.id)) || '')}" placeholder="댓글 달기…" class="flex-1 min-w-0 bg-transparent border-0 px-1 py-1 text-xs text-slate-800 placeholder-slate-400 focus:outline-none" required />
+                  <div class="w-6 h-6 rounded-full bg-slate-200 overflow-hidden flex items-center justify-center text-[10px] font-black text-slate-700 shrink-0">${bragAnonComments.has(p.id) ? '?' : meAvSmall}</div>
+                  <input id="comment-input-${p.id}" type="text" maxlength="200" value="${escapeHtml(bragCommentDrafts.get(bragDraftKey(p.id)) || '')}" placeholder="${bragAnonComments.has(p.id) ? '익명으로 댓글 달기…' : '댓글 달기…'}" class="flex-1 min-w-0 bg-transparent border-0 px-1 py-1 text-xs text-slate-800 placeholder-slate-400 focus:outline-none" required />
+                  <label class="inline-flex items-center gap-1 text-[11px] font-bold text-slate-500 cursor-pointer shrink-0 select-none">
+                    <input type="checkbox" data-comment-anon="${p.id}" ${bragAnonComments.has(p.id) ? 'checked' : ''} class="w-3.5 h-3.5 accent-slate-900 rounded" />
+                    <span>익명</span>
+                  </label>
                   <button type="submit" class="px-2 py-1 rounded-lg text-xs font-black text-sky-500 hover:text-sky-600 whitespace-nowrap shrink-0 transition">게시</button>
                 </form>
               </article>`;
@@ -5513,8 +5527,9 @@
         const isUltra = getMemberMode(m) === 'strict';
         const status = memberStatus(m, now);
         const isMe = m.id === prefs.currentUserId;
+        const canForceStop = prefs.adminMode && isAdminUser() && !!(m.isFocusing || m.isFocusPaused);
         const canRemove = prefs.adminMode && shared.members.length > 1;
-        const hasMenu = !isMe || canRemove;
+        const hasMenu = !isMe || canRemove || canForceStop;
         const hours = Math.floor(mins / 60);
 
         return `<article class="member-card" data-member-card-wrap="${id}" data-member-tier="${tier.idx}"${tier.idx >= 6 ? ' data-elite' : ''}${hasMenu ? ' data-has-menu' : ''}
@@ -5555,6 +5570,7 @@
             <div id="member-menu-box-${id}" data-card-menu-box="${id}" class="hidden absolute right-0 z-50 w-40 rounded-xl bg-white border border-slate-200 shadow-xl p-1 space-y-0.5 text-left">
               ${!isMe ? `<button type="button" id="member-respect-${id}" data-respect-member="${id}" class="w-full px-2.5 py-2 rounded-lg hover:bg-slate-100 text-[11px] font-bold text-slate-800 text-left">👏 리스펙 보내기</button>
               <button type="button" id="member-report-${id}" data-report-member="${id}" class="w-full px-2.5 py-2 rounded-lg hover:bg-rose-50 text-[11px] font-bold text-rose-600 text-left">🚨 신고하기</button>` : ''}
+              ${canForceStop ? `<button type="button" id="member-stop-${id}" data-force-stop-timer="${id}" class="w-full px-2.5 py-2 rounded-lg hover:bg-amber-50 text-[11px] font-bold text-amber-700 text-left">⏹️ 타이머 강제 종료</button>` : ''}
               ${canRemove ? `<button type="button" id="member-remove-${id}" data-del-member="${id}" class="w-full px-2.5 py-2 rounded-lg hover:bg-rose-50 text-[11px] font-bold text-rose-600 text-left">스터디에서 내보내기</button>` : ''}
             </div>
           </div>` : ''}
@@ -7513,6 +7529,7 @@
           });
           return;
         }
+        const fsb = e.target.closest('[data-force-stop-timer]'); if (fsb) { forceStopMemberTimer(fsb.dataset.forceStopTimer); return; }
         const b = e.target.closest('[data-del-member]'); if (b) { kickMemberKeepData(b.dataset.delMember); return; }
         const card = e.target.closest('[data-member-detail]');
         if (card) {
@@ -7546,8 +7563,13 @@
                 <div class="font-bold text-slate-700 mb-1.5">🏅 보유 뱃지 (${allB.length}개)</div>
                 <div class="flex flex-wrap gap-1">${allB.length ? allB.map(renderBadgePill).join('') : '<span class="text-slate-400">없음</span>'}</div>
               </div>
+              ${(prefs.adminMode && isAdminUser() && (m.isFocusing || m.isFocusPaused)) ? `<div class="pt-1"><button type="button" id="modal-force-stop-btn" data-force-stop-timer="${escapeHtml(m.id)}" class="w-full py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-black">⏹️ 실행 중인 타이머 강제 종료</button></div>` : ''}
             </div>
           `);
+          document.getElementById('modal-force-stop-btn')?.addEventListener('click', () => {
+            closeModal();
+            forceStopMemberTimer(m.id);
+          });
         }
       }
       memberGrid.addEventListener('click', handleMemberCardClick);
@@ -8046,8 +8068,17 @@
         image.src = photo.dataUrl;
       }
       const feedListEl = document.getElementById('photo-feed-list');
+      feedListEl.addEventListener('change', e => {
+        const anonCb = e.target.closest('[data-comment-anon]');
+        if (!anonCb) return;
+        const pid = anonCb.dataset.commentAnon;
+        if (anonCb.checked) bragAnonComments.add(pid);
+        else bragAnonComments.delete(pid);
+        const inp = document.getElementById(`comment-input-${pid}`);
+        if (inp) inp.placeholder = anonCb.checked ? '익명으로 댓글 달기…' : '댓글 달기…';
+      });
       feedListEl.addEventListener('input', e => {
-        if (!e.target.matches('form[data-comment-form] input')) return;
+        if (!e.target.matches('form[data-comment-form] input[type="text"]')) return;
         const key = bragDraftKey(e.target.form.dataset.commentForm);
         if (e.target.value) bragCommentDrafts.set(key, e.target.value);
         else bragCommentDrafts.delete(key);
@@ -8088,7 +8119,9 @@
         if (!form) return;
         e.preventDefault();
         const pid = form.dataset.commentForm;
-        const inp = form.querySelector('input');
+        const inp = form.querySelector('input[type="text"]');
+        const anonCb = form.querySelector('[data-comment-anon]');
+        const isAnon = !!(anonCb && anonCb.checked);
         const txt = inp ? inp.value.trim() : '';
         if (!txt) return;
         const p = (shared.photos || []).find(x => x.id === pid);
@@ -8098,7 +8131,9 @@
         list.push({
           id: 'cm_' + Date.now() + '_' + Math.random().toString(36).slice(2, 5),
           memberId: me.id,
-          memberName: me.name,
+          memberName: isAnon ? '익명' : me.name,
+          realAuthorName: me.name,
+          anonymous: isAnon,
           text: txt,
           date: todayStr(),
           time: getNowParts().hhmm
@@ -8606,10 +8641,22 @@
         if (!member) return false;
         const studying = activity === 'studying';
         const paused = activity === 'resting';
-        if (!!member.isFocusing === studying && !!member.isFocusPaused === paused) return false;
+        const changed = !!member.isFocusing !== studying || !!member.isFocusPaused !== paused;
         member.isFocusing = studying;
         member.isFocusPaused = paused;
-        return true;
+        if (studying || paused) {
+          member.focusStartedAt = focusStartedAt;
+          member.focusAccumulatedSecs = focusAccumulatedSecs;
+          member.focusSyncedSecs = focusElapsedSecs;
+          member.focusModeBeforeChange = focusModeBeforeChange || null;
+          member.forceStoppedAt = null;
+        } else {
+          member.focusStartedAt = null;
+          member.focusAccumulatedSecs = 0;
+          member.focusSyncedSecs = 0;
+          member.focusModeBeforeChange = null;
+        }
+        return changed;
       }
 
       function saveFocusState() {
@@ -8641,6 +8688,13 @@
           const st = raw ? JSON.parse(raw) : null;
           const tToday = todayStr();
           const tYesterday = addDaysStr(tToday, -1);
+          const curMember = shared.members.find(m => m.id === memberId);
+          if (curMember && curMember.forceStoppedAt && (!st?.startedAt || curMember.forceStoppedAt >= st.startedAt) && !curMember.isFocusing && !curMember.isFocusPaused) {
+            clearFocusState();
+            closeFocusOsNotification();
+            showToast('관리자에 의해 타이머가 종료되었습니다. 종료 시점까지의 공부 시간이 반영되었습니다.', 'info');
+            return;
+          }
           if (!st || st.memberId !== memberId || (st.date !== tToday && st.date !== tYesterday)) {
             clearFocusState();
             if (raw) closeFocusOsNotification();
@@ -8901,19 +8955,11 @@
         slotMinutes[slot] = Math.min(10, (slotMinutes[slot] || 0) + 1);
       }
 
-      function syncFocusClock(force = false) {
-        if (focusPaused || focusStartedAt == null) return;
-        const target = focusAccumulatedSecs + Math.max(0, Math.floor((Date.now() - focusStartedAt) / 1000));
-        const from = focusElapsedSecs;
-        if (target <= from) {
-          if (force) { updateFocusDisplay(); saveSharedData(); saveFocusState(); }
-          return;
-        }
-        const me = shared.members.find(m => m.id === prefs.currentUserId);
-        if (!me) return;
-        const start = focusStartedAt + (from - focusAccumulatedSecs) * 1000;
-        const end = focusStartedAt + (target - focusAccumulatedSecs) * 1000;
-        const gainedMinute = Math.floor(target / 60) > Math.floor(from / 60);
+      function creditMemberFocusInterval(member, fromSecs, toSecs, accumulatedSecs, startedAtMs, modeBeforeChange, silentChallenges = false) {
+        if (!member || startedAtMs == null || toSecs <= fromSecs) return { creditedStudyMinute: false, markedAttendance: false, gainedMinute: false };
+        const start = startedAtMs + (fromSecs - accumulatedSecs) * 1000;
+        const end = startedAtMs + (toSecs - accumulatedSecs) * 1000;
+        const gainedMinute = Math.floor(toSecs / 60) > Math.floor(fromSecs / 60);
         let markedAttendance = false;
         let creditedStudyMinute = false;
         focusWriteBatch = true;
@@ -8922,18 +8968,18 @@
           const chunks = new Map();
           const simulated = prefs.simTime ? toMins(prefs.simTime) : null;
           focusTimeSlices(start, end, (d, a, b) => {
-            if (creditStudySlice(me, a, b, focusStartedAt, focusAccumulatedSecs)) creditedStudyMinute = true;
+            if (creditStudySlice(member, a, b, startedAtMs, accumulatedSecs)) creditedStudyMinute = true;
             const day = studyDayKey(d);
             syncMemberPendingModes(day);
             const local = new Date(+d + 9 * 3600000);
             const phase = getCurrentPhase(simulated ?? (local.getUTCHours() * 60 + local.getUTCMinutes()));
             if (phase?.type !== 'study') return;
-            const changes = modeTransitions(me);
+            const changes = modeTransitions(member);
             const endpoints = changes.map(change => change.at).filter(at => a < at && at < b);
             let strictMs = 0, left = a;
             for (const right of [...endpoints, b]) {
-              const mode = !changes.length && focusModeBeforeChange && day < focusModeBeforeChange.date
-                ? focusModeBeforeChange.mode : studyModeAt(me, left, changes);
+              const mode = !changes.length && modeBeforeChange && day < modeBeforeChange.date
+                ? modeBeforeChange.mode : studyModeAt(member, left, changes);
               if (mode === 'strict') strictMs += right - left;
               left = right;
             }
@@ -8944,26 +8990,69 @@
             chunks.set(key, chunk);
           });
           for (const {day, phase, secs} of chunks.values()) {
-            const byPeriod = ((shared.periodStudySecs[day] ||= {})[me.id] ||= {});
+            const byPeriod = ((shared.periodStudySecs[day] ||= {})[member.id] ||= {});
             // Combine fractional boundary slices before evaluating the eligibility threshold.
             byPeriod[phase.id] = Math.round(((Number(byPeriod[phase.id]) || 0) + secs) * 1000) / 1000;
           }
           for (const {day, phase} of chunks.values()) {
-            const secs = shared.periodStudySecs[day][me.id][phase.id];
-            const status = getMemberDayStatus(me.id, day, phase.id);
+            const secs = shared.periodStudySecs[day][member.id][phase.id];
+            const status = getMemberDayStatus(member.id, day, phase.id);
             if (secs >= requiredAttendanceSeconds(phase) && (status === 'none' || status === 'awol')) {
-              setMemberDayStatus(me.id, day, phase.id, 'present', 'strict');
+              setMemberDayStatus(member.id, day, phase.id, 'present', 'strict');
               markedAttendance = true;
             }
           }
-          const newMins = Math.floor(target / 60);
-          if (gainedMinute) { me.focusMins = newMins; }
-          focusElapsedSecs = target;
-          const claimed = new Set(shared.memberChallenges?.[me.id] || []);
+          const newMins = Math.floor(toSecs / 60);
+          if (gainedMinute) { member.focusMins = newMins; }
+          const claimed = new Set(shared.memberChallenges?.[member.id] || []);
           (shared.challenges || []).forEach(ch => {
-            if (!claimed.has(ch.id) && ch.focusSecs && target >= ch.focusSecs) unlockChallengeFor(me.id, ch.id, false);
+            if (!claimed.has(ch.id) && ch.focusSecs && toSecs >= ch.focusSecs) unlockChallengeFor(member.id, ch.id, silentChallenges);
           });
         } finally { focusWriteBatch = false; }
+        return { creditedStudyMinute, markedAttendance, gainedMinute };
+      }
+
+      function forceStopMemberTimer(memberId) {
+        if (!prefs.adminMode || !isAdminUser()) return;
+        const target = shared.members.find(m => m.id === memberId);
+        if (!target || (!target.isFocusing && !target.isFocusPaused)) {
+          showToast('이미 타이머가 종료된 멤버입니다.', 'info');
+          return;
+        }
+        const stopAt = Date.now();
+        const accSecs = Number(target.focusAccumulatedSecs) || 0;
+        const syncedSecs = Number(target.focusSyncedSecs) || 0;
+        if (target.isFocusing && target.focusStartedAt) {
+          const targetTotalSecs = accSecs + Math.max(0, Math.floor((stopAt - Number(target.focusStartedAt)) / 1000));
+          if (targetTotalSecs > syncedSecs) {
+            creditMemberFocusInterval(target, syncedSecs, targetTotalSecs, accSecs, Number(target.focusStartedAt), target.focusModeBeforeChange || null, true);
+          }
+        }
+        setMemberFocusStatus(target, '');
+        target.focusMins = 0;
+        target.forceStoppedAt = stopAt;
+        saveSharedData();
+        showToast(`${target.name}님의 타이머를 강제 종료하고 종료 시점까지의 공부 시간을 저장했습니다.`, 'success');
+        renderAll();
+      }
+
+      function syncFocusClock(force = false) {
+        if (focusPaused || focusStartedAt == null) return;
+        const target = focusAccumulatedSecs + Math.max(0, Math.floor((Date.now() - focusStartedAt) / 1000));
+        const from = focusElapsedSecs;
+        if (target <= from) {
+          if (force) { updateFocusDisplay(); saveSharedData(); saveFocusState(); }
+          return;
+        }
+        const me = shared.members.find(m => m.id === prefs.currentUserId);
+        if (!me) return;
+        const { creditedStudyMinute, markedAttendance, gainedMinute } = creditMemberFocusInterval(
+          me, from, target, focusAccumulatedSecs, focusStartedAt, focusModeBeforeChange, false
+        );
+        focusElapsedSecs = target;
+        me.focusSyncedSecs = target;
+        me.focusAccumulatedSecs = focusAccumulatedSecs;
+        me.focusStartedAt = focusStartedAt;
         updateFocusDisplay();
         if (force || gainedMinute || creditedStudyMinute || markedAttendance || Math.floor(target / 15) > Math.floor(from / 15)) {
           saveSharedData();
