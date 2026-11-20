@@ -458,7 +458,7 @@
     body[data-dark="true"] #study-main .ed-card {background:var(--surface)!important}
     body[data-dark="true"] #btn-checkin:hover:not(:disabled),body[data-dark="true"] #focus-pause-btn:hover:not(:disabled){color:var(--link)}
     body[data-dark="true"] #btn-google-login:not(:disabled) {color:var(--ink)}
-    body[data-dark="true"] #study-main .nav-tab.tab-active,body[data-dark="true"] #tab-members [data-members-sub][aria-pressed="true"] {background:var(--primary);color:var(--on-primary)}
+    body[data-dark="true"] #study-main .nav-tab.tab-active,body[data-dark="true"] #tab-members [data-members-sub][aria-pressed="true"],body[data-dark="true"] #tab-admin [data-admin-sub][aria-pressed="true"] {background:var(--primary);color:var(--on-primary)}
     #header-more-menu [data-set-theme][aria-pressed="true"] {outline:2px solid var(--focus-ring);outline-offset:2px}
     #promo-bar-title {white-space:normal;word-break:keep-all}
     #promo-bar-actions {flex-wrap:wrap;flex-shrink:1}
@@ -1173,8 +1173,8 @@
           <span id="my-equipped-title-pill" class="px-3 py-1 rounded-full text-xs font-black bg-slate-950 text-white">장착 칭호: 없음</span>
         </div>
         <div id="challenge-cat-tabs" class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1">
-          <button type="button" data-ch-cat="starter" class="ch-cat-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 whitespace-nowrap">🌱 입문 (22)</button>
-          <button type="button" data-ch-cat="special" class="ch-cat-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-950 text-white whitespace-nowrap">🌟 출석 · 특수 (19)</button>
+          <button type="button" data-ch-cat="starter" class="ch-cat-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 whitespace-nowrap">🌱 입문 (23)</button>
+          <button type="button" data-ch-cat="special" class="ch-cat-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-950 text-white whitespace-nowrap">🌟 출석 · 특수 (18)</button>
           <button type="button" data-ch-cat="focus_mid" class="ch-cat-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 whitespace-nowrap">🔥 연속 집중 (1h~12h)</button>
           <button type="button" data-ch-cat="focus_high" class="ch-cat-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 whitespace-nowrap">👑 극한 집중 (13h~24h)</button>
         </div>
@@ -1586,13 +1586,23 @@
       </div>
     </div>
     <!-- TAB 6: ADMIN PANEL -->
-    <div id="tab-admin" class="tab-panel hidden space-y-4">
+    <div id="tab-admin" class="tab-panel hidden space-y-3.5">
       <div id="admin-report-alert-banner" class="hidden rounded-2xl border-2 border-rose-500 bg-rose-50 px-4 py-3 flex items-center justify-between gap-2">
         <span id="admin-report-alert-text" class="text-xs font-black text-rose-800">🚨 미처리 신고 내역이 있습니다.</span>
         <button id="admin-jump-reports-btn" type="button" class="px-3 py-1 rounded-lg bg-rose-600 text-white text-[11px] font-bold whitespace-nowrap shrink-0">신고 내역 보기</button>
       </div>
-      <div class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-sm space-y-4">
-        <div class="space-y-2.5 bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+
+      <!-- Admin Segmented Sub-Tab Bar -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-1.5 p-1 rounded-2xl bg-slate-100 border border-slate-200">
+        <button type="button" data-admin-sub="attendance" aria-pressed="true" aria-controls="admin-sub-attendance" class="admin-sub-btn py-2 px-2 rounded-xl text-[11px] sm:text-xs font-black bg-slate-950 text-white whitespace-nowrap transition">출석 · 가입<span id="admin-sub-badge-join" class="hidden ml-1 px-1.5 py-0.2 rounded-full bg-amber-400 text-slate-950 text-[9px] font-black">0</span></button>
+        <button type="button" data-admin-sub="members" aria-pressed="false" aria-controls="admin-sub-members" class="admin-sub-btn py-2 px-2 rounded-xl text-[11px] sm:text-xs font-bold text-slate-600 hover:text-slate-950 whitespace-nowrap transition">멤버 · 기록</button>
+        <button type="button" data-admin-sub="rewards" aria-pressed="false" aria-controls="admin-sub-rewards" class="admin-sub-btn py-2 px-2 rounded-xl text-[11px] sm:text-xs font-bold text-slate-600 hover:text-slate-950 whitespace-nowrap transition">챌린지 · 뱃지</button>
+        <button type="button" data-admin-sub="inbox" aria-pressed="false" aria-controls="admin-sub-inbox" class="admin-sub-btn py-2 px-2 rounded-xl text-[11px] sm:text-xs font-bold text-slate-600 hover:text-slate-950 whitespace-nowrap transition">소통 · 관리<span id="admin-sub-badge-inbox" class="hidden ml-1 px-1.5 py-0.2 rounded-full bg-rose-600 text-white text-[9px] font-black">0</span></button>
+      </div>
+
+      <!-- Admin Sub-Tab 1: Attendance & Signup -->
+      <div id="admin-sub-attendance" class="space-y-3.5">
+        <div class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-sm space-y-2.5">
           <div class="flex flex-wrap items-center justify-between gap-2">
             <h4 class="text-xs sm:text-sm font-black text-slate-900">🚪 신규 가입 허용 모드</h4>
             <span id="admin-signup-mode-badge" class="px-2.5 py-0.5 rounded-full text-[11px] font-black bg-emerald-100 text-emerald-800">모두 가입 허용</span>
@@ -1607,95 +1617,86 @@
           </div>
         </div>
 
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div>
-            <span class="px-2 py-0.5 rounded bg-indigo-100 text-indigo-800 text-[10px] font-bold">방장 전용 관리자</span>
-            <h3 class="text-sm font-black text-slate-900 mt-1">과거 · 오늘 · 미래 출석 처리</h3>
-          </div>
-          <div class="flex flex-wrap items-center gap-2">
-            <input id="admin-date-input" type="date" class="rounded-xl border border-slate-300 px-2.5 py-1.5 text-xs font-semibold" />
-            <select id="admin-member-filter" class="rounded-xl border border-slate-300 px-2.5 py-1.5 text-xs font-semibold"></select>
-          </div>
-        </div>
-
-        <div class="flex flex-wrap items-center gap-2 bg-slate-50 p-3 rounded-xl border border-slate-200">
-          <span class="text-xs font-bold text-slate-700 mr-1">적용 상태:</span>
-          <button data-admin-brush="present" class="admin-brush px-2.5 py-1 rounded-lg text-xs font-bold bg-emerald-600 text-white ring-2 ring-indigo-500">출석</button>
-          <button data-admin-brush="late" class="admin-brush px-2.5 py-1 rounded-lg text-xs font-bold bg-amber-100 text-amber-900">지각</button>
-          <button data-admin-brush="awol" class="admin-brush px-2.5 py-1 rounded-lg text-xs font-bold bg-rose-100 text-rose-900">무단이탈</button>
-          <button data-admin-brush="exempt" class="admin-brush px-2.5 py-1 rounded-lg text-xs font-bold bg-sky-100 text-sky-900">수업면제</button>
-          <button data-admin-brush="early" class="admin-brush px-2.5 py-1 rounded-lg text-xs font-bold bg-purple-100 text-purple-900">조퇴</button>
-          <button data-admin-brush="none" class="admin-brush px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-200 text-slate-700">초기화</button>
-        </div>
-
-        <div id="admin-grid-wrap" class="overflow-x-auto"></div>
-
-        <!-- Admin Challenge Completion -->
-        <div class="border-t border-slate-200 pt-4 space-y-2.5">
-          <h4 class="text-xs sm:text-sm font-black text-slate-900">⚔️ 관리자 챌린지 달성 처리 & 칭호 텍스트 수정</h4>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200 overflow-hidden">
-            <div class="space-y-2 min-w-0">
-              <select id="admin-challenge-member" class="w-full rounded-xl border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-semibold"></select>
-              <div id="admin-challenge-toggles" class="flex flex-wrap gap-1.5 max-h-48 overflow-y-auto scrollbar-thin pr-1"></div>
+        <div class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-sm space-y-3.5">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <span class="px-2 py-0.5 rounded bg-indigo-100 text-indigo-800 text-[10px] font-bold">방장 전용 관리자</span>
+              <h3 class="text-sm font-black text-slate-900 mt-1">과거 · 오늘 · 미래 출석 처리</h3>
             </div>
-            <div class="space-y-2 min-w-0">
-              <form id="admin-edit-ch-title-form" class="flex flex-wrap sm:flex-nowrap gap-1.5 min-w-0">
-                <select id="admin-edit-ch-select" class="w-full sm:w-36 min-w-0 rounded-xl border border-slate-300 bg-white px-2 py-1.5 text-xs font-semibold truncate"></select>
-                <input id="admin-edit-ch-title-input" type="text" placeholder="챌린지 칭호 수정" class="flex-1 min-w-0 rounded-xl border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-semibold" />
-                <button type="submit" class="px-3 py-1.5 rounded-xl bg-slate-800 text-white text-xs font-bold whitespace-nowrap shrink-0">변경</button>
-              </form>
+            <div class="flex flex-wrap items-center gap-2">
+              <input id="admin-date-input" type="date" class="rounded-xl border border-slate-300 px-2.5 py-1.5 text-xs font-semibold" />
+              <select id="admin-member-filter" class="rounded-xl border border-slate-300 px-2.5 py-1.5 text-xs font-semibold"></select>
             </div>
           </div>
-        </div>
 
-        <!-- Admin Enter Member View -->
-        <div class="border-t border-slate-200 pt-3.5 space-y-2">
-          <h4 class="text-xs font-black text-slate-900">👀 멤버 화면 들어가기 (캘린더 · 플래너 · 시간표)</h4>
-          <div class="flex flex-wrap sm:flex-nowrap gap-2 bg-slate-50 p-3 rounded-xl border border-slate-200">
-            <select id="admin-impersonate-select" class="flex-1 min-w-0 rounded-xl border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-semibold"></select>
-            <button id="admin-impersonate-btn" type="button" class="px-3.5 py-1.5 rounded-xl bg-indigo-600 text-white text-xs font-bold whitespace-nowrap shrink-0">이 멤버로 보기</button>
+          <div class="flex flex-wrap items-center gap-2 bg-slate-50 p-3 rounded-xl border border-slate-200">
+            <span class="text-xs font-bold text-slate-700 mr-1">적용 상태:</span>
+            <button data-admin-brush="present" class="admin-brush px-2.5 py-1 rounded-lg text-xs font-bold bg-emerald-600 text-white ring-2 ring-indigo-500">출석</button>
+            <button data-admin-brush="late" class="admin-brush px-2.5 py-1 rounded-lg text-xs font-bold bg-amber-100 text-amber-900">지각</button>
+            <button data-admin-brush="awol" class="admin-brush px-2.5 py-1 rounded-lg text-xs font-bold bg-rose-100 text-rose-900">무단이탈</button>
+            <button data-admin-brush="exempt" class="admin-brush px-2.5 py-1 rounded-lg text-xs font-bold bg-sky-100 text-sky-900">수업면제</button>
+            <button data-admin-brush="early" class="admin-brush px-2.5 py-1 rounded-lg text-xs font-bold bg-purple-100 text-purple-900">조퇴</button>
+            <button data-admin-brush="none" class="admin-brush px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-200 text-slate-700">초기화</button>
+          </div>
+
+          <div id="admin-grid-wrap" class="overflow-x-auto"></div>
+        </div>
+      </div>
+
+      <!-- Admin Sub-Tab 2: Members & Records -->
+      <div id="admin-sub-members" class="hidden space-y-3.5">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+          <!-- Admin Enter Member View -->
+          <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm space-y-2">
+            <h4 class="text-xs font-black text-slate-900">👀 멤버 화면 들어가기 (캘린더 · 플래너 · 시간표)</h4>
+            <div class="flex flex-wrap sm:flex-nowrap gap-2 bg-slate-50 p-3 rounded-xl border border-slate-200">
+              <select id="admin-impersonate-select" class="flex-1 min-w-0 rounded-xl border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-semibold"></select>
+              <button id="admin-impersonate-btn" type="button" class="px-3.5 py-1.5 rounded-xl bg-indigo-600 text-white text-xs font-bold whitespace-nowrap shrink-0">이 멤버로 보기</button>
+            </div>
+          </div>
+
+          <!-- Admin Add Member Directly -->
+          <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm space-y-2">
+            <h4 class="text-xs font-black text-slate-900">➕ 스터디원 추가</h4>
+            <form id="admin-add-member-form" class="flex gap-2 bg-slate-50 p-3 rounded-xl border border-slate-200">
+              <input id="admin-add-member-name" type="text" placeholder="새 스터디원 별명" class="flex-1 min-w-0 rounded-xl border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-semibold" required />
+              <button type="submit" class="px-3.5 py-1.5 rounded-xl bg-slate-950 text-white text-xs font-bold whitespace-nowrap shrink-0">추가</button>
+            </form>
           </div>
         </div>
 
-        <!-- Admin Add Member Directly -->
-        <div class="border-t border-slate-200 pt-3.5 space-y-2">
-          <h4 class="text-xs font-black text-slate-900">➕ 스터디원 추가</h4>
-          <form id="admin-add-member-form" class="flex gap-2 bg-slate-50 p-3 rounded-xl border border-slate-200">
-            <input id="admin-add-member-name" type="text" placeholder="새 스터디원 별명" class="flex-1 min-w-0 rounded-xl border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-semibold" required />
-            <button type="submit" class="px-3.5 py-1.5 rounded-xl bg-slate-950 text-white text-xs font-bold whitespace-nowrap shrink-0">추가</button>
-          </form>
-        </div>
-
-        <!-- Admin Immediate Mode Switch -->
-        <div class="border-t border-slate-200 pt-3.5 space-y-2">
-          <h4 class="text-xs font-black text-slate-900">⚡ 즉시 모드 전환 (오늘 바로 적용)</h4>
-          <div class="flex flex-col sm:flex-row sm:items-center gap-2 bg-slate-50 p-3 rounded-xl border border-slate-200">
-            <select id="admin-mode-member" class="w-full sm:flex-1 min-w-0 rounded-xl border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-semibold"></select>
-            <div class="grid grid-cols-2 sm:flex items-center gap-2 shrink-0">
-              <button id="admin-set-strict-btn" type="button" class="px-3 py-1.5 rounded-xl bg-rose-600 text-white text-xs font-bold whitespace-nowrap text-center">즉시 울트라집중</button>
-              <button id="admin-set-free-btn" type="button" class="px-3 py-1.5 rounded-xl bg-emerald-600 text-white text-xs font-bold whitespace-nowrap text-center">즉시 자율모드</button>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+          <!-- Admin Immediate Mode Switch -->
+          <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm space-y-2">
+            <h4 class="text-xs font-black text-slate-900">⚡ 즉시 모드 전환 (오늘 바로 적용)</h4>
+            <div class="flex flex-col gap-2 bg-slate-50 p-3 rounded-xl border border-slate-200">
+              <select id="admin-mode-member" class="w-full min-w-0 rounded-xl border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-semibold"></select>
+              <div class="grid grid-cols-2 gap-2">
+                <button id="admin-set-strict-btn" type="button" class="px-3 py-1.5 rounded-xl bg-rose-600 text-white text-xs font-bold whitespace-nowrap text-center">즉시 울트라집중</button>
+                <button id="admin-set-free-btn" type="button" class="px-3 py-1.5 rounded-xl bg-emerald-600 text-white text-xs font-bold whitespace-nowrap text-center">즉시 자율모드</button>
+              </div>
             </div>
           </div>
-        </div>
 
-        <!-- Admin Cumulative Study Time Editor -->
-        <div class="border-t border-slate-200 pt-3.5 space-y-2">
-          <h4 class="text-xs font-black text-slate-900">⏱️ 누적 공부시간 수정</h4>
-          <form id="admin-study-time-form" class="flex flex-wrap items-center gap-2 bg-slate-50 p-3 rounded-xl border border-slate-200">
-            <select id="admin-study-member" class="rounded-xl border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-semibold"></select>
-            <input id="admin-study-date" type="date" class="rounded-xl border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-semibold" />
-            <div class="flex items-center gap-1.5">
-              <input id="admin-study-mins" type="number" min="0" max="1440" class="w-20 rounded-xl border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-bold" required />
-              <span class="text-xs font-bold text-slate-500">분</span>
-            </div>
-            <button type="submit" class="px-3.5 py-1.5 rounded-xl bg-indigo-600 text-white text-xs font-bold whitespace-nowrap">시간 적용</button>
-          </form>
+          <!-- Admin Cumulative Study Time Editor -->
+          <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm space-y-2">
+            <h4 class="text-xs font-black text-slate-900">⏱️ 누적 공부시간 수정</h4>
+            <form id="admin-study-time-form" class="flex flex-wrap items-center gap-2 bg-slate-50 p-3 rounded-xl border border-slate-200">
+              <select id="admin-study-member" class="rounded-xl border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-semibold"></select>
+              <input id="admin-study-date" type="date" class="rounded-xl border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-semibold" />
+              <div class="flex items-center gap-1.5">
+                <input id="admin-study-mins" type="number" min="0" max="1440" class="w-20 rounded-xl border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-bold" required />
+                <span class="text-xs font-bold text-slate-500">분</span>
+              </div>
+              <button type="submit" class="px-3.5 py-1.5 rounded-xl bg-indigo-600 text-white text-xs font-bold whitespace-nowrap">시간 적용</button>
+            </form>
+          </div>
         </div>
 
         <!-- Admin Rank / Tier / LP Editor -->
-        <div class="border-t border-slate-200 pt-3.5 space-y-2">
+        <div class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-sm space-y-2.5">
           <div class="flex flex-wrap items-center justify-between gap-2">
-            <h4 class="text-xs font-black text-slate-900">🎖️ 랭크(티어 · LP) 직접 변경 &amp; 승급전 건너뛰기</h4>
+            <h4 class="text-xs sm:text-sm font-black text-slate-900">🎖️ 랭크(티어 · LP) 직접 변경 &amp; 승급전 건너뛰기</h4>
             <div id="admin-rank-current-info" class="flex items-center gap-1.5 flex-wrap text-xs"></div>
           </div>
           <form id="admin-rank-form" class="flex flex-wrap items-center gap-2 bg-slate-50 p-3 rounded-xl border border-slate-200">
@@ -1709,10 +1710,31 @@
             <button id="btn-admin-skip-promo" type="button" class="hidden px-3.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-black whitespace-nowrap">⏭️ 승급전 건너뛰기</button>
           </form>
         </div>
+      </div>
+
+      <!-- Admin Sub-Tab 3: Challenges & Badges -->
+      <div id="admin-sub-rewards" class="hidden space-y-3.5">
+        <!-- Admin Challenge Completion -->
+        <div class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-sm space-y-2.5">
+          <h4 class="text-xs sm:text-sm font-black text-slate-900">⚔️ 관리자 챌린지 달성 처리 &amp; 칭호 텍스트 수정</h4>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200 overflow-hidden">
+            <div class="space-y-2 min-w-0">
+              <select id="admin-challenge-member" class="w-full rounded-xl border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-semibold"></select>
+              <div id="admin-challenge-toggles" class="flex flex-wrap gap-1.5 max-h-56 overflow-y-auto scrollbar-thin pr-1"></div>
+            </div>
+            <div class="space-y-2 min-w-0">
+              <form id="admin-edit-ch-title-form" class="flex flex-wrap sm:flex-nowrap gap-1.5 min-w-0">
+                <select id="admin-edit-ch-select" class="w-full sm:w-36 min-w-0 rounded-xl border border-slate-300 bg-white px-2 py-1.5 text-xs font-semibold truncate"></select>
+                <input id="admin-edit-ch-title-input" type="text" placeholder="챌린지 칭호 수정" class="flex-1 min-w-0 rounded-xl border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-semibold" />
+                <button type="submit" class="px-3 py-1.5 rounded-xl bg-slate-800 text-white text-xs font-bold whitespace-nowrap shrink-0">변경</button>
+              </form>
+            </div>
+          </div>
+        </div>
 
         <!-- Admin Badge Awarding -->
-        <div class="border-t border-slate-200 pt-3.5 space-y-2">
-          <h4 class="text-xs font-black text-slate-900">🏅 특별 뱃지 수여 & 회수</h4>
+        <div class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-sm space-y-2.5">
+          <h4 class="text-xs sm:text-sm font-black text-slate-900">🏅 특별 뱃지 수여 &amp; 회수</h4>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200 overflow-hidden">
             <div class="space-y-2 min-w-0">
               <select id="admin-badge-member" class="w-full rounded-xl border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-semibold"></select>
@@ -1730,10 +1752,13 @@
             </div>
           </div>
         </div>
+      </div>
 
+      <!-- Admin Sub-Tab 4: Inbox, Reports, Onboarding & System -->
+      <div id="admin-sub-inbox" class="hidden space-y-3.5">
         <!-- Admin Direct Message to Members -->
-        <div class="border-t border-slate-200 pt-3.5 space-y-2">
-          <h4 class="text-xs font-black text-slate-900">✉️ 부원에게 다이렉트 메시지 보내기</h4>
+        <div class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-sm space-y-2">
+          <h4 class="text-xs sm:text-sm font-black text-slate-900">✉️ 부원에게 다이렉트 메시지 보내기</h4>
           <form id="admin-dm-form" class="flex flex-wrap sm:flex-nowrap gap-2 bg-slate-50 p-3 rounded-xl border border-slate-200">
             <select id="admin-dm-target" class="rounded-xl border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-semibold shrink-0"></select>
             <input id="admin-dm-text" type="text" placeholder="부원에게 보낼 메시지 입력..." class="flex-1 min-w-[140px] rounded-xl border border-slate-300 bg-white px-2.5 py-1.5 text-xs" required />
@@ -1741,32 +1766,34 @@
           </form>
         </div>
 
-        <!-- Admin Reports Inbox -->
-        <div id="admin-reports-section" class="border-t border-slate-200 pt-3.5 space-y-2">
-          <h4 class="text-xs font-black text-slate-900">🚨 스터디원 신고 내역</h4>
-          <div id="admin-reports-list" class="space-y-2 max-h-48 overflow-y-auto scrollbar-thin"></div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+          <!-- Admin Reports Inbox -->
+          <div id="admin-reports-section" class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm space-y-2">
+            <h4 class="text-xs font-black text-slate-900">🚨 스터디원 신고 내역</h4>
+            <div id="admin-reports-list" class="space-y-2 max-h-56 overflow-y-auto scrollbar-thin"></div>
+          </div>
+
+          <!-- Admin Direct Suggestions Inbox -->
+          <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm space-y-2">
+            <h4 class="text-xs font-black text-slate-900">📬 스터디원 다이렉트 건의함</h4>
+            <div id="admin-suggestions-list" class="space-y-2 max-h-56 overflow-y-auto scrollbar-thin"></div>
+          </div>
         </div>
 
         <!-- Admin Encouragement Requests Inbox -->
-        <div id="admin-encouragements-section" class="border-t border-slate-200 pt-3.5 space-y-2">
-          <h4 class="text-xs font-black text-slate-900">💪 격려 요청함 (답장 시 멤버 우편함으로 전송)</h4>
+        <div id="admin-encouragements-section" class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-sm space-y-2">
+          <h4 class="text-xs sm:text-sm font-black text-slate-900">💪 격려 요청함 (답장 시 멤버 우편함으로 전송)</h4>
           <div id="admin-encouragements-list" class="space-y-2 max-h-64 overflow-y-auto scrollbar-thin"></div>
         </div>
 
-        <!-- Admin Direct Suggestions Inbox -->
-        <div class="border-t border-slate-200 pt-3.5 space-y-2">
-          <h4 class="text-xs font-black text-slate-900">📬 스터디원 다이렉트 건의함</h4>
-          <div id="admin-suggestions-list" class="space-y-2 max-h-48 overflow-y-auto scrollbar-thin"></div>
-        </div>
-
         <!-- Admin Onboarding Real Name & Survey Viewer -->
-        <div class="border-t border-slate-200 pt-3.5 space-y-2">
-          <h4 class="text-xs font-black text-slate-900">📋 가입자 실명 · 설문 응답함 (관리자 전용)</h4>
+        <div class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-sm space-y-2">
+          <h4 class="text-xs sm:text-sm font-black text-slate-900">📋 가입자 실명 · 설문 응답함 (관리자 전용)</h4>
           <div id="admin-onboarding-list" class="space-y-2 max-h-64 overflow-y-auto scrollbar-thin"></div>
         </div>
 
         <!-- Admin PIN & Cleanup -->
-        <div class="border-t border-slate-200 pt-4 flex flex-wrap items-center justify-between gap-3">
+        <div class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-sm flex flex-wrap items-center justify-between gap-3">
           <div class="flex items-center gap-2">
             <span class="text-xs font-bold text-slate-700">🔐 관리자 전용 계정: <code class="text-indigo-600">donghyun060324@gmail.com</code></span>
           </div>
@@ -1977,7 +2004,7 @@
             { id: 'ch9', cat: 'special', title: '🖊️ 잉크를 불태운 자', desc: '하루 플래너 5시간 이상 채우기', lp: 20 },
             { id: 'ch_suggest', cat: 'special', title: '💬 소통의 시작', desc: '관리자에게 건의하기 1회 전송', lp: 10 },
             { id: 'ch_dark', cat: 'special', title: '🌙 야간 시력 보호자', desc: '다크모드로 전환하기', lp: 10 },
-            { id: 'ch_theme', cat: 'special', title: '🎨 취향 존중', desc: '포인트 컬러 테마 바꾸기', lp: 10 },
+            { id: 'ch_theme', cat: 'starter', title: '🦎 카멜레온', desc: '상단 더보기(⋯)에서 테마 색깔 바꾸기', lp: 7 },
             { id: 'ch_quote', cat: 'special', title: '✍️ 나만의 좌우명', desc: '자율모드 홈 배너 명언 설정하기', lp: 10 },
             { id: 'ch_4am', cat: 'special', title: '🌃 새벽 4시의 고독한 천재', desc: '새벽 4시(04:00~04:59)에 스톱워치 공부하기', lp: 25 },
             { id: 'ch_6am', cat: 'special', title: '🐓 닭보다 먼저 우는 자', desc: '아침 6시(06:00~06:59)에 0교시 출석 완료', lp: 20 },
@@ -2066,6 +2093,7 @@
           lpRebalanceV4: true,
           lpRebalanceV5: true,
               lpRebalanceV6: true,
+              lpRebalanceV7: true,
           promoHistory: {},
           customBadges: { m1: [{ id: 'cb1', label: '🏆 방장 특별상', theme: 'gold' }] },
           motemote: {
@@ -2126,6 +2154,10 @@
               const starterSet = new Set(['ch_newbie','ch_join_study','ch_avatar','ch_timetable','ch_equip','ch_respect1','ch_brag1','ch_mailbox','ch_guide','ch_encourage','ch_todo_v','ch_cal_day','ch_spy','ch_rank_bottom','ch_ultra_reserve','ch_rename','ch_banner_bg']);
               mergedCh = mergedCh.map(c => starterSet.has(c.id) ? { ...c, cat: 'starter', lp: 7 } : c);
               parsed.lpRebalanceV6 = true;
+            }
+            if (!parsed.lpRebalanceV7) {
+              mergedCh = mergedCh.map(c => c.id === 'ch_theme' ? { ...c, cat: 'starter', title: '🦎 카멜레온', desc: '상단 더보기(⋯)에서 테마 색깔 바꾸기', lp: 7 } : c);
+              parsed.lpRebalanceV7 = true;
             }
             parsed.challenges = mergedCh;
             if (!parsed.periodStudySecs) parsed.periodStudySecs = {};
@@ -2725,6 +2757,7 @@
               lpRebalanceV3: true,
               lpRebalanceV5: true,
               lpRebalanceV6: true,
+              lpRebalanceV7: true,
               challenges: (() => {
                 const base = buildDefaultSharedData(false).challenges;
                 const existing = Array.isArray(v.challenges) ? v.challenges : [];
@@ -2743,6 +2776,9 @@
                 if (!v.lpRebalanceV6) {
                   const starterSet = new Set(['ch_newbie','ch_join_study','ch_avatar','ch_timetable','ch_equip','ch_respect1','ch_brag1','ch_mailbox','ch_guide','ch_encourage','ch_todo_v','ch_cal_day','ch_spy','ch_rank_bottom','ch_ultra_reserve','ch_rename','ch_banner_bg']);
                   mergedCh = mergedCh.map(c => starterSet.has(c.id) ? { ...c, cat: 'starter', lp: 7 } : c);
+                }
+                if (!v.lpRebalanceV7) {
+                  mergedCh = mergedCh.map(c => c.id === 'ch_theme' ? { ...c, cat: 'starter', title: '🦎 카멜레온', desc: '상단 더보기(⋯)에서 테마 색깔 바꾸기', lp: 7 } : c);
                 }
                 return mergedCh;
               })(),
@@ -3153,7 +3189,9 @@
         const ch = (shared.challenges || []).find(c => c.id === chId);
         if (!ch) return;
         if (!shared.memberChallenges) shared.memberChallenges = {};
-        if (!shared.memberChallenges[memberId]) shared.memberChallenges[memberId] = [];
+        if (!Array.isArray(shared.memberChallenges[memberId])) {
+          shared.memberChallenges[memberId] = Object.values(shared.memberChallenges[memberId] || {}).filter(Boolean);
+        }
         if (shared.memberChallenges[memberId].includes(chId)) return;
         shared.memberChallenges[memberId].push(chId);
         if (!shared.challengeLpGranted) shared.challengeLpGranted = {};
@@ -3343,6 +3381,16 @@
         const adminNav = document.getElementById('nav-tab-admin');
         if (adminNav) {
           adminNav.innerHTML = adminAlertCnt > 0 ? `🛡️ 관리자 <span class="ml-0.5 px-1.5 py-0.2 rounded-full bg-rose-600 text-white text-[9px] font-black">${adminAlertCnt}</span>` : '🛡️ 관리자';
+        }
+        const joinSubBadge = document.getElementById('admin-sub-badge-join');
+        if (joinSubBadge) {
+          joinSubBadge.textContent = pendingJoinCnt;
+          joinSubBadge.classList.toggle('hidden', pendingJoinCnt === 0);
+        }
+        const inboxSubBadge = document.getElementById('admin-sub-badge-inbox');
+        if (inboxSubBadge) {
+          inboxSubBadge.textContent = repCnt;
+          inboxSubBadge.classList.toggle('hidden', repCnt === 0);
         }
         const repAlertBanner = document.getElementById('admin-report-alert-banner');
         const repAlertText = document.getElementById('admin-report-alert-text');
@@ -3713,11 +3761,17 @@
               ch_equip: { label: '칭호 장착', action: 'tab:profile' },
               ch_rename: { label: '별명 수정', action: 'tab:profile' },
               ch_banner_bg: { label: '배경 설정', action: 'tab:profile' },
-              ch_respect1: { label: '리스펙 보내기', action: 'tab:members' },
+              ch_respect1: { label: '리스펙 보내기', action: 'sub:live' },
               ch_brag1: { label: '사진 올리기', action: 'sub:brag' },
-              ch_spy: { label: '스터디원 구경', action: 'tab:members' },
+              ch_spy: { label: '스터디원 구경', action: 'sub:live' },
               ch_rank_bottom: { label: '입문 도감 보기', action: 'sub:starter' },
-              ch_encourage: { label: '격려 요청', action: 'encourage' }
+              ch_encourage: { label: '격려 요청', action: 'encourage' },
+              ch_theme: { label: '테마 바꾸기', action: 'theme' },
+              ch_flipflop: { label: '플래너 가기', action: 'tab:planner' },
+              ch_minimal: { label: '프로필 가기', action: 'tab:profile' },
+              ch_pause1: { label: '스톱워치 켜기', action: 'focus' },
+              ch_ultra_reserve: { label: '모드 전환', action: 'mode' },
+              ch_justice: { label: '스터디원 보기', action: 'sub:live' }
             };
             const STARTER_LIST = (shared.challenges || []).filter(c => c.cat === 'starter' || STARTER_ACTIONS[c.id]);
             const doneSet = new Set((shared.memberChallenges && shared.memberChallenges[me.id]) || []);
@@ -4431,7 +4485,7 @@
         }
         const myDoneIds = (shared.memberChallenges && shared.memberChallenges[me.id]) || [];
         document.getElementById('my-equipped-title-pill').textContent = `장착 칭호: ${me.equippedTitle || '없음'}`;
-        const STARTER_IDS = new Set(['ch_newbie','ch_join_study','ch_avatar','ch_timetable','ch_equip','ch_respect1','ch_brag1','ch_mailbox','ch_guide','ch_encourage','ch_todo_v','ch_cal_day','ch_spy','ch_rank_bottom','ch_ultra_reserve','ch_rename','ch_banner_bg','ch_flipflop','ch_minimal','ch_pause1','ch_timetravel','ch_justice']);
+        const STARTER_IDS = new Set(['ch_newbie','ch_join_study','ch_avatar','ch_timetable','ch_equip','ch_respect1','ch_brag1','ch_mailbox','ch_guide','ch_encourage','ch_todo_v','ch_cal_day','ch_spy','ch_rank_bottom','ch_ultra_reserve','ch_rename','ch_banner_bg','ch_flipflop','ch_minimal','ch_pause1','ch_timetravel','ch_justice','ch_theme']);
         function getChCat(ch) {
           if (STARTER_IDS.has(ch.id) || ch.cat === 'starter') return 'starter';
           if (ch.cat) return ch.cat;
@@ -4486,8 +4540,9 @@
         });
         document.getElementById('admin-grid-wrap').innerHTML = html + '</tbody></table>';
 
+        const validMemberId = id => (id && shared.members.some(m => m.id === id)) ? id : ((shared.members[0] && shared.members[0].id) || '');
         const chMemSel = document.getElementById('admin-challenge-member');
-        const curChMem = chMemSel.value || (shared.members[0] && shared.members[0].id);
+        const curChMem = validMemberId(chMemSel.value);
         chMemSel.innerHTML = shared.members.map(m => `<option value="${m.id}" ${m.id === curChMem ? 'selected' : ''}>${escapeHtml(m.name)}</option>`).join('');
         const memDone = (shared.memberChallenges && shared.memberChallenges[curChMem]) || [];
 
@@ -4504,28 +4559,28 @@
         }).join('');
 
         const impSel = document.getElementById('admin-impersonate-select');
-        const curImp = impSel.value || prefs.currentUserId;
+        const curImp = (impSel.value && shared.members.some(m => m.id === impSel.value)) ? impSel.value : validMemberId(prefs.currentUserId);
         impSel.innerHTML = shared.members.map(m => `<option value="${m.id}" ${m.id === curImp ? 'selected' : ''}>${escapeHtml(m.name)}</option>`).join('');
 
         const modeMemSel = document.getElementById('admin-mode-member');
-        const curModeMem = modeMemSel.value || (shared.members[0] && shared.members[0].id);
+        const curModeMem = validMemberId(modeMemSel.value);
         modeMemSel.innerHTML = shared.members.map(m => `<option value="${m.id}" ${m.id === curModeMem ? 'selected' : ''}>${escapeHtml(m.name)} (${getMemberMode(m) === 'strict' ? '울트라집중' : '자율'})</option>`).join('');
 
         const stMemSel = document.getElementById('admin-study-member');
-        const curStMem = stMemSel.value || (shared.members[0] && shared.members[0].id);
+        const curStMem = validMemberId(stMemSel.value);
         stMemSel.innerHTML = shared.members.map(m => `<option value="${m.id}" ${m.id === curStMem ? 'selected' : ''}>${escapeHtml(m.name)}</option>`).join('');
         const stDateEl = document.getElementById('admin-study-date');
         if (!stDateEl.value) stDateEl.value = todayStr();
         document.getElementById('admin-study-mins').value = (shared.studyLogs?.[stDateEl.value]?.[curStMem]) || 0;
 
         const rankMemSel = document.getElementById('admin-rank-member');
-        const curRankMem = rankMemSel.value || (shared.members[0] && shared.members[0].id);
+        const curRankMem = validMemberId(rankMemSel.value);
         rankMemSel.innerHTML = shared.members.map(m => `<option value="${m.id}" ${m.id === curRankMem ? 'selected' : ''}>${escapeHtml(m.name)}</option>`).join('');
         const rankPresetSel = document.getElementById('admin-rank-tier-preset');
         rankPresetSel.innerHTML = LOL_TIERS.map(t => `<option value="${t.min}">${t.icon} ${t.name} (${t.min} LP~)</option>`).join('');
         syncAdminRankControls(curRankMem);
 
-        const bms = document.getElementById('admin-badge-member'), cbm = bms.value || (shared.members[0] && shared.members[0].id);
+        const bms = document.getElementById('admin-badge-member'), cbm = validMemberId(bms.value);
         bms.innerHTML = shared.members.map(m => `<option value="${m.id}" ${m.id === cbm ? 'selected' : ''}>${escapeHtml(m.name)}</option>`).join('');
         document.getElementById('admin-preset-badges').innerHTML = PRESET_ADMIN_BADGES.map((pb, idx) => `<button type="button" data-grant-preset="${idx}" class="fancy-badge px-2.5 py-1 rounded-full text-[11px] font-extrabold border ${BADGE_THEMES[pb.theme]}">${pb.label}</button>`).join('');
         const cList = (shared.customBadges && shared.customBadges[cbm]) || [];
@@ -5414,9 +5469,26 @@
         showToast(target === 'all' ? '전체 부원에게 다이렉트 메시지를 보냈습니다!' : '다이렉트 메시지를 보냈습니다!', 'success');
       });
 
+      function switchAdminSubTab(targetSub) {
+        ['attendance', 'members', 'rewards', 'inbox'].forEach(key => {
+          const pane = document.getElementById(`admin-sub-${key}`);
+          if (pane) pane.classList.toggle('hidden', key !== targetSub);
+        });
+        document.querySelectorAll('[data-admin-sub]').forEach(btn => {
+          const on = btn.dataset.adminSub === targetSub;
+          btn.setAttribute('aria-pressed', String(on));
+          btn.className = on
+            ? 'admin-sub-btn py-2 px-2 rounded-xl text-[11px] sm:text-xs font-black bg-slate-950 text-white whitespace-nowrap transition'
+            : 'admin-sub-btn py-2 px-2 rounded-xl text-[11px] sm:text-xs font-bold text-slate-600 hover:text-slate-950 whitespace-nowrap transition';
+        });
+      }
+      document.querySelectorAll('[data-admin-sub]').forEach(btn => {
+        btn.addEventListener('click', () => switchAdminSubTab(btn.dataset.adminSub));
+      });
       const jumpRepBtn = document.getElementById('admin-jump-reports-btn');
       if (jumpRepBtn) {
         jumpRepBtn.addEventListener('click', () => {
+          switchAdminSubTab('inbox');
           const sec = document.getElementById('admin-reports-section');
           if (sec) sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
         });
@@ -5671,12 +5743,16 @@
         if (!shared.memberChallenges[mid]) shared.memberChallenges[mid] = [];
         const lpAmt = Number(ch.lp) || 0;
         const idx = shared.memberChallenges[mid].indexOf(chId);
+        if (!shared.challengeLpGranted) shared.challengeLpGranted = {};
+        if (!shared.challengeLpGranted[mid]) shared.challengeLpGranted[mid] = {};
         if (idx >= 0) {
           shared.memberChallenges[mid].splice(idx, 1);
+          delete shared.challengeLpGranted[mid][chId];
           addMemberLp(mid, -lpAmt, `챌린지 취소: ${ch.title}`);
           showToast(`${targetMem.name}님 챌린지 취소 (-${lpAmt} LP)`, 'info');
         } else {
           shared.memberChallenges[mid].push(chId);
+          shared.challengeLpGranted[mid][chId] = lpAmt;
           addMemberLp(mid, lpAmt, `챌린지 달성: ${ch.title}`);
           if (mid === prefs.currentUserId) triggerChallengeCelebration(ch);
           else showToast(`${targetMem.name}님 챌린지 달성 처리 (+${lpAmt} LP)`, 'success');
@@ -6035,7 +6111,7 @@
         prefs.currentUserId = targetId;
         prefs.inspectingMember = true;
         savePrefs();
-        showToast(`'${escapeHtml(m.name)}'님 열람 모드로 전환했습니다.`, 'info');
+        showToast(`'${m.name}'님 열람 모드로 전환했습니다.`, 'info');
         switchTab('planner');
       });
 
@@ -6066,13 +6142,13 @@
         const m = shared.members.find(x => x.id === document.getElementById('admin-mode-member').value);
         if (!m) return;
         m.mode = 'strict'; m.pendingMode = null; m.pendingDate = null;
-        saveSharedData(); showToast(`${escapeHtml(m.name)}님을 즉시 울트라집중모드로 전환했습니다.`, 'success'); renderAll();
+        saveSharedData(); showToast(`${m.name}님을 즉시 울트라집중모드로 전환했습니다.`, 'success'); renderAll();
       });
       document.getElementById('admin-set-free-btn').addEventListener('click', () => {
         const m = shared.members.find(x => x.id === document.getElementById('admin-mode-member').value);
         if (!m) return;
         m.mode = 'free'; m.pendingMode = null; m.pendingDate = null;
-        saveSharedData(); showToast(`${escapeHtml(m.name)}님을 즉시 자율모드로 전환했습니다.`, 'info'); renderAll();
+        saveSharedData(); showToast(`${m.name}님을 즉시 자율모드로 전환했습니다.`, 'info'); renderAll();
       });
 
       function syncAdminRankControls(mid) {
@@ -6121,7 +6197,7 @@
         m.bankedLp = 0;
         saveSharedData();
         const tInfo = getMemberTier(m);
-        showToast(`${escapeHtml(m.name)}님의 랭크가 ${tInfo.icon} ${tInfo.name} (${m.lp} LP)로 변경되었습니다!`, 'success');
+        showToast(`${m.name}님의 랭크가 ${tInfo.icon} ${tInfo.name} (${m.lp} LP)로 변경되었습니다!`, 'success');
         renderAll();
       });
       document.getElementById('btn-admin-skip-promo').addEventListener('click', () => {
@@ -6146,7 +6222,7 @@
         if (!shared.promoHistory[m.id]) shared.promoHistory[m.id] = {};
         shared.promoHistory[m.id][todayStr()] = `${nextObj.name} 승급 (관리자 건너뛰기)`;
         saveSharedData();
-        showToast(`${escapeHtml(m.name)}님의 ${nextObj.name} 승급전을 건너뛰어 바로 승급 처리했습니다!`, 'success');
+        showToast(`${m.name}님의 ${nextObj.name} 승급전을 건너뛰어 바로 승급 처리했습니다!`, 'success');
         renderAll();
       });
 
@@ -6232,8 +6308,7 @@
         for (let i = 0; i < firstDay; i++) html += '<td class="p-1.5 border border-slate-100 bg-slate-50/40"></td>';
         for (let d = 1; d <= daysInMonth; d++) {
           const dStr = `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
-          if (!prefs.adminMode) { unlockChallengeFor(prefs.currentUserId, 'ch_cal_day', false); saveSharedData(); }
-        const mins = (shared.studyLogs && shared.studyLogs[dStr] && shared.studyLogs[dStr][me.id]) || 0;
+          const mins = (shared.studyLogs && shared.studyLogs[dStr] && shared.studyLogs[dStr][me.id]) || 0;
           const promoEvt = (shared.promoHistory && shared.promoHistory[me.id] && shared.promoHistory[me.id][dStr]) || null;
           const isPromoSched = (me.promoPendingDate === dStr || me.promoActiveDate === dStr);
           const isUltraSched = (me.pendingMode === 'strict' && me.pendingDate === dStr) || (dStr === todayStr() && getMemberMode(me) === 'strict');
@@ -6278,6 +6353,7 @@
       document.getElementById('cal-next-btn').addEventListener('click', () => { calCursor.setMonth(calCursor.getMonth() + 1); renderCalendarTab(); });
       document.getElementById('calendar-grid-wrap').addEventListener('click', e => {
         const td = e.target.closest('[data-cal-day]'); if (!td) return;
+        if (!prefs.adminMode) { unlockChallengeFor(prefs.currentUserId, 'ch_cal_day', false); saveSharedData(); }
         const dStr = td.dataset.calDay, me = shared.members.find(x => x.id === prefs.currentUserId);
         const mins = (shared.studyLogs && shared.studyLogs[dStr] && shared.studyLogs[dStr][me.id]) || 0;
         const promoEvt = (shared.promoHistory && shared.promoHistory[me.id] && shared.promoHistory[me.id][dStr]) || '없음';
@@ -6730,7 +6806,7 @@
         if (wasOpen && !discard) { renderAll(); if (prefs.activeTab === 'dashboard') document.getElementById('btn-open-focus').focus({preventScroll:true}); }
       }
 
-      document.getElementById('btn-open-focus').addEventListener('click', openFocusOverlay);
+      document.getElementById('btn-open-focus').addEventListener('click', () => openFocusOverlay(false));
       let pendingCelebrations = [];
       let celebrationFrame = 0;
       function triggerChallengeCelebration(ch) {
@@ -6864,7 +6940,7 @@
         saveSharedData(); showToast(`${escapeHtml(nm)}님이 추가되었습니다.`, 'success'); renderAll();
       });
       document.getElementById('focus-min-btn').addEventListener('click', minimizeFocusOverlay);
-      document.getElementById('focus-mini-expand').addEventListener('click', openFocusOverlay);
+      document.getElementById('focus-mini-expand').addEventListener('click', () => openFocusOverlay(false));
       document.getElementById('focus-end-btn').addEventListener('click', () => { closeFocusOverlay(); flushCelebrations(); });
       let googleLoginBusy = false;
       document.getElementById('btn-google-login').addEventListener('click', () => {
@@ -7376,7 +7452,14 @@
         else if (act === 'focus') document.getElementById('btn-open-focus').click();
         else if (act === 'mailbox') document.getElementById('mailbox-btn').click();
         else if (act === 'encourage') openEncourageModal();
-        else if (act === 'sub:brag') {
+        else if (act === 'mode') document.getElementById('study-mode-btn')?.click();
+        else if (act === 'theme') {
+          e.stopPropagation();
+          document.getElementById('header-more-btn')?.click();
+        } else if (act === 'sub:live') {
+          switchTab('members');
+          document.querySelector('[data-members-sub="live"]')?.click();
+        } else if (act === 'sub:brag') {
           switchTab('members');
           document.querySelector('[data-members-sub="brag"]')?.click();
         } else if (act === 'sub:starter') {
