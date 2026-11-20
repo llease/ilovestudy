@@ -6026,6 +6026,40 @@
       let focusInterval = null;
       let focusModeBeforeChange = null;
       let focusLastGridMinute = '';
+      let focusLastNotifMin = -1;
+
+      function updateFocusOsNotification(force = false) {
+        if (typeof Notification === 'undefined' || Notification.permission !== 'granted') return;
+        const mins = Math.floor(focusElapsedSecs / 60);
+        if (!force && mins === focusLastNotifMin) return;
+        focusLastNotifMin = mins;
+        const h = Math.floor(mins / 60), m = mins % 60;
+        const timeTxt = h > 0 ? `${h}시간 ${m}분` : `${m}분`;
+        const title = focusPaused ? `⏸️ 잠시 쉬는 중 (${timeTxt} 누적)` : `⏱️ 집중 중 · ${timeTxt} 경과`;
+        const body = focusPaused ? '10분 초과 휴식 시 연속 집중이 초기화됩니다.' : 'I LOVE STUDY 스톱워치가 실행 중입니다.';
+        const opts = {
+          body,
+          icon: './icon-192.png',
+          tag: 'iluvstudy-focus',
+          renotify: false,
+          silent: true,
+          requireInteraction: false
+        };
+        if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+          navigator.serviceWorker.ready.then(reg => reg.showNotification(title, opts)).catch(() => {});
+        } else {
+          try { new Notification(title, opts); } catch (e) {}
+        }
+      }
+
+      function closeFocusOsNotification() {
+        focusLastNotifMin = -1;
+        if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+          navigator.serviceWorker.ready.then(reg => reg.getNotifications({ tag: 'iluvstudy-focus' })).then(list => {
+            list.forEach(n => n.close());
+          }).catch(() => {});
+        }
+      }
       let focusRestoredOnce = false;
 
       function saveFocusState() {
@@ -6057,6 +6091,7 @@
           const tYesterday = addDaysStr(tToday, -1);
           if (!st || st.memberId !== memberId || (st.date !== tToday && st.date !== tYesterday)) {
             clearFocusState();
+        closeFocusOsNotification();
             return;
           }
           focusModeBeforeChange = st.modeBeforeChange || null;
@@ -6216,7 +6251,7 @@
             }
           }
           const newMins = Math.floor(target / 60);
-          if (gainedMinute) me.focusMins = newMins;
+          if (gainedMinute) { me.focusMins = newMins; updateFocusOsNotification(); }
           focusElapsedSecs = target;
           const claimed = new Set(shared.memberChallenges?.[me.id] || []);
           (shared.challenges || []).forEach(ch => {
@@ -6226,6 +6261,11 @@
             document.getElementById('focus-cheer-msg').textContent = `${newMins}분 집중했어요. 지금 페이스를 이어가 보세요.`;
           }
         } finally { focusWriteBatch = false; }
+        if (typeof Notification !== 'undefined' && Notification.permission === 'default' && !isRestoring) {
+          Notification.requestPermission().then(p => { if (p === 'granted' && focusInterval) updateFocusOsNotification(true); }).catch(() => {});
+        } else {
+          updateFocusOsNotification(true);
+        }
         updateFocusDisplay();
         refreshFocusAttendance(force || markedAttendance);
         if (force || gainedMinute || markedAttendance || Math.floor(target / 15) > Math.floor(from / 15)) {
@@ -6384,6 +6424,7 @@
           focusStartedAt = Date.now();
           focusModeBeforeChange = null;
         }
+        updateFocusOsNotification(true);
         saveFocusState();
         updateFocusDisplay();
       });
