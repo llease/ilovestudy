@@ -1176,7 +1176,7 @@
           <span id="my-equipped-title-pill" class="px-3 py-1 rounded-full text-xs font-black bg-slate-950 text-white">장착 칭호: 없음</span>
         </div>
         <div id="challenge-cat-tabs" class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1">
-          <button type="button" data-ch-cat="special" class="ch-cat-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-950 text-white whitespace-nowrap">🌟 출석 · 특수 (18)</button>
+          <button type="button" data-ch-cat="special" class="ch-cat-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-950 text-white whitespace-nowrap">🌟 출석 · 특수 (33)</button>
           <button type="button" data-ch-cat="focus_mid" class="ch-cat-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 whitespace-nowrap">🔥 연속 집중 (1h~12h)</button>
           <button type="button" data-ch-cat="focus_high" class="ch-cat-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 whitespace-nowrap">👑 극한 집중 (13h~24h)</button>
         </div>
@@ -1982,6 +1982,21 @@
             { id: 'ch_all_resp', cat: 'special', title: '💞 스터디 아부꾼', desc: '모든 스터디원에게 리스펙 보내기', lp: 15 },
             { id: 'ch_promo_streak', cat: 'special', title: '🚀 연승의 화신', desc: '승급전 연속 성공하기', lp: 20 },
             { id: 'ch_brag5', cat: 'special', title: '📸 인스타 갬성충', desc: '자랑하기 피드에 사진 5개 올리기', lp: 20 },
+            { id: 'ch_newbie', cat: 'special', title: '🐣 뉴비', desc: '집중 시작하기 스톱워치 처음 켜기', lp: 5 },
+            { id: 'ch_join_study', cat: 'special', title: '🙋 신입 받아라', desc: '스터디 참가하기로 스터디 처음 합류하기', lp: 5 },
+            { id: 'ch_avatar', cat: 'special', title: '📷 저요', desc: '내 프로필에서 프로필 사진 처음 등록하기', lp: 5 },
+            { id: 'ch_timetable', cat: 'special', title: '🗓️ 파워 J', desc: '대학 수업 1개 이상 처음 등록하기', lp: 5 },
+            { id: 'ch_equip', cat: 'special', title: '🏷️ 비아방지', desc: '획득한 칭호 처음으로 1회 장착하기', lp: 5 },
+            { id: 'ch_respect1', cat: 'special', title: '👏 관객', desc: '다른 스터디원에게 첫 리스펙 보내기', lp: 5 },
+            { id: 'ch_brag1', cat: 'special', title: '✨ 관심 주세요', desc: '자랑하기 피드에 첫 사진 1장 올리기', lp: 5 },
+            { id: 'ch_mailbox', cat: 'special', title: '💌 사랑의 편지', desc: '상단 우편함 버튼 처음 열어보기', lp: 5 },
+            { id: 'ch_guide', cat: 'special', title: '📖 설명 중', desc: '설명서 탭 처음 열어보기', lp: 5 },
+            { id: 'ch_encourage', cat: 'special', title: '💪 근육맨', desc: '격려해주세요 기능 처음 사용해 보기', lp: 5 },
+            { id: 'ch_todo_v', cat: 'special', title: '✅ 나르시스트', desc: '플래너에서 할 일 상태를 처음으로 V로 체크하기', lp: 5 },
+            { id: 'ch_cal_day', cat: 'special', title: '📅 탐험가', desc: '캘린더에서 날짜를 눌러 상세 기록 확인하기', lp: 5 },
+            { id: 'ch_spy', cat: 'special', title: '🔍 염탐꾼', desc: '스터디원 카드를 눌러 상세 기록 구경하기', lp: 5 },
+            { id: 'ch_rank_bottom', cat: 'special', title: '👀 구경꾼', desc: '랭킹 · 챌린지 서브탭을 끝까지 스크롤하기', lp: 5 },
+            { id: 'ch_ultra_reserve', cat: 'special', title: '⚡ 태토', desc: '울트라집중모드 전환 처음 예약하기', lp: 5 },
             { id: 'ch_f1h', cat: 'focus_mid', title: '🕯️ 몰입의 불씨', desc: '1시간 연속 스톱워치 집중 달성 (누적 집중과 별개)', lp: 10, focusSecs: 3600 },
             { id: 'ch_f2h', cat: 'focus_mid', title: '📚 워밍업 완료', desc: '2시간 연속 스톱워치 집중 달성 (누적 집중과 별개)', lp: 20, focusSecs: 7200 },
             { id: 'ch_f180', cat: 'focus_mid', title: '🫠 의자랑 물아일체', desc: '3시간 연속 스톱워치 연속 집중 달성 (누적 집중과 별개)', lp: 30, focusSecs: 10800 },
@@ -4538,8 +4553,9 @@
           return;
         }
         if (!document.getElementById(`tab-${tab}`)) tab = 'dashboard';
-        if (tab === 'guide' && prefs.guideHintUnread) {
-          prefs.guideHintUnread = false;
+        if (tab === 'guide') {
+          if (prefs.guideHintUnread) prefs.guideHintUnread = false;
+          if (!prefs.adminMode) { unlockChallengeFor(prefs.currentUserId, 'ch_guide', false); saveSharedData(); }
         }
         prefs.activeTab = tab;
         document.querySelectorAll('.nav-tab').forEach(b => {
@@ -4637,6 +4653,7 @@
           });
           document.getElementById('confirm-strict-tmr').addEventListener('click', () => {
             me.pendingMode = 'strict'; me.pendingDate = tmr;
+            unlockChallengeFor(me.id, 'ch_ultra_reserve', false);
             saveSharedData(); closeModal();
             showToast(`내일(${tmr})부터 울트라집중모드가 적용됩니다. 시간표를 꼭 확인해 주세요!`, 'success');
             renderAll();
@@ -4770,6 +4787,7 @@
         const now = getNowParts(), t = todayStr();
         if (!shared.photos) shared.photos = [];
         shared.photos.push({ id: 'ph_' + Date.now(), memberId: me.id, memberName: me.name, periodLabel: '자랑하기', time: now.hhmm, date: t, caption: cap, dataUrl: pendingPhoto });
+        unlockChallengeFor(me.id, 'ch_brag1', false);
         me.bragUploadCount = (me.bragUploadCount || 0) + 1;
         const totalBrags = Math.max(me.bragUploadCount, shared.photos.filter(p => p.memberId === me.id).length);
         if (totalBrags >= 5) unlockChallengeFor(me.id, 'ch_brag5', false);
@@ -4913,6 +4931,7 @@
               const m = shared.members.find(x => x.id === mid);
               if (m) {
                 m.avatarUrl = outC.toDataURL('image/jpeg', 0.72);
+                unlockChallengeFor(m.id, 'ch_avatar', false);
                 saveSharedData();
                 showToast('프로필 사진이 변경되었습니다!', 'success');
                 renderAll();
@@ -5009,6 +5028,7 @@
         document.getElementById('cancel-join-study').addEventListener('click', closeModal);
         document.getElementById('confirm-join-study').addEventListener('click', () => {
           myMem.inStudy = true;
+          unlockChallengeFor(myMem.id, 'ch_join_study', false);
           prefs.joinedMemberId = myMem.id;
           prefs.lastJoinedMemberId = myMem.id;
           prefs.currentUserId = myMem.id;
@@ -5067,6 +5087,7 @@
           ev.preventDefault();
           const note = document.getElementById('enc-note-input').value.trim();
           if (!shared.encouragements) shared.encouragements = [];
+          unlockChallengeFor(me.id, 'ch_encourage', false);
           shared.encouragements.push({
             id: 'enc_' + Date.now(),
             fromId: me.id,
@@ -5184,6 +5205,7 @@
           : (!dmList.length ? '<p class="text-xs text-slate-400 text-center py-4">아직 도착한 메시지가 없습니다.</p>' : '');
         list.forEach(p => { p.read = true; });
         dmList.forEach(d => { d.read = true; });
+        if (!prefs.adminMode) unlockChallengeFor(prefs.currentUserId, 'ch_mailbox', false);
         saveSharedData();
         renderHeaderControls();
         openModal('💌 우편함 & 다이렉트 메시지', dmHtml + praiseHtml);
@@ -5212,6 +5234,7 @@
           if (!target) return;
           const tStr = todayStr();
           target.respectCount = (target.respectCount || 0) + 1;
+          unlockChallengeFor(prefs.currentUserId, 'ch_respect1', false);
           if (!shared.respectLpRewarded) shared.respectLpRewarded = {};
           if (!shared.respectLpRewarded[prefs.currentUserId]) shared.respectLpRewarded[prefs.currentUserId] = {};
           const alreadyRewardedResp = !!shared.respectLpRewarded[prefs.currentUserId][targetId];
@@ -5281,6 +5304,7 @@
         if (card) {
           const m = shared.members.find(x => x.id === card.dataset.memberDetail);
           if (!m) return;
+          if (!prefs.adminMode) { unlockChallengeFor(prefs.currentUserId, 'ch_spy', false); saveSharedData(); }
           const t = todayStr();
           const todayTotalMins = (shared.studyLogs && shared.studyLogs[t] && shared.studyLogs[t][m.id]) || 0;
           const maxF = (shared.maxFocusLogs && shared.maxFocusLogs[t] && shared.maxFocusLogs[t][m.id]) || 0;
@@ -5353,6 +5377,7 @@
         if (!me) return;
         const tName = b.dataset.equipTitle;
         me.equippedTitle = me.equippedTitle === tName ? '' : tName;
+        if (me.equippedTitle) unlockChallengeFor(me.id, 'ch_equip', false);
         saveSharedData();
         showToast(me.equippedTitle ? `'${me.equippedTitle}' 칭호를 장착했습니다!` : '칭호 장착을 해제했습니다.', 'success');
         renderRankingsTab();
@@ -5447,6 +5472,7 @@
           if (task) {
             const order = ['', 'V', '△', 'X'];
             task.status = order[(order.indexOf(task.status || '') + 1) % order.length];
+            if (task.status === 'V') unlockChallengeFor(prefs.currentUserId, 'ch_todo_v', false);
             if ((mm.tasks || []).length >= 5 && mm.tasks.every(x => x.status === 'V')) {
               unlockChallengeFor(prefs.currentUserId, 'ch3', false);
             }
@@ -5591,6 +5617,7 @@
         newSlots.forEach((sl, idx) => {
           shared.classes[mid].push({ id: `c_${baseTs}_${idx}`, day: sl.day, name: n, start: sl.start, end: sl.end });
         });
+        unlockChallengeFor(mid, 'ch_timetable', false);
         saveSharedData();
         document.getElementById('class-name-input').value = '';
         resetFormSlots();
@@ -5618,6 +5645,7 @@
         const baseTs = Date.now();
         const added = CNU_EE_PRESET.map((item, idx) => ({ id: `cnu_${baseTs}_${idx}`, ...item }));
         shared.classes[mid] = existing.concat(added);
+        unlockChallengeFor(mid, 'ch_timetable', false);
         saveSharedData();
         showToast('충남대 전자과 5개 과목 시간표가 등록되었습니다! (다른 분반은 아래에서 수정 가능)', 'success');
         renderTimetableTab();
@@ -5893,7 +5921,8 @@
         for (let i = 0; i < firstDay; i++) html += '<td class="p-1.5 border border-slate-100 bg-slate-50/40"></td>';
         for (let d = 1; d <= daysInMonth; d++) {
           const dStr = `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
-          const mins = (shared.studyLogs && shared.studyLogs[dStr] && shared.studyLogs[dStr][me.id]) || 0;
+          if (!prefs.adminMode) { unlockChallengeFor(prefs.currentUserId, 'ch_cal_day', false); saveSharedData(); }
+        const mins = (shared.studyLogs && shared.studyLogs[dStr] && shared.studyLogs[dStr][me.id]) || 0;
           const promoEvt = (shared.promoHistory && shared.promoHistory[me.id] && shared.promoHistory[me.id][dStr]) || null;
           const isPromoSched = (me.promoPendingDate === dStr || me.promoActiveDate === dStr);
           const isUltraSched = (me.pendingMode === 'strict' && me.pendingDate === dStr) || (dStr === todayStr() && getMemberMode(me) === 'strict');
@@ -6307,6 +6336,7 @@
           }
           document.getElementById('focus-cheer-msg').textContent = '';
           focusInterval = setInterval(syncFocusClock, 1000);
+          if (isRestoring !== true) unlockChallengeFor(meFocus.id, 'ch_newbie', false);
           if (isRestoring !== true) saveFocusState();
         }
         updateFocusDisplay();
@@ -6894,6 +6924,7 @@
         if (!tm) return;
         const tName = b.dataset.profileEquip;
         tm.equippedTitle = tm.equippedTitle === tName ? '' : tName;
+        if (tm.equippedTitle) unlockChallengeFor(tm.id, 'ch_equip', false);
         saveSharedData();
         showToast(tm.equippedTitle ? `'${tm.equippedTitle}' 칭호를 장착했습니다!` : '칭호 장착을 해제했습니다.', 'success');
         renderAll();
@@ -6920,6 +6951,19 @@
         showToast('칭호 장착을 해제했습니다.', 'info');
         renderAll();
       });
+
+      window.addEventListener('scroll', () => {
+        if (prefs.adminMode || prefs.activeTab !== 'members') return;
+        const rankPane = document.getElementById('members-sub-rank');
+        if (!rankPane || rankPane.classList.contains('hidden')) return;
+        if (window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 80) {
+          const already = (shared.memberChallenges?.[prefs.currentUserId] || []).includes('ch_rank_bottom');
+          if (!already) {
+            unlockChallengeFor(prefs.currentUserId, 'ch_rank_bottom', false);
+            saveSharedData();
+          }
+        }
+      }, { passive: true });
 
       window.addEventListener('popstate', () => {
         if (prefs.activeTab === 'planner' && plannerEditMode) {
@@ -6969,6 +7013,7 @@
         if (!task) return;
         const order = ['', 'V', '△', 'X'];
         task.status = order[(order.indexOf(task.status || '') + 1) % order.length];
+        if (task.status === 'V') unlockChallengeFor(prefs.currentUserId, 'ch_todo_v', false);
         if ((mmToday.tasks || []).length >= 5 && mmToday.tasks.every(x => x.status === 'V')) {
           unlockChallengeFor(prefs.currentUserId, 'ch3', false);
         }
