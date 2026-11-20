@@ -1231,14 +1231,14 @@
           </div>
         </form>
 
-        <div id="profile-achievements-box" class="border-t border-slate-100 pt-4 space-y-3">
+        <div id="profile-achievements-box" class="border-t border-slate-100 pt-4 space-y-3.5">
           <div class="flex items-center justify-between gap-2 flex-wrap">
-            <span class="text-xs font-black text-slate-900">💎 현재 티어 & LP</span>
+            <span class="inline-flex items-center gap-1.5 text-xs font-black text-slate-900"><span class="w-1.5 h-1.5 rounded-full bg-slate-400 inline-block"></span>현재 티어 &amp; LP</span>
             <div id="profile-tier-lp" class="flex items-center gap-1.5 flex-wrap"></div>
           </div>
           <div class="space-y-1.5">
             <div class="flex items-center justify-between gap-2 flex-wrap">
-              <span class="text-xs font-black text-slate-900">👑 보유한 칭호</span>
+              <span class="inline-flex items-center gap-1.5 text-xs font-black text-slate-900"><span class="w-1.5 h-1.5 rounded-full bg-slate-400 inline-block"></span>보유한 칭호</span>
               <div class="flex items-center gap-1.5">
                 <span id="profile-equipped-title" class="text-[11px] font-bold text-indigo-600">장착 중: 없음</span>
                 <button type="button" id="btn-profile-unequip" class="hidden px-2 py-0.5 rounded-md bg-slate-100 hover:bg-rose-50 text-[10px] font-bold text-slate-600 hover:text-rose-600 border border-slate-200">장착 해제</button>
@@ -1247,19 +1247,19 @@
             <div id="profile-titles-list" class="flex flex-wrap gap-1.5"></div>
           </div>
           <div class="space-y-1.5">
-            <span class="text-xs font-black text-slate-900 block">🏅 보유 뱃지 기록</span>
+            <span class="inline-flex items-center gap-1.5 text-xs font-black text-slate-900"><span class="w-1.5 h-1.5 rounded-full bg-slate-400 inline-block"></span>보유 뱃지 기록</span>
             <div id="profile-badges-list" class="flex flex-wrap gap-1.5"></div>
           </div>
-          <div class="space-y-1.5 pt-2 border-t border-slate-100">
-            <span class="text-xs font-black text-slate-900 block">📜 최근 LP 획득 기록</span>
-            <div id="profile-lp-history" class="space-y-1 max-h-40 overflow-y-auto scrollbar-thin"></div>
-          </div>
-          <div class="space-y-2 pt-2 border-t border-slate-100">
-            <span class="text-xs font-black text-slate-900 block">🏠 홈 배너 꾸미기 (자율모드)</span>
+          <div class="space-y-2 pt-2.5 border-t border-slate-100">
+            <span class="inline-flex items-center gap-1.5 text-xs font-black text-slate-900"><span class="w-1.5 h-1.5 rounded-full bg-slate-400 inline-block"></span>홈 배너 꾸미기 (자율모드)</span>
             <div class="flex flex-wrap gap-2">
-              <button id="btn-edit-quote" type="button" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-800 whitespace-nowrap">✏️ 명언 설정</button>
-              <button id="btn-edit-bg" type="button" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-800 whitespace-nowrap">🖼️ 배경 설정</button>
+              <button id="btn-edit-quote" type="button" class="px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-xs font-bold text-slate-800 whitespace-nowrap">명언 설정</button>
+              <button id="btn-edit-bg" type="button" class="px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-xs font-bold text-slate-800 whitespace-nowrap">배경 설정</button>
             </div>
+          </div>
+          <div class="space-y-2 pt-2.5 border-t border-slate-100">
+            <span class="inline-flex items-center gap-1.5 text-xs font-black text-slate-900"><span class="w-1.5 h-1.5 rounded-full bg-slate-400 inline-block"></span>최근 LP 획득 기록</span>
+            <div id="profile-lp-history" class="space-y-1.5"></div>
           </div>
           <div class="pt-3 border-t border-slate-100 text-right">
             <button id="btn-delete-my-account" type="button" class="text-[11px] text-slate-400 hover:text-slate-600 underline underline-offset-2">계정 탈퇴</button>
@@ -2919,9 +2919,7 @@
           delta,
           reason: reason || (delta > 0 ? 'LP 획득' : 'LP 조정')
         });
-        if (shared.lpHistory[memberId].length > 30) {
-          shared.lpHistory[memberId] = shared.lpHistory[memberId].slice(-30);
-        }
+
         if (memberId === prefs.currentUserId && delta > 0 && !prefs.adminMode) {
           showFloatingLp(delta);
         }
