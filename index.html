@@ -521,7 +521,7 @@
     body[data-dark="true"][data-theme="master"] { --primary:#c4b5fd; --primary-hover:#ddd6fe; --on-primary:#250f47; --tint:#2e224d; --link:#d3c7fe; --focus-ring:#a074f5; --hero:#511f96; --hero-deep:#180930; }
     body[data-dark="true"][data-theme="grandmaster"] { --primary:#fda4af; --primary-hover:#fecdd3; --on-primary:#3d0a16; --tint:#451f2b; --link:#feb8c1; --focus-ring:#e65b6e; --hero:#8c1335; --hero-deep:#240610; }
     body[data-dark="true"][data-theme="challenger"] { --primary:#93c5fd; --primary-hover:#bfdbfe; --on-primary:#0c1e42; --tint:#1f355e; --link:#f5ca64; --focus-ring:#f5ca64; --hero:#1e479e; --hero-deep:#08122b; }
-    html {background-color:var(--viewport-bg,var(--page))}
+    html {min-height:100%;min-height:100dvh;background-color:var(--viewport-bg,var(--page))!important}
     html:fullscreen::backdrop {background-color:var(--viewport-bg,var(--page))}
     body {
       margin:0; min-height:100vh; min-height:100dvh; color:var(--ink)!important; background:var(--viewport-bg,var(--page))!important;
@@ -2671,6 +2671,7 @@
         </div>
         <div class="flex flex-wrap gap-2">
           <button id="admin-jump-reports-btn" type="button" class="px-3 py-1 rounded-lg bg-slate-950 text-white text-[11px] font-bold">새 접수 보기</button>
+          <button id="admin-mark-all-read-btn" type="button" class="hidden px-3 py-1 rounded-lg border border-slate-300 bg-slate-50 text-slate-800 text-[11px] font-bold">모두 읽음</button>
           <button id="admin-enable-device-notices" type="button" class="hidden px-3 py-1 rounded-lg border border-slate-200 text-[11px] font-bold">기기 알림 켜기</button>
         </div>
       </div>
@@ -3359,6 +3360,7 @@
       let lastPrivateMotemoteJson = '{}';
       let dbListenerAttached = false;
       let dbLoadedOnce = false;
+      let allPrivateLoadedOnce = false;
       let currentAuthUser = null;
       let authResolvedOnce = false;
       let sessionClaimed = false;
@@ -3894,6 +3896,7 @@
               }
             });
             allPrivateData = raw;
+            allPrivateLoadedOnce = true;
             renderAdminNotices();
             if (prefs.activeTab === 'admin') renderAdminTab();
           }, () => {});
@@ -4057,6 +4060,7 @@
                 sessionClaimed = false;
                 welcomePlayedForSession = false;
                 dbLoadedOnce = false;
+                allPrivateLoadedOnce = false;
                 detachPrivateDb();
                 if (dbRef && dbListenerAttached) {
                   try { dbRef.off(); } catch (e) {}
@@ -4104,10 +4108,14 @@
       const defaultBrowserThemeColor = browserThemeColor.content;
       function syncFocusBrowserColor() {
         const timer = document.getElementById('focus-overlay');
-        const timerColor = shown(timer) ? getComputedStyle(timer).backgroundColor : null;
+        const timerOpen = shown(timer);
+        const timerColor = timerOpen ? getComputedStyle(timer).backgroundColor : null;
         const rootStyle = document.documentElement.style;
         const viewportColor = timerColor || getComputedStyle(document.body).getPropertyValue('--page').trim();
         if (rootStyle.getPropertyValue('--viewport-bg') !== viewportColor) rootStyle.setProperty('--viewport-bg', viewportColor);
+        if (rootStyle.backgroundColor !== viewportColor) rootStyle.backgroundColor = viewportColor;
+        const isDarkViewport = !!(prefs.darkMode || (timerOpen && timer.dataset.focusTheme === 'home'));
+        rootStyle.colorScheme = isDarkViewport ? 'dark' : 'light';
         const color = timerColor || getComputedStyle(document.getElementById('study-header')).backgroundColor || defaultBrowserThemeColor;
         if (browserThemeColor.content !== color) browserThemeColor.content = color;
       }
@@ -4668,14 +4676,14 @@
           }
         }
         for (const request of shared.joinRequests || []) {
-          if (request?.status === 'pending' && request.uid) pending.get('joinRequests').push(`joinRequests/${request.uid}/${request.requestedAt || 'legacy'}`);
+          if (request?.status === 'pending' && request.uid && !request.read) pending.get('joinRequests').push(`joinRequests/${request.uid}/${request.requestedAt || 'legacy'}`);
         }
         const surveys = new Map();
         for (const member of shared.members || []) {
           if (member.uid && member.onboardingSurvey) surveys.set(member.uid, member.onboardingSurvey);
         }
         for (const [uid, record] of Object.entries(allPrivateData || {})) {
-          if (record?.status === 'withdrawn') surveys.delete(uid);
+          if (record?.status === 'withdrawn' || record?.surveyHidden) surveys.delete(uid);
           else if (record?.onboardingSurvey) surveys.set(uid, record.onboardingSurvey);
         }
         const seen = new Set(prefs.adminSeenSurveys || []);
@@ -4693,7 +4701,7 @@
       }
 
       function showAdminDeviceNotice(body) {
-        if (!prefs.adminDeviceNotices || typeof Notification === 'undefined' || Notification.permission !== 'granted') return;
+        if (!isAdminUser() || !prefs.adminDeviceNotices || typeof Notification === 'undefined' || Notification.permission !== 'granted') return;
         const title = 'I LOVE STUDY · 관리자 알림';
         const options = { body, tag: 'iluvstudy-admin-inbox' };
         if (navigator.serviceWorker?.controller) {
@@ -4731,12 +4739,32 @@
         const summaryText = describe || '확인할 새 접수가 없어요.';
         if (summary.textContent !== summaryText) summary.textContent = summaryText;
         document.getElementById('admin-jump-reports-btn').classList.toggle('hidden', total === 0);
+        document.getElementById('admin-mark-all-read-btn').classList.toggle('hidden', total === 0);
         const enableButton = document.getElementById('admin-enable-device-notices');
         const canNotify = allowed && typeof Notification !== 'undefined' && typeof Notification.requestPermission === 'function';
         enableButton.classList.toggle('hidden', !canNotify || Notification.permission === 'denied');
         enableButton.textContent = prefs.adminDeviceNotices ? '기기 알림 끄기' : '기기 알림 켜기';
-        if (!total) return;
+        if (!allowed) return;
         const sent = new Set(prefs.adminNotifiedKeys || []);
+        let seededBaseline = false;
+        if (dbLoadedOnce && !prefs.adminBaselineStudyDone) {
+          for (const type of ['reports', 'suggestions', 'encouragements', 'joinRequests']) {
+            for (const key of pending.get(type) || []) sent.add(key);
+          }
+          prefs.adminBaselineStudyDone = true;
+          seededBaseline = true;
+        }
+        if (allPrivateLoadedOnce && !prefs.adminBaselinePrivateDone) {
+          for (const key of pending.get('surveys') || []) sent.add(key);
+          prefs.adminBaselinePrivateDone = true;
+          seededBaseline = true;
+        }
+        if (seededBaseline) {
+          prefs.adminNotifiedKeys = [...sent];
+          savePrefs();
+          return;
+        }
+        if (!total) return;
         const fresh = new Map([...pending].map(([type, keys]) => [type, keys.filter(key => !sent.has(key))]));
         const message = describeAdminNotices(fresh);
         if (!message) return;
@@ -6291,11 +6319,15 @@
           const encList = sortedInbox(shared.encouragements);
           encListEl.innerHTML = encList.length
             ? encList.map(([key, eq]) => `
-              <div class="rounded-xl border ${eq.replied ? 'border-slate-200 bg-slate-50' : 'border-indigo-300 bg-indigo-50/70'} p-3 text-xs space-y-2">
+              <div class="rounded-xl border ${eq.replied || eq.read ? 'border-slate-200 bg-slate-50' : 'border-indigo-300 bg-indigo-50/70'} p-3 text-xs space-y-2">
                 <div class="flex items-center justify-between gap-2">
-                  <span class="font-black text-slate-900 truncate">${escapeHtml(eq.fromName)}</span>
+                  <div class="flex items-center gap-1.5 min-w-0">
+                    <span class="font-black text-slate-900 truncate">${escapeHtml(eq.fromName)}</span>
+                    ${eq.read && !eq.replied ? '<span class="px-1.5 py-0.5 rounded bg-slate-200 text-slate-600 text-[10px] font-bold shrink-0">읽음</span>' : (!eq.replied ? '<span class="px-1.5 py-0.5 rounded bg-indigo-600 text-white text-[10px] font-black shrink-0">미확인</span>' : '')}
+                  </div>
                   <div class="flex items-center gap-2 shrink-0">
                     <span class="text-[10px] text-slate-400">${escapeHtml(eq.date)} ${escapeHtml(eq.time)}</span>
+                    ${!eq.read && !eq.replied ? `<button type="button" data-read-enc="${escapeHtml(key)}" class="text-[10px] px-2 py-0.5 rounded bg-slate-900 text-white font-bold">✓ 읽음</button>` : ''}
                     <button type="button" data-del-enc="${escapeHtml(key)}" class="text-[10px] text-rose-600 font-bold">삭제</button>
                   </div>
                 </div>
@@ -6317,7 +6349,7 @@
               <div class="flex items-center gap-2 flex-wrap"><span class="font-bold text-slate-900">${escapeHtml(sg.fromName)}</span><span class="text-[10px] text-slate-400">${escapeHtml(sg.date)} ${escapeHtml(sg.time)}</span></div>
               <p class="text-slate-700 break-words whitespace-pre-wrap">${escapeHtml(sg.text)}</p>
               <div class="flex justify-end items-center gap-2">
-                ${sg.read ? '<span class="text-[10px] text-slate-500">확인함</span>' : `<button type="button" data-read-sug="${escapeHtml(key)}" class="text-[10px] px-2 py-1 rounded bg-slate-900 text-white font-bold">확인</button>`}
+                ${sg.read ? '<span class="px-1.5 py-0.5 rounded bg-slate-200 text-slate-600 text-[10px] font-bold">읽음</span>' : `<button type="button" data-read-sug="${escapeHtml(key)}" class="text-[10px] px-2 py-1 rounded bg-slate-900 text-white font-bold">✓ 읽음</button>`}
                 ${sg.replied ? '<span class="text-[10px] text-emerald-700">답장 완료</span>' : inboxReplyButton('suggestions', key, sg.fromId)}
                 <button type="button" data-del-sug="${escapeHtml(key)}" class="text-[10px] px-2 py-1 rounded text-rose-600 font-bold">삭제</button>
               </div>
@@ -6343,11 +6375,12 @@
           reqList.innerHTML = reqs.length
             ? reqs.map(r => {
                 const pRec = (r.uid && allPrivateData[r.uid]) ? allPrivateData[r.uid] : {};
-                return `<div class="rounded-xl border border-indigo-200 bg-white p-2.5 text-xs space-y-1.5">
+                return `<div class="rounded-xl border ${r.read ? 'border-slate-200 bg-slate-50' : 'border-indigo-200 bg-white'} p-2.5 text-xs space-y-1.5">
                   <div class="flex items-center justify-between gap-2">
-                    <div class="flex items-center gap-1.5 min-w-0">
+                    <div class="flex items-center gap-1.5 min-w-0 flex-wrap">
                       <span class="px-2 py-0.5 rounded-md bg-slate-950 text-white text-[10px] font-black shrink-0">실명: ${escapeHtml(pRec.realName || '미확인')}</span>
                       <span class="font-bold text-slate-900 truncate">${escapeHtml(r.nickname)}</span>
+                      ${r.read ? '<span class="px-1.5 py-0.5 rounded bg-slate-200 text-slate-600 text-[10px] font-bold shrink-0">읽음</span>' : '<span class="px-1.5 py-0.5 rounded bg-amber-400 text-slate-950 text-[10px] font-black shrink-0">미확인</span>'}
                     </div>
                     <span class="text-[10px] text-slate-400 shrink-0">${escapeHtml(r.requestedAt || '')}</span>
                   </div>
@@ -6357,9 +6390,11 @@
                     <span class="px-2 py-0.5 rounded-md bg-slate-50 border border-slate-200">기대: ${escapeHtml(r.feature || '-')}</span>
                     <span class="px-2 py-0.5 rounded-md bg-slate-50 border border-slate-200">목표: ${escapeHtml(r.goalHours || '-')}시간</span>
                   </div>
-                  <div class="flex justify-end gap-1.5 pt-0.5">
+                  <div class="flex justify-end flex-wrap gap-1.5 pt-0.5">
+                    ${!r.read ? `<button type="button" data-read-join="${escapeHtml(r.uid)}" class="px-2.5 py-1 rounded-lg bg-slate-900 text-white text-[11px] font-bold">✓ 읽음</button>` : ''}
                     <button type="button" data-reject-join="${escapeHtml(r.uid)}" class="px-2.5 py-1 rounded-lg bg-rose-50 text-rose-700 border border-rose-200 text-[11px] font-bold">거절</button>
                     <button type="button" data-approve-join="${escapeHtml(r.uid)}" class="px-3 py-1 rounded-lg bg-emerald-600 text-white text-[11px] font-bold">수락</button>
+                    <button type="button" data-del-join="${escapeHtml(r.uid)}" class="px-2 py-1 rounded-lg text-rose-600 text-[11px] font-bold">삭제</button>
                   </div>
                 </div>`;
               }).join('')
@@ -6373,12 +6408,13 @@
           (shared.members || []).forEach(m => {
             if (m.uid) seenUids.add(m.uid);
             const pRec = (m.uid && allPrivateData[m.uid]) ? allPrivateData[m.uid] : {};
+            if (pRec.surveyHidden) return;
             const realName = pRec.realName || m.realName || '';
             const survey = pRec.onboardingSurvey || m.onboardingSurvey || null;
             if (realName || survey) obRows.push({ uid: m.uid, name: m.name, email: pRec.email || '', realName, survey, withdrawn: false });
           });
           Object.entries(allPrivateData || {}).forEach(([uid, pRec]) => {
-            if (seenUids.has(uid) || !pRec) return;
+            if (seenUids.has(uid) || !pRec || pRec.surveyHidden) return;
             if (pRec.realName || pRec.onboardingSurvey) {
               obRows.push({
                 uid,
@@ -6405,8 +6441,8 @@
                     </div>
                     <div class="flex items-center gap-2 shrink-0">
                       ${sv.agreedAt ? `<span class="text-[10px] text-slate-400">${escapeHtml(sv.agreedAt)}</span>` : ''}
-                      ${surveyKey && !seenSurveys.has(surveyKey) ? `<button type="button" data-read-survey="${escapeHtml(surveyKey)}" class="px-2 py-1 rounded bg-slate-950 text-white text-[10px] font-bold">확인</button>` : ''}
-                      ${item.withdrawn && item.uid ? `<button type="button" data-del-archive="${escapeHtml(item.uid)}" class="text-[10px] font-bold text-rose-600 hover:underline">보관 삭제</button>` : ''}
+                      ${surveyKey ? (seenSurveys.has(surveyKey) ? '<span class="px-1.5 py-0.5 rounded bg-slate-200 text-slate-600 text-[10px] font-bold">읽음</span>' : `<button type="button" data-read-survey="${escapeHtml(surveyKey)}" class="px-2 py-1 rounded bg-slate-950 text-white text-[10px] font-bold">✓ 읽음</button>`) : ''}
+                      ${item.withdrawn && item.uid ? `<button type="button" data-del-archive="${escapeHtml(item.uid)}" class="text-[10px] font-bold text-rose-600 hover:underline">보관 삭제</button>` : (item.uid ? `<button type="button" data-del-survey="${escapeHtml(item.uid)}" class="text-[10px] font-bold text-rose-600 hover:underline">삭제</button>` : '')}
                     </div>
                   </div>
                   ${item.email ? `<div class="text-[10px] text-slate-500">이메일: ${escapeHtml(item.email)}</div>` : ''}
@@ -7308,6 +7344,31 @@
       }
       document.querySelectorAll('[data-admin-sub]').forEach(btn => {
         btn.addEventListener('click', () => switchAdminSubTab(btn.dataset.adminSub));
+      });
+      document.getElementById('admin-mark-all-read-btn').addEventListener('click', () => {
+        if (!prefs.adminMode || !isAdminUser()) return;
+        let sharedChanged = false;
+        for (const type of ['reports', 'suggestions', 'encouragements']) {
+          for (const record of Object.values(shared[type] || {})) {
+            if (record && !record.read) { record.read = true; sharedChanged = true; }
+          }
+        }
+        for (const req of shared.joinRequests || []) {
+          if (req?.status === 'pending' && !req.read) { req.read = true; sharedChanged = true; }
+        }
+        const seen = new Set(prefs.adminSeenSurveys || []);
+        const pendingSurveys = getAdminPendingNotices().get('surveys') || [];
+        let prefsChanged = false;
+        for (const key of pendingSurveys) {
+          if (!seen.has(key)) { seen.add(key); prefsChanged = true; }
+        }
+        if (prefsChanged) {
+          prefs.adminSeenSurveys = [...seen];
+          savePrefs();
+        }
+        if (sharedChanged) saveSharedData();
+        showToast('모든 미확인 알림을 읽음 처리했습니다. 기록은 그대로 유지됩니다.', 'success');
+        renderAll();
       });
       document.getElementById('admin-jump-reports-btn').addEventListener('click', () => {
         if (!prefs.adminMode || !isAdminUser()) return;
@@ -8468,6 +8529,7 @@
           }
           prefs.theme = btn.dataset.setTheme;
           document.body.setAttribute('data-theme', prefs.theme);
+          syncFocusBrowserColor();
           const activeThemeLabelEl = document.getElementById('active-theme-label');
           if (activeThemeLabelEl && btn.dataset.themeLabel) activeThemeLabelEl.textContent = btn.dataset.themeLabel;
           document.querySelectorAll('[data-set-theme]').forEach(el => el.setAttribute('aria-pressed', String(el.dataset.setTheme === prefs.theme)));
@@ -9535,6 +9597,26 @@
 
       document.getElementById('admin-join-requests-list')?.addEventListener('click', async e => {
         if (!prefs.adminMode || !isAdminUser()) return;
+        const readJoinBtn = e.target.closest('[data-read-join]');
+        if (readJoinBtn) {
+          const uid = readJoinBtn.dataset.readJoin;
+          const req = (shared.joinRequests || []).find(r => r.uid === uid && r.status === 'pending');
+          if (req) {
+            req.read = true;
+            saveSharedData();
+            renderAll();
+          }
+          return;
+        }
+        const delJoinBtn = e.target.closest('[data-del-join]');
+        if (delJoinBtn) {
+          const uid = delJoinBtn.dataset.delJoin;
+          shared.joinRequests = (shared.joinRequests || []).filter(r => r.uid !== uid);
+          saveSharedData();
+          showToast('가입 요청 기록을 삭제했습니다.', 'info');
+          renderAll();
+          return;
+        }
         const appBtn = e.target.closest('[data-approve-join]');
         if (appBtn) {
           const uid = appBtn.dataset.approveJoin;
@@ -9586,6 +9668,20 @@
           savePrefs();
           renderAdminNotices();
           renderAdminTab();
+          return;
+        }
+        const delSurveyBtn = e.target.closest('[data-del-survey]');
+        if (delSurveyBtn) {
+          const uid = delSurveyBtn.dataset.delSurvey;
+          if (!uid || typeof firebase === 'undefined') return;
+          try {
+            await firebase.database().ref('privateData/' + uid).update({ surveyHidden: true });
+            if (allPrivateData[uid]) allPrivateData[uid].surveyHidden = true;
+            showToast('가입자 설문 기록을 목록에서 삭제했습니다.', 'info');
+            renderAll();
+          } catch (err) {
+            showToast('기록 삭제에 실패했습니다.', 'error');
+          }
           return;
         }
         const delBtn = e.target.closest('[data-del-archive]');
