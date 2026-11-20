@@ -704,10 +704,7 @@
           <p id="auth-pending-title" class="font-black text-sm">⏳ 가입 승인 대기 중입니다</p>
           <p id="auth-pending-desc" class="leading-relaxed">관리자에게 가입 요청서를 보냈습니다. 관리자가 수락하면 이 화면이 자동으로 열리며 바로 시작할 수 있습니다.</p>
         </div>
-        <div class="flex gap-2">
-          <button id="btn-cancel-join-req" type="button" class="flex-1 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700">요청 취소</button>
-          <button id="btn-pending-logout" type="button" class="flex-1 py-2.5 rounded-xl bg-slate-950 text-white text-xs font-bold">다른 계정 로그인</button>
-        </div>
+        <button id="btn-pending-logout" type="button" class="w-full py-2.5 rounded-xl bg-slate-950 text-white text-xs font-bold">다른 Google 계정으로 로그인</button>
       </div>
 
       <form id="auth-onboard-step" class="hidden space-y-3.5" novalidate>
@@ -2292,17 +2289,14 @@
           const box = document.getElementById('auth-pending-box');
           const pTitle = document.getElementById('auth-pending-title');
           const pDesc = document.getElementById('auth-pending-desc');
-          const cancelBtn = document.getElementById('btn-cancel-join-req');
           if (step === 'rejected') {
             box.className = 'p-4 rounded-2xl bg-rose-50 border border-rose-200 text-xs text-rose-900 space-y-1.5';
             pTitle.textContent = '❌ 가입 요청이 거절되었습니다';
-            pDesc.textContent = '관리자가 가입 요청을 승인하지 않았습니다. 요청을 취소하고 다시 신청하거나 다른 계정으로 로그인하세요.';
-            cancelBtn.textContent = '다시 신청하기';
+            pDesc.textContent = '관리자가 가입 요청을 승인하지 않았습니다. 다른 계정으로 로그인해 주세요.';
           } else {
             box.className = 'p-4 rounded-2xl bg-amber-50 border border-amber-200 text-xs text-amber-950 space-y-1.5';
             pTitle.textContent = '⏳ 가입 승인 대기 중입니다';
             pDesc.textContent = '관리자에게 가입 요청서를 보냈습니다. 관리자가 수락하면 이 화면이 자동으로 열리며 바로 시작할 수 있습니다.';
-            cancelBtn.textContent = '요청 취소';
           }
         } else {
           loginStep.classList.remove('hidden');
@@ -2333,7 +2327,15 @@
         const sub = document.getElementById('welcome-cheer-sub');
         const targetLogo = document.querySelector('#study-header .study-logo');
         if (!ov || !fly || !targetLogo) return;
-        if (titleEl) titleEl.textContent = '오늘 하루도 파이팅해봐요!';
+        const WELCOME_CHEERS = [
+          '오늘 하루도 파이팅해봐요!',
+          '지금처럼 한 걸음씩만 가보자!',
+          '오늘도 시작하는 네가 제일 멋져!',
+          '조급해하지 말고 내 페이스대로 해보자!',
+          '오늘 목표, 차근차근 채워보자!'
+        ];
+        const cheerIdx = Math.floor(Math.random() * WELCOME_CHEERS.length);
+        if (titleEl) titleEl.textContent = WELCOME_CHEERS[cheerIdx];
         if (sub) sub.textContent = memberDisplayName ? `${memberDisplayName}님, 오늘의 몰입을 시작해 볼까요?` : 'I LOVE STUDY';
         targetLogo.style.opacity = '0';
         fly.style.transform = '';
@@ -3986,7 +3988,7 @@
             const topPx = ((sM - startHour * 60) / 60) * pxPerHour;
             const heightPx = Math.max(24, ((eM - sM) / 60) * pxPerHour - 2);
             const pal = getSubjectPalette(c.name);
-            etaHtml += `<button type="button" data-eta-edit="${c.id}" class="absolute left-0.5 right-0.5 rounded-lg px-1 py-1 border border-l-[3px] shadow-sm flex items-center justify-center text-center overflow-y-auto no-scrollbar hover:brightness-95 transition" style="top:${topPx + 1}px; height:${heightPx}px; background:${pal.bg}; border-color:${pal.border}; color:${pal.text}" title="${escapeHtml(c.name)} (${c.start}~${c.end}) · 클릭해 수정">
+            etaHtml += `<button type="button" data-eta-edit="${c.id}" class="absolute left-0.5 right-0.5 rounded-lg px-1 py-1 flex items-center justify-center text-center overflow-y-auto no-scrollbar hover:brightness-95 transition" style="top:${topPx + 1}px; height:${heightPx}px; background:${pal.bg}; color:${pal.text}" title="${escapeHtml(c.name)} (${c.start}~${c.end}) · 클릭해 수정">
               <span class="w-full text-[10px] sm:text-[11px] font-extrabold leading-[1.2] break-all">${escapeHtml(c.name)}</span>
             </button>`;
           }
@@ -6506,17 +6508,6 @@
       }
       document.getElementById('btn-onboard-logout').addEventListener('click', signOutToLogin);
       document.getElementById('btn-pending-logout')?.addEventListener('click', signOutToLogin);
-      document.getElementById('btn-cancel-join-req')?.addEventListener('click', async () => {
-        if (!currentAuthUser || !dbRef) return;
-        const uid = currentAuthUser.uid;
-        try {
-          await dbRef.child('joinRequests').transaction(cur => {
-            return (Array.isArray(cur) ? cur : Object.values(cur || {})).filter(Boolean).filter(r => r.uid !== uid);
-          }, undefined, false);
-          shared.joinRequests = (shared.joinRequests || []).filter(r => r.uid !== uid);
-          showAuthOverlay('onboard');
-        } catch (e) { showToast('요청 취소 중 오류가 발생했습니다.', 'error'); }
-      });
 
       document.querySelectorAll('[data-set-signup-mode]').forEach(btn => {
         btn.addEventListener('click', () => {
