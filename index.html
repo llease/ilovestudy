@@ -522,6 +522,7 @@
     body[data-dark="true"][data-theme="grandmaster"] { --primary:#fda4af; --primary-hover:#fecdd3; --on-primary:#3d0a16; --tint:#451f2b; --link:#feb8c1; --focus-ring:#e65b6e; --hero:#8c1335; --hero-deep:#240610; }
     body[data-dark="true"][data-theme="challenger"] { --primary:#93c5fd; --primary-hover:#bfdbfe; --on-primary:#0c1e42; --tint:#1f355e; --link:#f5ca64; --focus-ring:#f5ca64; --hero:#1e479e; --hero-deep:#08122b; }
     html {background-color:var(--viewport-bg,var(--page))}
+    html:fullscreen::backdrop {background-color:var(--viewport-bg,var(--page))}
     body {
       margin:0; min-height:100vh; min-height:100dvh; color:var(--ink)!important; background:var(--viewport-bg,var(--page))!important;
       font-family:Pretendard,'Noto Sans KR',system-ui,'Malgun Gothic','Apple SD Gothic Neo',sans-serif;
@@ -1253,6 +1254,9 @@
     .focus-theme-switch { display:flex; align-self:flex-end; gap:2px; border:1px solid var(--focus-divider); border-radius:9px; padding:2px; }
     .focus-theme-switch button { min-height:34px; padding:.35rem .65rem; font-size:.72rem; color:var(--focus-subtle); border-radius:6px; font-weight:700 }
     .focus-theme-switch button[aria-pressed="true"] { color:var(--focus-fg); background:color-mix(in srgb,var(--focus-fg) 10%,transparent); }
+    .focus-top-controls {display:flex;flex-wrap:wrap;justify-content:flex-end;align-items:center;gap:.35rem}
+    #focus-native-fullscreen {min-height:38px;padding:0 .65rem;color:var(--focus-subtle);font-size:.72rem;border-radius:8px}
+    #focus-native-fullscreen:hover,#focus-native-fullscreen[aria-pressed="true"] {color:var(--focus-fg);background:color-mix(in srgb,var(--focus-fg) 10%,transparent)}
     #focus-rest-label,#focus-rest-note {color:var(--focus-subtle); font-size:clamp(.7rem,2.2vw,.85rem);font-variant-numeric:tabular-nums}
     #focus-rest-note {min-height:1.35em;line-height:1.45}
     #header-more-menu [data-just-unlocked] {outline:2px solid var(--focus-ring);outline-offset:3px;z-index:1}
@@ -1758,9 +1762,12 @@
   <div id="focus-overlay" role="dialog" aria-modal="true" aria-label="집중 스톱워치" tabindex="-1" class="fixed inset-0 z-50 hidden flex-col text-center overflow-y-auto">
     <div class="focus-home-scene" aria-hidden="true"></div>
     <div class="focus-shell">
-      <div class="focus-theme-switch" id="focus-theme-switch" role="group" aria-label="타이머 화면 테마">
-        <button type="button" data-focus-theme-choice="plain" aria-pressed="true">기본</button>
-        <button type="button" data-focus-theme-choice="home" aria-pressed="false">홈 테마</button>
+      <div class="focus-top-controls">
+        <div class="focus-theme-switch" id="focus-theme-switch" role="group" aria-label="타이머 화면 테마">
+          <button type="button" data-focus-theme-choice="plain" aria-pressed="true">기본</button>
+          <button type="button" data-focus-theme-choice="home" aria-pressed="false">홈 테마</button>
+        </div>
+        <button id="focus-native-fullscreen" type="button" aria-pressed="false" class="hidden">전체 화면</button>
       </div>
       <section class="focus-screen" id="focus-panel-timer" aria-labelledby="focus-view-timer">
         <div class="focus-time-stage">
@@ -1978,7 +1985,7 @@
       <div id="header-tools" class="flex items-center shrink-0 relative">
         <button id="mailbox-btn" type="button" aria-label="우편함" class="relative w-7 h-7 rounded-lg text-xs font-bold text-slate-700 hover:bg-slate-100 border border-slate-200 flex items-center justify-center shrink-0 overflow-hidden" title="우편함"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="m4 7 8 6 8-6"/></svg><span id="mailbox-badge" class="hidden absolute top-1 right-1 w-2 h-2 rounded-full bg-rose-500 ring-1 ring-white pointer-events-none"></span></button>
         <button id="dark-toggle-btn" type="button" aria-label="다크모드" aria-pressed="false" class="w-7 h-7 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 flex items-center justify-center shrink-0 text-xs" title="다크모드 전환">🌙</button>
-        <button id="header-more-btn" type="button" aria-label="더보기" aria-expanded="false" aria-controls="header-more-menu" class="w-7 h-7 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 flex items-center justify-center shrink-0 font-black text-sm" title="테마 · 알림 · 건의 · 관리자"><svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg></button>
+        <button id="header-more-btn" type="button" aria-label="더보기" aria-expanded="false" aria-controls="header-more-menu" class="relative w-7 h-7 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 flex items-center justify-center shrink-0 font-black text-sm" title="테마 · 알림 · 건의 · 관리자"><svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg><span id="admin-more-badge" class="hidden absolute top-1 right-1 w-2 h-2 rounded-full bg-rose-500 ring-1 ring-white pointer-events-none" aria-hidden="true"></span></button>
 
         <!-- Compact Popover Menu (replaces cramped horizontal icon strip) -->
         <div id="header-more-menu" class="hidden absolute right-0 top-9 w-56 rounded-2xl bg-white border border-slate-200 shadow-xl p-2.5 space-y-2 z-50">
@@ -2069,7 +2076,7 @@
         </div>
         <h2 id="live-period-title" class="text-base sm:text-xl font-black tracking-tight">1교시 (08:00 ~ 08:50)</h2>
         <div class="flex items-center gap-2 flex-wrap">
-          <p id="live-sub-desc" class="text-xs font-medium opacity-85">시작 후 5분 이내에 출석 버튼을 눌러주세요.</p>
+          <p id="live-sub-desc" class="text-xs font-medium opacity-85">교시 중 타이머로 공부 시간을 기록하세요.</p>
 
         </div>
       </div>
@@ -2657,9 +2664,15 @@
     </div>
     <!-- TAB 6: ADMIN PANEL -->
     <div id="tab-admin" class="tab-panel hidden space-y-3.5">
-      <div id="admin-report-alert-banner" class="hidden rounded-2xl border-2 border-rose-500 bg-rose-50 px-4 py-3 flex items-center justify-between gap-2">
-        <span id="admin-report-alert-text" class="text-xs font-black text-rose-800">🚨 미처리 신고 내역이 있습니다.</span>
-        <button id="admin-jump-reports-btn" type="button" class="px-3 py-1 rounded-lg bg-rose-600 text-white text-[11px] font-bold whitespace-nowrap shrink-0">신고 내역 보기</button>
+      <div class="rounded-2xl border border-slate-200 bg-white px-4 py-3 flex flex-wrap items-center justify-between gap-2">
+        <div>
+          <h3 class="text-xs font-black text-slate-900">관리자 알림</h3>
+          <p id="admin-report-alert-text" class="text-xs text-slate-600" aria-live="polite"></p>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <button id="admin-jump-reports-btn" type="button" class="px-3 py-1 rounded-lg bg-slate-950 text-white text-[11px] font-bold">새 접수 보기</button>
+          <button id="admin-enable-device-notices" type="button" class="hidden px-3 py-1 rounded-lg border border-slate-200 text-[11px] font-bold">기기 알림 켜기</button>
+        </div>
       </div>
 
       <!-- Admin Segmented Sub-Tab Bar -->
@@ -2934,6 +2947,14 @@
       const LOCAL_DATA_KEY = storageScope + 'iluvstudy_data_v2';
       const FOCUS_STATE_KEY = storageScope + 'iluvstudy_focus_v1';
       const ADMIN_EMAIL = 'donghyun060324@gmail.com';
+      const EXTRA_STUDY_QUOTES = [
+        '너, 너무 잘하려고 애쓰지 마라. 오늘의 일은 오늘의 일로 충분하다.',
+        '고갤 들어라. 그대도 오늘 누군가에게 위로였다.',
+        '심장을 바쳐라.',
+        '구름에 달 가듯이 가는 나그네.',
+        '천상천하 유아독존.',
+        '포기하면 그 순간이 바로 시합 종료예요.'
+      ];
 
       function toMins(hhmm) { const [h, m] = hhmm.split(':').map(Number); return h * 60 + m; }
       function escapeHtml(s) {
@@ -3022,6 +3043,29 @@
         m.lastActiveStudyDate = dateKey;
       }
 
+      function modeTransitions(member) {
+        return Object.values(member.modeTransitions || {}).filter(change => Number.isFinite(change?.at)).sort((a,b) => a.at - b.at);
+      }
+      function changeStudyMode(member, mode, at = Date.now()) {
+        const before = getMemberMode(member);
+        if (before === mode) return;
+        member.modeTransitions = modeTransitions(member).filter(change => change.at >= at - 3 * 86400000);
+        member.modeTransitions.push({ at, before });
+        member.mode = mode;
+      }
+      function studyModeAt(member, timestamp, changes = modeTransitions(member)) {
+        const transition = changes.find(change => timestamp < change.at);
+        return transition?.before || getMemberMode(member);
+      }
+      function cancelPromotionReservation(member) {
+        if (member.promoReservedMode && member.pendingMode === 'strict' && member.pendingDate === member.promoPendingDate) {
+          member.pendingMode = null;
+          member.pendingDate = null;
+        }
+        member.promoReservedMode = false;
+        member.promoPendingDate = null;
+        member.promoTargetTier = null;
+      }
       function syncMemberPendingModes(studyDay = studyDayKey()) {
         let changed = false;
         (shared.members || []).forEach(m => {
@@ -3029,7 +3073,7 @@
           if (syncDailyStreak(m, studyDay)) changed = true;
           if (m.pendingMode && m.pendingDate && studyDay >= m.pendingDate) {
             if (focusInterval && m.id === prefs.currentUserId) focusModeBeforeChange = { date:m.pendingDate, mode:getMemberMode(m) };
-            m.mode = m.pendingMode;
+            changeStudyMode(m, m.pendingMode, Date.parse(m.pendingDate + 'T05:00:00+09:00'));
             m.pendingMode = null;
             m.pendingDate = null;
             m.promoReservedMode = false;
@@ -3777,7 +3821,12 @@
               saveSharedData();
             }
           }
-          prefs.currentUserId = found.id;
+          if (prefs.adminMode && prefs.inspectingMember && isAdminUser() && shared.members.some(m => m.id === prefs.currentUserId)) {
+            prefs.adminOwnUserId = found.id;
+          } else {
+            prefs.inspectingMember = false;
+            prefs.currentUserId = found.id;
+          }
           prefs.joinedMemberId = found.inStudy !== false ? found.id : null;
           prefs.lastJoinedMemberId = found.id;
           savePrefs();
@@ -3845,6 +3894,7 @@
               }
             });
             allPrivateData = raw;
+            renderAdminNotices();
             if (prefs.activeTab === 'admin') renderAdminTab();
           }, () => {});
         }
@@ -4111,12 +4161,13 @@
       }
 
       function getNowParts() {
-        const n = new Date();
+        const n = new Date(Date.now() + 9 * 3600000);
         if (prefs.simTime) {
           const [h, m] = prefs.simTime.split(':').map(Number);
-          return { h, m, s: 0, totalMins: h * 60 + m, hhmm: prefs.simTime, day: n.getDay() };
+          return { h, m, s: 0, totalMins: h * 60 + m, hhmm: prefs.simTime, day: n.getUTCDay() };
         }
-        return { h: n.getHours(), m: n.getMinutes(), s: n.getSeconds(), totalMins: n.getHours() * 60 + n.getMinutes(), hhmm: `${String(n.getHours()).padStart(2, '0')}:${String(n.getMinutes()).padStart(2, '0')}`, day: n.getDay() };
+        const h = n.getUTCHours(), m = n.getUTCMinutes();
+        return { h, m, s: n.getUTCSeconds(), totalMins: h * 60 + m, hhmm: `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`, day: n.getUTCDay() };
       }
 
       function getCurrentPhase(mins) {
@@ -4125,6 +4176,11 @@
           if (mins >= st && mins < en) return { ...t, startMins: st, endMins: en };
         }
         return null;
+      }
+      function requiredAttendanceSeconds(phase) { return Math.ceil(phase.mins * 60 * .75); }
+      function attendanceDuration(phase) {
+        const seconds = requiredAttendanceSeconds(phase);
+        return `${Math.floor(seconds / 60)}분${seconds % 60 ? ` ${seconds % 60}초` : ''}`;
       }
 
       function getExemptPeriodIds(memberId, dayOfWeek) {
@@ -4248,6 +4304,7 @@
       }
 
       function calcAttendanceRate(memberId, dateStr) {
+        if (new Date(dateStr + 'T12:00:00Z').getUTCDay() === 0) return null;
         let mand = 0, score = 0;
         for (const p of STUDY_PERIODS) {
           if (!p.mandatory) continue;
@@ -4586,48 +4643,121 @@
         el._animRaf = requestAnimationFrame(step);
       }
 
+      function isAdminUser() {
+        return (currentAuthUser?.email || '').toLowerCase() === ADMIN_EMAIL;
+      }
+
+      const adminNoticeTypes = [
+        ['reports', '신고', 'admin-reports-section'],
+        ['suggestions', '건의', 'admin-suggestions-list'],
+        ['encouragements', '격려 요청', 'admin-encouragements-section'],
+        ['surveys', '가입 설문', 'admin-onboarding-list'],
+        ['joinRequests', '가입 요청', 'admin-join-requests-wrap']
+      ];
+
+      function adminSurveyKey(uid, survey) {
+        return uid && survey ? `surveys/${uid}/${survey.submittedAt || survey.agreedAt || 'legacy'}` : '';
+      }
+
+      function getAdminPendingNotices() {
+        const pending = new Map(adminNoticeTypes.map(([type]) => [type, []]));
+        if (!isAdminUser()) return pending;
+        for (const type of ['reports', 'suggestions', 'encouragements']) {
+          for (const [key, record] of Object.entries(shared[type] || {})) {
+            if (record && !record.read && !record.replied) pending.get(type).push(`${type}/${record.id || key}`);
+          }
+        }
+        for (const request of shared.joinRequests || []) {
+          if (request?.status === 'pending' && request.uid) pending.get('joinRequests').push(`joinRequests/${request.uid}/${request.requestedAt || 'legacy'}`);
+        }
+        const surveys = new Map();
+        for (const member of shared.members || []) {
+          if (member.uid && member.onboardingSurvey) surveys.set(member.uid, member.onboardingSurvey);
+        }
+        for (const [uid, record] of Object.entries(allPrivateData || {})) {
+          if (record?.status === 'withdrawn') surveys.delete(uid);
+          else if (record?.onboardingSurvey) surveys.set(uid, record.onboardingSurvey);
+        }
+        const seen = new Set(prefs.adminSeenSurveys || []);
+        for (const [uid, survey] of surveys) {
+          const key = adminSurveyKey(uid, survey);
+          if (key && !seen.has(key)) pending.get('surveys').push(key);
+        }
+        return pending;
+      }
+
+      function describeAdminNotices(notices) {
+        return adminNoticeTypes
+          .map(([type, label]) => notices.get(type).length ? `${label} ${notices.get(type).length}건` : '')
+          .filter(Boolean).join(' · ');
+      }
+
+      function showAdminDeviceNotice(body) {
+        if (!prefs.adminDeviceNotices || typeof Notification === 'undefined' || Notification.permission !== 'granted') return;
+        const title = 'I LOVE STUDY · 관리자 알림';
+        const options = { body, tag: 'iluvstudy-admin-inbox' };
+        if (navigator.serviceWorker?.controller) {
+          const adminUid = currentAuthUser.uid;
+          navigator.serviceWorker.ready.then(reg => {
+            if (isAdminUser() && currentAuthUser.uid === adminUid) return reg.showNotification(title, options);
+          }).catch(() => {});
+        } else {
+          try { new Notification(title, options); } catch {}
+        }
+      }
+
+      function renderAdminNotices() {
+        const allowed = isAdminUser();
+        const pending = getAdminPendingNotices();
+        const joinCount = pending.get('joinRequests').length;
+        const inboxCount = [...pending.values()].reduce((sum, keys) => sum + keys.length, 0) - joinCount;
+        const total = inboxCount + joinCount;
+        const describe = describeAdminNotices(pending);
+        const more = document.getElementById('header-more-btn');
+        document.getElementById('admin-more-badge').classList.toggle('hidden', !total);
+        more.setAttribute('aria-label', total ? `더보기 · 관리자 미확인 ${total}건` : '더보기');
+        const adminBtn = document.getElementById('admin-toggle-btn');
+        adminBtn.classList.toggle('hidden', !allowed);
+        adminBtn.innerHTML = `<span>🛡️ ${prefs.adminMode ? '관리자 모드 ON' : '관리자 모드'}</span>${total ? `<span class="px-1.5 py-0.5 rounded-full bg-rose-600 text-white text-[10px] font-black">${total}</span>` : ''}`;
+        document.getElementById('nav-tab-admin').innerHTML = total
+          ? `🛡️ 관리자 <span class="ml-0.5 px-1.5 py-0.2 rounded-full bg-rose-600 text-white text-[9px] font-black">${total}</span>`
+          : '🛡️ 관리자';
+        for (const [id, count] of [['admin-sub-badge-join', joinCount], ['admin-sub-badge-inbox', inboxCount]]) {
+          const badge = document.getElementById(id);
+          badge.textContent = count;
+          badge.classList.toggle('hidden', count === 0);
+        }
+        const summary = document.getElementById('admin-report-alert-text');
+        const summaryText = describe || '확인할 새 접수가 없어요.';
+        if (summary.textContent !== summaryText) summary.textContent = summaryText;
+        document.getElementById('admin-jump-reports-btn').classList.toggle('hidden', total === 0);
+        const enableButton = document.getElementById('admin-enable-device-notices');
+        const canNotify = allowed && typeof Notification !== 'undefined' && typeof Notification.requestPermission === 'function';
+        enableButton.classList.toggle('hidden', !canNotify || Notification.permission === 'denied');
+        enableButton.textContent = prefs.adminDeviceNotices ? '기기 알림 끄기' : '기기 알림 켜기';
+        if (!total) return;
+        const sent = new Set(prefs.adminNotifiedKeys || []);
+        const fresh = new Map([...pending].map(([type, keys]) => [type, keys.filter(key => !sent.has(key))]));
+        const message = describeAdminNotices(fresh);
+        if (!message) return;
+        for (const keys of fresh.values()) for (const key of keys) sent.add(key);
+        prefs.adminNotifiedKeys = [...sent];
+        savePrefs();
+        showToast(`관리자 새 접수 · ${message}`, 'info');
+        showAdminDeviceNotice(message);
+      }
+
       function renderHeaderControls() {
         if (!shared.members.some(m => m.id === prefs.currentUserId) && shared.members.length) prefs.currentUserId = shared.members[0].id;
         const curMemObj = shared.members.find(m => m.id === prefs.currentUserId);
 
-        function isAdminUser() {
-          return !!(currentAuthUser && (currentAuthUser.email || '').toLowerCase() === ADMIN_EMAIL);
-        }
         if (prefs.adminMode && authResolvedOnce && !isAdminUser()) {
           prefs.adminMode = false;
           prefs.inspectingMember = false;
           savePrefs();
         }
+        renderAdminNotices();
         const adminBtn = document.getElementById('admin-toggle-btn');
-        if (adminBtn) adminBtn.classList.toggle('hidden', !isAdminUser());
-        const repCnt = Object.values(shared.reports || {}).filter(r => !r.read).length;
-        const newSuggestions = Object.values(shared.suggestions || {}).filter(s => !s.read).length;
-        const inboxCount = repCnt + newSuggestions;
-        const pendingJoinCnt = (shared.joinRequests || []).filter(r => r.status === 'pending').length;
-        const adminAlertCnt = inboxCount + pendingJoinCnt;
-        if (adminBtn) {
-          adminBtn.innerHTML = `<span>🛡️ ${prefs.adminMode ? '관리자 모드 ON' : '관리자 모드'}</span>${adminAlertCnt > 0 && prefs.adminMode ? `<span class="px-1.5 py-0.5 rounded-full bg-rose-600 text-white text-[10px] font-black">${adminAlertCnt}</span>` : ''}`;
-        }
-        const adminNav = document.getElementById('nav-tab-admin');
-        if (adminNav) {
-          adminNav.innerHTML = adminAlertCnt > 0 ? `🛡️ 관리자 <span class="ml-0.5 px-1.5 py-0.2 rounded-full bg-rose-600 text-white text-[9px] font-black">${adminAlertCnt}</span>` : '🛡️ 관리자';
-        }
-        const joinSubBadge = document.getElementById('admin-sub-badge-join');
-        if (joinSubBadge) {
-          joinSubBadge.textContent = pendingJoinCnt;
-          joinSubBadge.classList.toggle('hidden', pendingJoinCnt === 0);
-        }
-        const inboxSubBadge = document.getElementById('admin-sub-badge-inbox');
-        if (inboxSubBadge) {
-          inboxSubBadge.textContent = inboxCount;
-          inboxSubBadge.classList.toggle('hidden', inboxCount === 0);
-        }
-        const repAlertBanner = document.getElementById('admin-report-alert-banner');
-        const repAlertText = document.getElementById('admin-report-alert-text');
-        if (repAlertBanner && repAlertText) {
-          repAlertBanner.classList.toggle('hidden', !prefs.adminMode || repCnt === 0);
-          repAlertText.textContent = `🚨 확인하지 않은 스터디원 신고 ${repCnt}건이 있습니다.`;
-        }
         const pureAdmin = prefs.adminMode && !prefs.inspectingMember;
         document.querySelectorAll('.nav-tab').forEach(tb => {
           const tName = tb.dataset.tab;
@@ -4651,6 +4781,7 @@
           adminBtn.className = 'w-full flex items-center justify-between px-2.5 py-2 rounded-xl hover:bg-slate-100 text-xs font-bold text-slate-700 whitespace-nowrap';
           if (prefs.activeTab === 'admin') switchTab('dashboard');
         }
+        adminBtn.classList.toggle('hidden', !isAdminUser());
         syncMemberPendingModes();
         const meHdr = shared.members.find(m => m.id === prefs.currentUserId) || shared.members[0];
         const mode = getMemberMode(meHdr);
@@ -4769,7 +4900,7 @@
 
       function renderLiveBanner() {
         const now = getNowParts(), phase = getCurrentPhase(now.totalMins), days = ['일', '월', '화', '수', '목', '금', '토'];
-        document.getElementById('live-date-label').textContent = `${todayStr()} (${days[now.day]})`;
+        document.getElementById('live-date-label').textContent = `${koreaDateKey()} (${days[now.day]})`;
         const day = studyDayKey();
         const shortDate = date => date.slice(5).replace('-', '.');
         document.getElementById('live-study-day-range').textContent = `${shortDate(day)} 05:00 ~ ${shortDate(nextStudyDay(day))} 05:00`;
@@ -4819,7 +4950,8 @@
           '가장 넓은 길은 언제나 내 마음속에',
           '저 넓은 세상에서 큰 꿈을 펼쳐라',
           '초록 물결이 톡톡 튀는 젊음처럼',
-          '끝없이 높은 하늘로 한없이 넓은 바다로'
+          '끝없이 높은 하늘로 한없이 넓은 바다로',
+          ...EXTRA_STUDY_QUOTES
         ];
         const meBanner = shared.members.find(m => m.id === prefs.currentUserId);
         const bannerEl = document.getElementById('main-live-banner');
@@ -4836,7 +4968,7 @@
         if (isFreeBanner) {
           badgeEl.textContent = '자율모드 · 오늘의 한마디';
           badgeEl.className = 'px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500 text-white';
-          const dayIdx = Math.floor(Date.now() / 86400000) % DAILY_QUOTES.length;
+          const dayIdx = Math.floor(Date.parse(day + 'T00:00:00Z') / 86400000) % DAILY_QUOTES.length;
           titleEl.textContent = prefs.customQuote ? `"${prefs.customQuote}"` : `"${DAILY_QUOTES[dayIdx]}"`;
           descEl.textContent = '';
           descEl.classList.add('hidden');
@@ -4865,25 +4997,22 @@
           lastNotifiedPhaseId = phase.id;
         }
         if (phase.type === 'study') {
-          const meModeObj = shared.members.find(m => m.id === prefs.currentUserId);
-          const isFree = getMemberMode(meModeObj) === 'free';
-          const el = now.totalMins - phase.startMins;
-          if (isFree) {
-            badgeEl.textContent = '자율모드 · 공부시간';
-            badgeEl.className = 'px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500 text-white';
-            titleEl.textContent = `${phase.label} (${phase.start} ~ ${phase.end})`;
-            descEl.textContent = '자율모드 중입니다. 지각·무단이탈 없이 편하게 시간을 재며 공부하세요.';
-          } else {
-            badgeEl.textContent = el <= 5 ? '울트라집중모드 · 출석 가능' : '울트라집중모드 · 공부시간';
-            badgeEl.className = el <= 5 ? 'px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500 text-white' : 'px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-rose-600 text-white';
-            titleEl.textContent = `${phase.label} (${phase.start} ~ ${phase.end})`;
-            descEl.textContent = `타이머를 최소 75%(${Math.ceil(phase.mins * 0.75)}분) 이상 유지해야 ${phase.label} 출석이 인정됩니다.`;
-          }
+          const isSunday = now.day === 0;
+          const status = getMemberDayStatus(meBanner.id, day, phase.id);
+          const credited = Number(shared.periodStudySecs?.[day]?.[meBanner.id]?.[phase.id]) || 0;
+          const canAttend = (phase.endMins - now.totalMins) * 60 - (now.s || 0) + credited >= requiredAttendanceSeconds(phase);
+          const badge = status === 'exempt' ? '수업 면제'
+            : status === 'present' || status === 'late' ? '출석 완료'
+            : isSunday ? '일요일 선택 자습' : canAttend ? '출석 가능' : '공부시간';
+          badgeEl.textContent = `울트라집중모드 · ${badge}`;
+          titleEl.textContent = `${phase.label} (${phase.start} ~ ${phase.end})`;
+          descEl.textContent = status === 'exempt' ? '수업 시간표에 따라 이 교시는 면제돼요.'
+            : `교시 중 타이머 누적 ${attendanceDuration(phase)}(75%) 이상이면 출석으로 인정돼요.`;
         } else {
           badgeEl.textContent = phase.type === 'break' ? '쉬는시간' : phase.type === 'meal' ? '식사시간' : '귀가시간';
           badgeEl.className = 'px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-500 text-white';
           titleEl.textContent = `${phase.label} (${phase.start} ~ ${phase.end})`;
-          descEl.textContent = phase.type === 'home' ? '8교시 종료! 귀가 완료 또는 심야 자습을 선택하세요.' : '잠시 휴식 후 다음 교시 시작 5분 내 출석해 주세요.';
+          descEl.textContent = phase.type === 'home' ? '8교시 종료! 귀가 완료 또는 심야 자습을 선택하세요.' : '다음 교시에는 타이머를 켜고 교시 시간의 75%를 채워 주세요.';
         }
       }
 
@@ -4985,7 +5114,10 @@
         if (prefs.adminMode || isFreeDashMode) {
           // handled above
         } else if (!phase || phase.type !== 'study') {
-          if (now.totalMins >= 360 && now.totalMins < 480) { btn.disabled = false; btn.textContent = '0교시 등원 출석'; }
+          if (now.totalMins >= 360 && now.totalMins < 480) {
+            btn.disabled = getMemberDayStatus(me.id, t, 'p1') === 'present';
+            btn.textContent = btn.disabled ? '0교시 등원 출석 완료 ✓' : '0교시 등원 출석';
+          }
           else { btn.disabled = true; btn.textContent = phase ? `${phase.label} (공부시간에 출석)` : '출석 가능 시간 아님'; }
         } else if (curSt === 'exempt') { btn.disabled = true; btn.textContent = `${phase.label} 수업 면제`; }
         else if (curSt === 'present' || curSt === 'late') { btn.disabled = true; btn.textContent = `${phase.label} ${meta.text} 완료 ✓`; }
@@ -4997,7 +5129,8 @@
         document.getElementById('schedule-list-card').classList.toggle('hidden', isFreeDash);
         const todayLogMins = studyMinutes(me.id);
         animateCountUp(document.getElementById('my-today-study-mins'), todayLogMins, formatStudyMins);
-        document.getElementById('my-today-rate').textContent = `출석률 ${calcAttendanceRate(me.id, t)}%`;
+        const attendanceRate = calcAttendanceRate(me.id, t);
+        document.getElementById('my-today-rate').textContent = attendanceRate == null ? '일요일 의무자습 없음' : `출석률 ${attendanceRate}%`;
         document.getElementById('my-period-chips').innerHTML = STUDY_PERIODS.map(p => {
           const st = getMemberDayStatus(me.id, t, p.id), m = getStatusMeta(st);
           return `<div class="rounded-lg border px-2 py-1.5 text-center ${m.cls}"><div class="text-[11px] font-bold">${p.label.replace('(심야)', '')}</div><div class="text-[10px]">${m.text}</div></div>`;
@@ -5137,7 +5270,7 @@
                   <span class="font-bold text-slate-900 truncate">${escapeHtml(m.name)}</span>
                 </div>
                 <div class="flex items-center gap-2.5 shrink-0">
-                  <span class="text-[10px] font-semibold text-slate-500 whitespace-nowrap">출석 ${m.rate}%</span>
+                  <span class="text-[10px] font-semibold text-slate-500 whitespace-nowrap">${m.rate == null ? '의무자습 없음' : `출석 ${m.rate}%`}</span>
                   <span class="font-mono font-black text-indigo-600 whitespace-nowrap">${formatStudyMins(m.weekMins)}</span>
                 </div>
               </div>`).join('')}</div>`
@@ -6103,9 +6236,7 @@
         const stMemSel = document.getElementById('admin-study-member');
         const curStMem = validMemberId(stMemSel.value);
         stMemSel.innerHTML = shared.members.map(m => `<option value="${m.id}" ${m.id === curStMem ? 'selected' : ''}>${escapeHtml(m.name)}</option>`).join('');
-        const stDateEl = document.getElementById('admin-study-date');
-        if (!stDateEl.value) stDateEl.value = todayStr();
-        document.getElementById('admin-study-mins').value = (shared.studyLogs?.[stDateEl.value]?.[curStMem]) || 0;
+        refreshAdminStudyInput();
 
         const rankMemSel = document.getElementById('admin-rank-member');
         const curRankMem = validMemberId(rankMemSel.value);
@@ -6115,7 +6246,9 @@
         if (consPromoChk) consPromoChk.checked = !!shared.allowConsecutivePromo;
         if (consPromoLbl) consPromoLbl.textContent = shared.allowConsecutivePromo ? '켜짐 (연속 허용)' : '꺼짐 (하루 1회)';
         const rankPresetSel = document.getElementById('admin-rank-tier-preset');
+        const draftTier = rankPresetSel.value;
         rankPresetSel.innerHTML = LOL_TIERS.map(t => `<option value="${t.min}">${t.icon} ${t.name} (${t.min} LP~)</option>`).join('');
+        rankPresetSel.value = draftTier;
         syncAdminRankControls(curRankMem);
 
         const bms = document.getElementById('admin-badge-member'), cbm = validMemberId(bms.value);
@@ -6249,18 +6382,20 @@
             if (pRec.realName || pRec.onboardingSurvey) {
               obRows.push({
                 uid,
-                name: pRec.nickname || '탈퇴 회원',
+                name: pRec.nickname || (pRec.status === 'withdrawn' ? '탈퇴 회원' : '가입 신청자'),
                 email: pRec.email || '',
                 realName: pRec.realName || '',
                 survey: pRec.onboardingSurvey || null,
-                withdrawn: pRec.status === 'withdrawn' || !seenUids.has(uid),
+                withdrawn: pRec.status === 'withdrawn',
                 withdrawnAt: pRec.withdrawnAt || ''
               });
             }
           });
+          const seenSurveys = new Set(prefs.adminSeenSurveys || []);
           obListEl.innerHTML = obRows.length
             ? obRows.map(item => {
                 const sv = item.survey || {};
+                const surveyKey = !item.withdrawn && adminSurveyKey(item.uid, item.survey);
                 return `<div class="rounded-xl border ${item.withdrawn ? 'border-rose-200 bg-rose-50/60' : 'border-slate-200 bg-slate-50'} p-2.5 text-xs space-y-1.5">
                   <div class="flex items-center justify-between gap-2">
                     <div class="flex items-center gap-1.5 min-w-0 flex-wrap">
@@ -6270,6 +6405,7 @@
                     </div>
                     <div class="flex items-center gap-2 shrink-0">
                       ${sv.agreedAt ? `<span class="text-[10px] text-slate-400">${escapeHtml(sv.agreedAt)}</span>` : ''}
+                      ${surveyKey && !seenSurveys.has(surveyKey) ? `<button type="button" data-read-survey="${escapeHtml(surveyKey)}" class="px-2 py-1 rounded bg-slate-950 text-white text-[10px] font-bold">확인</button>` : ''}
                       ${item.withdrawn && item.uid ? `<button type="button" data-del-archive="${escapeHtml(item.uid)}" class="text-[10px] font-bold text-rose-600 hover:underline">보관 삭제</button>` : ''}
                     </div>
                   </div>
@@ -6424,6 +6560,10 @@
       document.getElementById('study-mode-btn').addEventListener('click', () => {
         const me = shared.members.find(m => m.id === prefs.currentUserId);
         if (!me) return;
+        if (prefs.adminMode && prefs.inspectingMember) {
+          showToast('멤버의 모드는 관리자 화면의 멤버 · 기록에서 변경해 주세요.', 'info');
+          return;
+        }
         const curMode = getMemberMode(me);
         const targetMode = curMode === 'strict' ? 'free' : 'strict';
         const tmr = nextStudyDay();
@@ -6579,12 +6719,7 @@
             }
           });
         } else if (e.target.id === 'btn-cancel-promo') {
-          if (me.promoReservedMode && me.pendingMode === 'strict' && me.pendingDate === me.promoPendingDate) {
-            me.pendingMode = null; me.pendingDate = null;
-          }
-          me.promoReservedMode = false;
-          me.promoPendingDate = null;
-          me.promoTargetTier = null;
+          cancelPromotionReservation(me);
           saveSharedData();
           showToast('승급전 예약이 취소되었습니다.', 'info');
           renderAll();
@@ -6709,9 +6844,13 @@
           }
           savePrefs(); showToast('관리자 모드 OFF', 'info'); switchTab('dashboard'); return;
         }
+        if (focusInterval) {
+          showToast('공부 중인 타이머를 종료한 뒤 관리자 모드를 열어 주세요.', 'info');
+          return;
+        }
         prefs.adminMode = true; prefs.inspectingMember = false; savePrefs();
-        const rCnt = Object.values(shared.reports || {}).filter(report => !report.read).length;
-        showToast(rCnt > 0 ? `관리자 모드 ON (🚨 미처리 신고 ${rCnt}건)` : '관리자 전용 화면으로 전환되었습니다.', rCnt > 0 ? 'warn' : 'success');
+        const pending = describeAdminNotices(getAdminPendingNotices());
+        showToast(pending ? `관리자 미확인 · ${pending}` : '관리자 모드를 열었어요.', 'info');
         switchTab('admin');
       });
 
@@ -6933,11 +7072,12 @@
           return;
         }
         if (!phase && now.totalMins >= 360 && now.totalMins < 480) {
-          if (!pendingPhoto) pendingPhoto = makeSampleDeskImage(me.name, `${now.hhmm} 1교시`);
+          if (getMemberDayStatus(me.id, t, 'p1') === 'present') return;
+          const checkinPhoto = makeSampleDeskImage(me.name, `${now.hhmm} 1교시`);
           if (me.firstTimeDate !== t || !me.firstTime || toMins(now.hhmm) < toMins(me.firstTime)) { me.firstTime = now.hhmm; me.firstTimeDate = t; } recordEarlyMorningCheck(me, t, now.hhmm); if (now.totalMins >= 360 && now.totalMins < 420) unlockChallengeFor(me.id, 'ch_6am', false);
           if (!shared.photos) shared.photos = [];
-          shared.photos.push({ id: 'ph_' + Date.now(), memberId: me.id, memberName: me.name, periodId: 'p1', periodLabel: '1교시 등원', time: now.hhmm, date: t, dataUrl: pendingPhoto });
-          pendingPhoto = null; setMemberDayStatus(me.id, t, 'p1', 'present'); showToast('이른 등원 완료!', 'success'); renderAll(); return;
+          shared.photos.push({ id: 'ph_' + Date.now(), memberId: me.id, memberName: me.name, periodId: 'p1', periodLabel: '1교시 등원', time: now.hhmm, date: t, dataUrl: checkinPhoto });
+          setMemberDayStatus(me.id, t, 'p1', 'present'); showToast('이른 등원 완료!', 'success'); renderAll(); return;
         }
         if (!phase || phase.type !== 'study') return;
         if (phase.id === 'p1' && (me.firstTimeDate !== t || !me.firstTime || toMins(now.hhmm) < toMins(me.firstTime))) {
@@ -6945,8 +7085,7 @@
           me.firstTimeDate = t;
           saveSharedData();
         }
-        const reqMins = Math.ceil(phase.mins * 0.75);
-        showToast(`${phase.label} 타이머를 ${reqMins}분(75%) 이상 유지하면 출석이 인정됩니다.`, 'info');
+        showToast(`${phase.label} 타이머 누적 ${attendanceDuration(phase)}(75%) 이상이면 출석이 인정돼요.`, 'info');
         openFocusOverlay();
       });
 
@@ -7170,14 +7309,30 @@
       document.querySelectorAll('[data-admin-sub]').forEach(btn => {
         btn.addEventListener('click', () => switchAdminSubTab(btn.dataset.adminSub));
       });
-      const jumpRepBtn = document.getElementById('admin-jump-reports-btn');
-      if (jumpRepBtn) {
-        jumpRepBtn.addEventListener('click', () => {
-          switchAdminSubTab('inbox');
-          const sec = document.getElementById('admin-reports-section');
-          if (sec) sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        });
-      }
+      document.getElementById('admin-jump-reports-btn').addEventListener('click', () => {
+        if (!prefs.adminMode || !isAdminUser()) return;
+        const pending = getAdminPendingNotices();
+        const first = adminNoticeTypes.find(([type]) => pending.get(type).length);
+        if (!first) return;
+        switchAdminSubTab(first[0] === 'joinRequests' ? 'attendance' : 'inbox');
+        document.getElementById(first[2])?.scrollIntoView({ behavior: reduceMotion.matches ? 'auto' : 'smooth', block: 'start' });
+      });
+      document.getElementById('admin-enable-device-notices').addEventListener('click', async () => {
+        if (!isAdminUser() || typeof Notification === 'undefined') return;
+        if (prefs.adminDeviceNotices) prefs.adminDeviceNotices = false;
+        else {
+          try {
+            const result = await Notification.requestPermission();
+            if (!isAdminUser()) return;
+            prefs.adminDeviceNotices = result === 'granted';
+            showToast(prefs.adminDeviceNotices ? '관리자 기기 알림을 켰어요.' : '앱 안의 관리자 알림을 계속 볼 수 있어요.', 'info');
+          } catch {
+            showToast('앱 안의 관리자 알림을 계속 볼 수 있어요.', 'info');
+          }
+        }
+        savePrefs();
+        renderAdminNotices();
+      });
       document.getElementById('mailbox-btn').addEventListener('click', () => {
         const list = (shared.praises && shared.praises[prefs.currentUserId]) || [];
         const dmList = sortedInbox(shared.directMessages?.[prefs.currentUserId]).map(([, message]) => message);
@@ -7784,6 +7939,7 @@
         b.classList.add('ring-2', 'ring-indigo-500'); savePrefs();
       }));
       document.getElementById('admin-impersonate-btn').addEventListener('click', () => {
+        if (!prefs.adminMode || !isAdminUser()) return;
         const targetId = document.getElementById('admin-impersonate-select').value;
         const m = shared.members.find(x => x.id === targetId);
         if (!m) return;
@@ -7896,24 +8052,29 @@
       });
 
       document.getElementById('admin-grid-wrap').addEventListener('click', e => {
+        if (!prefs.adminMode || !isAdminUser()) return;
         const kick = e.target.closest('[data-kick-member]'); if (kick) { kickMemberKeepData(kick.dataset.kickMember); return; }
         const del = e.target.closest('[data-del-member]'); if (del) { deleteMember(del.dataset.delMember); return; }
         const cell = e.target.closest('[data-admin-cell]'); if (!cell) return;
         const [mid, d, pid] = cell.dataset.adminCell.split('|');
         setMemberDayStatus(mid, d, pid, prefs.adminBrush); renderAdminTab();
       });
-      document.getElementById('admin-set-strict-btn').addEventListener('click', () => {
-        const m = shared.members.find(x => x.id === document.getElementById('admin-mode-member').value);
-        if (!m) return;
-        m.mode = 'strict'; m.pendingMode = null; m.pendingDate = null; m.promoReservedMode = false;
-        saveSharedData(); showToast(`${m.name}님을 즉시 울트라집중모드로 전환했습니다.`, 'success'); renderAll();
-      });
-      document.getElementById('admin-set-free-btn').addEventListener('click', () => {
-        const m = shared.members.find(x => x.id === document.getElementById('admin-mode-member').value);
-        if (!m) return;
-        m.mode = 'free'; m.pendingMode = null; m.pendingDate = null; m.promoReservedMode = false;
-        saveSharedData(); showToast(`${m.name}님을 즉시 자율모드로 전환했습니다.`, 'info'); renderAll();
-      });
+      function adminSetStudyMode(mode) {
+        if (!prefs.adminMode || !isAdminUser()) return;
+        const member = shared.members.find(m => m.id === document.getElementById('admin-mode-member').value);
+        if (!member) return;
+        const canceled = mode === 'free' && !!member.promoPendingDate;
+        if (canceled) cancelPromotionReservation(member);
+        changeStudyMode(member, mode);
+        member.pendingMode = null;
+        member.pendingDate = null;
+        member.promoReservedMode = false;
+        saveSharedData();
+        showToast(`${member.name}님에게 ${modeLabel(mode)}를 즉시 적용했어요.${canceled ? ' 울트라집중 승급전 예약을 취소했어요.' : ''}`, 'info');
+        renderAll();
+      }
+      document.getElementById('admin-set-strict-btn').addEventListener('click', () => adminSetStudyMode('strict'));
+      document.getElementById('admin-set-free-btn').addEventListener('click', () => adminSetStudyMode('free'));
 
       function canResumeMidnightPromotion(member, calendarDay = koreaDateKey()) {
         if (!member || member.inStudy === false || member.promoActiveDate || member.promoPendingDate) return false;
@@ -7946,8 +8107,11 @@
         const tierSel = document.getElementById('admin-rank-tier-preset');
         if (!m) return;
         const tInfo = getMemberTier(m);
-        if (lpIn) lpIn.value = m.lp || 0;
-        if (tierSel) tierSel.value = String(LOL_TIERS[tInfo.idx].min);
+        if (lpIn.dataset.draftFor !== mid) {
+          delete lpIn.dataset.draftFor;
+          lpIn.value = m.lp || 0;
+          tierSel.value = String(LOL_TIERS[tInfo.idx].min);
+        }
         if (infoEl) infoEl.innerHTML = renderTierPill(m);
         const canSkip = !!(tInfo.nextName && (tInfo.inPromo || m.promoActiveDate || m.promoPendingDate));
         if (skipBtn) {
@@ -7959,9 +8123,12 @@
         syncAdminRankControls(e.target.value);
       });
       document.getElementById('admin-rank-tier-preset').addEventListener('change', e => {
-        document.getElementById('admin-rank-lp-input').value = e.target.value;
+        const input = document.getElementById('admin-rank-lp-input');
+        input.dataset.draftFor = document.getElementById('admin-rank-member').value;
+        input.value = e.target.value;
       });
       document.getElementById('admin-rank-lp-input').addEventListener('input', e => {
+        e.target.dataset.draftFor = document.getElementById('admin-rank-member').value;
         const val = Math.max(0, Number(e.target.value) || 0);
         let matchIdx = 0;
         for (let i = 0; i < LOL_TIERS.length; i++) if (val >= LOL_TIERS[i].min) matchIdx = i;
@@ -7969,10 +8136,13 @@
       });
       document.getElementById('admin-rank-form').addEventListener('submit', e => {
         e.preventDefault();
+        if (!prefs.adminMode || !isAdminUser()) return;
         const mid = document.getElementById('admin-rank-member').value;
         const m = shared.members.find(x => x.id === mid);
         if (!m) return;
-        const newLp = Math.max(0, Number(document.getElementById('admin-rank-lp-input').value) || 0);
+        const lpInput = document.getElementById('admin-rank-lp-input');
+        const newLp = Number(lpInput.value);
+        if (!lpInput.value || !Number.isInteger(newLp) || newLp < 0 || newLp > 9999) return;
         const presetMin = Number(document.getElementById('admin-rank-tier-preset').value) || 0;
         let newTIdx = LOL_TIERS.findIndex(t => t.min === presetMin);
         if (newTIdx < 0) {
@@ -7981,15 +8151,15 @@
         const prevTIdx = typeof m.tierIdx === 'number' ? m.tierIdx : getMemberTier(m).idx;
         m.lp = newLp;
         m.tierIdx = newTIdx;
-        m.bankedLp = 0;
         if (newTIdx !== prevTIdx) {
+          m.bankedLp = 0;
           m.promoActiveDate = null;
           m.promoActiveStudyDay = null;
           m.promoLegacyCarryDate = null;
-          m.promoPendingDate = null;
-          m.promoTargetTier = null;
+          cancelPromotionReservation(m);
           m.promoCooldownUntil = null;
         }
+        delete lpInput.dataset.draftFor;
         saveSharedData();
         const tInfo = getMemberTier(m);
         showToast(`${m.name}님의 랭크가 ${tInfo.icon} ${tInfo.name} (${m.lp} LP)로 변경되었습니다!`, 'success');
@@ -8053,8 +8223,7 @@
         m.promoActiveDate = null;
         m.promoActiveStudyDay = null;
         m.promoLegacyCarryDate = null;
-        m.promoPendingDate = null;
-        m.promoTargetTier = null;
+        cancelPromotionReservation(m);
         m.promoCooldownUntil = null;
         if (!shared.promoHistory) shared.promoHistory = {};
         if (!shared.promoHistory[m.id]) shared.promoHistory[m.id] = {};
@@ -8250,26 +8419,40 @@
       });
 
       function refreshAdminStudyInput() {
-        const mid = document.getElementById('admin-study-member').value;
-        const dStr = document.getElementById('admin-study-date').value || todayStr();
-        document.getElementById('admin-study-mins').value = (shared.studyLogs?.[dStr]?.[mid]) || 0;
+        const member = document.getElementById('admin-study-member').value;
+        const dateInput = document.getElementById('admin-study-date');
+        if (!dateInput.value || dateInput.value === dateInput.dataset.automaticDate) {
+          dateInput.value = studyDayKey();
+          dateInput.dataset.automaticDate = dateInput.value;
+        }
+        const day = dateInput.value;
+        const input = document.getElementById('admin-study-mins');
+        if (input.dataset.draftFor === `${member}/${day}`) return;
+        delete input.dataset.draftFor;
+        input.value = studyMinutes(member, day);
       }
       document.getElementById('admin-study-member').addEventListener('change', refreshAdminStudyInput);
-      document.getElementById('admin-study-date').addEventListener('change', refreshAdminStudyInput);
+      document.getElementById('admin-study-date').addEventListener('change', event => {
+        delete event.currentTarget.dataset.automaticDate;
+        refreshAdminStudyInput();
+      });
+      document.getElementById('admin-study-mins').addEventListener('input', event => {
+        event.currentTarget.dataset.draftFor = `${document.getElementById('admin-study-member').value}/${document.getElementById('admin-study-date').value}`;
+      });
       document.getElementById('admin-study-time-form').addEventListener('submit', e => {
         e.preventDefault();
+        if (!prefs.adminMode || !isAdminUser()) return;
         const mid = document.getElementById('admin-study-member').value;
-        const dStr = document.getElementById('admin-study-date').value || todayStr();
-        const mins = Math.max(0, Number(document.getElementById('admin-study-mins').value) || 0);
-        if (!shared.studyLogs) shared.studyLogs = {};
-        if (!shared.studyLogs[dStr]) shared.studyLogs[dStr] = {};
-        shared.studyLogs[dStr][mid] = mins;
-        if (!shared.maxFocusLogs) shared.maxFocusLogs = {};
-        if (!shared.maxFocusLogs[dStr]) shared.maxFocusLogs[dStr] = {};
-        shared.maxFocusLogs[dStr][mid] = mins;
+        const member = shared.members.find(m => m.id === mid);
+        const day = document.getElementById('admin-study-date').value || studyDayKey();
+        const input = document.getElementById('admin-study-mins');
+        const mins = Number(input.value);
+        if (!member || !input.value || !Number.isInteger(mins) || mins < 0 || mins > 1440) return;
+        ((shared.studyLogs ||= {})[day] ||= {})[mid] = mins;
+        if (shared.studySubminuteMs?.[day]) delete shared.studySubminuteMs[day][mid];
+        delete input.dataset.draftFor;
         saveSharedData();
-        const m = shared.members.find(x => x.id === mid);
-        showToast(`${m ? m.name : ''} ${dStr} 누적 공부시간이 ${formatStudyMins(mins)}로 변경되었습니다.`, 'success');
+        showToast(`${member.name}님 ${day} 누적 공부시간을 ${formatStudyMins(mins)}로 변경했어요.`, 'success');
         renderAll();
       });
 
@@ -8432,7 +8615,8 @@
         '꿈을 꾸기에 인생은 빛난다.',
         '젊었을 때 배움을 게을리한 사람은 과거를 상실하며 미래도 없다.',
         '고통은 잠깐이다. 포기는 영원히 남는다.',
-        '서두르지 말되, 멈추지 마라.'
+        '서두르지 말되, 멈추지 마라.',
+        ...EXTRA_STUDY_QUOTES
       ];
       let focusQuoteIndex = 0;
       let focusStudyMarkup = '';
@@ -8517,6 +8701,42 @@
       });
       setFocusTheme(prefs.focusTheme);
 
+      const focusFullscreenButton = document.getElementById('focus-native-fullscreen');
+      let focusOwnsFullscreen = false;
+      function syncFocusFullscreenButton() {
+        focusFullscreenButton.setAttribute('aria-pressed', String(focusOwnsFullscreen));
+        focusFullscreenButton.textContent = focusOwnsFullscreen ? '전체 화면 해제' : '전체 화면';
+      }
+      function leaveFocusFullscreen() {
+        if (!focusOwnsFullscreen) return;
+        focusOwnsFullscreen = false;
+        syncFocusFullscreenButton();
+        if (document.fullscreenElement === document.documentElement) document.exitFullscreen().catch(() => {});
+      }
+      if (document.fullscreenEnabled && document.documentElement.requestFullscreen) {
+        focusFullscreenButton.classList.remove('hidden');
+        focusFullscreenButton.addEventListener('click', async () => {
+          if (focusOwnsFullscreen) { leaveFocusFullscreen(); return; }
+          if (document.fullscreenElement || !focusInterval) return;
+          const timer = focusInterval;
+          focusFullscreenButton.disabled = true;
+          try {
+            await document.documentElement.requestFullscreen({ navigationUI: 'hide' });
+            focusOwnsFullscreen = document.fullscreenElement === document.documentElement;
+            if (focusInterval !== timer || !shown(document.getElementById('focus-overlay'))) leaveFocusFullscreen();
+            else syncFocusFullscreenButton();
+          } catch {
+            showToast('이 브라우저에서는 전체 화면을 열 수 없어요.', 'info');
+          } finally {
+            focusFullscreenButton.disabled = false;
+          }
+        });
+        document.addEventListener('fullscreenchange', () => {
+          if (!document.fullscreenElement) focusOwnsFullscreen = false;
+          syncFocusFullscreenButton();
+        });
+      }
+
       function restRemainingMs(now = Date.now()) {
         if (focusPaused) return Math.max(0, focusRestDurationMs - Math.max(0, now - pauseStartedAt));
         const recharged = focusStartedAt != null && now - focusStartedAt >= FOCUS_REST_LIMIT_MS;
@@ -8596,7 +8816,8 @@
 
       function logFocusMinute(member, date, continuousMins) {
         const day = studyDayKey(date);
-        const localDay = localDateKey(date), hours = date.getHours(), mins = date.getMinutes();
+        const koreaClock = new Date(+date + 9 * 3600000);
+        const localDay = koreaDateKey(date), hours = koreaClock.getUTCHours(), mins = koreaClock.getUTCMinutes();
         const id = member.id;
         const totals = (shared.studyLogs[day] ||= {});
         totals[id] = (Number(totals[id]) || 0) + 1;
@@ -8642,13 +8863,22 @@
             if (creditStudySlice(me, a, b, focusStartedAt, focusAccumulatedSecs)) creditedStudyMinute = true;
             const day = studyDayKey(d);
             syncMemberPendingModes(day);
-            const mode = focusModeBeforeChange && day < focusModeBeforeChange.date ? focusModeBeforeChange.mode : getMemberMode(me);
-            if (mode !== 'strict') return;
-            const phase = getCurrentPhase(simulated ?? (d.getHours() * 60 + d.getMinutes()));
+            const local = new Date(+d + 9 * 3600000);
+            const phase = getCurrentPhase(simulated ?? (local.getUTCHours() * 60 + local.getUTCMinutes()));
             if (phase?.type !== 'study') return;
+            const changes = modeTransitions(me);
+            const endpoints = changes.map(change => change.at).filter(at => a < at && at < b);
+            let strictMs = 0, left = a;
+            for (const right of [...endpoints, b]) {
+              const mode = !changes.length && focusModeBeforeChange && day < focusModeBeforeChange.date
+                ? focusModeBeforeChange.mode : studyModeAt(me, left, changes);
+              if (mode === 'strict') strictMs += right - left;
+              left = right;
+            }
+            if (!strictMs) return;
             const key = `${day}/${phase.id}`;
             const chunk = chunks.get(key) || { day, phase, secs: 0 };
-            chunk.secs += (b - a) / 1000;
+            chunk.secs += strictMs / 1000;
             chunks.set(key, chunk);
           });
           for (const {day, phase, secs} of chunks.values()) {
@@ -8659,7 +8889,7 @@
           for (const {day, phase} of chunks.values()) {
             const secs = shared.periodStudySecs[day][me.id][phase.id];
             const status = getMemberDayStatus(me.id, day, phase.id);
-            if (secs >= Math.ceil(phase.mins * 60 * .75) && (status === 'none' || status === 'awol')) {
+            if (secs >= requiredAttendanceSeconds(phase) && (status === 'none' || status === 'awol')) {
               setMemberDayStatus(me.id, day, phase.id, 'present', 'strict');
               markedAttendance = true;
             }
@@ -8746,6 +8976,7 @@
 
       function minimizeFocusOverlay() {
         if (expireFocusRest()) return;
+        leaveFocusFullscreen();
         const ov = document.getElementById('focus-overlay');
         ov.classList.add('hidden');
         ov.classList.remove('flex');
@@ -8768,6 +8999,7 @@
 
       function closeFocusOverlay(discard = false, { restExpired = false } = {}) {
         const wasOpen = !!focusInterval;
+        leaveFocusFullscreen();
         const ov = document.getElementById('focus-overlay');
         const wasFullScreen = shown(ov);
         if (wasOpen && !discard && !focusPaused) syncFocusClock(true);
@@ -9196,7 +9428,7 @@
         if (!agreed) { showToast('개인정보 수집·이용 동의에 체크해 주세요.', 'warn'); return; }
         if (!dbRef || !cloudConnected || cloudLinkLive === false) { showToast('연결된 뒤에 다시 시작하기를 눌러 주세요.', 'warn'); return; }
         const button = e.currentTarget.querySelector('button[type="submit"]');
-        const onboardingSurvey = { source, feature, goalHours: Number(goalHours), agreedAt: `${todayStr()} ${getNowParts().hhmm}` };
+        const onboardingSurvey = { source, feature, goalHours: Number(goalHours), submittedAt: Date.now(), agreedAt: `${todayStr()} ${getNowParts().hhmm}` };
         const sMode = shared.signupMode === 'approval' ? 'approval' : 'open';
         const newMember = {
           id:'m_' + user.uid.slice(0,8) + '_' + Date.now(), uid:user.uid, activeSessionId:SESSION_ID,
@@ -9292,6 +9524,7 @@
 
       document.querySelectorAll('[data-set-signup-mode]').forEach(btn => {
         btn.addEventListener('click', () => {
+          if (!prefs.adminMode || !isAdminUser()) return;
           shared.signupMode = btn.dataset.setSignupMode;
           saveSharedData();
           const labels = { open: '모두 가입 허용', approval: '승인 후 가입' };
@@ -9301,10 +9534,11 @@
       });
 
       document.getElementById('admin-join-requests-list')?.addEventListener('click', async e => {
+        if (!prefs.adminMode || !isAdminUser()) return;
         const appBtn = e.target.closest('[data-approve-join]');
         if (appBtn) {
           const uid = appBtn.dataset.approveJoin;
-          const req = (shared.joinRequests || []).find(r => r.uid === uid);
+          const req = (shared.joinRequests || []).find(r => r.uid === uid && r.status === 'pending');
           if (!req) return;
           if (!shared.members.some(m => m.uid === uid)) {
             shared.members.push({
@@ -9324,13 +9558,13 @@
           }
           saveSharedData();
           showToast(`${req.nickname}님의 가입 요청을 수락했습니다!`, 'success');
-          renderAdminTab();
+          renderAll();
           return;
         }
         const rejBtn = e.target.closest('[data-reject-join]');
         if (rejBtn) {
           const uid = rejBtn.dataset.rejectJoin;
-          const req = (shared.joinRequests || []).find(r => r.uid === uid);
+          const req = (shared.joinRequests || []).find(r => r.uid === uid && r.status === 'pending');
           if (!req) return;
           req.status = 'rejected';
           if (typeof firebase !== 'undefined') {
@@ -9338,11 +9572,22 @@
           }
           saveSharedData();
           showToast(`${req.nickname}님의 가입 요청을 거절했습니다.`, 'info');
-          renderAdminTab();
+          renderAll();
         }
       });
 
       document.getElementById('admin-onboarding-list')?.addEventListener('click', async e => {
+        if (!prefs.adminMode || !isAdminUser()) return;
+        const readSurvey = e.target.closest('[data-read-survey]');
+        if (readSurvey) {
+          const seen = new Set(prefs.adminSeenSurveys || []);
+          seen.add(readSurvey.dataset.readSurvey);
+          prefs.adminSeenSurveys = [...seen];
+          savePrefs();
+          renderAdminNotices();
+          renderAdminTab();
+          return;
+        }
         const delBtn = e.target.closest('[data-del-archive]');
         if (!delBtn) return;
         const uid = delBtn.dataset.delArchive;
@@ -9598,7 +9843,7 @@
       document.getElementById('home-today-todos-list').addEventListener('click', e => {
         const b = e.target.closest('[data-home-cycle-task]');
         if (!b) return;
-        const mmToday = getMemberMotemote(todayStr(), prefs.currentUserId);
+        const mmToday = getMemberMotemote(studyDayKey(), prefs.currentUserId);
         const task = (mmToday.tasks || []).find(t => t.id === b.dataset.homeCycleTask);
         if (!task) return;
         const order = ['', 'V', '△', 'X'];
