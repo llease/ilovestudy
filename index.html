@@ -78,9 +78,10 @@
     #group-status-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: clamp(9px, 1.4vw, 16px);
+      gap: clamp(15px, 2vw, 23px);
     }
     .member-card {
+      --member-card-padding: clamp(9px, 1.35vw, 15px);
       position: relative;
       display: grid;
       min-width: 0;
@@ -98,7 +99,8 @@
       position: relative;
       isolation: isolate;
       min-width: 0;
-      padding: clamp(9px, 1.35vw, 15px);
+      z-index: 1;
+      padding: var(--member-card-padding);
       border: 1px solid transparent;
       border-radius: 16px;
       background:
@@ -139,14 +141,18 @@
     @media (hover: hover) {
       .member-card-details:hover { box-shadow: 0 5px 14px color-mix(in srgb, var(--rank-deep) 17%, transparent); transform: translateY(-2px); }
     }
-    .member-card-details:focus-visible, .member-card-menu:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+    :is(.member-card-details, .member-card-menu, .member-avatar):focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
     .member-card[data-has-menu] .member-identity { padding-right: 31px; }
-    .member-identity { display: flex; align-items: center; gap: 8px; min-height: 34px; min-width: 0; }
+    .member-identity { display: flex; align-items: center; min-height: 34px; min-width: 0; padding-left: 40px; }
     .member-avatar {
+      position: absolute;
+      z-index: 2;
+      top: calc(var(--member-card-padding) + 2px);
+      left: calc(var(--member-card-padding) + 1px);
       display: grid;
       place-items: center;
-      position: relative;
-      flex: 0 0 32px;
+      padding: 0;
+      cursor: zoom-in;
       width: 32px;
       height: 32px;
       border: 1px solid var(--rank-edge);
@@ -157,6 +163,7 @@
       font-weight: 900;
     }
     .member-avatar img { width: 100%; height: 100%; border-radius: inherit; object-fit: cover; }
+    .member-avatar:hover { outline: 1px solid var(--rank-ink); outline-offset: 2px; }
     .member-avatar[data-ultra] { border-color: #fb923c; box-shadow: 0 0 0 2px #fb923c33; }
     .member-avatar-bolt {
       position: absolute;
@@ -219,35 +226,110 @@
     .member-status::before { opacity: .65; }
     .member-status[data-status="studying"]::before { opacity: 1; }
 
+    /* Daily study aura outside the tier frame */
+    .member-card[data-aura-level="1"] { --aura-color: #b86d41; --aura-light: #fed3a6; }
+    .member-card[data-aura-level="2"] { --aura-color: #ce7640; --aura-light: #fdd498; }
+    .member-card[data-aura-level="3"] { --aura-color: #e78a25; --aura-light: #ffe0a3; }
+    .member-card[data-aura-level="4"] { --aura-color: #ef8c16; --aura-light: #ffe597; }
+    .member-card[data-aura-level="5"] { --aura-color: #ec6f19; --aura-light: #ffd392; }
+    .member-card[data-aura-level="6"] { --aura-color: #f65e33; --aura-light: #ffd29c; }
+    .member-card[data-aura-level="7"] { --aura-color: #f44f4a; --aura-light: #ffd097; }
+    .member-card[data-aura-level="8"] { --aura-color: #e84a75; --aura-light: #ffb1b7; }
+    .member-card[data-aura-level="9"] { --aura-color: #c653df; --aura-light: #f1befc; }
+    .member-card[data-aura-level="10"] { --aura-color: #9a5bf1; --aura-light: #e3bcff; }
+    .member-card[data-aura-level="11"] { --aura-color: #6379f4; --aura-light: #bde4ff; }
+    .member-card[data-aura-level="12"] { --aura-color: #4189ef; --aura-light: #c4f4ff; }
+    .member-card[data-aura-level="13"] { --aura-color: #ec9c28; --aura-light: #fff0b8; }
+    .member-aura {
+      position: absolute;
+      inset: -3px;
+      z-index: 0;
+      border-radius: 19px;
+      opacity: calc(.38 + var(--aura-level) * .045);
+      box-shadow:
+        0 0 0 calc(.5px + var(--aura-level) * .14px) color-mix(in srgb, var(--aura-color) 48%, transparent),
+        0 0 calc(5px + var(--aura-level) * 1.35px) calc(var(--aura-level) * .27px) color-mix(in srgb, var(--aura-color) 52%, transparent),
+        0 5px calc(9px + var(--aura-level) * 1.65px) color-mix(in srgb, var(--aura-color) 34%, transparent);
+      pointer-events: none;
+    }
+    .member-aura::before {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      padding: calc(1px + var(--aura-level) * .25px);
+      border-radius: 20px;
+      background: conic-gradient(from -48deg, var(--aura-light), transparent 24%, var(--aura-color) 39%, var(--aura-light) 56%, transparent 77%, var(--aura-color));
+      mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      mask-composite: exclude;
+    }
+    .member-card[data-aura-level="13"] .member-aura::before {
+      background: conic-gradient(from -54deg, #fff5c7, #cf9dff 20%, #8bdfff 36%, #ffdf82 59%, #ffeccc 72%, #e89a33 87%, #fff5c7);
+    }
+    .member-card[data-aura-level="13"] .member-aura::after {
+      content: '';
+      position: absolute;
+      inset: -5px;
+      border: 1px solid transparent;
+      border-top-color: #e8ad43;
+      border-bottom-color: #89b9f4;
+      border-radius: 23px;
+      opacity: .7;
+    }
+
+    .member-aura-wisps {
+      position: absolute;
+      inset: 0 -7px -5px;
+      opacity: calc(.35 + (var(--aura-level) - 7) * .093);
+      transform-origin: 50% 100%;
+    }
+    .member-aura-wisps::before, .member-aura-wisps::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      width: 45px;
+      height: calc(32px + var(--aura-level) * 6px);
+      background: linear-gradient(0deg, var(--aura-color), var(--aura-light) 52%, var(--aura-color) 81%, transparent);
+      clip-path: polygon(6% 96%, 10% 84%, 5% 76%, 4% 68%, 8% 59%, 15% 51%, 16% 43%, 11% 34%, 16% 23%, 22% 16%, 25% 4%, 28% 14%, 27% 24%, 20% 38%, 24% 48%, 33% 44%, 42% 31%, 45% 43%, 39% 58%, 41% 71%, 48% 76%, 57% 72%, 65% 60%, 68% 75%, 65% 85%, 78% 91%, 100% 96%, 100% 100%, 15% 100%);
+    }
+    .member-aura-wisps::before { left: 0; }
+    .member-aura-wisps::after { right: 0; transform: scaleX(-1) scaleY(.86); transform-origin: 50% 100%; }
+    .member-aura-sparks {
+      position: absolute;
+      inset: -9px -11px;
+      background:
+        radial-gradient(circle at 4% 8%, var(--aura-color) 0 1px, transparent 2px),
+        radial-gradient(circle at 93% 2%, var(--aura-light) 0 1px, transparent 2.5px),
+        radial-gradient(circle at 99% 35%, var(--aura-color) 0 1.5px, transparent 2.5px),
+        radial-gradient(circle at 1% 76%, var(--aura-light) 0 1.3px, transparent 2.7px),
+        radial-gradient(circle at 96% 88%, var(--aura-color) 0 1px, transparent 2px),
+        radial-gradient(circle at 84% 99%, var(--aura-color) 0 1.5px, transparent 2.5px);
+      opacity: calc(.44 + (var(--aura-level) - 10) * .17);
+    }
+    @media (prefers-reduced-motion: no-preference) {
+      .member-card[data-studying] .member-aura-wisps { animation: memberAuraFlow 3.6s ease-in-out infinite alternate; }
+      .member-card[data-studying] .member-aura-sparks { animation: memberAuraEmbers 4.1s ease-in-out infinite alternate; }
+    }
+    @keyframes memberAuraFlow {
+      from { transform: scaleY(.87); }
+      to { transform: scaleY(1); }
+    }
+    @keyframes memberAuraEmbers {
+      from { transform: translateY(2px); }
+      to { transform: translateY(-4px); }
+    }
+
     .member-study {
-      --flame-color: #71849c;
-      --flame-core: #bac9dc;
-      --flame-line: color-mix(in srgb, var(--flame-color) 44%, #263448);
-      position: relative;
       display: grid;
       gap: 5px;
-      isolation: isolate;
-      overflow: hidden;
       padding: 8px 9px 9px;
-      border: 1px solid var(--flame-line);
+      border: 1px solid #334259;
       border-radius: 11px;
-      background:
-        radial-gradient(ellipse at 90% 70%, color-mix(in srgb, var(--flame-color) 26%, transparent), transparent 64%),
-        linear-gradient(145deg, #1b2a40, #0d1727 68%);
+      background: linear-gradient(145deg, #1b2a40, #0d1727 68%);
       color: #f3f6fc;
     }
-    .member-study[data-flame-level="1"] { --flame-color: #fb923c; --flame-core: #fed7aa; }
-    .member-study[data-flame-level="2"] { --flame-color: #fb7185; --flame-core: #fed7aa; }
-    .member-study[data-flame-level="3"] { --flame-color: #38bdf8; --flame-core: #bae6fd; }
-    .member-study[data-flame-level="4"] { --flame-color: #c084fc; --flame-core: #f5d0fe; }
-    .member-study[data-flame-level="5"] { --flame-color: #fbbf24; --flame-core: #fef3c7; }
-    .member-study[data-flame-level="6"] { --flame-color: #fb7185; --flame-core: #fde68a; }
-    .member-study[data-flame-level="7"] { --flame-color: #2dd4bf; --flame-core: #a5f3fc; }
-    .member-study[data-flame-level="8"] { --flame-color: #a78bfa; --flame-core: #67e8f9; }
-    .member-study[data-flame-level="9"] { --flame-color: #818cf8; --flame-core: #fde68a; }
-    .member-study[data-flame-level="10"] { --flame-color: #fbbf24; --flame-core: #fff4bf; border-color: #fbbf2499; }
-    .member-study-label, .member-study-time, .member-flame-caption, .member-flame-track { position: relative; z-index: 1; }
-    .member-study-label { color: #becbdf; font-size: .65rem; font-weight: 700; line-height: 1.2; }
+    .member-study-heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 3px 7px; }
+    .member-study-label, .member-study-aura { color: #becbdf; font-size: .65rem; font-weight: 700; line-height: 1.2; }
+    .member-study-aura { color: var(--aura-light); white-space: nowrap; }
     .member-study-time {
       color: #fff;
       font-size: clamp(.96rem, 3.4vw, 1.35rem);
@@ -257,65 +339,32 @@
       letter-spacing: -.045em;
       white-space: nowrap;
     }
-    .member-flame-caption { color: var(--flame-core); font-size: .65rem; font-weight: 800; line-height: 1.2; }
-    .member-flame-track { display: grid; grid-template-columns: repeat(10, 1fr); gap: 2px; margin-top: 2px; }
-    .member-flame-track i { height: 3px; background: #ffffff32; border-radius: 2px; }
-    .member-flame-track .is-lit { background: var(--flame-color); }
-    .member-flame-track .is-peak { background: var(--flame-core); box-shadow: 0 0 5px var(--flame-color); }
-    .member-flame-art {
-      position: absolute;
-      right: 1px;
-      bottom: 13px;
-      width: 62px;
-      height: 63px;
-      pointer-events: none;
+    .member-photo-preview { display: grid; justify-items: center; gap: 10px; padding: 3px 0 2px; text-align: center; }
+    .member-photo-preview [hidden] { display: none; }
+    .member-photo-preview img {
+      display: block;
+      width: 100%;
+      height: auto;
+      max-height: 58vh;
+      max-height: 58dvh;
+      object-fit: contain;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      background: var(--soft);
     }
-    .member-flame-art::before {
-      content: '';
-      position: absolute;
-      inset: 6px 4px 0;
-      background: radial-gradient(ellipse at 50% 66%, color-mix(in srgb, var(--flame-color) 54%, transparent), transparent 70%);
-      opacity: calc(.14 + var(--flame-level) * .078);
+    .member-photo-initial {
+      display: grid;
+      place-items: center;
+      width: min(40vw, 142px);
+      aspect-ratio: 1;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background: var(--soft);
+      color: var(--ink);
+      font-size: 3rem;
+      font-weight: 900;
     }
-    .member-flame-shape {
-      --fire-outline: path('M 26 1 C 29 13 42 16 36 29 C 41 27 44 23 44 21 C 52 34 49 48 41 54 C 32 61 16 60 8 53 C 0 46 0 34 8 25 C 7 33 11 37 14 36 C 9 21 25 16 26 1 Z');
-      position: absolute;
-      bottom: 3px;
-      right: 4px;
-      width: 50px;
-      height: 60px;
-      transform: scale(calc(.30 + var(--flame-level) * .085));
-      transform-origin: 50% 100%;
-      filter: drop-shadow(0 0 6px color-mix(in srgb, var(--flame-color) 60%, transparent));
-    }
-    .member-flame-shape::before, .member-flame-shape::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      clip-path: var(--fire-outline);
-      transform-origin: 50% 95%;
-    }
-    .member-flame-shape::before { background: linear-gradient(155deg, var(--flame-core), var(--flame-color) 59%, color-mix(in srgb, var(--flame-color) 42%, #441623)); }
-    .member-flame-shape::after { background: linear-gradient(0deg, #fff7de, var(--flame-core) 72%, transparent); transform: scale(.56, .73) scaleX(-1); }
-    .member-study[data-flame-level="0"] .member-flame-shape { opacity: .54; filter: none; }
-    .member-flame-sparks {
-      position: absolute;
-      inset: 5px 0;
-      background:
-        radial-gradient(circle at 22% 55%, var(--flame-color) 0 1px, transparent 2px),
-        radial-gradient(circle at 71% 22%, var(--flame-core) 0 1px, transparent 2px),
-        radial-gradient(circle at 81% 42%, var(--flame-color) 0 1px, transparent 2px),
-        radial-gradient(circle at 18% 23%, var(--flame-core) 0 1px, transparent 2px);
-    }
-    .member-study[data-flame-level="10"] .member-flame-art::before {
-      inset: 0 -4px -4px;
-      background: radial-gradient(ellipse at 50% 63%, #fde68acc, #fb718568 44%, transparent 73%);
-    }
-    .member-card[data-studying] .member-flame-sparks { animation: memberEmbers 2.8s ease-in-out infinite alternate; }
-    @keyframes memberEmbers {
-      from { opacity: .45; transform: translateY(2px); }
-      to { opacity: 1; transform: translateY(-3px); }
-    }
+    .member-photo-note { margin: 0; color: var(--muted); font-size: .82rem; }
     .member-badges { display: flex; align-items: center; gap: 4px; min-width: 0; margin-top: auto; }
     .member-badges .badge-pill { display: block; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: .64rem; padding-inline: 6px; }
     .member-badge-count { flex: none; color: var(--muted); font-size: .67rem; font-weight: 800; }
@@ -325,14 +374,12 @@
     @media (min-width: 650px) { #group-status-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
     @media (min-width: 1020px) { #group-status-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
     @media (max-width: 470px) {
-      .member-flame-art { right: -7px; transform: scale(.84); transform-origin: bottom right; }
       .member-card[data-has-menu] .member-identity { padding-right: 27px; }
       .member-rank-line { min-height: 2.9em; align-content: flex-start; }
     }
     .member-study-time small { margin-left: 1px; color: #d4dfef; font-size: .64em; letter-spacing: 0; }
     @media (prefers-reduced-motion: reduce) {
       .member-card-details { transition: none; transform: none !important; }
-      .member-card[data-studying] .member-flame-sparks { animation: none; }
     }
     @keyframes flameShimmer {
       0% { transform: translateX(-120%) skewX(-20deg); }
@@ -2393,7 +2440,7 @@
               </li>
               <li class="space-y-0.5">
                 <div class="font-black text-slate-900">🏅 뱃지 · 카드 이펙트</div>
-                <p>스터디원 카드의 테두리는 티어 색으로 표시하고, 울트라집중모드는 프로필에 번개를 표시합니다. 불꽃은 오늘 누적 공부 10분부터 켜지며 30분, 1·2·4·5·6·7·8·9시간에 다음 단계로 올라갑니다. 카드를 누르면 다음 불꽃까지 남은 시간과 전체 뱃지를 볼 수 있습니다.</p>
+                <p>스터디원 카드의 테두리는 티어 색으로 표시합니다. 오늘 누적 공부가 10분, 30분, 1시간, 1시간 30분, 2·3·4·5·6·7·8·9·10시간에 도달할 때마다 카드 전체의 오라가 한 단계씩 강해집니다. 카드를 누르면 다음 단계까지 남은 시간과 전체 뱃지를 볼 수 있고, 아바타를 누르면 프로필 사진이 크게 열립니다.</p>
                 <p>활동 뱃지에는 <strong>🌅 얼리버드</strong>(08시 전 · 당일 유지), <strong>🦉 심야 올빼미</strong>(자정~04:59 공부 · 당일 유지), <strong>연속 출석</strong>(2일~10일+ 진화)이 있습니다. 관리자가 수여한 뱃지가 있으면 카드에 먼저 표시합니다.</p>
               </li>
             </ul>
@@ -5010,26 +5057,6 @@
           : '<div class="ed-card p-10 text-center space-y-1.5"><span class="empty-float-icon text-2xl">📸</span><p class="text-sm font-bold text-slate-500">아직 올라온 게시물이 없습니다</p><p class="text-xs text-slate-400">위에서 오늘의 공부 기록을 첫 번째로 공유해 보세요!</p></div>';
       }
 
-      function renderMemberStudy(mins, id) {
-        const level = getFlameLevel(mins);
-        const stages = STUDY_FLAME_THRESHOLDS.length;
-        const hours = Math.floor(mins / 60);
-        const ticks = STUDY_FLAME_THRESHOLDS.map((_, i) => {
-          const state = i + 1 === level ? 'is-peak' : i < level ? 'is-lit' : '';
-          return `<i class="${state}"></i>`;
-        }).join('');
-        return `<span class="member-study" id="member-study-${id}" data-flame-level="${level}" style="--flame-level:${level}">
-          <span class="member-study-label">오늘 누적 공부</span>
-          <strong class="member-study-time">${hours ? `${hours}<small>시간</small> ` : ''}${mins % 60}<small>분</small></strong>
-          <span class="member-flame-art" aria-hidden="true">
-            ${level >= 6 ? '<span class="member-flame-sparks"></span>' : ''}
-            <span class="member-flame-shape"></span>
-          </span>
-          <span class="member-flame-caption">불꽃 ${level}/${stages}</span>
-          <span class="member-flame-track" aria-hidden="true">${ticks}</span>
-        </span>`;
-      }
-
       function renderMemberCard(m, date, mins, now) {
         const id = escapeHtml(m.id);
         const name = escapeHtml(m.name);
@@ -5043,17 +5070,24 @@
         const isMe = m.id === prefs.currentUserId;
         const canRemove = prefs.adminMode && shared.members.length > 1;
         const hasMenu = !isMe || canRemove;
+        const auraLevel = getStudyAuraLevel(mins);
+        const hours = Math.floor(mins / 60);
 
-        return `<article class="member-card" data-member-card-wrap="${id}"${tier.idx >= 6 ? ' data-elite' : ''}${hasMenu ? ' data-has-menu' : ''}${m.isFocusing ? ' data-studying' : ''}
-            style="--rank-deep:${tier.wingColor};--rank-gem:${tier.gemColor}">
+        return `<article class="member-card" data-member-card-wrap="${id}" data-aura-level="${auraLevel}"${tier.idx >= 6 ? ' data-elite' : ''}${hasMenu ? ' data-has-menu' : ''}${m.isFocusing ? ' data-studying' : ''}
+            style="--rank-deep:${tier.wingColor};--rank-gem:${tier.gemColor};--aura-level:${auraLevel}">
+          ${auraLevel ? `<span class="member-aura" aria-hidden="true">
+            ${auraLevel >= 7 ? '<span class="member-aura-wisps"></span>' : ''}
+            ${auraLevel >= 10 ? '<span class="member-aura-sparks"></span>' : ''}
+          </span>` : ''}
+          <button class="member-avatar" id="member-avatar-${id}" type="button" data-member-avatar="${id}" aria-haspopup="dialog"
+            aria-label="${name} 프로필 사진 보기"${isUltra ? ' data-ultra title="울트라집중모드 · 프로필 사진 보기"' : ' title="프로필 사진 보기"'}>
+            ${m.avatarUrl ? `<img src="${escapeHtml(m.avatarUrl)}" alt="" loading="lazy">` : escapeHtml(String(m.name || '').slice(0, 1))}
+            ${isUltra ? '<span class="member-avatar-bolt" aria-hidden="true">⚡</span>' : ''}
+          </button>
           <button class="member-card-details" id="member-card-${id}" type="button" data-member-detail="${id}"
             aria-label="${name} 상세 기록"
             aria-describedby="member-rank-${id} member-status-${id} member-study-${id}${title ? ` member-title-${id}` : ''}${featured ? ` member-badges-${id}` : ''}">
             <span class="member-identity">
-              <span class="member-avatar"${isUltra ? ' data-ultra title="울트라집중모드"' : ''} aria-hidden="true">
-                ${m.avatarUrl ? `<img src="${escapeHtml(m.avatarUrl)}" alt="" loading="lazy">` : escapeHtml(String(m.name || '').slice(0, 1))}
-                ${isUltra ? '<span class="member-avatar-bolt">⚡</span>' : ''}
-              </span>
               <span class="member-nameplate">
                 <strong class="member-name" title="${name}">${name}</strong>
                 ${title ? `<span class="member-title" id="member-title-${id}" title="${title}">${title}</span>` : ''}
@@ -5066,7 +5100,13 @@
                 : m.promoPendingDate ? '<span class="member-promo">승급전 예약</span>'
                 : tier.inPromo ? '<span class="member-promo">승급 LP 충족</span>' : ''}
             </span>
-            ${renderMemberStudy(mins, id)}
+            <span class="member-study" id="member-study-${id}">
+              <span class="member-study-heading">
+                <span class="member-study-label">오늘 누적 공부</span>
+                ${auraLevel ? `<span class="member-study-aura">오라 ${auraLevel}/${STUDY_AURA_THRESHOLDS.length}</span>` : ''}
+              </span>
+              <strong class="member-study-time">${hours ? `${hours}<small>시간</small> ` : ''}${mins % 60}<small>분</small></strong>
+            </span>
             ${featured ? `<span class="member-badges" id="member-badges-${id}">
               ${renderBadgePill(featured)}
               ${badges.length > 1 ? `<span class="member-badge-count" aria-label="뱃지 ${badges.length - 1}개 더 보기">+${badges.length - 1}</span>` : ''}
@@ -5081,6 +5121,30 @@
             </div>
           </div>` : ''}
         </article>`;
+      }
+
+      function openMemberPhoto(member) {
+        const photo = escapeHtml(member.avatarUrl);
+        const name = escapeHtml(member.name);
+        openModal(`${member.name}님의 프로필 사진`, `
+          <div class="member-photo-preview">
+            ${photo ? `<img id="member-photo-image" src="${photo}" alt="${name}님의 프로필 사진">` : ''}
+            <span id="member-photo-initial" class="member-photo-initial" aria-hidden="true"${photo ? ' hidden' : ''}>${escapeHtml(String(member.name || '').slice(0, 1))}</span>
+            <p id="member-photo-note" class="member-photo-note" role="status"${photo ? ' hidden' : ''}>등록된 프로필 사진이 없어요.</p>
+          </div>
+        `);
+        const image = document.getElementById('member-photo-image');
+        if (!image) return;
+        const initial = document.getElementById('member-photo-initial');
+        const note = document.getElementById('member-photo-note');
+        const showFallback = () => {
+          image.hidden = true;
+          initial.hidden = false;
+          note.textContent = '프로필 사진을 불러오지 못했어요.';
+          note.hidden = false;
+        };
+        image.addEventListener('error', showFallback, { once: true });
+        if (image.complete && !image.naturalWidth) showFallback();
       }
 
       function setMemberCardMenu(button, open) {
@@ -5117,7 +5181,9 @@
         if (markup === memberCardsMarkup) return;
         const openMenu = grid.querySelector('[data-card-menu-btn][aria-expanded="true"]');
         const focused = grid.contains(document.activeElement) ? document.activeElement : null;
+        const modalFocusId = previousModalFocus && grid.contains(previousModalFocus) ? previousModalFocus.id : '';
         grid.innerHTML = memberCardsMarkup = markup;
+        if (modalFocusId) previousModalFocus = document.getElementById(modalFocusId);
         if (openMenu) setMemberCardMenu(document.getElementById(openMenu.id), true);
         if (focused?.id) document.getElementById(focused.id)?.focus({ preventScroll: true });
       }
@@ -6745,6 +6811,15 @@
           setMemberCardMenu(menuBtn, openMenu !== menuBtn);
           return;
         }
+        const avatar = e.target.closest('[data-member-avatar]');
+        if (avatar) {
+          const member = shared.members.find(m => m.id === avatar.dataset.memberAvatar);
+          if (member) {
+            avatar.focus({ preventScroll: true });
+            openMemberPhoto(member);
+          }
+          return;
+        }
         if (openMenu && e.target.closest('[data-card-menu-box] button')) {
           setMemberCardMenu(openMenu, false);
           openMenu.focus({ preventScroll: true });
@@ -6834,8 +6909,8 @@
           const maxF = (shared.maxFocusLogs && shared.maxFocusLogs[t] && shared.maxFocusLogs[t][m.id]) || 0;
           const todayRespect = ((shared.praises && shared.praises[m.id]) || []).filter(p => p.date === t).length;
           const allB = getBadgesForMember(m, t);
-          const flameLevel = getFlameLevel(todayTotalMins);
-          const nextFlame = STUDY_FLAME_THRESHOLDS[flameLevel];
+          const auraLevel = getStudyAuraLevel(todayTotalMins);
+          const nextAura = STUDY_AURA_THRESHOLDS[auraLevel];
           openModal(`${m.name} 상세 기록`, `
             <div class="space-y-3 text-xs">
               ${m.equippedTitle ? `<p class="text-sm font-bold text-slate-900"><span class="mr-1 text-xs text-slate-500">장착 칭호</span> ${escapeHtml(m.equippedTitle)}</p>` : ''}
@@ -6847,8 +6922,8 @@
                 <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200"><div class="text-slate-400">오늘 받은 리스펙</div><div class="text-sm font-black text-slate-900 mt-0.5">👏 ${todayRespect}회</div></div>
               </div>
               <div class="rounded-xl bg-slate-50 border border-slate-200 px-3 py-2 flex flex-wrap items-center justify-between gap-1.5">
-                <strong class="text-slate-900">불꽃 ${flameLevel}/${STUDY_FLAME_THRESHOLDS.length}</strong>
-                <span class="text-slate-600">${nextFlame === undefined ? '최고 단계 달성' : `다음 단계까지 ${nextFlame - todayTotalMins}분`}</span>
+                <strong class="text-slate-900">집중 오라 ${auraLevel}/${STUDY_AURA_THRESHOLDS.length}</strong>
+                <span class="text-slate-600">${nextAura === undefined ? '최고 단계 달성' : `다음 단계까지 ${nextAura - todayTotalMins}분`}</span>
               </div>
               ${m.id === prefs.currentUserId ? `<div>
                 <div class="font-bold text-slate-700 mb-1.5">👑 보유 칭호</div>
@@ -7878,10 +7953,10 @@
         if (cheerEl && !cheerEl.textContent) {
           const meD = shared.members.find(x => x.id === prefs.currentUserId);
           const todayM = (meD && shared.studyLogs?.[todayStr()]?.[meD.id]) || 0;
-          const nextFlame = STUDY_FLAME_THRESHOLDS[getFlameLevel(todayM)];
-          cheerEl.textContent = nextFlame
-            ? `오늘 누적 ${formatStudyMins(todayM)} · 다음 불꽃 오라까지 ${nextFlame - todayM}분`
-            : `오늘 누적 ${formatStudyMins(todayM)} · 🔥 최고 단계 불꽃 오라 달성!`;
+          const nextAura = STUDY_AURA_THRESHOLDS[getStudyAuraLevel(todayM)];
+          cheerEl.textContent = nextAura
+            ? `오늘 누적 ${formatStudyMins(todayM)} · 다음 오라 단계까지 ${nextAura - todayM}분`
+            : `오늘 누적 ${formatStudyMins(todayM)} · 최고 단계 집중 오라 달성!`;
         }
       }
 
@@ -8105,12 +8180,12 @@
         document.getElementById('focus-mini-expand').focus({preventScroll:true});
       }
 
-      const STUDY_FLAME_THRESHOLDS = [10, 30, 60, 120, 240, 300, 360, 420, 480, 540];
+      const STUDY_AURA_THRESHOLDS = [10, 30, 60, 90, 120, 180, 240, 300, 360, 420, 480, 540, 600];
 
-      function getFlameLevel(mins) {
+      function getStudyAuraLevel(mins) {
         const minutes = Number(mins) || 0;
-        const nextStage = STUDY_FLAME_THRESHOLDS.findIndex(threshold => minutes < threshold);
-        return nextStage === -1 ? STUDY_FLAME_THRESHOLDS.length : nextStage;
+        const nextStage = STUDY_AURA_THRESHOLDS.findIndex(threshold => minutes < threshold);
+        return nextStage === -1 ? STUDY_AURA_THRESHOLDS.length : nextStage;
       }
 
       function closeFocusOverlay(discard = false) {
@@ -8147,7 +8222,7 @@
           if (sessionMins >= 1) {
             const meF = shared.members.find(x => x.id === prefs.currentUserId);
             const todayTotal = (meF && shared.studyLogs?.[todayStr()]?.[meF.id]) || 0;
-            const flameLv = getFlameLevel(todayTotal);
+            const auraLevel = getStudyAuraLevel(todayTotal);
             const sH = Math.floor(sessionMins / 60), sM = sessionMins % 60;
             const sessionStr = sH > 0 ? `${sH}시간 ${sM}분` : `${sM}분`;
             openModal('⏱️ 집중 완료 리포트', `
@@ -8163,7 +8238,7 @@
                     <div class="font-mono font-black text-sm text-emerald-600 mt-0.5">${earnedSessionLp > 0 ? `+${earnedSessionLp} LP` : '기록 저장 ✓'}</div>
                   </div>
                 </div>
-                ${flameLv > 0 ? `<div class="rounded-xl bg-amber-50 border border-amber-200 px-3 py-2 text-xs font-bold text-amber-900">스터디원 카드 <strong>불꽃 ${flameLv}/${STUDY_FLAME_THRESHOLDS.length}</strong></div>` : ''}
+                ${auraLevel > 0 ? `<div class="rounded-xl bg-amber-50 border border-amber-200 px-3 py-2 text-xs font-bold text-amber-900">스터디원 카드 <strong>오라 ${auraLevel}/${STUDY_AURA_THRESHOLDS.length}</strong></div>` : ''}
                 <button type="button" id="btn-focus-summary-ok" class="w-full py-2.5 rounded-xl ed-btn-accent text-xs font-black">확인</button>
               </div>
             `);
