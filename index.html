@@ -819,8 +819,7 @@
     #focus-pause-btn {background:var(--surface);color:var(--ink);border:1px solid var(--line)}
     #focus-end-btn {background:var(--primary);color:var(--on-primary)}
     #focus-mini-expand {background:#e9f0ff;color:#182d50}
-    .fancy-badge,.studying-live-card {animation:none!important}
-    .studying-live-card {outline:1.5px solid #25b48288;outline-offset:-2px}
+    .fancy-badge {animation:none!important}
     .fancy-badge {box-shadow:none!important}
     .scrollbar-thin::-webkit-scrollbar-thumb {background:var(--line)}
     body[data-dark="true"] :is(.bg-white,.bg-slate-50,.bg-slate-100,.bg-slate-50\/40,.bg-slate-50\/50,.bg-slate-50\/60,.bg-slate-50\/80) {background-color:var(--soft)!important;border-color:var(--line)!important;color:var(--ink)!important}
@@ -4757,7 +4756,7 @@
                   ${prefs.adminMode && shared.members.length > 1 ? `<button type="button" data-del-member="${m.id}" class="w-full flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg hover:bg-rose-50 text-[11px] font-bold text-rose-600 whitespace-nowrap">🗑️ 삭제하기</button>` : ''}
                 </div>
               </div>` : ''}
-              <div data-member-detail="${m.id}" class="flex-1 cursor-pointer rounded-2xl p-2.5 sm:p-3 bg-white flex flex-col justify-start gap-2 transition-all ${tierObj.frame} ${promoRing} ${flameCls} ${isStudying ? 'studying-live-card' : ''}">
+              <div data-member-detail="${m.id}" class="flex-1 cursor-pointer rounded-2xl p-2.5 sm:p-3 bg-white flex flex-col justify-start gap-2 transition-all ${tierObj.frame} ${promoRing} ${flameCls}">
                 <div class="space-y-1.5">
                   <div class="flex items-center justify-between gap-1.5 min-h-[28px] ${hasMenu ? 'pr-7' : ''}">
                     <div class="flex items-center gap-2 min-w-0">
