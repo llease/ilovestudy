@@ -1043,6 +1043,7 @@
 
     <!-- TAB 1: DASHBOARD (Refined Minimal Check-in + Timetable) -->
     <div id="tab-dashboard" class="tab-panel space-y-4">
+      <div id="home-onboarding-guide" class="hidden space-y-2.5"></div>
       <div id="home-card-grid" class="study-home-grid">
         <section class="ed-card p-4 sm:p-5 space-y-4" aria-labelledby="my-card-name">
           <div class="study-card-heading flex items-center justify-between gap-2">
@@ -1702,7 +1703,10 @@
 
         <!-- Admin Rank / Tier / LP Editor -->
         <div class="border-t border-slate-200 pt-3.5 space-y-2">
-          <h4 class="text-xs font-black text-slate-900">🎖️ 랭크(티어 · LP) 직접 변경</h4>
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <h4 class="text-xs font-black text-slate-900">🎖️ 랭크(티어 · LP) 직접 변경 &amp; 승급전 건너뛰기</h4>
+            <div id="admin-rank-current-info" class="flex items-center gap-1.5 flex-wrap text-xs"></div>
+          </div>
           <form id="admin-rank-form" class="flex flex-wrap items-center gap-2 bg-slate-50 p-3 rounded-xl border border-slate-200">
             <select id="admin-rank-member" class="rounded-xl border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-semibold"></select>
             <select id="admin-rank-tier-preset" class="rounded-xl border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-semibold"></select>
@@ -1711,6 +1715,7 @@
               <span class="text-xs font-bold text-slate-500">LP</span>
             </div>
             <button type="submit" class="px-3.5 py-1.5 rounded-xl bg-slate-950 text-white text-xs font-bold whitespace-nowrap">랭크 적용</button>
+            <button id="btn-admin-skip-promo" type="button" class="hidden px-3.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-black whitespace-nowrap">⏭️ 승급전 건너뛰기</button>
           </form>
         </div>
 
@@ -3336,7 +3341,7 @@
         }
         const adminBtn = document.getElementById('admin-toggle-btn');
         if (adminBtn) adminBtn.classList.toggle('hidden', !isAdminUser());
-        const repCnt = (shared.reports || []).length;
+        const repCnt = (shared.reports || []).filter(r => !r.read).length;
         const pendingJoinCnt = (shared.joinRequests || []).filter(r => r.status === 'pending').length;
         const adminAlertCnt = repCnt + pendingJoinCnt;
         if (adminBtn) {
@@ -3694,6 +3699,76 @@
                 </div>
               `).join('')
             : '<p class="text-[11px] text-slate-400">오늘 등록된 할 일이 없습니다. 플래너에서 추가해 보세요.</p>';
+        }
+
+        const guideEl = document.getElementById('home-onboarding-guide');
+        if (guideEl) {
+          if (prefs.adminMode) {
+            guideEl.classList.add('hidden');
+          } else {
+            const needStudyJoin = !prefs.joinedMemberId && me.inStudy === false;
+            const STARTER_ACTIONS = {
+              ch_join_study: { label: '스터디 참가', action: 'join' },
+              ch_newbie: { label: '스톱워치 켜기', action: 'focus' },
+              ch_avatar: { label: '프로필 사진', action: 'tab:profile' },
+              ch_timetable: { label: '수업 등록', action: 'tab:timetable' },
+              ch_guide: { label: '설명서 보기', action: 'tab:guide' },
+              ch_mailbox: { label: '우편함 열기', action: 'mailbox' },
+              ch_todo_v: { label: '할 일 V 체크', action: 'tab:planner' },
+              ch_cal_day: { label: '캘린더 보기', action: 'tab:calendar' },
+              ch_timetravel: { label: '지난 달 보기', action: 'tab:calendar' },
+              ch_equip: { label: '칭호 장착', action: 'tab:profile' },
+              ch_rename: { label: '별명 수정', action: 'tab:profile' },
+              ch_banner_bg: { label: '배경 설정', action: 'tab:profile' },
+              ch_respect1: { label: '리스펙 보내기', action: 'tab:members' },
+              ch_brag1: { label: '사진 올리기', action: 'sub:brag' },
+              ch_spy: { label: '스터디원 구경', action: 'tab:members' },
+              ch_rank_bottom: { label: '입문 도감 보기', action: 'sub:starter' },
+              ch_encourage: { label: '격려 요청', action: 'encourage' }
+            };
+            const STARTER_LIST = (shared.challenges || []).filter(c => c.cat === 'starter' || STARTER_ACTIONS[c.id]);
+            const doneSet = new Set((shared.memberChallenges && shared.memberChallenges[me.id]) || []);
+            const remaining = STARTER_LIST.filter(c => !doneSet.has(c.id));
+            const doneCount = STARTER_LIST.length - remaining.length;
+            let guideHtml = '';
+            if (needStudyJoin) {
+              guideHtml += `<div class="rounded-2xl border-2 border-indigo-500 bg-indigo-50/90 p-3.5 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+                <div class="space-y-0.5">
+                  <div class="text-xs sm:text-sm font-black text-indigo-950">👋 아직 스터디에 참가하지 않았어요!</div>
+                  <p class="text-[11px] text-indigo-900">스터디에 참가하면 랭킹·자랑하기·실시간 공부 현황과 <strong>신입 받아라(+7 LP)</strong> 챌린지를 바로 시작할 수 있어요.</p>
+                </div>
+                <button type="button" data-guide-action="join" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-black whitespace-nowrap shrink-0">🙋 스터디 참가하기</button>
+              </div>`;
+            }
+            if (remaining.length > 0 && !prefs.hideStarterGuide) {
+              const pct = STARTER_LIST.length ? Math.round((doneCount / STARTER_LIST.length) * 100) : 0;
+              const nextThree = remaining.slice(0, 3);
+              guideHtml += `<div class="ed-card p-3.5 sm:p-4 space-y-2.5">
+                <div class="flex items-center justify-between gap-2">
+                  <div class="flex items-center gap-2 min-w-0">
+                    <button type="button" data-guide-action="sub:starter" class="text-xs sm:text-sm font-black text-slate-900 hover:text-indigo-600 text-left">🌱 입문 챌린지 가이드 →</button>
+                    <span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-black whitespace-nowrap">${doneCount} / ${STARTER_LIST.length} 완료</span>
+                  </div>
+                  <button type="button" id="btn-hide-starter-guide" class="text-[11px] font-bold text-slate-400 hover:text-slate-700 whitespace-nowrap">숨기기</button>
+                </div>
+                <div class="h-1.5 w-full rounded-full bg-slate-100 overflow-hidden"><div class="h-full bg-emerald-500 rounded-full transition-all" style="width:${pct}%"></div></div>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                  ${nextThree.map(ch => {
+                    const act = STARTER_ACTIONS[ch.id] || { label: '도전하기', action: 'tab:members' };
+                    return `<div class="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 flex items-center justify-between gap-2">
+                      <div class="min-w-0">
+                        <div class="text-xs font-black text-slate-900 truncate">${escapeHtml(ch.title)} <span class="text-indigo-600">+${ch.lp}LP</span></div>
+                        <div class="text-[10px] text-slate-500 truncate">${escapeHtml(ch.desc)}</div>
+                      </div>
+                      <button type="button" data-guide-action="${act.action}" class="px-2.5 py-1 rounded-lg bg-white border border-slate-300 hover:bg-slate-100 text-[11px] font-bold text-slate-800 whitespace-nowrap shrink-0">${act.label} →</button>
+                    </div>`;
+                  }).join('')}
+                </div>
+              </div>`;
+            }
+            guideEl.innerHTML = guideHtml;
+            guideEl.classList.toggle('hidden', !guideHtml);
+          }
         }
       }
 
@@ -4455,8 +4530,7 @@
         rankMemSel.innerHTML = shared.members.map(m => `<option value="${m.id}" ${m.id === curRankMem ? 'selected' : ''}>${escapeHtml(m.name)}</option>`).join('');
         const rankPresetSel = document.getElementById('admin-rank-tier-preset');
         rankPresetSel.innerHTML = LOL_TIERS.map(t => `<option value="${t.min}">${t.icon} ${t.name} (${t.min} LP~)</option>`).join('');
-        const rMemObj = shared.members.find(m => m.id === curRankMem);
-        document.getElementById('admin-rank-lp-input').value = rMemObj ? (rMemObj.lp || 0) : 0;
+        syncAdminRankControls(curRankMem);
 
         const bms = document.getElementById('admin-badge-member'), cbm = bms.value || (shared.members[0] && shared.members[0].id);
         bms.innerHTML = shared.members.map(m => `<option value="${m.id}" ${m.id === cbm ? 'selected' : ''}>${escapeHtml(m.name)}</option>`).join('');
@@ -4473,7 +4547,20 @@
         if (repListEl) {
           const repList = (shared.reports || []).slice().reverse();
           repListEl.innerHTML = repList.length
-            ? repList.map(rp => `<div class="flex items-start justify-between gap-2 bg-rose-50 border border-rose-200 rounded-xl p-2.5 text-xs"><div><span class="font-black text-rose-700">대상: ${escapeHtml(rp.targetName)}</span> <span class="text-slate-500">· 신고자: ${escapeHtml(rp.reporterName)} (${rp.date} ${rp.time})</span><p class="text-slate-800 mt-0.5">${escapeHtml(rp.reason)}</p></div><button type="button" data-del-report="${rp.id}" class="text-[10px] px-2 py-0.5 rounded bg-rose-600 text-white font-bold shrink-0">🗑️ 삭제</button></div>`).join('')
+            ? repList.map(rp => `<div class="flex items-start justify-between gap-2 ${rp.read ? 'bg-slate-50 border-slate-200' : 'bg-rose-50 border-rose-300'} border rounded-xl p-2.5 text-xs">
+                <div class="min-w-0">
+                  <div class="flex items-center gap-1.5 flex-wrap">
+                    <span class="font-black ${rp.read ? 'text-slate-700' : 'text-rose-700'}">대상: ${escapeHtml(rp.targetName)}</span>
+                    <span class="text-slate-500">· 신고자: ${escapeHtml(rp.reporterName)} (${rp.date} ${rp.time})</span>
+                    ${rp.read ? '<span class="px-1.5 py-0.5 rounded bg-slate-200 text-slate-600 text-[10px] font-bold">읽음</span>' : '<span class="px-1.5 py-0.5 rounded bg-rose-600 text-white text-[10px] font-black">미확인</span>'}
+                  </div>
+                  <p class="text-slate-800 mt-0.5 break-words">${escapeHtml(rp.reason)}</p>
+                </div>
+                <div class="flex items-center gap-1.5 shrink-0">
+                  ${!rp.read ? `<button type="button" data-read-report="${rp.id}" class="text-[10px] px-2 py-1 rounded bg-slate-900 text-white font-bold whitespace-nowrap">✓ 읽음</button>` : ''}
+                  <button type="button" data-del-report="${rp.id}" class="text-[10px] px-2 py-1 rounded bg-rose-600 text-white font-bold whitespace-nowrap">삭제</button>
+                </div>
+              </div>`).join('')
             : '<p class="text-xs text-slate-400">접수된 신고가 없습니다.</p>';
         }
         const encListEl = document.getElementById('admin-encouragements-list');
@@ -5342,9 +5429,15 @@
         });
       }
       document.getElementById('admin-reports-list').addEventListener('click', e => {
+        const rb = e.target.closest('[data-read-report]');
+        if (rb) {
+          const rp = (shared.reports || []).find(r => r.id === rb.dataset.readReport);
+          if (rp) { rp.read = true; saveSharedData(); renderHeaderControls(); renderAdminTab(); }
+          return;
+        }
         const b = e.target.closest('[data-del-report]'); if (!b) return;
         shared.reports = (shared.reports || []).filter(r => r.id !== b.dataset.delReport);
-        saveSharedData(); renderAdminTab();
+        saveSharedData(); renderHeaderControls(); renderAdminTab();
       });
 
       document.getElementById('admin-suggestions-list').addEventListener('click', e => {
@@ -5457,7 +5550,8 @@
               targetName: target.name,
               reason,
               date: todayStr(),
-              time: getNowParts().hhmm
+              time: getNowParts().hhmm,
+              read: false
             });
             saveSharedData();
             closeModal();
@@ -5988,26 +6082,78 @@
         saveSharedData(); showToast(`${escapeHtml(m.name)}님을 즉시 자율모드로 전환했습니다.`, 'info'); renderAll();
       });
 
-      document.getElementById('admin-rank-member').addEventListener('change', () => {
-        const m = shared.members.find(x => x.id === document.getElementById('admin-rank-member').value);
-        if (m) document.getElementById('admin-rank-lp-input').value = m.lp || 0;
+      function syncAdminRankControls(mid) {
+        const m = shared.members.find(x => x.id === mid);
+        const infoEl = document.getElementById('admin-rank-current-info');
+        const skipBtn = document.getElementById('btn-admin-skip-promo');
+        const lpIn = document.getElementById('admin-rank-lp-input');
+        const tierSel = document.getElementById('admin-rank-tier-preset');
+        if (!m) return;
+        const tInfo = getMemberTier(m);
+        if (lpIn) lpIn.value = m.lp || 0;
+        if (tierSel) tierSel.value = String(LOL_TIERS[tInfo.idx].min);
+        if (infoEl) infoEl.innerHTML = renderTierPill(m);
+        const canSkip = !!(tInfo.nextName && (tInfo.inPromo || m.promoActiveDate || m.promoPendingDate));
+        if (skipBtn) {
+          skipBtn.classList.toggle('hidden', !canSkip);
+          if (canSkip) skipBtn.textContent = `⏭️ ${tInfo.nextName} 승급전 건너뛰기`;
+        }
+      }
+      document.getElementById('admin-rank-member').addEventListener('change', e => {
+        syncAdminRankControls(e.target.value);
       });
       document.getElementById('admin-rank-tier-preset').addEventListener('change', e => {
         document.getElementById('admin-rank-lp-input').value = e.target.value;
+      });
+      document.getElementById('admin-rank-lp-input').addEventListener('input', e => {
+        const val = Math.max(0, Number(e.target.value) || 0);
+        let matchIdx = 0;
+        for (let i = 0; i < LOL_TIERS.length; i++) if (val >= LOL_TIERS[i].min) matchIdx = i;
+        document.getElementById('admin-rank-tier-preset').value = String(LOL_TIERS[matchIdx].min);
       });
       document.getElementById('admin-rank-form').addEventListener('submit', e => {
         e.preventDefault();
         const mid = document.getElementById('admin-rank-member').value;
         const m = shared.members.find(x => x.id === mid);
         if (!m) return;
-        m.lp = Math.max(0, Number(document.getElementById('admin-rank-lp-input').value) || 0);
-        let newTIdx = 0;
-        for (let i = 0; i < LOL_TIERS.length; i++) if (m.lp >= LOL_TIERS[i].min) newTIdx = i;
+        const newLp = Math.max(0, Number(document.getElementById('admin-rank-lp-input').value) || 0);
+        const presetMin = Number(document.getElementById('admin-rank-tier-preset').value) || 0;
+        let newTIdx = LOL_TIERS.findIndex(t => t.min === presetMin);
+        if (newTIdx < 0) {
+          newTIdx = 0;
+          for (let i = 0; i < LOL_TIERS.length; i++) if (newLp >= LOL_TIERS[i].min) newTIdx = i;
+        }
+        m.lp = newLp;
         m.tierIdx = newTIdx;
         m.bankedLp = 0;
         saveSharedData();
         const tInfo = getMemberTier(m);
         showToast(`${escapeHtml(m.name)}님의 랭크가 ${tInfo.icon} ${tInfo.name} (${m.lp} LP)로 변경되었습니다!`, 'success');
+        renderAll();
+      });
+      document.getElementById('btn-admin-skip-promo').addEventListener('click', () => {
+        if (!prefs.adminMode) return;
+        const mid = document.getElementById('admin-rank-member').value;
+        const m = shared.members.find(x => x.id === mid);
+        if (!m) return;
+        const tInfo = getMemberTier(m);
+        if (!tInfo.nextName) return;
+        const nextIdx = tInfo.idx + 1;
+        const nextObj = LOL_TIERS[nextIdx];
+        if (!nextObj) return;
+        const releasedBank = Number(m.bankedLp) || 0;
+        m.tierIdx = nextIdx;
+        m.lp = Math.max(m.lp || 0, nextObj.min) + releasedBank;
+        m.bankedLp = 0;
+        m.promoActiveDate = null;
+        m.promoPendingDate = null;
+        m.promoTargetTier = null;
+        m.promoCooldownUntil = null;
+        if (!shared.promoHistory) shared.promoHistory = {};
+        if (!shared.promoHistory[m.id]) shared.promoHistory[m.id] = {};
+        shared.promoHistory[m.id][todayStr()] = `${nextObj.name} 승급 (관리자 건너뛰기)`;
+        saveSharedData();
+        showToast(`${escapeHtml(m.name)}님의 ${nextObj.name} 승급전을 건너뛰어 바로 승급 처리했습니다!`, 'success');
         renderAll();
       });
 
@@ -7223,6 +7369,32 @@
       });
 
       document.getElementById('btn-home-goto-planner').addEventListener('click', () => switchTab('planner'));
+      document.getElementById('home-onboarding-guide').addEventListener('click', e => {
+        if (e.target.id === 'btn-hide-starter-guide') {
+          prefs.hideStarterGuide = true;
+          savePrefs();
+          renderDashboard();
+          return;
+        }
+        const actBtn = e.target.closest('[data-guide-action]');
+        if (!actBtn) return;
+        const act = actBtn.dataset.guideAction;
+        if (act === 'join') document.getElementById('add-member-btn').click();
+        else if (act === 'focus') document.getElementById('btn-open-focus').click();
+        else if (act === 'mailbox') document.getElementById('mailbox-btn').click();
+        else if (act === 'encourage') openEncourageModal();
+        else if (act === 'sub:brag') {
+          switchTab('members');
+          document.querySelector('[data-members-sub="brag"]')?.click();
+        } else if (act === 'sub:starter') {
+          switchTab('members');
+          document.querySelector('[data-members-sub="rank"]')?.click();
+          document.querySelector('[data-ch-cat="starter"]')?.click();
+          setTimeout(() => {
+            document.getElementById('challenge-cat-tabs')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }, 60);
+        } else if (act.startsWith('tab:')) switchTab(act.slice(4));
+      });
       document.getElementById('home-today-todos-list').addEventListener('click', e => {
         const b = e.target.closest('[data-home-cycle-task]');
         if (!b) return;
