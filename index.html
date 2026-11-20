@@ -3986,6 +3986,64 @@
         }
       }
 
+      const STARTER_ACTIONS = {
+        ch_join_study: { label: '스터디 참가', action: 'join' },
+        ch_newbie: { label: '스톱워치 켜기', action: 'focus' },
+        ch_avatar: { label: '프로필 사진', action: 'tab:profile' },
+        ch_timetable: { label: '수업 등록', action: 'tab:timetable' },
+        ch_guide: { label: '설명서 보기', action: 'tab:guide' },
+        ch_mailbox: { label: '우편함 열기', action: 'mailbox' },
+        ch_todo_v: { label: '할 일 V 체크', action: 'tab:planner' },
+        ch_cal_day: { label: '캘린더 보기', action: 'tab:calendar' },
+        ch_timetravel: { label: '지난 달 보기', action: 'tab:calendar' },
+        ch_equip: { label: '칭호 장착', action: 'tab:profile' },
+        ch_rename: { label: '별명 수정', action: 'tab:profile' },
+        ch_banner_bg: { label: '배경 설정', action: 'tab:profile' },
+        ch_respect1: { label: '리스펙 보내기', action: 'sub:live' },
+        ch_brag1: { label: '사진 올리기', action: 'sub:brag' },
+        ch_spy: { label: '스터디원 구경', action: 'sub:live' },
+        ch_rank_bottom: { label: '입문 도감 보기', action: 'sub:starter' },
+        ch_encourage: { label: '격려 요청', action: 'encourage' },
+        ch_theme: { label: '테마 바꾸기', action: 'theme' },
+        ch_flipflop: { label: '플래너 가기', action: 'tab:planner' },
+        ch_minimal: { label: '프로필 가기', action: 'tab:profile' },
+        ch_pause1: { label: '스톱워치 켜기', action: 'focus' },
+        ch_ultra_reserve: { label: '모드 전환', action: 'mode' },
+        ch_justice: { label: '스터디원 보기', action: 'sub:live' }
+      };
+      function executeStarterAction(act, ev) {
+        if (!act) return;
+        if (act === 'join') document.getElementById('add-member-btn')?.click();
+        else if (act === 'focus') document.getElementById('btn-open-focus')?.click();
+        else if (act === 'mailbox') document.getElementById('mailbox-btn')?.click();
+        else if (act === 'encourage') openEncourageModal();
+        else if (act === 'mode') document.getElementById('study-mode-btn')?.click();
+        else if (act === 'theme') {
+          if (ev) ev.stopPropagation();
+          document.getElementById('header-more-btn')?.click();
+        } else if (act === 'scroll:bottom') {
+          window.scrollTo({ top: document.documentElement.scrollHeight, behavior: reduceMotion.matches ? 'auto' : 'smooth' });
+        } else if (act === 'sub:live') {
+          switchTab('members');
+          document.querySelector('[data-members-sub="live"]')?.click();
+          window.scrollTo({ top: 0, behavior: reduceMotion.matches ? 'auto' : 'smooth' });
+        } else if (act === 'sub:brag') {
+          switchTab('members');
+          document.querySelector('[data-members-sub="brag"]')?.click();
+          window.scrollTo({ top: 0, behavior: reduceMotion.matches ? 'auto' : 'smooth' });
+        } else if (act === 'sub:starter') {
+          switchTab('members');
+          document.querySelector('[data-members-sub="rank"]')?.click();
+          document.querySelector('[data-ch-cat="starter"]')?.click();
+          setTimeout(() => {
+            document.getElementById('challenge-cat-tabs')?.scrollIntoView({ behavior: reduceMotion.matches ? 'auto' : 'smooth', block: 'start' });
+          }, 60);
+        } else if (act.startsWith('tab:')) {
+          switchTab(act.slice(4));
+          window.scrollTo({ top: 0, behavior: reduceMotion.matches ? 'auto' : 'smooth' });
+        }
+      }
+
       function renderDashboard() {
         const now = getNowParts(), t = todayStr(), phase = getCurrentPhase(now.totalMins);
         const me = shared.members.find(m => m.id === prefs.currentUserId) || shared.members[0];
@@ -4082,31 +4140,6 @@
             guideEl.classList.add('hidden');
           } else {
             const needStudyJoin = !prefs.joinedMemberId && me.inStudy === false;
-            const STARTER_ACTIONS = {
-              ch_join_study: { label: '스터디 참가', action: 'join' },
-              ch_newbie: { label: '스톱워치 켜기', action: 'focus' },
-              ch_avatar: { label: '프로필 사진', action: 'tab:profile' },
-              ch_timetable: { label: '수업 등록', action: 'tab:timetable' },
-              ch_guide: { label: '설명서 보기', action: 'tab:guide' },
-              ch_mailbox: { label: '우편함 열기', action: 'mailbox' },
-              ch_todo_v: { label: '할 일 V 체크', action: 'tab:planner' },
-              ch_cal_day: { label: '캘린더 보기', action: 'tab:calendar' },
-              ch_timetravel: { label: '지난 달 보기', action: 'tab:calendar' },
-              ch_equip: { label: '칭호 장착', action: 'tab:profile' },
-              ch_rename: { label: '별명 수정', action: 'tab:profile' },
-              ch_banner_bg: { label: '배경 설정', action: 'tab:profile' },
-              ch_respect1: { label: '리스펙 보내기', action: 'sub:live' },
-              ch_brag1: { label: '사진 올리기', action: 'sub:brag' },
-              ch_spy: { label: '스터디원 구경', action: 'sub:live' },
-              ch_rank_bottom: { label: '입문 도감 보기', action: 'sub:starter' },
-              ch_encourage: { label: '격려 요청', action: 'encourage' },
-              ch_theme: { label: '테마 바꾸기', action: 'theme' },
-              ch_flipflop: { label: '플래너 가기', action: 'tab:planner' },
-              ch_minimal: { label: '프로필 가기', action: 'tab:profile' },
-              ch_pause1: { label: '스톱워치 켜기', action: 'focus' },
-              ch_ultra_reserve: { label: '모드 전환', action: 'mode' },
-              ch_justice: { label: '스터디원 보기', action: 'sub:live' }
-            };
             const STARTER_LIST = (shared.challenges || []).filter(c => c.cat === 'starter' || STARTER_ACTIONS[c.id]);
             const doneSet = new Set((shared.memberChallenges && shared.memberChallenges[me.id]) || []);
             if (me.inStudy !== false && !doneSet.has('ch_join_study')) {
@@ -4126,31 +4159,41 @@
                 <button type="button" data-guide-action="join" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-black whitespace-nowrap shrink-0">🙋 스터디 참가하기</button>
               </div>`;
             }
-            if (remaining.length > 0 && !prefs.hideStarterGuide) {
-              const pct = STARTER_LIST.length ? Math.round((doneCount / STARTER_LIST.length) * 100) : 0;
-              const nextThree = (needStudyJoin ? remaining.filter(c => c.id !== 'ch_join_study') : remaining).slice(0, 3);
-              guideHtml += `<div class="ed-card p-3.5 sm:p-4 space-y-2.5">
-                <div class="flex items-center justify-between gap-2">
+            if (remaining.length > 0) {
+              if (prefs.hideStarterGuide) {
+                guideHtml += `<div class="ed-card px-3.5 py-2.5 flex items-center justify-between gap-2">
                   <div class="flex items-center gap-2 min-w-0">
-                    <button type="button" data-guide-action="sub:starter" class="text-xs sm:text-sm font-black text-slate-900 hover:text-indigo-600 text-left">🌱 입문 챌린지 가이드 →</button>
-                    <span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-black whitespace-nowrap">${doneCount} / ${STARTER_LIST.length} 완료</span>
+                    <button type="button" data-guide-action="sub:starter" class="text-xs font-black text-slate-900 hover:text-indigo-600 text-left truncate">🌱 입문 챌린지 가이드</button>
+                    <span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-black whitespace-nowrap shrink-0">${doneCount} / ${STARTER_LIST.length} 완료</span>
                   </div>
-                  <button type="button" id="btn-hide-starter-guide" class="text-[11px] font-bold text-slate-400 hover:text-slate-700 whitespace-nowrap">숨기기</button>
-                </div>
-                <div class="h-1.5 w-full rounded-full bg-slate-100 overflow-hidden"><div class="h-full bg-emerald-500 rounded-full transition-all" style="width:${pct}%"></div></div>
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                  ${nextThree.map(ch => {
-                    const act = STARTER_ACTIONS[ch.id] || { label: '도전하기', action: 'tab:members' };
-                    return `<div class="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 flex items-center justify-between gap-2">
-                      <div class="min-w-0">
-                        <div class="text-xs font-black text-slate-900 truncate">${escapeHtml(ch.title)} <span class="text-indigo-600">+${ch.lp}LP</span></div>
-                        <div class="text-[10px] text-slate-500 truncate">${escapeHtml(ch.desc)}</div>
-                      </div>
-                      <button type="button" data-guide-action="${act.action}" class="px-2.5 py-1 rounded-lg bg-white border border-slate-300 hover:bg-slate-100 text-[11px] font-bold text-slate-800 whitespace-nowrap shrink-0">${act.label} →</button>
-                    </div>`;
-                  }).join('')}
-                </div>
-              </div>`;
+                  <button type="button" id="btn-show-starter-guide" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-[11px] font-bold text-slate-700 whitespace-nowrap shrink-0">펼치기 ▾</button>
+                </div>`;
+              } else {
+                const pct = STARTER_LIST.length ? Math.round((doneCount / STARTER_LIST.length) * 100) : 0;
+                const nextThree = (needStudyJoin ? remaining.filter(c => c.id !== 'ch_join_study') : remaining).slice(0, 3);
+                guideHtml += `<div class="ed-card p-3.5 sm:p-4 space-y-2.5">
+                  <div class="flex items-center justify-between gap-2">
+                    <div class="flex items-center gap-2 min-w-0">
+                      <button type="button" data-guide-action="sub:starter" class="text-xs sm:text-sm font-black text-slate-900 hover:text-indigo-600 text-left">🌱 입문 챌린지 가이드 →</button>
+                      <span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-black whitespace-nowrap">${doneCount} / ${STARTER_LIST.length} 완료</span>
+                    </div>
+                    <button type="button" id="btn-hide-starter-guide" class="text-[11px] font-bold text-slate-400 hover:text-slate-700 whitespace-nowrap">접기 ▴</button>
+                  </div>
+                  <div class="h-1.5 w-full rounded-full bg-slate-100 overflow-hidden"><div class="h-full bg-emerald-500 rounded-full transition-all" style="width:${pct}%"></div></div>
+                  <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                    ${nextThree.map(ch => {
+                      const act = STARTER_ACTIONS[ch.id] || { label: '도전하기', action: 'tab:members' };
+                      return `<div class="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 flex items-center justify-between gap-2">
+                        <div class="min-w-0">
+                          <div class="text-xs font-black text-slate-900 truncate">${escapeHtml(ch.title)} <span class="text-indigo-600">+${ch.lp}LP</span></div>
+                          <div class="text-[10px] text-slate-500 truncate">${escapeHtml(ch.desc)}</div>
+                        </div>
+                        <button type="button" data-guide-action="${act.action}" class="px-2.5 py-1 rounded-lg bg-white border border-slate-300 hover:bg-slate-100 text-[11px] font-bold text-slate-800 whitespace-nowrap shrink-0">${act.label} →</button>
+                      </div>`;
+                    }).join('')}
+                  </div>
+                </div>`;
+              }
             }
             guideEl.innerHTML = guideHtml;
             guideEl.classList.toggle('hidden', !guideHtml);
@@ -4954,8 +4997,12 @@
           const unlocked = myDoneIds.includes(ch.id);
           const cleanTitle = (ch.title.replace(/^[^\w가-힣A-Za-z0-9]+\s*/, '').trim() || ch.title.trim());
           const isEquipped = me.equippedTitle === cleanTitle;
+          const isStarter = getChCat(ch) === 'starter';
+          const stAct = isStarter && !unlocked ? STARTER_ACTIONS[ch.id] : null;
+          const goAct = stAct ? (ch.id === 'ch_rank_bottom' ? 'scroll:bottom' : stAct.action) : '';
+          const goLabel = stAct ? (ch.id === 'ch_rank_bottom' ? '맨 아래로 이동' : stAct.label) : '';
           return `
-            <div class="rounded-xl border p-3.5 flex flex-col justify-between gap-2 ${unlocked ? 'border-slate-950 bg-amber-50/40' : 'border-slate-200 bg-slate-50/60'}">
+            <div ${goAct ? `data-ch-go="${goAct}"` : ''} class="rounded-xl border p-3.5 flex flex-col justify-between gap-2 transition ${goAct ? 'cursor-pointer hover:border-indigo-400 hover:bg-indigo-50/30 ' : ''}${unlocked ? 'border-slate-950 bg-amber-50/40' : 'border-slate-200 bg-slate-50/60'}">
               <div>
                 <div class="flex items-center justify-between gap-2">
                   <span class="font-black text-sm text-slate-900">${(unlocked || prefs.adminMode) ? ch.title : '🔒 ??? (달성 시 칭호 공개)'}</span>
@@ -4966,6 +5013,7 @@
               <div class="flex items-center justify-between pt-1">
                 <span class="text-[11px] font-bold ${unlocked ? 'text-emerald-700' : 'text-slate-400'}">${unlocked ? '✓ 달성 완료' : '도전 중'}</span>
                 <div class="flex items-center gap-1.5">
+                  ${goAct ? `<button type="button" data-ch-go="${goAct}" class="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-white border border-slate-300 text-slate-800 hover:bg-slate-100 whitespace-nowrap">${goLabel} →</button>` : ''}
                   ${prefs.adminMode ? `<button type="button" data-admin-edit-ch="${ch.id}" class="px-2 py-1 rounded-lg text-[11px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-200 hover:bg-indigo-100">이름 수정</button>` : ''}
                   ${(unlocked || prefs.adminMode) ? `<button type="button" data-equip-title="${cleanTitle}" class="px-2.5 py-1 rounded-lg text-[11px] font-bold ${isEquipped ? 'bg-slate-950 text-white' : 'bg-white border border-slate-950 text-slate-950 hover:bg-slate-100'}">${isEquipped ? '장착 중 ✓' : '칭호 장착'}</button>` : ''}
                 </div>
@@ -6211,7 +6259,11 @@
           return;
         }
         const b = e.target.closest('[data-equip-title]');
-        if (!b) return;
+        if (!b) {
+          const goEl = e.target.closest('[data-ch-go]');
+          if (goEl) executeStarterAction(goEl.dataset.chGo, e);
+          return;
+        }
         const me = shared.members.find(m => m.id === prefs.currentUserId);
         if (!me) return;
         const tName = b.dataset.equipTitle;
@@ -8124,31 +8176,15 @@
           renderDashboard();
           return;
         }
+        if (e.target.id === 'btn-show-starter-guide') {
+          prefs.hideStarterGuide = false;
+          savePrefs();
+          renderDashboard();
+          return;
+        }
         const actBtn = e.target.closest('[data-guide-action]');
         if (!actBtn) return;
-        const act = actBtn.dataset.guideAction;
-        if (act === 'join') document.getElementById('add-member-btn').click();
-        else if (act === 'focus') document.getElementById('btn-open-focus').click();
-        else if (act === 'mailbox') document.getElementById('mailbox-btn').click();
-        else if (act === 'encourage') openEncourageModal();
-        else if (act === 'mode') document.getElementById('study-mode-btn')?.click();
-        else if (act === 'theme') {
-          e.stopPropagation();
-          document.getElementById('header-more-btn')?.click();
-        } else if (act === 'sub:live') {
-          switchTab('members');
-          document.querySelector('[data-members-sub="live"]')?.click();
-        } else if (act === 'sub:brag') {
-          switchTab('members');
-          document.querySelector('[data-members-sub="brag"]')?.click();
-        } else if (act === 'sub:starter') {
-          switchTab('members');
-          document.querySelector('[data-members-sub="rank"]')?.click();
-          document.querySelector('[data-ch-cat="starter"]')?.click();
-          setTimeout(() => {
-            document.getElementById('challenge-cat-tabs')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          }, 60);
-        } else if (act.startsWith('tab:')) switchTab(act.slice(4));
+        executeStarterAction(actBtn.dataset.guideAction, e);
       });
       document.getElementById('home-today-todos-list').addEventListener('click', e => {
         const b = e.target.closest('[data-home-cycle-task]');
