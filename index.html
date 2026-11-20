@@ -521,8 +521,9 @@
     body[data-dark="true"][data-theme="master"] { --primary:#c4b5fd; --primary-hover:#ddd6fe; --on-primary:#250f47; --tint:#2e224d; --link:#d3c7fe; --focus-ring:#a074f5; --hero:#511f96; --hero-deep:#180930; }
     body[data-dark="true"][data-theme="grandmaster"] { --primary:#fda4af; --primary-hover:#fecdd3; --on-primary:#3d0a16; --tint:#451f2b; --link:#feb8c1; --focus-ring:#e65b6e; --hero:#8c1335; --hero-deep:#240610; }
     body[data-dark="true"][data-theme="challenger"] { --primary:#93c5fd; --primary-hover:#bfdbfe; --on-primary:#0c1e42; --tint:#1f355e; --link:#f5ca64; --focus-ring:#f5ca64; --hero:#1e479e; --hero-deep:#08122b; }
+    html {background-color:var(--viewport-bg,var(--page))}
     body {
-      margin:0; color:var(--ink)!important; background:var(--page)!important;
+      margin:0; min-height:100vh; min-height:100dvh; color:var(--ink)!important; background:var(--viewport-bg,var(--page))!important;
       font-family:Pretendard,'Noto Sans KR',system-ui,'Malgun Gothic','Apple SD Gothic Neo',sans-serif;
       font-size:15px; line-height:1.55; -webkit-tap-highlight-color:transparent;
     }
@@ -1025,7 +1026,12 @@
     .skip-link:focus {transform:none}
     #study-header {background:var(--surface)!important;color:var(--ink)!important;border-color:var(--line)!important;box-shadow:0 3px 16px #10284c09;backdrop-filter:none;padding-top:env(safe-area-inset-top,0px)}
     #study-header h1 {font-family:'Space Grotesk',sans-serif;color:var(--ink)!important;font-size:1.06rem;line-height:1.15;letter-spacing:-.045em;margin:0}
-    .study-header-bar, #study-nav, #study-main {width:min(100%,74rem);max-width:none;margin-inline:auto;padding-inline:clamp(.875rem,3vw,1.75rem)}
+    .study-header-bar, #study-nav, #study-main {
+      --content-inset:clamp(.875rem,3vw,1.75rem);
+      --content-left:max(var(--content-inset),env(safe-area-inset-left,0px));
+      --content-right:max(var(--content-inset),env(safe-area-inset-right,0px));
+      width:min(100%,74rem);max-width:none;margin-inline:auto;padding-left:var(--content-left);padding-right:var(--content-right)
+    }
     .study-header-bar {display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:clamp(.5rem,2vw,1.4rem);min-height:69px;padding-block:.5rem}
     .study-brand {display:flex;align-items:center;gap:.65rem;min-width:0}
     .study-logo {width:41px;height:41px;flex:none;display:grid;place-items:center;border-radius:13px;background:var(--hero-deep);color:var(--hero-text);border:1px solid #ffffff20;box-shadow:none}
@@ -1137,7 +1143,7 @@
     #study-nav .nav-tab.tab-idle:hover {background:var(--soft);color:var(--ink)!important}
     #study-nav .nav-tab.tab-active {background:var(--tint)!important;color:var(--link)!important;border-color:var(--line)!important}
     #guide-hint-badge {animation:none;margin-left:0}
-    #study-main {padding-block:clamp(1rem,3vw,2.25rem) 4rem}
+    #study-main {padding-block:clamp(1rem,3vw,2.25rem) calc(4rem + env(safe-area-inset-bottom,0px))}
     #home-top-banners {margin-bottom:0}
     #main-live-banner {display:grid;position:relative;isolation:isolate;overflow:hidden;grid-template-columns:minmax(0,1fr) auto;gap:1.5rem;align-items:center;padding:clamp(1.25rem,3vw,2.15rem);min-height:190px;border-radius:24px;background:linear-gradient(118deg,var(--hero-deep) 0%,var(--hero) 75%)!important;background-image:var(--study-hero-image,linear-gradient(118deg,var(--hero-deep),var(--hero)))!important;color:var(--hero-text)!important;border:1px solid #668bd472!important;box-shadow:0 14px 32px #112b5922!important}
     :is(#main-live-banner, :where(#focus-overlay[data-focus-theme="home"]) .focus-home-scene)::before {content:'';pointer-events:none;z-index:-1;position:absolute;inset:0;background-image:linear-gradient(#9cc4fe23 1px,transparent 1px),linear-gradient(90deg,#9cc4fe23 1px,transparent 1px);background-size:22px 22px;mask-image:linear-gradient(95deg,transparent 33%,#000);opacity:.57}
@@ -1149,6 +1155,7 @@
     #live-phase-badge::before {content:'';width:6px;height:6px;border-radius:50%;background:var(--accent)}
     .study-hero-stat {padding:1rem 1.2rem;min-width:173px;border:1px solid #b5d1ff49;border-radius:16px;background:#101f36ae;text-align:right}
     .study-hero-stat > span {display:block;color:var(--hero-muted);font-size:.8rem;font-weight:650}
+    #live-study-day-range {display:block;color:var(--hero-muted);font-size:.7rem;font-weight:650;font-variant-numeric:tabular-nums}
     #live-clock-text {color:var(--hero-text);font:700 clamp(1.55rem,4vw,2.55rem)/1.15 'Space Grotesk',system-ui,sans-serif;white-space:nowrap;margin:.35rem 0 .2rem;font-variant-numeric:tabular-nums}
     #live-studying-mini {color:var(--hero-muted);opacity:1;font-size:.76rem}
     .ed-card,body[data-dark="true"] .ed-card {background:var(--surface)!important;color:var(--ink);border:1px solid var(--line)!important;border-radius:18px;box-shadow:var(--shadow-card)}
@@ -1210,7 +1217,8 @@
       --focus-subtle: #586174;
       --focus-divider: #dce0e7;
       box-sizing:border-box;
-      height:100dvh;
+      position:fixed;
+      inset:0;
       overscroll-behavior:contain;
       overflow-x:hidden;
       background: var(--focus-bg) !important;
@@ -1232,20 +1240,21 @@
       --focus-divider: color-mix(in srgb, var(--hero-text) 30%, transparent);
     }
     #focus-overlay[data-focus-theme="home"] .focus-home-scene {
-      display:block; position:fixed; inset:0; height:100dvh; z-index:0; isolation:isolate; overflow:hidden;
+      display:block; position:fixed; inset:0; z-index:0; isolation:isolate; overflow:hidden;
       background:linear-gradient(118deg,var(--hero-deep),var(--hero));
       pointer-events:none;
     }
     #focus-overlay[data-focus-theme="home"] .focus-home-scene::after {
-      content:''; position:absolute; inset:0 0 auto; height:calc(env(safe-area-inset-top, 0px) + clamp(3.5rem, 12dvh, 7rem));
-      background:linear-gradient(var(--focus-bg) 0 calc(env(safe-area-inset-top, 0px) + 1px), transparent);
+      content:''; position:absolute; inset:0;
+      background:
+        linear-gradient(to bottom,var(--focus-bg) 0 calc(env(safe-area-inset-top,0px) + 1px),transparent) top / 100% calc(env(safe-area-inset-top,0px) + clamp(3.5rem,12dvh,7rem)) no-repeat,
+        linear-gradient(to top,var(--focus-bg) 0 calc(env(safe-area-inset-bottom,0px) + 1px),transparent) bottom / 100% calc(env(safe-area-inset-bottom,0px) + clamp(3rem,11dvh,6rem)) no-repeat;
     }
     .focus-theme-switch { display:flex; align-self:flex-end; gap:2px; border:1px solid var(--focus-divider); border-radius:9px; padding:2px; }
     .focus-theme-switch button { min-height:34px; padding:.35rem .65rem; font-size:.72rem; color:var(--focus-subtle); border-radius:6px; font-weight:700 }
     .focus-theme-switch button[aria-pressed="true"] { color:var(--focus-fg); background:color-mix(in srgb,var(--focus-fg) 10%,transparent); }
     #focus-rest-label,#focus-rest-note {color:var(--focus-subtle); font-size:clamp(.7rem,2.2vw,.85rem);font-variant-numeric:tabular-nums}
     #focus-rest-note {min-height:1.35em;line-height:1.45}
-    #focus-overlay[data-resting="true"][data-rest-empty="true"] #focus-rest-label {font-weight:800}
     #header-more-menu [data-just-unlocked] {outline:2px solid var(--focus-ring);outline-offset:3px;z-index:1}
     @media (prefers-reduced-motion: no-preference) {
       #header-more-menu [data-just-unlocked] {animation:tierSwatchUnlock 1.2s var(--ios-ease) both}
@@ -1446,7 +1455,17 @@
     #header-tools > button {padding:0}
     #header-tools > button svg {width:18px;height:18px}
     #study-header .study-brand-caption {letter-spacing:.12em;text-transform:uppercase}
+    .profile-heading {display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:.45rem .75rem}
+    .profile-heading > div {min-width:0;max-width:100%;overflow-wrap:anywhere}
+    #profile-mode-pill {max-width:100%;white-space:normal;overflow-wrap:anywhere;text-align:left}
+    #profile-mode-pending {flex-basis:100%;max-width:100%;overflow-wrap:anywhere;word-break:keep-all}
     @media(max-width:640px) {
+      #main-live-banner {
+        margin-left:calc(-1 * var(--content-left));margin-right:calc(-1 * var(--content-right));
+        padding-left:calc(var(--content-left) + .3rem);padding-right:calc(var(--content-right) + .3rem);
+        border-inline-width:0!important;border-radius:0
+      }
+      #live-study-day-range {flex:1 0 100%}
       .study-home-grid.is-free .study-home-content {display:flex;flex-direction:column}
       .study-home-grid.is-free .study-home-content > * {width:100%}
       .study-home-grid.is-free #home-today-todos-card {border-left:0;border-top:1px solid var(--line);padding:.82rem 0 0}
@@ -1747,7 +1766,7 @@
         <div class="focus-time-stage">
           <p id="focus-rest-label" class="hidden">남은 휴식</p>
           <div id="focus-timer-display">00:00:00</div>
-          <p id="focus-today-total">오늘 누적 00:00:00</p>
+          <p id="focus-today-total">공부일 누적 00:00:00</p>
           <p id="focus-rest-note"></p>
         </div>
         <div class="focus-actions">
@@ -2042,7 +2061,7 @@
     <!-- Refined Minimal Live Banner (Only visible on 홈 tab) -->
     <section id="main-live-banner" class="ed-banner rounded-2xl px-4 py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
       <div class="space-y-1 min-w-0">
-        <div class="study-kicker">TODAY · 내 공부 기록</div>
+        <div class="study-kicker">내 공부 기록</div>
         <div class="flex items-center gap-1.5 flex-wrap">
           <span id="live-phase-badge" class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-slate-950 text-white whitespace-nowrap">공부시간</span>
           <span id="live-date-label" class="text-[11px] font-semibold opacity-75 whitespace-nowrap"></span>
@@ -2055,8 +2074,9 @@
         </div>
       </div>
       <div class="study-hero-stat">
-        <span>오늘 누적 공부</span>
+        <span>공부일 누적 공부</span>
         <div id="live-clock-text">0H 0M</div>
+        <small id="live-study-day-range"></small>
         <div id="live-studying-mini" class="hidden">0명 공부 중</div>
       </div>
     </section>
@@ -2096,7 +2116,7 @@
               <button id="btn-checkin" type="button" class="ed-btn-accent rounded-xl font-bold">출석 체크하기</button>
             </div>
             <div class="study-today-stat">
-              <span class="font-semibold text-slate-600">오늘 누적 공부</span>
+              <span class="font-semibold text-slate-600">공부일 누적 공부</span>
               <span id="my-today-study-mins" class="font-mono font-black">0H 0M</span>
             </div>
             <div id="my-period-wrap" class="pt-1">
@@ -2342,12 +2362,13 @@
     <!-- TAB: MY PROFILE -->
     <div id="tab-profile" class="tab-panel hidden space-y-5">
       <div class="ed-card max-w-xl mx-auto p-5 sm:p-6 space-y-4">
-        <div class="flex items-center justify-between gap-2 pb-3 border-b border-slate-100">
+        <div class="profile-heading pb-3 border-b border-slate-100">
           <div>
             <h3 class="text-base sm:text-lg font-black text-slate-900">👤 내 프로필</h3>
             <p id="profile-account-email" class="text-xs text-slate-500 mt-0.5">별명과 프로필 사진을 설정할 수 있습니다.</p>
           </div>
-          <button id="profile-mode-pill" type="button" title="클릭하여 공부 모드 전환 (다음 공부일 오전 5시 적용)" class="px-2.5 py-1 rounded-full text-[11px] font-black bg-emerald-100 text-emerald-800 whitespace-nowrap cursor-pointer hover:opacity-80 transition">자율모드</button>
+          <button id="profile-mode-pill" type="button" title="공부 모드 전환 (다음 공부일 오전 5시 적용)" aria-describedby="profile-mode-pending" class="px-2.5 py-1 rounded-full text-[11px] font-black bg-emerald-100 text-emerald-800 cursor-pointer hover:opacity-80 transition">자율모드</button>
+          <p id="profile-mode-pending" class="hidden text-xs text-slate-500"></p>
         </div>
         <div class="flex items-center gap-4">
           <div id="profile-avatar-preview" class="w-14 h-14 rounded-full bg-slate-200 border border-slate-300 overflow-hidden flex items-center justify-center text-base font-black text-slate-600 shrink-0"></div>
@@ -2540,7 +2561,7 @@
             <ul class="space-y-2.5 text-slate-700">
               <li class="space-y-0.5">
                 <div class="font-black text-slate-900">⏱️ 집중 스톱워치</div>
-                <p><code>00:00</code>부터 측정하며, 휴식 버튼을 누르면 10분 카운트다운이 시작됩니다. 재개 후 10분 연속 공부하면 휴식 시간이 다시 10분으로 충전됩니다. 그 전에 쉬면 남은 시간부터 이어지고, 휴식 시간이 끝난 뒤 공부를 재개하면 연속 집중이 새로 시작됩니다. <strong>휴식 중</strong>에는 미니 바로 축소해 다른 탭을 볼 수 있습니다.</p>
+                <p><code>00:00</code>부터 측정하며, 첫 휴식은 10분입니다. 공부를 재개한 뒤 10분을 채우기 전에 다시 쉬면 1분, 10분 이상 연속 공부하면 10분을 쉴 수 있습니다. 휴식이 끝나면 전체 화면과 미니 타이머가 자동으로 닫히고, 공부한 시간은 누적 기록에 저장됩니다.</p>
                 <p>누적 공부 시간과 출석은 매일 <strong>오전 5시(한국 시간)</strong>부터 새 공부일로 기록됩니다. 오전 5시 전 출석은 이전 공부일에 들어갑니다. 오전 5시를 걸쳐 공부하면 이전과 새 공부일에 각각 기록되고 스톱워치는 계속 흐릅니다. 타이머 화면의 스터디 탭에서는 공부 중인 부원을, 공부자극 탭에서는 짧은 문구를 볼 수 있습니다.</p>
               </li>
               <li class="space-y-0.5">
@@ -2578,7 +2599,7 @@
               </li>
               <li class="space-y-0.5">
                 <div class="font-black text-slate-900">🏅 뱃지 · 카드 이펙트</div>
-                <p>아바타를 감싸는 불꽃은 스터디원의 티어 색을 띠며 오늘 누적 공부 시간에 따라 높이와 움직임이 달라집니다. 아바타를 누르면 프로필 사진을, 카드 본문을 누르면 상세 기록과 뱃지를 볼 수 있습니다.</p>
+                <p>아바타를 감싸는 불꽃은 스터디원의 티어 색을 띠며 공부일 누적 공부 시간에 따라 높이와 움직임이 달라집니다. 아바타를 누르면 프로필 사진을, 카드 본문을 누르면 상세 기록과 뱃지를 볼 수 있습니다.</p>
                 <p>활동 뱃지에는 <strong>🌅 얼리버드</strong>(08시 전 · 당일 유지), <strong>🦉 심야 올빼미</strong>(자정~04:59 공부 · 당일 유지), <strong>연속 출석</strong>(2일~10일+ 진화)이 있습니다. 관리자가 수여한 뱃지가 있으면 카드에 먼저 표시합니다.</p>
               </li>
             </ul>
@@ -4033,7 +4054,11 @@
       const defaultBrowserThemeColor = browserThemeColor.content;
       function syncFocusBrowserColor() {
         const timer = document.getElementById('focus-overlay');
-        const color = shown(timer) ? getComputedStyle(timer).backgroundColor : defaultBrowserThemeColor;
+        const timerColor = shown(timer) ? getComputedStyle(timer).backgroundColor : null;
+        const rootStyle = document.documentElement.style;
+        const viewportColor = timerColor || getComputedStyle(document.body).getPropertyValue('--page').trim();
+        if (rootStyle.getPropertyValue('--viewport-bg') !== viewportColor) rootStyle.setProperty('--viewport-bg', viewportColor);
+        const color = timerColor || getComputedStyle(document.getElementById('study-header')).backgroundColor || defaultBrowserThemeColor;
         if (browserThemeColor.content !== color) browserThemeColor.content = color;
       }
       function activeStudyDialog() {
@@ -4630,6 +4655,7 @@
         const meHdr = shared.members.find(m => m.id === prefs.currentUserId) || shared.members[0];
         const mode = getMemberMode(meHdr);
         document.body.setAttribute('data-mode', mode);
+        syncFocusBrowserColor();
         const modeBtn = document.getElementById('study-mode-btn');
         modeBtn.title = meHdr?.pendingMode
           ? `${studyDayStartLabel(meHdr.pendingDate)}부터 ${modeLabel(meHdr.pendingMode)} 적용`
@@ -4744,8 +4770,11 @@
       function renderLiveBanner() {
         const now = getNowParts(), phase = getCurrentPhase(now.totalMins), days = ['일', '월', '화', '수', '목', '금', '토'];
         document.getElementById('live-date-label').textContent = `${todayStr()} (${days[now.day]})`;
+        const day = studyDayKey();
+        const shortDate = date => date.slice(5).replace('-', '.');
+        document.getElementById('live-study-day-range').textContent = `${shortDate(day)} 05:00 ~ ${shortDate(nextStudyDay(day))} 05:00`;
         const meClock = shared.members.find(m => m.id === prefs.currentUserId) || shared.members[0];
-        const todayStudyM = meClock ? studyMinutes(meClock.id) : 0;
+        const todayStudyM = meClock ? studyMinutes(meClock.id, day) : 0;
         animateCountUp(document.getElementById('live-clock-text'), todayStudyM, formatStudyMins);
         document.getElementById('sim-active-badge').classList.toggle('hidden', !prefs.simTime);
 
@@ -5134,6 +5163,11 @@
       }
 
       const expandedBragComments = new Set();
+      const bragCommentDrafts = new Map();
+      let bragFeedRefreshPending = false;
+      let lastBragFeedMarkup = '';
+      function bragDraftKey(photoId) { return prefs.currentUserId + '/' + photoId; }
+
       function getPhotoLikesMap(p) {
         if (!p || !p.likes) return {};
         if (Array.isArray(p.likes)) {
@@ -5192,7 +5226,14 @@
           ? `<img src="${escapeHtml(meCur.avatarUrl)}" alt="" class="w-full h-full object-cover" />`
           : escapeHtml((meCur ? meCur.name : '나').slice(0, 1));
 
-        document.getElementById('photo-feed-list').innerHTML = photos.length
+        const feed = document.getElementById('photo-feed-list');
+        const focused = document.activeElement;
+        if (focused?.matches('form[data-comment-form] input') && feed.contains(focused)) {
+          bragFeedRefreshPending = true;
+          return;
+        }
+        bragFeedRefreshPending = false;
+        const markup = photos.length
           ? photos.map(p => {
               const author = (shared.members || []).find(m => m.id === p.memberId);
               const authorName = author ? author.name : (p.memberName || '스터디원');
@@ -5266,12 +5307,16 @@
                 <!-- IG Comment Composer -->
                 <form data-comment-form="${p.id}" class="border-t border-slate-100 px-3.5 py-2 flex items-center gap-2 bg-slate-50/40">
                   <div class="w-6 h-6 rounded-full bg-slate-200 overflow-hidden flex items-center justify-center text-[10px] font-black text-slate-700 shrink-0">${meAvSmall}</div>
-                  <input id="comment-input-${p.id}" type="text" maxlength="200" placeholder="댓글 달기…" class="flex-1 min-w-0 bg-transparent border-0 px-1 py-1 text-xs text-slate-800 placeholder-slate-400 focus:outline-none" required />
+                  <input id="comment-input-${p.id}" type="text" maxlength="200" value="${escapeHtml(bragCommentDrafts.get(bragDraftKey(p.id)) || '')}" placeholder="댓글 달기…" class="flex-1 min-w-0 bg-transparent border-0 px-1 py-1 text-xs text-slate-800 placeholder-slate-400 focus:outline-none" required />
                   <button type="submit" class="px-2 py-1 rounded-lg text-xs font-black text-sky-500 hover:text-sky-600 whitespace-nowrap shrink-0 transition">게시</button>
                 </form>
               </article>`;
             }).join('')
           : '<div class="ed-card p-10 text-center space-y-1.5"><span class="empty-float-icon text-2xl">📸</span><p class="text-sm font-bold text-slate-500">아직 올라온 게시물이 없습니다</p><p class="text-xs text-slate-400">위에서 오늘의 공부 기록을 첫 번째로 공유해 보세요!</p></div>';
+        if (markup !== lastBragFeedMarkup) {
+          feed.innerHTML = markup;
+          lastBragFeedMarkup = markup;
+        }
       }
 
       const MEMBER_STATUS_LABELS = { studying: '공부 중', class: '수업 중', resting: '휴식 중' };
@@ -5336,7 +5381,7 @@
                 : tier.inPromo ? '<span class="member-promo">승급 LP 충족</span>' : ''}
             </span>
             <span class="member-study" id="member-study-${id}">
-              <span class="member-study-label">오늘 누적 공부</span>
+              <span class="member-study-label">공부일 누적 공부</span>
               <strong class="member-study-time">${hours ? `${hours}<small>시간</small> ` : ''}${mins % 60}<small>분</small></strong>
             </span>
             ${featured ? `<span class="member-badges" id="member-badges-${id}">
@@ -5634,12 +5679,17 @@
           if (emailEl) emailEl.textContent = (tm.id === prefs.currentUserId && currentAuthUser && currentAuthUser.email) ? `연결된 계정: ${currentAuthUser.email}` : '별명과 프로필 사진을 설정할 수 있습니다.';
           const modePill = document.getElementById('profile-mode-pill');
           if (modePill) {
-            const isStrict = getMemberMode(tm) === 'strict';
-            const pendP = tm.pendingMode ? (` → ${studyDayStartLabel(tm.pendingDate)} ${modeLabel(tm.pendingMode)}`) : '';
-            modePill.textContent = (isStrict ? '울트라집중모드' : '자율모드') + pendP;
+            const currentMode = getMemberMode(tm);
+            const isStrict = currentMode === 'strict';
+            modePill.textContent = modeLabel(currentMode);
             modePill.className = isStrict
-              ? 'px-2.5 py-1 rounded-full text-[11px] font-black bg-rose-100 text-rose-800 whitespace-nowrap cursor-pointer hover:opacity-80 transition'
-              : 'px-2.5 py-1 rounded-full text-[11px] font-black bg-emerald-100 text-emerald-800 whitespace-nowrap cursor-pointer hover:opacity-80 transition';
+              ? 'px-2.5 py-1 rounded-full text-[11px] font-black bg-rose-100 text-rose-800 cursor-pointer hover:opacity-80 transition'
+              : 'px-2.5 py-1 rounded-full text-[11px] font-black bg-emerald-100 text-emerald-800 cursor-pointer hover:opacity-80 transition';
+            const modePending = document.getElementById('profile-mode-pending');
+            modePending.textContent = tm.pendingMode && tm.pendingDate
+              ? `${studyDayStartLabel(tm.pendingDate)}에 ${modeLabel(tm.pendingMode)}로 전환 예정`
+              : '';
+            modePending.classList.toggle('hidden', !modePending.textContent);
           }
           const tierEl = document.getElementById('profile-tier-lp');
           if (tierEl) tierEl.innerHTML = renderTierPill(tm);
@@ -7263,7 +7313,7 @@
               ${m.equippedTitle ? `<p class="text-sm font-bold text-slate-900"><span class="mr-1 text-xs text-slate-500">장착 칭호</span> ${escapeHtml(m.equippedTitle)}</p>` : ''}
               <div class="flex flex-wrap items-center gap-1.5">${renderTierPill(m)} ${getMemberMode(m) === 'strict' ? '<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-black text-amber-300 border border-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.45)]" style="background:linear-gradient(90deg,#0f172a,#7f1d1d,#0f172a)"><span class="inline-block animate-pulse">⚡</span>울트라집중모드</span>' : '<span class="px-2 py-0.5 rounded bg-slate-100 font-bold">자율모드</span>'}</div>
               <div class="grid grid-cols-2 gap-2">
-                <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200"><div class="text-slate-400">오늘 누적 공부</div><div class="text-sm font-black text-slate-900 mt-0.5">${formatStudyMins(todayTotalMins)}</div></div>
+                <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200"><div class="text-slate-400">공부일 누적 공부</div><div class="text-sm font-black text-slate-900 mt-0.5">${formatStudyMins(todayTotalMins)}</div></div>
                 <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200"><div class="text-slate-400">오늘 최장 연속</div><div class="text-sm font-black text-slate-900 mt-0.5">${maxF}분</div></div>
                 <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200"><div class="text-slate-400">연속 출석</div><div class="text-sm font-black text-slate-900 mt-0.5">${Number(m.streak) || 0}일</div></div>
                 <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200"><div class="text-slate-400">오늘 받은 리스펙</div><div class="text-sm font-black text-slate-900 mt-0.5">👏 ${todayRespect}회</div></div>
@@ -7779,6 +7829,16 @@
         image.src = photo.dataUrl;
       }
       const feedListEl = document.getElementById('photo-feed-list');
+      feedListEl.addEventListener('input', e => {
+        if (!e.target.matches('form[data-comment-form] input')) return;
+        const key = bragDraftKey(e.target.form.dataset.commentForm);
+        if (e.target.value) bragCommentDrafts.set(key, e.target.value);
+        else bragCommentDrafts.delete(key);
+      });
+      feedListEl.addEventListener('focusout', e => {
+        if (!bragFeedRefreshPending || !e.target.matches('form[data-comment-form] input')) return;
+        setTimeout(() => { if (bragFeedRefreshPending) renderBragTab(); }, 250);
+      });
       feedListEl.addEventListener('click', e => {
         const viewPhoto = e.target.closest('[data-view-studygram-photo]');
         if (viewPhoto) { openStudygramPhoto(viewPhoto.dataset.viewStudygramPhoto); return; }
@@ -7828,6 +7888,9 @@
         });
         p.comments = list;
         expandedBragComments.add(pid);
+        bragCommentDrafts.delete(bragDraftKey(pid));
+        inp.value = '';
+        inp.blur();
         saveSharedData();
         renderBragTab();
       });
@@ -8147,6 +8210,7 @@
 
       function applyDarkMode() {
         document.body.setAttribute('data-dark', prefs.darkMode ? 'true' : 'false');
+        syncFocusBrowserColor();
         const btn = document.getElementById('dark-toggle-btn');
         btn.setAttribute('aria-pressed', String(!!prefs.darkMode));
         btn.title = prefs.darkMode ? '라이트모드 전환' : '다크모드 전환';
@@ -8233,7 +8297,9 @@
 
       // Fullscreen Focus Stopwatch Logic (Counts up from 00:00)
       const FOCUS_REST_LIMIT_MS = 10 * 60 * 1000;
-      let focusRestBudgetMs = FOCUS_REST_LIMIT_MS;
+      const FOCUS_SHORT_REST_MS = 60 * 1000;
+      let focusRestDurationMs = FOCUS_REST_LIMIT_MS;
+      let focusHasRested = false;
       let focusPaused = false;
       let focusElapsedSecs = 0;
       let focusSessionLp = 0;
@@ -8259,7 +8325,10 @@
           data: { url: './?focus=1' }
         };
         if (navigator.serviceWorker && navigator.serviceWorker.controller) {
-          navigator.serviceWorker.ready.then(reg => reg.showNotification(title, opts)).catch(() => {});
+          const timer = focusInterval;
+          navigator.serviceWorker.ready.then(reg => {
+            if (timer && focusInterval === timer) return reg.showNotification(title, opts);
+          }).catch(() => {});
         } else {
           try {
             if (focusOsNotifRef) { try { focusOsNotifRef.close(); } catch (e) {} }
@@ -8267,13 +8336,7 @@
             focusOsNotifRef = n;
             n.onclick = () => {
               try { window.focus(); } catch (e) {}
-              const ov = document.getElementById('focus-overlay');
-              if (ov && focusInterval) {
-                ov.classList.remove('hidden');
-                ov.classList.add('flex');
-                document.getElementById('focus-mini-bar')?.classList.add('hidden');
-                ov.focus({ preventScroll: true });
-              }
+              if (focusInterval) openFocusOverlay();
               try { n.close(); } catch (e) {}
             };
           } catch (e) {}
@@ -8314,7 +8377,9 @@
             startedAt: focusStartedAt,
             paused: focusPaused,
             pauseStartedAt,
-            restBudgetMs: focusRestBudgetMs,
+            restBudgetMs: focusRestDurationMs,
+            hasRested: focusHasRested,
+            sessionLp: focusSessionLp,
             syncedSecs: focusElapsedSecs,
             modeBeforeChange: focusModeBeforeChange
           }));
@@ -8342,10 +8407,12 @@
           focusAccumulatedSecs = Number(st.accumulatedSecs) || 0;
           focusElapsedSecs = Number(st.syncedSecs) || 0;
           focusPaused = !!st.paused;
-          pauseStartedAt = st.pauseStartedAt || null;
-          focusRestBudgetMs = Number.isFinite(st.restBudgetMs)
+          pauseStartedAt = focusPaused ? (Number(st.pauseStartedAt) || Date.now()) : null;
+          focusRestDurationMs = Number.isFinite(st.restBudgetMs)
             ? Math.max(0, Math.min(FOCUS_REST_LIMIT_MS, st.restBudgetMs))
             : FOCUS_REST_LIMIT_MS;
+          focusHasRested = st.hasRested ?? (focusPaused || focusRestDurationMs < FOCUS_REST_LIMIT_MS);
+          focusSessionLp = Number(st.sessionLp) || 0;
           focusStartedAt = st.startedAt || null;
           openFocusOverlay(true);
           if (!focusPaused && syncFocusClock) syncFocusClock();
@@ -8385,7 +8452,7 @@
               ${member.avatarUrl ? `<img src="${escapeHtml(member.avatarUrl)}" alt="" loading="lazy">` : escapeHtml(String(member.name || '').slice(0, 1))}
             </button>
           </div>
-          <span class="focus-study-total" aria-label="오늘 누적 ${time}">${time}</span>
+          <span class="focus-study-total" aria-label="공부일 누적 ${time}">${time}</span>
         </article>`;
       }
 
@@ -8451,9 +8518,19 @@
       setFocusTheme(prefs.focusTheme);
 
       function restRemainingMs(now = Date.now()) {
-        if (focusPaused) return Math.max(0, focusRestBudgetMs - (pauseStartedAt == null ? 0 : Math.max(0, now - pauseStartedAt)));
-        if (focusStartedAt != null && now - focusStartedAt >= FOCUS_REST_LIMIT_MS) return FOCUS_REST_LIMIT_MS;
-        return focusRestBudgetMs;
+        if (focusPaused) return Math.max(0, focusRestDurationMs - Math.max(0, now - pauseStartedAt));
+        const recharged = focusStartedAt != null && now - focusStartedAt >= FOCUS_REST_LIMIT_MS;
+        return !focusHasRested || recharged ? FOCUS_REST_LIMIT_MS : FOCUS_SHORT_REST_MS;
+      }
+      function expireFocusRest(now = Date.now()) {
+        if (!focusInterval || !focusPaused || restRemainingMs(now) > 0) return false;
+        closeFocusOverlay(false, { restExpired: true });
+        return true;
+      }
+      function tickFocusTimer(force = false) {
+        if (!focusInterval || expireFocusRest()) return;
+        if (focusPaused) updateFocusDisplay();
+        else syncFocusClock(force);
       }
       function formatRestClock(ms) {
         const seconds = Math.ceil(ms / 1000);
@@ -8467,25 +8544,22 @@
         const rest = formatRestClock(remaining);
         const screen = document.getElementById('focus-overlay');
         screen.dataset.resting = String(focusPaused);
-        screen.dataset.restEmpty = String(remaining === 0);
         const restLabel = document.getElementById('focus-rest-label');
         restLabel.classList.toggle('hidden', !focusPaused);
         document.getElementById('focus-timer-display').textContent = focusPaused ? rest : formatted;
         document.getElementById('focus-mini-time').textContent = focusPaused ? `휴식 ${rest}` : formatted;
         const restNote = document.getElementById('focus-rest-note');
         if (focusPaused) {
-          restNote.textContent = remaining === 0
-            ? '휴식 시간이 끝났어요. 재개하면 연속 집중이 새로 시작돼요.'
-            : `연속 집중 ${formatted} · 10분 연속 공부하면 휴식 시간 충전`;
-        } else if (remaining < FOCUS_REST_LIMIT_MS && focusStartedAt != null) {
+          restNote.textContent = `연속 집중 ${formatted} · 휴식이 끝나면 자동 종료`;
+        } else if (remaining === FOCUS_SHORT_REST_MS && focusStartedAt != null) {
           const recharge = FOCUS_REST_LIMIT_MS - Math.max(0, now - focusStartedAt);
-          restNote.textContent = `휴식 ${rest} 남음 · ${formatRestClock(recharge)} 더 공부하면 10분으로 충전`;
+          restNote.textContent = `지금 쉬면 1분 · ${formatRestClock(recharge)} 더 공부하면 10분 휴식`;
         } else {
-          restNote.textContent = '남은 휴식 10:00';
+          restNote.textContent = '지금 쉬면 10분';
         }
         document.getElementById('focus-min-btn').classList.toggle('hidden', !focusPaused);
         document.getElementById('focus-pause-btn').textContent = focusPaused ? '공부 다시 시작하기' : '잠시 쉬기';
-        document.getElementById('focus-today-total').textContent = `오늘 누적 ${formatStopwatch(studySeconds(prefs.currentUserId))}`;
+        document.getElementById('focus-today-total').textContent = `공부일 누적 ${formatStopwatch(studySeconds(prefs.currentUserId))}`;
       }
 
       // Split real elapsed time at local minute boundaries. Endpoints are half-open [start, end).
@@ -8613,7 +8687,7 @@
         }
         const now = getNowParts();
         const meFocus = shared.members.find(m => m.id === prefs.currentUserId);
-        if (!meFocus) return;
+        if (!meFocus || expireFocusRest()) return;
         const tEarly = studyDayKey();
         if (!focusInterval && isRestoring !== true && meFocus && now.totalMins >= toMins('05:00') && now.totalMins < toMins('08:00')) {
           let earlyChanged = false;
@@ -8638,15 +8712,14 @@
             focusStartedAt = Date.now();
             focusPaused = false;
             pauseStartedAt = null;
-            focusRestBudgetMs = FOCUS_REST_LIMIT_MS;
+            focusRestDurationMs = FOCUS_REST_LIMIT_MS;
+            focusHasRested = false;
             focusModeBeforeChange = null;
           }
+          focusInterval = setInterval(tickFocusTimer, 250);
+          if (expireFocusRest()) return;
           if (setMemberFocusStatus(meFocus, focusPaused ? 'resting' : 'studying')) saveSharedData();
           setFocusView('timer');
-          focusInterval = setInterval(() => {
-            if (focusPaused) updateFocusDisplay();
-            else syncFocusClock(false);
-          }, 250);
           if (isRestoring !== true) { unlockChallengeFor(meFocus.id, 'ch_newbie', false); saveSharedData(); }
           if (isRestoring !== true) saveFocusState();
           if (typeof Notification !== 'undefined' && Notification.permission === 'default' && isRestoring !== true) {
@@ -8672,6 +8745,7 @@
       }
 
       function minimizeFocusOverlay() {
+        if (expireFocusRest()) return;
         const ov = document.getElementById('focus-overlay');
         ov.classList.add('hidden');
         ov.classList.remove('flex');
@@ -8692,8 +8766,10 @@
         return reached / 30;
       }
 
-      function closeFocusOverlay(discard = false) {
+      function closeFocusOverlay(discard = false, { restExpired = false } = {}) {
         const wasOpen = !!focusInterval;
+        const ov = document.getElementById('focus-overlay');
+        const wasFullScreen = shown(ov);
         if (wasOpen && !discard && !focusPaused) syncFocusClock(true);
         const finishedSecs = focusElapsedSecs;
         const earnedSessionLp = focusSessionLp;
@@ -8703,7 +8779,8 @@
         focusSessionLp = 0;
         focusStartedAt = null;
         pauseStartedAt = null;
-        focusRestBudgetMs = FOCUS_REST_LIMIT_MS;
+        focusRestDurationMs = FOCUS_REST_LIMIT_MS;
+        focusHasRested = false;
         focusModeBeforeChange = null;
         focusPaused = false;
         clearFocusState();
@@ -8716,18 +8793,29 @@
             if (meObj.focusMins || changed) { meObj.focusMins = 0; saveSharedData(); }
           }
         }
-        const ov = document.getElementById('focus-overlay');
         ov.classList.add('hidden');
         ov.classList.remove('flex');
         const mini = document.getElementById('focus-mini-bar');
         mini.classList.add('hidden');
         mini.classList.remove('flex');
+        const modal = document.getElementById('modal-overlay');
+        if (restExpired && shown(modal) && (ov.contains(previousModalFocus) || modal.dataset.variant === 'focus-exit')) closeModal();
+        try {
+          if (history.state?.focusOpen) {
+            const { focusOpen, ...state } = history.state;
+            history.replaceState(state, '');
+          }
+        } catch (e) {}
         refreshStudyDialogs();
         if (wasOpen && !discard) {
           renderAll();
           const homeButton = document.getElementById('btn-open-focus');
-          if (prefs.activeTab === 'dashboard' && homeButton?.getClientRects().length) {
+          if ((!restExpired || wasFullScreen) && !activeStudyDialog() && prefs.activeTab === 'dashboard' && homeButton?.getClientRects().length) {
             homeButton.focus({ preventScroll: true });
+          }
+          if (restExpired) {
+            showToast('휴식이 끝나 타이머를 종료했어요. 공부 시간은 누적에 저장했어요.', 'info');
+            return;
           }
           const sessionMins = Math.floor(finishedSecs / 60);
           if (sessionMins >= 1) {
@@ -8740,7 +8828,7 @@
                 <div class="text-2xl font-black text-slate-900">${sessionStr} 집중 완료!</div>
                 <div class="grid grid-cols-2 gap-2 text-xs">
                   <div class="rounded-xl bg-slate-50 border border-slate-200 p-2.5">
-                    <div class="text-slate-400 font-semibold">오늘 누적 공부</div>
+                    <div class="text-slate-400 font-semibold">공부일 누적 공부</div>
                     <div class="font-mono font-black text-sm text-indigo-600 mt-0.5">${formatStudyMins(todayTotal)}</div>
                   </div>
                   <div class="rounded-xl bg-slate-50 border border-slate-200 p-2.5">
@@ -8753,7 +8841,7 @@
             `);
             document.getElementById('btn-focus-summary-ok')?.addEventListener('click', closeModal);
           } else {
-            showToast('짧은 집중 시간도 오늘 누적에 합산돼요.', 'info');
+            showToast('짧은 집중 시간도 공부일 누적에 합산돼요.', 'info');
           }
         }
       }
@@ -8912,34 +9000,30 @@
       let pauseStartedAt = null;
       document.getElementById('focus-pause-btn').addEventListener('click', () => {
         if (!focusInterval) return;
-        if (!focusPaused) syncFocusClock(true);
         const now = Date.now();
-        focusRestBudgetMs = restRemainingMs(now);
-        focusPaused = !focusPaused;
+        if (expireFocusRest(now)) return;
+        if (!focusPaused) syncFocusClock(true);
         const me = shared.members.find(member => member.id === prefs.currentUserId);
-        setMemberFocusStatus(me, focusPaused ? 'resting' : 'studying');
         if (focusPaused) {
+          focusPaused = false;
+          pauseStartedAt = null;
+          focusStartedAt = now;
+          focusModeBeforeChange = null;
+        } else {
+          focusRestDurationMs = restRemainingMs(now);
+          focusHasRested = true;
+          focusPaused = true;
           focusAccumulatedSecs = focusElapsedSecs;
           focusStartedAt = null;
           pauseStartedAt = now;
           unlockChallengeFor(prefs.currentUserId, 'ch_pause1', false);
           flushCelebrations();
-        } else {
-          pauseStartedAt = null;
-          if (focusRestBudgetMs === 0) {
-            focusElapsedSecs = 0;
-            focusAccumulatedSecs = 0;
-            if (me) me.focusMins = 0;
-          }
-          focusStartedAt = now;
-          focusModeBeforeChange = null;
         }
+        setMemberFocusStatus(me, focusPaused ? 'resting' : 'studying');
         saveSharedData();
         saveFocusState();
         renderAll();
       });
-
-
 
       document.getElementById('btn-edit-quote').addEventListener('click', () => {
         openModal('✏️ 오늘의 명언 설정', `
@@ -9470,7 +9554,7 @@
                 <button id="confirm-back-focus" type="button" class="px-5 py-2 rounded-xl ed-btn-accent text-xs font-black">집중 끝내기</button>
               </div>
             </div>
-          `);
+          `, 'focus-exit');
           document.getElementById('cancel-back-focus').addEventListener('click', closeModal);
           document.getElementById('confirm-back-focus').addEventListener('click', () => {
             closeModal();
@@ -9482,11 +9566,9 @@
       });
 
       document.addEventListener('visibilitychange', () => {
-        if (focusInterval && !focusPaused) syncFocusClock(true);
+        if (!document.hidden) tickFocusTimer(true);
       });
-      window.addEventListener('focus', () => {
-        if (focusInterval && !focusPaused) syncFocusClock(true);
-      });
+      window.addEventListener('focus', () => tickFocusTimer(true));
       window.addEventListener('pagehide', () => {
         if (focusInterval && !focusPaused) syncFocusClock(true);
         else if (focusInterval) saveFocusState();
@@ -9554,7 +9636,6 @@
           if (dayChanged) renderWeeklyReportCards();
         }
         if (dayChanged && prefs.activeTab === 'admin') renderAdminTab();
-        if (focusInterval && focusPaused) updateFocusDisplay();
       }
       setInterval(refreshScheduleMinute, 1000);
       document.addEventListener('visibilitychange', refreshScheduleMinute);
