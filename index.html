@@ -49,43 +49,84 @@
     #planner-grid.is-editing .time-cell { touch-action: none; user-select: none; -webkit-user-select: none; cursor: crosshair; }
     #group-status-grid [data-member-detail] { position: relative; overflow: hidden; }
     #group-status-grid [data-member-detail] > * { position: relative; z-index: 1; }
-    .flame-lv1::before, .flame-lv2::before, .flame-lv3::before, .flame-lv4::before, .flame-lv5::before {
+    .flame-lv1::before, .flame-lv2::before, .flame-lv3::before, .flame-lv4::before, .flame-lv5::before, .flame-lv6::before, .flame-lv7::before, .flame-lv8::before {
       content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 0;
     }
-    .flame-lv1 { box-shadow: 0 4px 14px rgba(249, 115, 22, 0.22), inset 0 -2px 10px rgba(249, 115, 22, 0.1); }
-    .flame-lv1::before { background: linear-gradient(to top, rgba(249, 115, 22, 0.14), transparent 62%); }
+    /* Lv1 (10m+): Subtle warm ember */
+    .flame-lv1 { box-shadow: 0 3px 10px rgba(249, 115, 22, 0.14); }
+    .flame-lv1::before { background: linear-gradient(to top, rgba(249, 115, 22, 0.08), transparent 52%); }
+    /* Lv2 (30m+): Soft crimson-orange glow */
     @keyframes flamePulseRed {
-      0%, 100% { box-shadow: 0 4px 16px rgba(239, 68, 68, 0.26), 0 0 0 1px rgba(249, 115, 22, 0.22); }
-      50% { box-shadow: 0 6px 24px rgba(239, 68, 68, 0.44), 0 0 0 2px rgba(249, 115, 22, 0.36); }
+      0%, 100% { box-shadow: 0 4px 14px rgba(239, 68, 68, 0.18), 0 0 0 1px rgba(249, 115, 22, 0.16); }
+      50% { box-shadow: 0 5px 20px rgba(239, 68, 68, 0.32), 0 0 0 1.5px rgba(249, 115, 22, 0.28); }
     }
-    .flame-lv2 { animation: flamePulseRed 2.6s ease-in-out infinite; }
-    .flame-lv2::before { background: radial-gradient(circle at 85% 92%, rgba(249, 115, 22, 0.22), transparent 62%), linear-gradient(to top, rgba(239, 68, 68, 0.18), transparent 65%); }
+    .flame-lv2 { animation: flamePulseRed 2.8s ease-in-out infinite; }
+    .flame-lv2::before { background: radial-gradient(circle at 85% 92%, rgba(249, 115, 22, 0.15), transparent 58%), linear-gradient(to top, rgba(239, 68, 68, 0.12), transparent 58%); }
+    /* Lv3 (1h+): Cobalt-sky plasma flame */
     @keyframes flamePulseBlue {
-      0%, 100% { box-shadow: 0 6px 18px rgba(37, 99, 235, 0.3), 0 0 0 1.5px rgba(56, 189, 248, 0.32); }
-      50% { box-shadow: 0 8px 30px rgba(56, 189, 248, 0.55), 0 0 0 2.5px rgba(56, 189, 248, 0.5); }
+      0%, 100% { box-shadow: 0 5px 16px rgba(37, 99, 235, 0.24), 0 0 0 1px rgba(56, 189, 248, 0.25); }
+      50% { box-shadow: 0 7px 24px rgba(56, 189, 248, 0.42), 0 0 0 2px rgba(56, 189, 248, 0.4); }
     }
-    .flame-lv3 { animation: flamePulseBlue 2.3s ease-in-out infinite; }
-    .flame-lv3::before { background: radial-gradient(circle at 82% 88%, rgba(37, 99, 235, 0.26), transparent 65%), linear-gradient(to top, rgba(56, 189, 248, 0.2), transparent 68%); }
+    .flame-lv3 { animation: flamePulseBlue 2.5s ease-in-out infinite; }
+    .flame-lv3::before { background: radial-gradient(circle at 82% 88%, rgba(37, 99, 235, 0.2), transparent 62%), linear-gradient(to top, rgba(56, 189, 248, 0.16), transparent 62%); }
+    /* Lv4 (2h+): Electric violet-magenta aura */
     @keyframes flamePulsePurple {
-      0%, 100% { box-shadow: 0 6px 22px rgba(147, 51, 234, 0.38), 0 0 0 2px rgba(192, 132, 252, 0.42); }
-      50% { box-shadow: 0 10px 36px rgba(192, 132, 252, 0.65), 0 0 0 3px rgba(236, 72, 153, 0.48); }
+      0%, 100% { box-shadow: 0 6px 20px rgba(147, 51, 234, 0.3), 0 0 0 1.5px rgba(192, 132, 252, 0.35); }
+      50% { box-shadow: 0 8px 30px rgba(192, 132, 252, 0.54), 0 0 0 2.5px rgba(236, 72, 153, 0.42); }
     }
-    .flame-lv4 { animation: flamePulsePurple 2s ease-in-out infinite; }
-    .flame-lv4::before { background: radial-gradient(circle at 80% 85%, rgba(168, 85, 247, 0.32), transparent 68%), linear-gradient(to top, rgba(236, 72, 153, 0.2), rgba(168, 85, 247, 0.08) 65%, transparent); }
+    .flame-lv4 { animation: flamePulsePurple 2.2s ease-in-out infinite; }
+    .flame-lv4::before { background: radial-gradient(circle at 80% 85%, rgba(168, 85, 247, 0.25), transparent 65%), linear-gradient(to top, rgba(236, 72, 153, 0.16), rgba(168, 85, 247, 0.06) 62%, transparent); }
+    /* Lv5 (4h+): Golden amber aura + light shimmer */
     @keyframes flamePulseGold {
-      0%, 100% { box-shadow: 0 8px 26px rgba(234, 179, 8, 0.46), 0 0 0 2px rgba(250, 204, 21, 0.65), 0 0 22px rgba(249, 115, 22, 0.3); }
-      50% { box-shadow: 0 10px 42px rgba(250, 204, 21, 0.78), 0 0 0 3.5px rgba(253, 224, 71, 0.85), 0 0 34px rgba(249, 115, 22, 0.5); }
+      0%, 100% { box-shadow: 0 7px 22px rgba(234, 179, 8, 0.36), 0 0 0 2px rgba(250, 204, 21, 0.52); }
+      50% { box-shadow: 0 9px 34px rgba(250, 204, 21, 0.64), 0 0 0 3px rgba(253, 224, 71, 0.72); }
     }
     @keyframes flameShimmer {
       0% { transform: translateX(-120%) skewX(-20deg); }
       45%, 100% { transform: translateX(240%) skewX(-20deg); }
     }
-    .flame-lv5 { animation: flamePulseGold 1.7s ease-in-out infinite; }
-    .flame-lv5::before { background: radial-gradient(circle at 80% 80%, rgba(250, 204, 21, 0.36), transparent 68%), radial-gradient(circle at 18% 20%, rgba(249, 115, 22, 0.16), transparent 55%), linear-gradient(to top, rgba(245, 158, 11, 0.26), transparent 72%); }
+    .flame-lv5 { animation: flamePulseGold 2s ease-in-out infinite; }
+    .flame-lv5::before { background: radial-gradient(circle at 80% 80%, rgba(250, 204, 21, 0.28), transparent 66%), linear-gradient(to top, rgba(245, 158, 11, 0.2), transparent 68%); }
     .flame-lv5::after {
-      content: ''; position: absolute; top: 0; bottom: 0; left: 0; width: 50%; pointer-events: none; z-index: 0;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
-      animation: flameShimmer 2.8s ease-in-out infinite;
+      content: ''; position: absolute; top: 0; bottom: 0; left: 0; width: 42%; pointer-events: none; z-index: 0;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.36), transparent);
+      animation: flameShimmer 3.2s ease-in-out infinite;
+    }
+    /* Lv6 (5h+): Crimson-gold phoenix flare + faster shimmer */
+    @keyframes flamePulsePhoenix {
+      0%, 100% { box-shadow: 0 8px 26px rgba(244, 63, 94, 0.42), 0 0 0 2px rgba(251, 146, 60, 0.65), 0 0 18px rgba(250, 204, 21, 0.3); }
+      50% { box-shadow: 0 10px 38px rgba(244, 63, 94, 0.68), 0 0 0 3px rgba(253, 224, 71, 0.8), 0 0 28px rgba(249, 115, 22, 0.48); }
+    }
+    .flame-lv6 { animation: flamePulsePhoenix 1.8s ease-in-out infinite; }
+    .flame-lv6::before { background: radial-gradient(circle at 82% 82%, rgba(244, 63, 94, 0.28), transparent 65%), radial-gradient(circle at 18% 22%, rgba(251, 191, 36, 0.22), transparent 58%), linear-gradient(to top, rgba(249, 115, 22, 0.24), transparent 72%); }
+    .flame-lv6::after {
+      content: ''; position: absolute; top: 0; bottom: 0; left: 0; width: 48%; pointer-events: none; z-index: 0;
+      background: linear-gradient(90deg, transparent, rgba(254, 240, 138, 0.45), transparent);
+      animation: flameShimmer 2.6s ease-in-out infinite;
+    }
+    /* Lv7 (6h+): Cyan-prism aurora flame */
+    @keyframes flamePulseAurora {
+      0%, 100% { box-shadow: 0 8px 28px rgba(6, 182, 212, 0.45), 0 0 0 2.5px rgba(56, 189, 248, 0.72), 0 0 24px rgba(168, 85, 247, 0.36); }
+      50% { box-shadow: 0 12px 44px rgba(56, 189, 248, 0.75), 0 0 0 3.5px rgba(167, 139, 250, 0.85), 0 0 36px rgba(45, 212, 191, 0.55); }
+    }
+    .flame-lv7 { animation: flamePulseAurora 1.65s ease-in-out infinite; }
+    .flame-lv7::before { background: radial-gradient(circle at 80% 85%, rgba(45, 212, 191, 0.34), transparent 65%), radial-gradient(circle at 20% 20%, rgba(168, 85, 247, 0.26), transparent 60%), linear-gradient(135deg, rgba(56, 189, 248, 0.22), rgba(168, 85, 247, 0.16) 55%, rgba(250, 204, 21, 0.14)); }
+    .flame-lv7::after {
+      content: ''; position: absolute; top: 0; bottom: 0; left: 0; width: 52%; pointer-events: none; z-index: 0;
+      background: linear-gradient(90deg, transparent, rgba(224, 242, 254, 0.55), transparent);
+      animation: flameShimmer 2.3s ease-in-out infinite;
+    }
+    /* Lv8 (7h+): Mythic cosmic rainbow supernova */
+    @keyframes flamePulseMythic {
+      0%, 100% { box-shadow: 0 10px 32px rgba(250, 204, 21, 0.55), 0 0 0 2.5px rgba(253, 224, 71, 0.88), 0 0 28px rgba(56, 189, 248, 0.5), 0 0 42px rgba(236, 72, 153, 0.38); }
+      50% { box-shadow: 0 14px 48px rgba(250, 204, 21, 0.85), 0 0 0 4px rgba(56, 189, 248, 0.9), 0 0 40px rgba(168, 85, 247, 0.68), 0 0 56px rgba(244, 63, 94, 0.52); }
+    }
+    .flame-lv8 { animation: flamePulseMythic 1.45s ease-in-out infinite; }
+    .flame-lv8::before { background: conic-gradient(from 120deg at 80% 75%, rgba(250, 204, 21, 0.34), rgba(244, 63, 94, 0.28), rgba(168, 85, 247, 0.28), rgba(56, 189, 248, 0.32), rgba(52, 211, 153, 0.24), rgba(250, 204, 21, 0.34)); }
+    .flame-lv8::after {
+      content: ''; position: absolute; top: 0; bottom: 0; left: 0; width: 58%; pointer-events: none; z-index: 0;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.68), transparent);
+      animation: flameShimmer 1.9s ease-in-out infinite;
     }
     @keyframes ultraRingSpin {
       0% { transform: rotate(0deg); }
@@ -151,7 +192,7 @@
     body[data-dark="true"] .bg-rose-50 { background-color: rgba(136, 19, 55, 0.28) !important; }
     body[data-dark="true"] .bg-emerald-50 { background-color: rgba(6, 78, 59, 0.32) !important; }
     body[data-dark="true"] .bg-amber-50, body[data-dark="true"] .bg-amber-50\/90 { background-color: rgba(120, 53, 15, 0.3) !important; }
-    body[data-dark="true"] .bg-indigo-50, body[data-dark="true"] .bg-sky-50\/70 { background-color: rgba(30, 58, 138, 0.28) !important; }
+    body[data-dark="true"] .bg-indigo-50, body[data-dark="true"] .bg-indigo-50\/90, body[data-dark="true"] .bg-sky-50\/70 { background-color: rgba(30, 58, 138, 0.28) !important; }
     body[data-dark="true"] .text-rose-900, body[data-dark="true"] .text-rose-800, body[data-dark="true"] .text-rose-700 { color: #fda4af !important; }
     body[data-dark="true"] .text-emerald-900, body[data-dark="true"] .text-emerald-800, body[data-dark="true"] .text-emerald-700 { color: #6ee7b7 !important; }
     body[data-dark="true"] .text-amber-950, body[data-dark="true"] .text-amber-800 { color: #fde68a !important; }
@@ -404,6 +445,11 @@
     body[data-dark="true"] #brag-story-strip .bg-white,
     body[data-dark="true"] #photo-feed-list .bg-white.p-\[1\.5px\] {background-color:var(--surface)!important}
     body[data-dark="true"] [data-photo-stage] {background-color:#09101d!important}
+    body[data-dark="true"] .eta-hour-col {background-color:#0e1729!important;border-color:var(--line)!important}
+    body[data-dark="true"] #weekly-exemption-grid .border-slate-100 {border-color:rgba(51,65,85,0.55)!important}
+    body[data-dark="true"] .eta-class-block {background:var(--eta-bg-dark)!important;color:var(--eta-text-dark)!important;border:1px solid var(--eta-border-dark)!important}
+    body[data-dark="true"] #ultra-exempt-table-wrap [data-toggle-exempt].bg-sky-500 {background-color:#0284c7!important;color:#f0f9ff!important;border-color:#38bdf8!important}
+    body[data-dark="true"] #ultra-exempt-table-wrap [data-toggle-exempt]:not(.bg-sky-500) {background-color:#0e1729!important;color:#94a3b8!important;border-color:#334155!important}
     body[data-dark="true"] .tier-pill[data-tier="아이언"] {background:#27272a!important;color:#e4e4e7!important;border-color:#52525b!important}
     body[data-dark="true"] .tier-pill[data-tier="브론즈"] {background:#451a03!important;color:#fed7aa!important;border-color:#b45309!important}
     body[data-dark="true"] .tier-pill[data-tier="실버"] {background:linear-gradient(135deg,#1e293b,#334155)!important;color:#f1f5f9!important;border-color:#94a3b8!important}
@@ -1134,7 +1180,7 @@
       <div class="grid grid-cols-3 gap-1.5 p-1 rounded-2xl bg-slate-100 border border-slate-200">
         <button type="button" data-members-sub="live" aria-pressed="true" aria-controls="members-sub-live" class="members-sub-btn py-2 px-2 rounded-xl text-[11px] sm:text-xs font-black bg-slate-950 text-white whitespace-nowrap transition">👥 스터디원 · 성적표</button>
         <button type="button" data-members-sub="rank" aria-pressed="false" aria-controls="members-sub-rank" class="members-sub-btn py-2 px-2 rounded-xl text-[11px] sm:text-xs font-bold text-slate-600 hover:text-slate-950 whitespace-nowrap transition">🏆 랭킹 · 챌린지</button>
-        <button type="button" data-members-sub="brag" aria-pressed="false" aria-controls="members-sub-brag" class="members-sub-btn py-2 px-2 rounded-xl text-[11px] sm:text-xs font-bold text-slate-600 hover:text-slate-950 whitespace-nowrap transition">✨ 자랑하기</button>
+        <button type="button" data-members-sub="brag" aria-pressed="false" aria-controls="members-sub-brag" class="members-sub-btn py-2 px-2 rounded-xl text-[11px] sm:text-xs font-bold text-slate-600 hover:text-slate-950 whitespace-nowrap transition">✨ STUDYGRAM</button>
       </div>
 
       <!-- Sub-Tab 1: Study Members & Weekly Report -->
@@ -1229,7 +1275,7 @@
 
       <!-- Sub-Tab 3: Brag Feed (Study Members Only) -->
       <div id="members-sub-brag" class="hidden space-y-4">
-        <div id="brag-locked-notice" class="hidden ed-card p-6 text-center text-xs font-bold text-slate-500">🔒 스터디에 참가한 멤버만 자랑하기 피드를 이용하고 볼 수 있습니다.</div>
+        <div id="brag-locked-notice" class="hidden ed-card p-6 text-center text-xs font-bold text-slate-500">🔒 스터디에 참가한 멤버만 STUDYGRAM 피드를 이용하고 볼 수 있습니다.</div>
         <div id="brag-content-wrap">
       <div class="max-w-lg mx-auto space-y-4">
         <!-- Instagram-style Active Members Story Bar -->
@@ -1538,7 +1584,7 @@
           <section class="p-4 sm:p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3 break-keep">
             <div class="flex items-center gap-2">
               <span class="px-2 py-0.5 rounded-md bg-slate-950 text-white text-[10px] font-black shrink-0">03</span>
-              <h4 class="text-sm font-black text-slate-900">스톱워치 · 플래너 · 캘린더 · 자랑하기</h4>
+              <h4 class="text-sm font-black text-slate-900">스톱워치 · 플래너 · 캘린더 · STUDYGRAM</h4>
             </div>
             <ul class="space-y-2.5 text-slate-700">
               <li class="space-y-0.5">
@@ -1550,8 +1596,8 @@
                 <p><code>✏️ 시간표 수정</code>에서 과목 색으로 10분 칸을 드래그해 계획하고, 실제 공부 시간은 상단 <strong>1분 단위 누적 배지</strong>와 초록색 게이지로 확인합니다.</p>
               </li>
               <li class="space-y-0.5">
-                <div class="font-black text-slate-900">📅 캘린더 &amp; ✨ 자랑하기</div>
-                <p>캘린더에서 월간 기록(⏱️ 공부 · 🔥 울트라 · ⚔️/👑 승급)과 주간 요약을 확인하고, <code>스터디 · 랭킹</code>의 3번째 탭에서 공부 인증 사진을 공유할 수 있습니다.</p>
+                <div class="font-black text-slate-900">📅 캘린더 &amp; ✨ STUDYGRAM</div>
+                <p>캘린더에서 월간 기록(⏱️ 공부 · 🔥 울트라 · ⚔️/👑 승급)과 주간 요약을 확인하고, <code>스터디 · 랭킹 → ✨ STUDYGRAM</code>에서 공부 인증 사진과 한마디를 올리고 좋아요(더블탭)·댓글로 응원할 수 있습니다.</p>
               </li>
             </ul>
           </section>
@@ -1576,11 +1622,11 @@
               </li>
               <li class="space-y-0.5">
                 <div class="font-black text-slate-900">⚔️ 승급전</div>
-                <p>다음 티어 <strong>15 LP 전부터</strong> 예약 가능(<strong>일요일 불가</strong>)하며, 실패해도 LP 차감 없이 2일 뒤 재도전합니다. 브론즈·실버는 연속 집중, 골드~다이아는 일일 누적, 마스터 이상은 울트라집중 완주 미션이 주어집니다.</p>
+                <p>다음 티어 <strong>15 LP 전부터</strong> 도전 가능하며, 실패해도 LP 차감 없이 <strong>다음 날</strong> 재도전할 수 있습니다. 브론즈·실버는 연속 집중, 골드~다이아는 일일 누적(일요일도 가능)이며, 마스터 이상은 울트라집중 완주 미션으로 <strong>울트라집중 승급전만 일요일 불가</strong>입니다.</p>
               </li>
               <li class="space-y-0.5">
                 <div class="font-black text-slate-900">🏅 뱃지 · 카드 이펙트</div>
-                <p><strong>🌅 얼리버드</strong>(08시 전 · 당일 유지), <strong>🦉 심야 올빼미</strong>(자정~04:59 공부 · 당일 유지), <strong>🌱~👑 연속출석</strong>(2일~10일+ 진화) 뱃지와 함께, 울트라집중 <strong>⚡ 회전 링</strong> 및 누적 공부량(10분~4h+)에 따른 <strong>카드 불꽃 오라</strong>가 표시됩니다.</p>
+                <p><strong>🌅 얼리버드</strong>(08시 전 · 당일 유지), <strong>🦉 심야 올빼미</strong>(자정~04:59 공부 · 당일 유지), <strong>🌱~👑 연속출석</strong>(2일~10일+ 진화) 뱃지와 함께, 울트라집중 <strong>⚡ 회전 링</strong> 및 누적 공부량(10분~7h+, 8단계)에 따른 <strong>카드 불꽃 오라</strong>가 점점 화려하게 표시됩니다.</p>
               </li>
             </ul>
           </section>
@@ -2060,7 +2106,7 @@
             { id: 'ch_6am', cat: 'special', title: '🐓 닭보다 먼저 우는 자', desc: '아침 6시(06:00~06:59)에 0교시 출석 완료', lp: 20 },
             { id: 'ch_all_resp', cat: 'special', title: '💞 스터디 아부꾼', desc: '모든 스터디원에게 리스펙 보내기', lp: 15 },
             { id: 'ch_promo_streak', cat: 'special', title: '🚀 연승의 화신', desc: '승급전 연속 성공하기', lp: 20 },
-            { id: 'ch_brag5', cat: 'special', title: '📸 인스타 갬성충', desc: '자랑하기 피드에 사진 5개 올리기', lp: 20 },
+            { id: 'ch_brag5', cat: 'special', title: '📸 인스타 갬성충', desc: 'STUDYGRAM 피드에 사진 5개 올리기', lp: 20 },
             { id: 'ch_cinderella', cat: 'special', title: '🧛 신데렐라', desc: '23:55 ~ 00:05 자정을 넘겨서 스톱워치 계속 켜두기', lp: 20 },
             { id: 'ch_newbie', cat: 'starter', title: '🐣 뉴비', desc: '집중 시작하기 스톱워치 처음 켜기', lp: 7 },
             { id: 'ch_join_study', cat: 'starter', title: '🙋 신입 받아라', desc: '스터디 참가하기로 스터디 처음 합류하기', lp: 7 },
@@ -2068,7 +2114,7 @@
             { id: 'ch_timetable', cat: 'starter', title: '🗓️ 파워 J', desc: '대학 수업 1개 이상 처음 등록하기', lp: 7 },
             { id: 'ch_equip', cat: 'starter', title: '🏷️ 비아방지', desc: '획득한 칭호 처음으로 1회 장착하기', lp: 7 },
             { id: 'ch_respect1', cat: 'starter', title: '👏 관객', desc: '다른 스터디원에게 첫 리스펙 보내기', lp: 7 },
-            { id: 'ch_brag1', cat: 'starter', title: '✨ 관심 주세요', desc: '자랑하기 피드에 첫 사진 1장 올리기', lp: 7 },
+            { id: 'ch_brag1', cat: 'starter', title: '✨ 관심 주세요', desc: 'STUDYGRAM 피드에 첫 사진 1장 올리기', lp: 7 },
             { id: 'ch_mailbox', cat: 'starter', title: '💌 사랑의 편지', desc: '상단 우편함 버튼 처음 열어보기', lp: 7 },
             { id: 'ch_guide', cat: 'starter', title: '📖 설명 중', desc: '설명서 탭 처음 열어보기', lp: 7 },
             { id: 'ch_encourage', cat: 'starter', title: '💪 근육맨', desc: '격려해주세요 기능 처음 사용해 보기', lp: 7 },
@@ -2783,12 +2829,22 @@
           cloudConnected = true;
           dbLoadedOnce = true;
           const v = value || {};
+          const normArrMap = obj => {
+            const out = {};
+            if (obj && typeof obj === 'object') {
+              Object.keys(obj).forEach(k => {
+                const val = obj[k];
+                out[k] = Array.isArray(val) ? val.filter(Boolean) : (val && typeof val === 'object' ? Object.values(val).filter(Boolean) : []);
+              });
+            }
+            return out;
+          };
           const remote = {
               studyMode: v.studyMode || 'strict',
               signupMode: v.signupMode || 'open',
               joinRequests: Array.isArray(v.joinRequests) ? v.joinRequests : (v.joinRequests ? Object.values(v.joinRequests) : []),
               members: (Array.isArray(v.members) ? v.members : Object.values(v.members || {})).filter(Boolean).map(m => { if (m.email) { const { email, ...rest } = m; return rest; } return m; }),
-              classes: v.classes || {},
+              classes: normArrMap(v.classes),
               manualExempt: v.manualExempt || {},
               studyLogs: v.studyLogs || {},
               maxFocusLogs: v.maxFocusLogs || {},
@@ -2797,14 +2853,14 @@
               suggestions: Array.isArray(v.suggestions) ? v.suggestions : (v.suggestions ? Object.values(v.suggestions) : []),
               reports: Array.isArray(v.reports) ? v.reports : (v.reports ? Object.values(v.reports) : []),
               encouragements: Array.isArray(v.encouragements) ? v.encouragements : (v.encouragements ? Object.values(v.encouragements) : []),
-              directMessages: v.directMessages || {},
-              lpHistory: v.lpHistory || {},
+              directMessages: normArrMap(v.directMessages),
+              lpHistory: normArrMap(v.lpHistory),
               respectLpRewarded: v.respectLpRewarded || {},
               periodLpRewarded: v.periodLpRewarded || {},
               hourlyLpGiven: v.hourlyLpGiven || {},
               studySlotMins: v.studySlotMins || {},
               promoHistory: v.promoHistory || {},
-              customBadges: v.customBadges || {},
+              customBadges: normArrMap(v.customBadges),
               motemote: v.motemote || {},
               lpCut30Migrated: true,
               lpRebalanceV2: true,
@@ -2836,9 +2892,9 @@
                 }
                 return mergedCh;
               })(),
-              memberChallenges: v.memberChallenges || {},
+              memberChallenges: normArrMap(v.memberChallenges),
               challengeLpGranted: v.challengeLpGranted || {},
-              praises: v.praises || {},
+              praises: normArrMap(v.praises),
               respectSentByDate: v.respectSentByDate || {},
               records: v.records || {},
               photos: Array.isArray(v.photos) ? v.photos : (v.photos ? Object.values(v.photos) : [])
@@ -2935,6 +2991,7 @@
       }
 
       let previousModalFocus = null;
+      let modalCleanupFn = null;
       let onboardingBusy = false;
       const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
       const shown = el => !!el && !el.classList.contains('hidden');
@@ -2973,6 +3030,7 @@
         document.getElementById('modal-title').focus({preventScroll:true});
       }
       function closeModal() {
+        if (typeof modalCleanupFn === 'function') { try { modalCleanupFn(); } catch (e) {} modalCleanupFn = null; }
         const o = document.getElementById('modal-overlay');
         o.classList.add('hidden'); o.classList.remove('flex');
         refreshStudyDialogs();
@@ -3105,10 +3163,12 @@
         document.getElementById('cancel-del-member').addEventListener('click', closeModal);
         document.getElementById('confirm-del-member').addEventListener('click', () => {
           shared.members = shared.members.filter(m => m.id !== memberId);
-          if (shared.classes) delete shared.classes[memberId];
-          if (shared.manualExempt) delete shared.manualExempt[memberId];
-          if (shared.customBadges) delete shared.customBadges[memberId];
-          if (shared.records) Object.keys(shared.records).forEach(d => { if (shared.records[d]) delete shared.records[d][memberId]; });
+          ['classes', 'manualExempt', 'customBadges', 'memberChallenges', 'challengeLpGranted', 'praises', 'directMessages', 'lpHistory', 'promoHistory', 'respectLpRewarded'].forEach(k => {
+            if (shared[k]) delete shared[k][memberId];
+          });
+          ['records', 'studyLogs', 'maxFocusLogs', 'periodStudySecs', 'studyBlocks', 'studySlotMins', 'hourlyLpGiven', 'motemote', 'periodLpRewarded', 'respectSentByDate'].forEach(k => {
+            if (shared[k]) Object.keys(shared[k]).forEach(d => { if (shared[k][d]) delete shared[k][d][memberId]; });
+          });
           if (shared.photos) shared.photos = shared.photos.filter(p => p.memberId !== memberId);
           if (prefs.currentUserId === memberId && shared.members.length) { prefs.currentUserId = shared.members[0].id; savePrefs(); }
           saveSharedData(); closeModal(); showToast(`${target.name}님 삭제 완료`, 'info'); renderAll();
@@ -3499,17 +3559,17 @@
 
         const isSundayToday = getNowParts().day === 0;
         if (meHdr && meHdr.promoActiveDate === tNow && tierInfo.nextName) {
-          if (isSundayToday) {
+          const mission = getPromoMission(tierInfo.nextName);
+          if (isSundayToday && mission.type === 'ultra') {
             document.body.removeAttribute('data-promo');
             promoBar.classList.remove('hidden');
             promoBadge.textContent = '일요일 승급전 제한';
             promoBadge.className = 'px-2 py-0.5 rounded-md text-[11px] font-black bg-slate-700 text-white';
-            promoTitle.textContent = `일요일은 승급전을 진행할 수 없습니다`;
-            promoDesc.textContent = `울트라집중모드는 이용할 수 있지만, 승급전은 월~토요일에만 진행됩니다.`;
+            promoTitle.textContent = `울트라집중 승급전은 일요일에 진행할 수 없습니다`;
+            promoDesc.textContent = `마스터 이상 승급전은 월~토요일 울트라집중모드로만 진행됩니다.`;
             promoActs.innerHTML = '';
           } else {
             document.body.setAttribute('data-promo', 'active');
-            const mission = getPromoMission(tierInfo.nextName);
             promoBar.classList.remove('hidden');
             promoBadge.textContent = '승급전 진행 중';
             promoBadge.className = 'px-2 py-0.5 rounded-md text-[11px] font-black bg-slate-950 text-amber-300';
@@ -3841,7 +3901,7 @@
               guideHtml += `<div class="rounded-2xl border-2 border-indigo-500 bg-indigo-50/90 p-3.5 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
                 <div class="space-y-0.5">
                   <div class="text-xs sm:text-sm font-black text-indigo-950">👋 아직 스터디에 참가하지 않았어요!</div>
-                  <p class="text-[11px] text-indigo-900">스터디에 참가하면 랭킹·자랑하기·실시간 공부 현황과 <strong>신입 받아라(+7 LP)</strong> 챌린지를 바로 시작할 수 있어요.</p>
+                  <p class="text-[11px] text-indigo-900">스터디에 참가하면 랭킹·STUDYGRAM·실시간 공부 현황과 <strong>신입 받아라(+7 LP)</strong> 챌린지를 바로 시작할 수 있어요.</p>
                 </div>
                 <button type="button" data-guide-action="join" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-black whitespace-nowrap shrink-0">🙋 스터디 참가하기</button>
               </div>`;
@@ -4116,7 +4176,7 @@
           const allBadges = getBadgesForMember(m, t);
           const badges = allBadges;
           const tierObj = getMemberTier(m);
-          const flameCls = todayTotalMins >= 240 ? 'flame-lv5' : todayTotalMins >= 120 ? 'flame-lv4' : todayTotalMins >= 60 ? 'flame-lv3' : todayTotalMins >= 30 ? 'flame-lv2' : todayTotalMins >= 10 ? 'flame-lv1' : '';
+          const flameCls = todayTotalMins >= 420 ? 'flame-lv8' : todayTotalMins >= 360 ? 'flame-lv7' : todayTotalMins >= 300 ? 'flame-lv6' : todayTotalMins >= 240 ? 'flame-lv5' : todayTotalMins >= 120 ? 'flame-lv4' : todayTotalMins >= 60 ? 'flame-lv3' : todayTotalMins >= 30 ? 'flame-lv2' : todayTotalMins >= 10 ? 'flame-lv1' : '';
           const isPromoNow = m.promoActiveDate === t;
           const isUltra = getMemberMode(m) === 'strict';
           const inClassNow = ((shared.classes && shared.classes[m.id]) || []).some(c => Number(c.day) === now.day && toMins(c.start) <= now.totalMins && now.totalMins < toMins(c.end));
@@ -4485,14 +4545,14 @@
         const pxPerHour = 52;
         const totalHeight = totalHours * pxPerHour;
         const ETA_PALETTE = [
-          { bg: '#fef3c7', border: '#f59e0b', text: '#78350f' },
-          { bg: '#dbeafe', border: '#3b82f6', text: '#1e3a8a' },
-          { bg: '#dcfce7', border: '#22c55e', text: '#14532d' },
-          { bg: '#fce7f3', border: '#ec4899', text: '#831843' },
-          { bg: '#ede9fe', border: '#8b5cf6', text: '#4c1d95' },
-          { bg: '#ffedd5', border: '#f97316', text: '#7c2d12' },
-          { bg: '#cffafe', border: '#06b6d4', text: '#164e63' },
-          { bg: '#ffe4e6', border: '#f43f5e', text: '#881337' }
+          { bg: '#fef3c7', border: '#f59e0b', text: '#78350f', dBg: 'rgba(180, 83, 9, 0.36)', dBorder: 'rgba(251, 191, 36, 0.55)', dText: '#fef3c7' },
+          { bg: '#dbeafe', border: '#3b82f6', text: '#1e3a8a', dBg: 'rgba(29, 78, 216, 0.36)', dBorder: 'rgba(96, 165, 250, 0.55)', dText: '#dbeafe' },
+          { bg: '#dcfce7', border: '#22c55e', text: '#14532d', dBg: 'rgba(21, 128, 61, 0.36)', dBorder: 'rgba(74, 222, 128, 0.5)', dText: '#dcfce7' },
+          { bg: '#fce7f3', border: '#ec4899', text: '#831843', dBg: 'rgba(190, 24, 93, 0.36)', dBorder: 'rgba(244, 114, 182, 0.55)', dText: '#fce7f3' },
+          { bg: '#ede9fe', border: '#8b5cf6', text: '#4c1d95', dBg: 'rgba(109, 40, 217, 0.38)', dBorder: 'rgba(167, 139, 250, 0.55)', dText: '#ede9fe' },
+          { bg: '#ffedd5', border: '#f97316', text: '#7c2d12', dBg: 'rgba(194, 65, 12, 0.36)', dBorder: 'rgba(251, 146, 60, 0.55)', dText: '#ffedd5' },
+          { bg: '#cffafe', border: '#06b6d4', text: '#164e63', dBg: 'rgba(14, 116, 144, 0.38)', dBorder: 'rgba(34, 211, 238, 0.55)', dText: '#cffafe' },
+          { bg: '#ffe4e6', border: '#f43f5e', text: '#881337', dBg: 'rgba(190, 18, 60, 0.36)', dBorder: 'rgba(251, 113, 133, 0.55)', dText: '#ffe4e6' }
         ];
         function getSubjectPalette(name) {
           let h = 0;
@@ -4506,7 +4566,7 @@
             ${dayCols.map(d => `<div class="py-1.5 text-center border-l border-slate-200">${days[d]}</div>`).join('')}
           </div>
           <div class="grid relative" style="grid-template-columns:34px repeat(${dayCols.length}, minmax(0, 1fr)); height:${totalHeight}px">
-            <div class="relative border-r border-slate-200 bg-slate-50/70">
+            <div class="eta-hour-col relative border-r border-slate-200 bg-slate-50/70">
               ${Array.from({ length: totalHours }, (_, i) => `<div class="absolute left-0 right-0 text-center text-[10px] font-mono font-bold text-slate-400 border-t border-slate-100 first:border-t-0" style="top:${i * pxPerHour}px; height:${pxPerHour}px; padding-top:2px">${startHour + i}</div>`).join('')}
             </div>`;
         for (const d of dayCols) {
@@ -4522,7 +4582,7 @@
             const topPx = ((sM - startHour * 60) / 60) * pxPerHour;
             const heightPx = Math.max(24, ((eM - sM) / 60) * pxPerHour - 2);
             const pal = getSubjectPalette(c.name);
-            etaHtml += `<button type="button" data-eta-edit="${c.id}" class="absolute left-0.5 right-0.5 rounded-lg px-1 py-1 flex items-center justify-center text-center overflow-y-auto no-scrollbar hover:brightness-95 transition" style="top:${topPx + 1}px; height:${heightPx}px; background:${pal.bg}; color:${pal.text}" title="${escapeHtml(c.name)} (${c.start}~${c.end}) · 클릭해 수정">
+            etaHtml += `<button type="button" data-eta-edit="${c.id}" class="eta-class-block absolute left-0.5 right-0.5 rounded-lg px-1 py-1 flex items-center justify-center text-center overflow-y-auto no-scrollbar hover:brightness-95 transition" style="top:${topPx + 1}px; height:${heightPx}px; background:${pal.bg}; color:${pal.text}; --eta-bg-dark:${pal.dBg}; --eta-border-dark:${pal.dBorder}; --eta-text-dark:${pal.dText}" title="${escapeHtml(c.name)} (${c.start}~${c.end}) · 클릭해 수정">
               <span class="w-full text-[10px] sm:text-[11px] font-extrabold leading-[1.2] break-all">${escapeHtml(c.name)}</span>
             </button>`;
           }
@@ -5110,8 +5170,8 @@
           const mission = getPromoMission(tierInfo.nextName);
           const needsTomorrow = mission.type === 'ultra' && getMemberMode(me) !== 'strict';
           const targetDay = needsTomorrow ? tmr : tNow;
-          if (new Date(targetDay + 'T12:00:00').getDay() === 0) {
-            showToast('일요일에는 승급전을 진행할 수 없습니다. 월~토요일에 도전해 주세요!', 'warn');
+          if (mission.type === 'ultra' && new Date(targetDay + 'T12:00:00').getDay() === 0) {
+            showToast('울트라집중모드가 필요한 승급전은 일요일에 진행할 수 없습니다. 월~토요일에 도전해 주세요!', 'warn');
             return;
           }
           openModal(`${tierInfo.nextName} 승급전 도전 안내`, `
@@ -5161,12 +5221,12 @@
           showToast(`승급전을 포기했습니다. 내일(${me.promoCooldownUntil})부터 다시 도전할 수 있습니다.`, 'warn');
           renderAll();
         } else if (e.target.id === 'btn-complete-promo') {
-          if (getNowParts().day === 0) {
-            showToast('일요일에는 승급전을 완료할 수 없습니다.', 'warn');
-            return;
-          }
           const tNow = todayStr();
           const mission = getPromoMission(tierInfo.nextName);
+          if (mission.type === 'ultra' && getNowParts().day === 0) {
+            showToast('울트라집중모드가 필요한 승급전은 일요일에 완료할 수 없습니다.', 'warn');
+            return;
+          }
           const todayMins = (shared.studyLogs?.[tNow]?.[me.id]) || 0;
           const todayMaxCont = Math.max((shared.maxFocusLogs?.[tNow]?.[me.id]) || 0, Math.floor(focusElapsedSecs / 60));
           let missionOk = false;
@@ -5252,7 +5312,7 @@
         const cap = document.getElementById('brag-caption-input').value.trim();
         const now = getNowParts(), t = todayStr();
         if (!shared.photos) shared.photos = [];
-        shared.photos.push({ id: 'ph_' + Date.now(), memberId: me.id, memberName: me.name, periodLabel: '자랑하기', time: now.hhmm, date: t, caption: cap, dataUrl: pendingPhoto });
+        shared.photos.push({ id: 'ph_' + Date.now(), memberId: me.id, memberName: me.name, periodLabel: 'STUDYGRAM', time: now.hhmm, date: t, caption: cap, dataUrl: pendingPhoto });
         unlockChallengeFor(me.id, 'ch_brag1', false);
         me.bragUploadCount = (me.bragUploadCount || 0) + 1;
         const totalBrags = Math.max(me.bragUploadCount, shared.photos.filter(p => p.memberId === me.id).length);
@@ -5260,7 +5320,7 @@
         pendingPhoto = null;
         document.getElementById('brag-caption-input').value = '';
         saveSharedData();
-        showToast('자랑하기 피드에 올라갔습니다!', 'success');
+        showToast('STUDYGRAM 피드에 올라갔습니다!', 'success');
         renderBragTab();
       });
 
@@ -5345,6 +5405,10 @@
             const onCropUp = () => { dragging = false; };
             window.addEventListener('mousemove', onCropMove);
             window.addEventListener('mouseup', onCropUp);
+            modalCleanupFn = () => {
+              window.removeEventListener('mousemove', onCropMove);
+              window.removeEventListener('mouseup', onCropUp);
+            };
             cvs.addEventListener('touchstart', ev2 => {
               ev2.preventDefault();
               if (ev2.touches.length === 2) {
