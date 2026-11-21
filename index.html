@@ -4129,7 +4129,7 @@
           .replace(/"/g, '&quot;')
           .replace(/'/g, '&#39;');
       }
-      function todayStr() { return localDateKey(new Date()); }
+      function todayStr() { return koreaDateKey(); }
       function koreaDateKey(date = new Date()) {
         return new Date(date.getTime() + 9 * 3600000).toISOString().slice(0, 10);
       }
@@ -4309,15 +4309,19 @@
         r.onload = ev => {
           const img = new Image();
           img.onload = () => {
-            const maxW = 480, sc = img.width > maxW ? maxW / img.width : 1;
-            const c = document.createElement('canvas'); c.width = Math.round(img.width * sc); c.height = Math.round(img.height * sc);
+            const sc = Math.min(1, 480 / img.width, 1280 / img.height);
+            const c = document.createElement('canvas'); c.width = Math.max(1, Math.round(img.width * sc)); c.height = Math.max(1, Math.round(img.height * sc));
             const ctx = c.getContext('2d'); ctx.drawImage(img, 0, 0, c.width, c.height);
-            ctx.fillStyle = 'rgba(15,23,42,0.75)'; ctx.fillRect(8, 8, Math.min(c.width - 16, 260), 28);
-            ctx.fillStyle = '#ffffff'; ctx.font = 'bold 12px Inter, sans-serif'; ctx.fillText(labelText, 16, 26);
+            if (labelText) {
+              ctx.fillStyle = 'rgba(15,23,42,0.75)'; ctx.fillRect(8, 8, Math.min(c.width - 16, 260), 28);
+              ctx.fillStyle = '#ffffff'; ctx.font = 'bold 12px Inter, sans-serif'; ctx.fillText(labelText, 16, 26);
+            }
             cb(c.toDataURL('image/jpeg', 0.65));
           };
+          img.onerror = () => showToast('이 사진을 열 수 없어요. JPG, PNG 또는 WebP 사진을 선택해 주세요.', 'warn');
           img.src = ev.target.result;
         };
+        r.onerror = () => showToast('사진을 읽지 못했어요. 다시 선택해 주세요.', 'warn');
         r.readAsDataURL(file);
       }
 
@@ -4466,16 +4470,23 @@
       }
 
       function loadPrefs() {
-        try { const r = localStorage.getItem(LOCAL_PREFS_KEY); if (r) return JSON.parse(r); } catch (e) {}
-        return { currentUserId: 'm1', adminMode: false, alertEnabled: true, simTime: null, adminBrush: 'present', activeTab: 'dashboard', theme: 'white' };
+        const defaults = { currentUserId: 'm1', adminMode: false, alertEnabled: true, simTime: null, adminBrush: 'present', activeTab: 'dashboard', theme: 'white' };
+        try {
+          const stored = JSON.parse(localStorage.getItem(LOCAL_PREFS_KEY));
+          if (stored && typeof stored === 'object' && !Array.isArray(stored)) return { ...defaults, ...stored };
+        } catch {}
+        return defaults;
       }
       function loadLocalData() {
         try {
           const r = localStorage.getItem(LOCAL_DATA_KEY);
           if (r) {
             const parsed = JSON.parse(r);
+            if (!parsed || typeof parsed !== 'object' || !parsed.members || typeof parsed.members !== 'object') return buildDefaultSharedData();
+            parsed.members = Object.values(parsed.members).filter(member => member && member.id);
+            parsed.photos = Object.values(parsed.photos || {}).filter(Boolean);
             const base = buildDefaultSharedData(false).challenges;
-            const existing = Array.isArray(parsed.challenges) ? parsed.challenges : [];
+            const existing = Object.values(parsed.challenges || {}).filter(Boolean);
             const filtered = existing.filter(c => !['ch_f10', 'ch_f30', 'ch_f60', 'ch_guide'].includes(c.id));
             const ids = new Set(filtered.map(c => c.id));
             let mergedCh = filtered.concat(base.filter(b => !ids.has(b.id)));
@@ -4530,7 +4541,15 @@
       let allPrivateRef = null;
       let myPrivateData = { onboardingSurvey: null, motemote: {} };
       let allPrivateData = {};
-      let lastPrivateMotemoteJson = '{}';
+      let plannerReady = false;
+      let plannerView = {};
+      let pendingPlannerDays = {};
+      let plannerFlight = null;
+      let plannerRetryTimer = null;
+      let plannerFailures = 0;
+      let plannerSyncError = '';
+      let plannerReadFailed = false;
+      function plannerDraftKey(uid) { return storageScope + 'planner_pending_' + uid; }
       let dbListenerAttached = false;
       let dbLoadedOnce = false;
       let allPrivateLoadedOnce = false;
@@ -4573,7 +4592,7 @@
       }
       function inboxMessage(fields, key = 'msg_' + Date.now() + '_' + (globalThis.crypto?.randomUUID?.() || Math.random().toString(36).slice(2))) {
         const now = new Date();
-        return { ...fields, id:key, createdAt:+now, date:localDateKey(now), time:`${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`, read:false };
+        return { ...fields, id:key, createdAt:+now, date:koreaDateKey(now), time:new Date(+now + 9 * 3600000).toISOString().slice(11, 16), read:false };
       }
       function addDirectMessage(memberId, text, key) {
         const message = inboxMessage({ text }, key);
@@ -4742,12 +4761,75 @@
         queueCloudWrite();
       }
 
+      function persistPlannerDrafts() {
+        if (!privateRef) return;
+        const key = plannerDraftKey(privateRef.key);
+        try {
+          if (Object.keys(pendingPlannerDays).length) localStorage.setItem(key, JSON.stringify(pendingPlannerDays));
+          else localStorage.removeItem(key);
+        } catch {
+          if (Object.keys(pendingPlannerDays).length) showToast('기기 저장 공간이 부족해요. 서버 저장이 끝날 때까지 이 화면을 열어 주세요.', 'warn');
+        }
+      }
+
       function syncPrivateMotemote() {
-        if (!privateRef || !currentAuthUser || prefs.inspectingMember) return;
-        const curJson = JSON.stringify(myPrivateData.motemote || {});
-        if (curJson === lastPrivateMotemoteJson) return;
-        lastPrivateMotemoteJson = curJson;
-        privateRef.child('motemote').set(myPrivateData.motemote || {}).catch(() => {});
+        if (!plannerReady || !privateRef || privateRef.key !== currentAuthUser?.uid || prefs.inspectingMember) return;
+        let changed = false;
+        for (const [day, plan] of Object.entries(myPrivateData.motemote || {})) {
+          const json = JSON.stringify(plan);
+          if (json === plannerView[day]) continue;
+          const isNew = plannerView[day] === undefined;
+          if (isNew && !plan.goalMinutes && !plan.tasks?.length && !Object.keys(plan.blocks || {}).length) continue;
+          plannerView[day] = json;
+          pendingPlannerDays[day] = json;
+          changed = true;
+        }
+        if (changed) persistPlannerDrafts();
+        flushPlannerDays();
+      }
+
+      async function flushPlannerDays() {
+        if (!plannerReady || !privateRef || privateRef.key !== currentAuthUser?.uid ||
+            plannerFlight || plannerRetryTimer || plannerFailures >= 5 || cloudLinkLive === false) return;
+        const sent = { ...pendingPlannerDays };
+        if (!Object.keys(sent).length) return;
+        const ref = privateRef;
+        plannerFlight = sent;
+        updateCloudPill();
+        try {
+          const days = Object.fromEntries(Object.entries(sent).map(([day, json]) =>
+            [day, { ...JSON.parse(json), initialized: true }]));
+          await ref.child('motemote').update(days);
+        } catch (error) {
+          if (plannerFlight !== sent || privateRef !== ref) return;
+          plannerFlight = null;
+          plannerSyncError = error?.message || '개인 플래너 저장을 확인하지 못했어요.';
+          plannerFailures++;
+          if (plannerFailures < 5) plannerRetryTimer = setTimeout(() => {
+            plannerRetryTimer = null;
+            flushPlannerDays();
+          }, 1200 * 2 ** (plannerFailures - 1));
+          updateCloudPill();
+          return;
+        }
+        if (plannerFlight !== sent || privateRef !== ref) return;
+        for (const [day, json] of Object.entries(sent)) {
+          if (pendingPlannerDays[day] === json) delete pendingPlannerDays[day];
+        }
+        plannerFlight = null;
+        plannerFailures = 0;
+        plannerSyncError = '';
+        persistPlannerDrafts();
+        updateCloudPill();
+        flushPlannerDays();
+      }
+
+      function retryPlannerSync() {
+        clearTimeout(plannerRetryTimer);
+        plannerRetryTimer = null;
+        plannerFailures = 0;
+        if (plannerReadFailed && privateRef) listenToPrivatePlanner(privateRef);
+        else flushPlannerDays();
       }
 
       function saveSharedData() {
@@ -4762,10 +4844,12 @@
 
       function cloudStatus() {
         if (filePreview) return ['local', '미리보기'];
+        if (plannerSyncError) return ['error', plannerReadFailed ? '플래너 불러오기 실패' : '플래너 저장 대기'];
         if (cloudErrorMsg) return ['error', syncFailures && syncFailures < 5 ? '저장 재시도' : '연동 확인'];
         if (!cloudConnected) return [dbListenerAttached ? 'pending' : 'local', dbListenerAttached ? '연결 중' : '로컬'];
-        if (cloudLinkLive === false) return ['pending', (syncDirty || syncFlight) ? '전송 대기' : '오프라인'];
-        if (syncDirty || syncFlight) return ['pending', '저장 중'];
+        const saving = syncDirty || syncFlight || plannerFlight || Object.keys(pendingPlannerDays).length > 0;
+        if (cloudLinkLive === false) return ['pending', saving ? '전송 대기' : '오프라인'];
+        if (saving) return ['pending', '저장 중'];
         return ['online', '실시간'];
       }
 
@@ -4994,11 +5078,11 @@
       }
 
       function syncAuthUserMember(user) {
-        if (!user) return;
+        if (!user || currentAuthUser?.uid !== user.uid || withdrawingUid === user.uid) return;
         const found = (shared.members || []).find(m => m.uid === user.uid);
         if (found) {
           if (sessionClaimed && found.activeSessionId && found.activeSessionId !== SESSION_ID) {
-            if (Date.now() <= pendingSessionClaimUntil || syncDirty || syncFlight) {
+            if (Date.now() <= pendingSessionClaimUntil) {
               found.activeSessionId = SESSION_ID;
             } else {
               sessionClaimed = false;
@@ -5046,7 +5130,7 @@
             saveSharedData();
             switchTab('dashboard', true);
             playApprovedThenFirstJoin(found.name);
-          } else if (pendingFirstJoinWelcome) {
+          } else if (pendingFirstJoinWelcome?.uid === user.uid) {
             const info = pendingFirstJoinWelcome;
             pendingFirstJoinWelcome = null;
             switchTab('dashboard', true);
@@ -5066,32 +5150,70 @@
         }
       }
 
+      function listenToPrivatePlanner(ref) {
+        plannerReadFailed = false;
+        ref.on('value', snap => {
+          if (privateRef !== ref || currentAuthUser?.uid !== ref.key) return;
+          const record = snap.val() || {};
+          if (record.status === 'withdrawn' && withdrawingUid !== ref.key) {
+            plannerFlight = null;
+            pendingPlannerDays = {};
+            persistPlannerDrafts();
+          }
+          const days = Object.fromEntries(Object.entries(record.motemote || {})
+            .filter(([, plan]) => plan && typeof plan === 'object')
+            .map(([day, plan]) => [day, { ...plan, tasks: Object.values(plan.tasks || {}).filter(Boolean), blocks: plan.blocks || {} }]));
+          for (const [day, json] of Object.entries(pendingPlannerDays)) days[day] = JSON.parse(json);
+          myPrivateData = { onboardingSurvey: record.onboardingSurvey || null, motemote: days };
+          plannerView = Object.fromEntries(Object.entries(days).map(([day, plan]) => [day, JSON.stringify(plan)]));
+          plannerReady = record.status !== 'withdrawn';
+          if (!plannerFailures) plannerSyncError = '';
+          updateCloudPill();
+          renderAll();
+          flushPlannerDays();
+        }, err => {
+          if (privateRef !== ref) return;
+          plannerReady = false;
+          plannerReadFailed = true;
+          plannerSyncError = err?.message || '개인 플래너를 불러오지 못했어요.';
+          updateCloudPill();
+          if (prefs.activeTab === 'planner') renderPlannerTab();
+        });
+      }
+
       function attachPrivateDb(user) {
         if (!user || typeof firebase === 'undefined') return;
         const database = firebase.database();
         if (!privateRef) {
           privateRef = database.ref('privateData/' + user.uid);
-          privateRef.on('value', snap => {
-            const pv = snap.val() || {};
-            myPrivateData = {
-              onboardingSurvey: pv.onboardingSurvey || null,
-              motemote: pv.motemote || {}
-            };
-            lastPrivateMotemoteJson = JSON.stringify(myPrivateData.motemote || {});
-            renderAll();
-          }, () => {});
+          try {
+            const draft = JSON.parse(localStorage.getItem(plannerDraftKey(user.uid)) || '{}');
+            for (const [day, json] of Object.entries(draft || {})) {
+              if (!/^\d{4}-\d{2}-\d{2}$/.test(day) || typeof json !== 'string') continue;
+              const plan = JSON.parse(json);
+              if (plan && typeof plan === 'object') pendingPlannerDays[day] = json;
+            }
+          } catch {}
+          listenToPrivatePlanner(privateRef);
         }
         if ((user.email || '').toLowerCase() === ADMIN_EMAIL && !allPrivateRef) {
           allPrivateRef = database.ref('privateData');
-          allPrivateRef.on('value', snap => {
+          const adminRef = allPrivateRef;
+          const cleanupAttempts = new Set();
+          adminRef.on('value', snap => {
+            if (allPrivateRef !== adminRef || currentAuthUser?.uid !== user.uid) return;
             const raw = snap.val() || {};
             const today = todayStr();
             Object.entries(raw).forEach(([uid, rec]) => {
               if (rec && rec.status === 'withdrawn' && rec.withdrawnAt) {
                 const wDate = String(rec.withdrawnAt).split(' ')[0];
-                if (/^\d{4}-\d{2}-\d{2}$/.test(wDate) && daysDiff(wDate, today) >= 7) {
-                  database.ref('privateData/' + uid).remove().catch(() => {});
-                  delete raw[uid];
+                if (/^\d{4}-\d{2}-\d{2}$/.test(wDate) && daysDiff(wDate, today) >= 7 && !cleanupAttempts.has(uid)) {
+                  cleanupAttempts.add(uid);
+                  database.ref('privateData/' + uid).transaction(current => {
+                    if (current?.status === 'withdrawn' && current.withdrawnAt === rec.withdrawnAt) return null;
+                  }, undefined, false).catch(() => {
+                    if (allPrivateRef === adminRef) showToast('일부 탈퇴 기록을 정리하지 못했어요. 보관 목록에서 다시 삭제할 수 있어요.', 'warn');
+                  });
                 }
               }
             });
@@ -5108,7 +5230,13 @@
         if (allPrivateRef) { try { allPrivateRef.off(); } catch (e) {} allPrivateRef = null; }
         myPrivateData = { onboardingSurvey: null, motemote: {} };
         allPrivateData = {};
-        lastPrivateMotemoteJson = '{}';
+        clearTimeout(plannerRetryTimer);
+        plannerRetryTimer = plannerFlight = null;
+        plannerReady = plannerReadFailed = false;
+        plannerFailures = 0;
+        plannerSyncError = '';
+        plannerView = {};
+        pendingPlannerDays = {};
       }
 
       function attachRealtimeDb() {
@@ -5118,9 +5246,11 @@
         const database = firebase.database();
         dbRef = database.ref('studyData');
         connectionRef = database.ref('.info/connected');
+        const binding = dbRef;
         connectionRef.on('value', snap => {
+          if (dbRef !== binding) return;
           cloudLinkLive = snap.val() === true;
-          if (cloudLinkLive) retryCloudWrite();
+          if (cloudLinkLive) { retryCloudWrite(); retryPlannerSync(); }
           updateCloudPill();
         });
         receiveCloudValue = value => {
@@ -5145,7 +5275,7 @@
           const remote = {
               studyMode: v.studyMode || 'strict',
               signupMode: v.signupMode || 'open',
-              joinRequests: Array.isArray(v.joinRequests) ? v.joinRequests : (v.joinRequests ? Object.values(v.joinRequests) : []),
+              joinRequests: Object.values(v.joinRequests || {}).filter(Boolean),
               members: (Array.isArray(v.members) ? v.members : Object.values(v.members || {})).filter(Boolean).map(m => { if (m.email) { const { email, ...rest } = m; return rest; } return m; }),
               classes: normArrMap(v.classes),
               manualExempt: v.manualExempt || {},
@@ -5176,7 +5306,7 @@
               lpRebalanceV7: true,
               challenges: (() => {
                 const base = buildDefaultSharedData(false).challenges;
-                const existing = Array.isArray(v.challenges) ? v.challenges : [];
+                const existing = Object.values(v.challenges || {}).filter(Boolean);
                 const filtered = existing.filter(c => !['ch_f10', 'ch_f30', 'ch_f60', 'ch10'].includes(c.id));
                 const ids = new Set(filtered.map(c => c.id));
                 let mergedCh = filtered.concat(base.filter(b => !ids.has(b.id)));
@@ -5203,7 +5333,7 @@
               praises: normArrMap(v.praises),
               respectSentByDate: v.respectSentByDate || {},
               records: v.records || {},
-              photos: Array.isArray(v.photos) ? v.photos : (v.photos ? Object.values(v.photos) : [])
+              photos: Object.values(v.photos || {}).filter(Boolean)
             };
           lastSyncedJson = snapshotSharedState(remote);
           if (hadBaseline && currentAuthUser && sessionClaimed) {
@@ -5211,7 +5341,7 @@
             if (registered?.activeSessionId === SESSION_ID) {
               pendingSessionClaimUntil = 0;
             } else if (registered?.activeSessionId && registered.activeSessionId !== SESSION_ID) {
-              if (Date.now() > pendingSessionClaimUntil && !syncDirty && !syncFlight) {
+              if (Date.now() > pendingSessionClaimUntil) {
                 resetCloudWrites();
                 shared = remote;
                 syncAuthUserMember(currentAuthUser);
@@ -5232,7 +5362,10 @@
           if (currentAuthUser && !onboardingBusy) syncAuthUserMember(currentAuthUser);
           else if (!currentAuthUser) renderAll();
         };
-        dbRef.on('value', snap => receiveCloudValue?.(snap.val()), err => {
+        dbRef.on('value', snap => {
+          if (dbRef === binding) receiveCloudValue?.(snap.val());
+        }, err => {
+          if (dbRef !== binding) return;
           cloudConnected = false; cloudErrorMsg = err?.message || 'Firebase 규칙 확인 필요'; updateCloudPill();
           if (currentAuthUser) showAuthOverlay('login', '데이터베이스 접근 권한이 없습니다. Firebase 규칙을 확인해 주세요.');
         });
@@ -5252,21 +5385,18 @@
             auth.getRedirectResult().catch(() => {});
             auth.onAuthStateChanged(user => {
               authResolvedOnce = true;
-              currentAuthUser = user || null;
-              if (user) {
-                if (!dbLoadedOnce) showAuthOverlay('loading');
-                attachRealtimeDb();
-                if (dbLoadedOnce) syncAuthUserMember(user);
-              } else {
+              const identityChanged = currentAuthUser && currentAuthUser.uid !== user?.uid;
+              if (!user || identityChanged) {
                 sessionClaimed = false;
+                pendingSessionClaimUntil = 0;
+                pendingFirstJoinWelcome = null;
+                onboardIdentityUid = null;
                 welcomePlayedForSession = false;
-                dbLoadedOnce = false;
-                allPrivateLoadedOnce = false;
+                dbLoadedOnce = allPrivateLoadedOnce = false;
                 detachPrivateDb();
-                if (dbRef && dbListenerAttached) {
-                  try { dbRef.off(); } catch (e) {}
-                  dbListenerAttached = false;
-                }
+                if (dbRef) dbRef.off();
+                dbRef = null;
+                dbListenerAttached = false;
                 if (connectionRef) connectionRef.off();
                 connectionRef = null;
                 receiveCloudValue = null;
@@ -5274,7 +5404,19 @@
                 cloudLinkLive = null;
                 resetCloudWrites();
                 if (focusInterval) closeFocusOverlay(true);
+                if (joinGuide.open) joinGuide.close();
+                if (shown(document.getElementById('modal-overlay'))) closeModal();
                 focusRestoredOnce = false;
+                prefs.inspectingMember = prefs.adminMode = false;
+                prefs.simTime = null;
+                if (prefs.activeTab === 'admin') switchTab('dashboard', true);
+              }
+              currentAuthUser = user || null;
+              if (user) {
+                if (!dbLoadedOnce) showAuthOverlay('loading');
+                attachRealtimeDb();
+                if (dbLoadedOnce) syncAuthUserMember(user);
+              } else {
                 updateCloudPill();
                 showAuthOverlay('login');
               }
@@ -5303,6 +5445,7 @@
       let previousModalFocus = null;
       let modalCleanupFn = null;
       let onboardingBusy = false;
+      let withdrawingUid = null;
       const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
       const shown = el => !!el && !el.classList.contains('hidden');
       const browserThemeColor = document.querySelector('meta[name="theme-color"]');
@@ -5408,10 +5551,9 @@
         return `${Math.floor(seconds / 60)}분${seconds % 60 ? ` ${seconds % 60}초` : ''}`;
       }
 
-      function getExemptPeriodIds(memberId, dayOfWeek) {
+      function getExemptPeriodIds(memberId, dayOfWeek, includeManual = true) {
         const exempt = new Set();
         const manual = (shared.manualExempt && shared.manualExempt[memberId] && shared.manualExempt[memberId][String(dayOfWeek)]) || {};
-        Object.keys(manual).forEach(pid => { if (manual[pid]) exempt.add(pid); });
         const list = ((shared.classes && shared.classes[memberId]) || []).filter(c => Number(c.day) === Number(dayOfWeek));
         for (const cls of list) {
           const cs = toMins(cls.start), ce = toMins(cls.end);
@@ -5423,6 +5565,12 @@
             } else if (ce <= ps && ps - ce <= 20) {
               exempt.add(p.id);
             }
+          }
+        }
+        if (includeManual) {
+          for (const [pid, state] of Object.entries(manual)) {
+            if (state === true) exempt.add(pid);
+            else if (state === 'required') exempt.delete(pid);
           }
         }
         return exempt;
@@ -5489,7 +5637,7 @@
         const target = shared.members.find(m => m.id === memberId);
         if (!target) return;
         openModal('스터디 내보내기 (기록 유지)', `
-          <p class="text-sm text-slate-700"><strong>${target.name}</strong>님을 스터디 목록에서만 내보낼까요? (시간표·공부기록·자랑 사진은 그대로 유지됩니다.)</p>
+          <p class="text-sm text-slate-700"><strong>${escapeHtml(target.name)}</strong>님을 스터디 목록에서만 내보낼까요? (시간표·공부기록·자랑 사진은 그대로 유지됩니다.)</p>
           <div class="flex justify-end gap-2 pt-3">
             <button id="cancel-kick-m" type="button" class="px-3 py-1.5 rounded-xl bg-slate-100 text-xs font-bold">취소</button>
             <button id="confirm-kick-m" type="button" class="px-3.5 py-1.5 rounded-xl bg-amber-600 text-white text-xs font-bold">내보내기</button>
@@ -5507,7 +5655,7 @@
         const target = shared.members.find(m => m.id === memberId);
         if (!target) return;
         openModal('스터디원 삭제', `
-          <p><strong>${target.name}</strong>님을 삭제할까요? 시간표, 기록, 사진도 함께 삭제됩니다.</p>
+          <p><strong>${escapeHtml(target.name)}</strong>님을 삭제할까요? 시간표, 기록, 사진도 함께 삭제됩니다.</p>
           <div class="flex justify-end gap-2 pt-2">
             <button id="cancel-del-member" class="px-3 py-1.5 rounded-xl bg-slate-100 text-xs font-bold">취소</button>
             <button id="confirm-del-member" class="px-3 py-1.5 rounded-xl bg-rose-600 text-white text-xs font-bold">삭제</button>
@@ -5834,6 +5982,7 @@
         const targetM = (shared.members || []).find(m => m.id === memId);
         const legacy = shared.motemote?.[dateStr]?.[memId];
         if (currentAuthUser && targetM && targetM.uid === currentAuthUser.uid && privateRef) {
+          if (!plannerReady) return create ? { tasks: [], blocks: {} } : null;
           if (!create) return myPrivateData.motemote?.[dateStr] || legacy || null;
           if (!myPrivateData.motemote) myPrivateData.motemote = {};
           if (!myPrivateData.motemote[dateStr]) {
@@ -6903,7 +7052,7 @@
 
       function canEditPlanner(context) {
         const input = document.getElementById('planner-date-input');
-        return !prefs.adminMode && prefs.activeTab === 'planner' &&
+        return (!privateRef || plannerReady) && !prefs.adminMode && prefs.activeTab === 'planner' &&
           prefs.currentUserId === context.memberId && (input.value || studyDayKey()) === context.day;
       }
 
@@ -7091,7 +7240,9 @@
             ${taskRows}
           </section>`;
         }
-        setPlannerMarkup('planner-tasks-list', listHtml || '<p class="planner-empty">편집을 눌러 과목과 할 일을 추가하세요.</p>');
+        setPlannerMarkup('planner-tasks-list', listHtml || `<p class="planner-empty">${privateRef && !plannerReady && !prefs.adminMode ?
+          (plannerReadFailed ? '플래너를 불러오지 못했어요. 상단 저장 상태에서 다시 시도할 수 있어요.' : '개인 플래너를 불러오는 중이에요.') :
+          '편집을 눌러 과목과 할 일을 추가하세요.'}</p>`);
 
         const nextDate = addDaysStr(day, 1);
         const dateClasses = date => {
@@ -7328,8 +7479,8 @@
         const dayCols = hasSat ? [1, 2, 3, 4, 5, 6] : [1, 2, 3, 4, 5];
         const minStartH = cls.length ? Math.min(9, ...cls.map(c => Math.floor(toMins(c.start) / 60))) : 9;
         const maxEndH = cls.length ? Math.max(18, ...cls.map(c => Math.ceil(toMins(c.end) / 60))) : 18;
-        const startHour = Math.max(7, minStartH);
-        const endHour = Math.min(22, maxEndH);
+        const startHour = Math.max(0, minStartH);
+        const endHour = Math.min(24, maxEndH);
         const totalHours = Math.max(1, endHour - startHour);
         const pxPerHour = 52;
         const totalHeight = totalHours * pxPerHour;
@@ -7764,9 +7915,9 @@
                   </div>
                   ${pRec.email ? `<div class="text-[10px] text-slate-500">이메일: ${escapeHtml(pRec.email)}</div>` : ''}
                   <div class="flex flex-wrap gap-1 text-[10px] font-semibold">
-                    <span class="px-2 py-0.5 rounded-md bg-slate-50 border border-slate-200">경로: ${escapeHtml(r.source || '-')}</span>
-                    <span class="px-2 py-0.5 rounded-md bg-slate-50 border border-slate-200">기대: ${escapeHtml(r.feature || '-')}</span>
-                    <span class="px-2 py-0.5 rounded-md bg-slate-50 border border-slate-200">목표: ${escapeHtml(r.goalHours || '-')}시간</span>
+                    <span class="px-2 py-0.5 rounded-md bg-slate-50 border border-slate-200">경로: ${escapeHtml(pRec.onboardingSurvey?.source ?? r.source ?? '-')}</span>
+                    <span class="px-2 py-0.5 rounded-md bg-slate-50 border border-slate-200">기대: ${escapeHtml(pRec.onboardingSurvey?.feature ?? r.feature ?? '-')}</span>
+                    <span class="px-2 py-0.5 rounded-md bg-slate-50 border border-slate-200">목표: ${escapeHtml(pRec.onboardingSurvey?.goalHours ?? r.goalHours ?? '-')}시간</span>
                   </div>
                   <div class="flex justify-end flex-wrap gap-1.5 pt-0.5">
                     ${!r.read ? `<button type="button" data-read-join="${escapeHtml(r.uid)}" class="px-2.5 py-1 rounded-lg bg-slate-900 text-white text-[11px] font-bold">✓ 읽음</button>` : ''}
@@ -8209,10 +8360,10 @@
         const description = state === 'online' ? '변경 사항이 서버에 동기화되고 있습니다.' : label === '저장 중' ? '서버 저장 확인을 기다리고 있습니다.' : label === '연결 중' ? '공부 기록을 불러오는 중입니다.' : state === 'local' ? (filePreview ? '다운로드 파일을 예시 데이터로 체험하는 중입니다. 여기서 바꾼 내용은 실제 스터디에 전송되지 않습니다.' : '현재 브라우저에만 기록됩니다.') : state === 'error' ? '아직 서버에 저장되지 않은 변경은 이 화면을 열어 둔 동안 다시 시도할 수 있습니다.' : '연결이 돌아오면 대기 중인 변경을 다시 보냅니다.';
         openModal('데이터 저장 상태', `
           <p><strong>${label}</strong></p><p>${description}</p>
-          ${cloudErrorMsg ? `<p class="text-xs text-rose-600">${escapeHtml(cloudErrorMsg)}</p>` : ''}
-          ${syncDirty && syncFailures ? '<button type="button" id="retry-study-save" class="ed-btn-accent study-primary rounded-xl px-4">지금 다시 시도</button>' : ''}
+          ${[plannerSyncError, cloudErrorMsg].filter(Boolean).map(message => `<p class="text-xs text-rose-600">${escapeHtml(message)}</p>`).join('')}
+          ${(syncDirty && syncFailures) || plannerSyncError ? '<button type="button" id="retry-study-save" class="ed-btn-accent study-primary rounded-xl px-4">지금 다시 시도</button>' : ''}
         `);
-        document.getElementById('retry-study-save')?.addEventListener('click', () => { retryCloudWrite(); closeModal(); });
+        document.getElementById('retry-study-save')?.addEventListener('click', () => { retryCloudWrite(); retryPlannerSync(); closeModal(); });
       });
 
       document.getElementById('admin-toggle-btn').addEventListener('click', () => {
@@ -9608,11 +9759,14 @@
         if (!shared.classes) shared.classes = {};
         const existing = shared.classes[mid] || [];
         const baseTs = Date.now();
-        const added = CNU_EE_PRESET.map((item, idx) => ({ id: `cnu_${baseTs}_${idx}`, ...item }));
+        const missing = CNU_EE_PRESET.filter(slot => !existing.some(course => course.name === slot.name &&
+          Number(course.day) === slot.day && course.start === slot.start && course.end === slot.end));
+        if (!missing.length) { showToast('기본 시간표가 이미 등록되어 있어요.', 'info'); return; }
+        const added = missing.map((item, idx) => ({ id: `cnu_${baseTs}_${idx}`, ...item }));
         shared.classes[mid] = existing.concat(added);
         unlockChallengeFor(mid, 'ch_timetable', false);
         saveSharedData();
-        showToast('충남대 전자과 5개 과목 시간표가 등록되었습니다! (다른 분반은 아래에서 수정 가능)', 'success');
+        showToast(`기본 시간표에서 수업 시간 ${added.length}개를 추가했어요.`, 'success');
         renderTimetableTab();
       });
 
@@ -9725,7 +9879,9 @@
             if (toMins(ns) >= toMins(ne)) { showToast('종료 시각이 시작 시각보다 늦어야 합니다.', 'warn'); return; }
             const current = (shared.classes?.[mid] || []).find(course => String(course.id) === editId);
             if (!current || mid !== (prefs.adminMode ? document.getElementById('class-member-select').value : prefs.currentUserId)) { closeModal(); return; }
-            current.name = document.getElementById('edit-cls-name').value.trim();
+            const name = document.getElementById('edit-cls-name').value.trim();
+            if (!name) { showToast('수업명을 입력하세요.', 'warn'); return; }
+            current.name = name;
             current.day = Number(document.getElementById('edit-cls-day').value);
             current.start = ns;
             current.end = ne;
@@ -9746,7 +9902,13 @@
         const b = e.target.closest('[data-toggle-exempt]'); if (!b) return;
         const [mid, d, pid] = b.dataset.toggleExempt.split('|');
         if (!shared.manualExempt) shared.manualExempt = {}; if (!shared.manualExempt[mid]) shared.manualExempt[mid] = {}; if (!shared.manualExempt[mid][d]) shared.manualExempt[mid][d] = {};
-        shared.manualExempt[mid][d][pid] = !shared.manualExempt[mid][d][pid]; saveSharedData(); renderTimetableTab();
+        const overrides = shared.manualExempt[mid][d];
+        const automatic = getExemptPeriodIds(mid, d, false).has(pid);
+        const desired = !getExemptPeriodIds(mid, d).has(pid);
+        if (desired === automatic) delete overrides[pid];
+        else overrides[pid] = desired ? true : 'required';
+        saveSharedData();
+        renderTimetableTab();
       });
 
       // Admin Panel Listeners
@@ -10587,7 +10749,7 @@
           const tToday = todayStr();
           const tYesterday = addDaysStr(tToday, -1);
           const curMember = shared.members.find(m => m.id === memberId);
-          if (curMember && curMember.forceStoppedAt && (!st?.startedAt || curMember.forceStoppedAt >= st.startedAt) && !curMember.isFocusing && !curMember.isFocusPaused) {
+          if (st?.memberId === memberId && curMember?.forceStoppedAt && (!st.startedAt || curMember.forceStoppedAt >= st.startedAt) && !curMember.isFocusing && !curMember.isFocusPaused) {
             clearFocusState();
             closeFocusOsNotification();
             showToast('관리자에 의해 타이머가 종료되었습니다. 종료 시점까지의 공부 시간이 반영되었습니다.', 'info');
@@ -10602,7 +10764,11 @@
           }
           focusModeBeforeChange = st.modeBeforeChange || null;
           focusAccumulatedSecs = Number(st.accumulatedSecs) || 0;
-          focusElapsedSecs = Number(st.syncedSecs) || 0;
+          focusElapsedSecs = Math.max(0, Number(st.syncedSecs) || 0);
+          if (st.startedAt && curMember?.isFocusing && Number(curMember.focusStartedAt) === Number(st.startedAt) &&
+              Number(curMember.focusAccumulatedSecs || 0) === focusAccumulatedSecs) {
+            focusElapsedSecs = Math.max(focusElapsedSecs, Number(curMember.focusSyncedSecs) || 0);
+          }
           focusPaused = !!st.paused;
           pauseStartedAt = focusPaused ? (Number(st.pauseStartedAt) || Date.now()) : null;
           focusRestDurationMs = Number.isFinite(st.restBudgetMs)
@@ -11110,7 +11276,7 @@
         return reached / 30;
       }
 
-      function closeFocusOverlay(discard = false, { restExpired = false } = {}) {
+      function closeFocusOverlay(discard = false, { restExpired = false, quiet = false } = {}) {
         const wasOpen = !!focusInterval;
         leaveFocusFullscreen();
         const ov = document.getElementById('focus-overlay');
@@ -11152,6 +11318,7 @@
           }
         } catch (e) {}
         refreshStudyDialogs();
+        if (quiet) return;
         if (wasOpen && !discard) {
           renderAll();
           if (shown(document.getElementById('promotion-overlay'))) {
@@ -11528,7 +11695,8 @@
             if (!document.getElementById('onboard-survey-source').value) { showToast('가입 경로를 선택해 주세요.', 'warn'); return; }
           } else if (targetStep === 4) {
             if (!document.getElementById('onboard-survey-feature').value) { showToast('가장 기대되는 기능을 선택해 주세요.', 'warn'); return; }
-            if (!document.getElementById('onboard-survey-goal-hours').value.trim()) { showToast('하루 목표 공부시간을 입력해 주세요.', 'warn'); return; }
+            const goal = document.getElementById('onboard-survey-goal-hours');
+            if (!goal.value || !goal.checkValidity()) { showToast('목표 공부시간은 0.5~24시간 사이에서 30분 단위로 입력해 주세요.', 'warn'); goal.focus(); return; }
           }
           setOnboardStep(targetStep);
           return;
@@ -11549,7 +11717,7 @@
         if (!nickname) { showToast('사용할 별명을 입력해 주세요.', 'warn'); return; }
         if (!source || !feature || !goalHours) { showToast('간단한 가입 설문을 모두 작성해 주세요.', 'warn'); return; }
         const parsedGoalHours = Number(goalHours);
-        if (!Number.isFinite(parsedGoalHours) || parsedGoalHours <= 0) { showToast('하루 목표 공부시간을 숫자로 입력해 주세요.', 'warn'); return; }
+        if (!document.getElementById('onboard-survey-goal-hours').checkValidity() || !Number.isFinite(parsedGoalHours) || parsedGoalHours <= 0) { showToast('하루 목표 공부시간을 숫자로 입력해 주세요.', 'warn'); return; }
         if (!agreed) { showToast('이용 안내 동의에 체크해 주세요.', 'warn'); return; }
         if (!dbRef || !cloudConnected || cloudLinkLive === false) { showToast('연결된 뒤에 다시 시작하기를 눌러 주세요.', 'warn'); return; }
         const button = e.currentTarget.querySelector('button[type="submit"]');
@@ -11560,26 +11728,23 @@
           name:nickname, avatarUrl:user.photoURL || '', mode:'free', inStudy:false,
           streak:0, lp:0, respectCount:0, equippedTitle:'', lateNight:false, firstTime:null, lastTime:null
         };
-        if (sMode === 'open') pendingFirstJoinWelcome = { nickname };
+        if (sMode === 'open') pendingFirstJoinWelcome = { uid:user.uid, nickname };
         onboardingBusy = true;
         button.disabled = true;
         button.textContent = sMode === 'approval' ? '요청서 전송 중…' : '기록 준비 중…';
         try {
-          await firebase.database().ref('privateData/' + user.uid).set({
+          await firebase.database().ref('privateData/' + user.uid).update({
             nickname,
             email: user.email || '',
             onboardingSurvey,
-            status: sMode === 'approval' ? 'pending' : 'active',
-            motemote: {}
+            status: sMode === 'approval' ? 'pending' : 'active', withdrawnAt: null
           });
+          if (currentAuthUser?.uid !== user.uid) return;
           if (sMode === 'approval') {
             const reqObj = {
               uid: user.uid,
               nickname,
               avatarUrl: user.photoURL || '',
-              source,
-              feature,
-              goalHours: parsedGoalHours,
               requestedAt: `${todayStr()} ${getNowParts().hhmm}`,
               status: 'pending'
             };
@@ -11588,6 +11753,7 @@
               list.push(reqObj);
               return list;
             }, undefined, false);
+            if (currentAuthUser?.uid !== user.uid) return;
             if (!shared.joinRequests) shared.joinRequests = [];
             shared.joinRequests = shared.joinRequests.filter(r => r.uid !== user.uid);
             shared.joinRequests.push(reqObj);
@@ -11614,7 +11780,7 @@
           savePrefs();
           syncAuthUserMember(user);
         } catch (err) {
-          pendingFirstJoinWelcome = null;
+          if (pendingFirstJoinWelcome?.uid === user.uid) pendingFirstJoinWelcome = null;
           if (currentAuthUser?.uid === user.uid) showToast(`가입 정보를 저장하지 못했습니다. ${err?.message || '다시 시도해 주세요.'}`, 'error');
         } finally {
           onboardingBusy = false;
@@ -11623,11 +11789,31 @@
         }
       });
 
-      function signOutToLogin() {
-        if (typeof firebase !== 'undefined' && typeof firebase.auth === 'function') {
-          firebase.auth().signOut().catch(() => {});
+      let loggingOut = false;
+      async function signOutToLogin() {
+        if (loggingOut) return;
+        const user = currentAuthUser;
+        if (!user || typeof firebase === 'undefined' || typeof firebase.auth !== 'function') {
+          showAuthOverlay('login');
+          return;
         }
-        showAuthOverlay('login');
+        loggingOut = true;
+        try {
+          if (focusInterval) closeFocusOverlay(false, { quiet: true });
+          const pending = () => syncDirty || syncFlight || plannerFlight || Object.keys(pendingPlannerDays).length > 0;
+          const deadline = Date.now() + 3000;
+          while (user === currentAuthUser && pending() && cloudLinkLive !== false && Date.now() < deadline) {
+            await new Promise(resolve => setTimeout(resolve, 75));
+          }
+          if (user !== currentAuthUser) return;
+          if (pending() && !window.confirm('서버에서 일부 기록의 저장을 아직 확인하지 못했어요. 지금 로그아웃할까요?')) return;
+          await firebase.auth().signOut();
+          showToast('로그아웃되었습니다.', 'info');
+        } catch {
+          showToast('로그아웃하지 못했어요. 다시 시도해 주세요.', 'error');
+        } finally {
+          loggingOut = false;
+        }
       }
       document.getElementById('btn-onboard-logout').addEventListener('click', signOutToLogin);
       document.getElementById('btn-pending-logout')?.addEventListener('click', signOutToLogin);
@@ -11639,7 +11825,11 @@
             return (Array.isArray(cur) ? cur : Object.values(cur || {})).filter(Boolean).filter(r => r.uid !== uid);
           }, undefined, false);
           shared.joinRequests = (shared.joinRequests || []).filter(r => r.uid !== uid);
-        } catch (e) {}
+        } catch {
+          if (currentAuthUser?.uid === uid) showToast('재신청을 준비하지 못했어요. 연결을 확인하고 다시 시도해 주세요.', 'error');
+          return;
+        }
+        if (currentAuthUser?.uid !== uid) return;
         setOnboardStep(1);
         showAuthOverlay('onboard');
       });
@@ -11776,7 +11966,7 @@
             </div>
             <div class="space-y-1">
               <p class="font-black text-slate-900">4. 탈퇴 및 삭제</p>
-              <p>언제든지 <strong>👤 내 프로필 → 계정 탈퇴</strong>에서 직접 탈퇴하고 모든 기록을 바로 삭제할 수 있어요. 문의나 삭제 요청은 상단 더보기(⋯)의 <strong>💬 건의하기</strong> 또는 관리자 이메일(<code>spacerocket099@gmail.com</code>)로 편하게 알려주세요.</p>
+              <p>언제든지 <strong>👤 내 프로필 → 계정 탈퇴</strong>에서 직접 탈퇴할 수 있어요. 활동 기록과 개인 플래너는 탈퇴 시 삭제돼요. 별명·이메일·가입 설문을 포함한 탈퇴 기록은 7일이 지난 뒤 관리자가 접속하면 정리돼요. 문의나 삭제 요청은 상단 더보기(⋯)의 <strong>💬 건의하기</strong> 또는 관리자 이메일(<code>spacerocket099@gmail.com</code>)로 편하게 알려주세요.</p>
             </div>
           </div>
         `);
@@ -11784,18 +11974,7 @@
       document.getElementById('btn-open-privacy-policy')?.addEventListener('click', openPrivacyPolicyModal);
       document.getElementById('btn-footer-privacy-policy')?.addEventListener('click', openPrivacyPolicyModal);
 
-      function handleHeaderAuthClick() {
-        sessionClaimed = false;
-        if (currentAuthUser && typeof firebase !== 'undefined' && typeof firebase.auth === 'function') {
-          firebase.auth().signOut().then(() => {
-            showToast('로그아웃되었습니다.', 'info');
-            showAuthOverlay('login');
-          }).catch(() => {});
-        } else {
-          showAuthOverlay('login');
-        }
-      }
-      document.getElementById('btn-google-logout').addEventListener('click', handleHeaderAuthClick);
+      document.getElementById('btn-google-logout').addEventListener('click', signOutToLogin);
 
       document.getElementById('btn-delete-my-account')?.addEventListener('click', () => {
         if (prefs.adminMode && prefs.inspectingMember) {
@@ -11808,7 +11987,7 @@
           <form id="confirm-delete-account-form" class="space-y-3 text-xs">
             <div class="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-900 space-y-1">
               <p class="font-black">정말 계정을 탈퇴하시겠습니까?</p>
-              <p>탈퇴 시 <strong>가입 설문·공부 시간·플래너·출석·티어(LP)·사진</strong> 등 모든 데이터가 즉시 삭제되며 복구할 수 없습니다.</p>
+              <p>탈퇴하면 공부 시간·플래너·출석·티어(LP)·등록 사진이 삭제되며 복구할 수 없어요. 별명·이메일·가입 설문을 포함한 탈퇴 기록은 7일이 지난 뒤 관리자가 접속하면 정리돼요.</p>
             </div>
             <div>
               <label for="delete-account-confirm-input" class="block font-bold text-slate-700 mb-1">확인을 위해 아래에 <strong>탈퇴</strong> 라고 입력해 주세요.</label>
@@ -11831,39 +12010,47 @@
           btn.disabled = true;
           btn.textContent = '삭제 중…';
           const mid = me.id;
-          const uid = me.uid || (currentAuthUser && currentAuthUser.uid);
+          const user = currentAuthUser;
+          const uid = user?.uid;
           try {
-            if (focusInterval) closeFocusOverlay(true);
-            if (uid && typeof firebase !== 'undefined') {
-              try {
-                await firebase.database().ref('privateData/' + uid).update({
-                  status: 'withdrawn',
-                  withdrawnAt: `${todayStr()} ${getNowParts().hhmm}`,
-                  nickname: me.name || myPrivateData.nickname || '',
-                  email: (currentAuthUser && currentAuthUser.email) || myPrivateData.email || '',
-                  motemote: null
-                });
-              } catch (e) {}
+            if (uid && (me.uid !== uid || !dbRef || !cloudConnected || cloudLinkLive === false ||
+                syncDirty || syncFlight || plannerFlight || respectWriteInProgress)) {
+              throw new Error('저장이 끝나고 연결이 정상일 때 다시 시도해 주세요.');
             }
-            shared.members = (shared.members || []).filter(m => m.id !== mid);
-            ['classes', 'manualExempt', 'customBadges', 'memberChallenges', 'praises', 'directMessages', 'lpHistory', 'promoHistory', 'respectLpRewarded'].forEach(k => {
-              if (shared[k]) delete shared[k][mid];
+            if (uid) withdrawingUid = uid;
+            const updated = JSON.parse(JSON.stringify(shared));
+            updated.members = (updated.members || []).filter(m => m.id !== mid);
+            ['classes', 'manualExempt', 'customBadges', 'memberChallenges', 'challengeLpGranted', 'praises', 'directMessages', 'lpHistory', 'promoHistory', 'respectLpRewarded'].forEach(k => {
+              if (updated[k]) delete updated[k][mid];
             });
             ['records', 'studyLogs', 'studySubminuteMs', 'maxFocusLogs', 'periodStudySecs', 'studyBlocks', 'studyRankTimes', 'studySlotMins', 'hourlyLpGiven', 'motemote', 'periodLpRewarded', 'respectSentByDate', 'respectLpRewardedByDay'].forEach(k => {
-              if (shared[k]) {
-                Object.keys(shared[k]).forEach(d => {
-                  if (shared[k][d]) delete shared[k][d][mid];
+              if (updated[k]) {
+                Object.keys(updated[k]).forEach(d => {
+                  if (updated[k][d]) delete updated[k][d][mid];
                 });
               }
             });
-            if (Array.isArray(shared.photos)) {
-              shared.photos = shared.photos.filter(p => p.memberId !== mid);
+            if (Array.isArray(updated.photos)) {
+              updated.photos = updated.photos.filter(p => p.memberId !== mid);
             }
-            if (dbRef && cloudConnected) {
-              const sent = snapshotSharedState(shared);
-              const patch = makeCloudPatch(lastSyncedJson, sent);
-              if (Object.keys(patch).length) await dbRef.update(patch);
+            if (uid) {
+              const patch = {};
+              for (const [path, value] of Object.entries(makeCloudPatch(snapshotSharedState(shared), snapshotSharedState(updated)))) {
+                patch['studyData/' + path] = value;
+              }
+              const archived = {
+                status: 'withdrawn', withdrawnAt: todayStr() + ' ' + getNowParts().hhmm,
+                nickname: me.name || '', email: user.email || '', motemote: null
+              };
+              for (const [key, value] of Object.entries(archived)) patch['privateData/' + uid + '/' + key] = value;
+              await firebase.database().ref().update(patch);
+              if (currentAuthUser?.uid !== uid) return;
+              pendingPlannerDays = {};
+              persistPlannerDrafts();
+            } else {
+              shared = updated;
             }
+            if (focusInterval) closeFocusOverlay(true);
             try {
               localStorage.removeItem(LOCAL_PREFS_KEY);
               localStorage.removeItem(LOCAL_DATA_KEY);
@@ -11872,21 +12059,23 @@
             sessionClaimed = false;
             welcomePlayedForSession = false;
             closeModal();
-            if (currentAuthUser && typeof currentAuthUser.delete === 'function') {
+            if (user) {
               try {
-                await currentAuthUser.delete();
-              } catch (delErr) {
-                if (typeof firebase !== 'undefined' && typeof firebase.auth === 'function') {
-                  await firebase.auth().signOut().catch(() => {});
-                }
+                await user.delete();
+              } catch {
+                showToast('스터디 탈퇴 처리는 끝났지만 로그인 계정 삭제는 확인하지 못했어요. 관리자에게 문의해 주세요.', 'warn');
+                await firebase.auth().signOut();
+                return;
               }
             }
-            showToast('계정 탈퇴가 완료되었습니다. 모든 기록과 개인정보가 삭제되었습니다.', 'info');
+            showToast('스터디 탈퇴가 완료되었습니다.', 'info');
             showAuthOverlay('login');
           } catch (err) {
             btn.disabled = false;
             btn.textContent = '영구 탈퇴하기';
-            showToast('탈퇴 처리 중 오류가 발생했습니다. 다시 로그인 후 시도해 주세요.', 'error');
+            showToast(err?.message || '탈퇴 처리 중 오류가 발생했습니다. 다시 시도해 주세요.', 'error');
+          } finally {
+            if (withdrawingUid === uid) withdrawingUid = null;
           }
         });
       });
@@ -11989,7 +12178,7 @@
       });
       document.getElementById('home-today-todos-list').addEventListener('click', e => {
         const b = e.target.closest('[data-home-cycle-task]');
-        if (!b) return;
+        if (!b || prefs.adminMode || (privateRef && !plannerReady)) return;
         const mmToday = getMemberMotemote(studyDayKey(), prefs.currentUserId);
         const task = (mmToday.tasks || []).find(t => t.id === b.dataset.homeCycleTask);
         if (!task) return;
@@ -12001,6 +12190,7 @@
       initFirebase();
       updateCloudPill();
       switchTab(prefs.activeTab || 'dashboard');
+      if (filePreview) restoreFocusStateIfNeeded(prefs.currentUserId);
       let bannerMinute = '';
       let bannerStudyDay = studyDayKey();
       function refreshScheduleMinute() {
