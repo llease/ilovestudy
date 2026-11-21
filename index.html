@@ -28,8 +28,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet" />
   <style>
     :root { --accent: #5BB5F6; --accent-text: #111111; }
-    body[data-theme="yellow"] { --accent: #FACC15; --accent-text: #111111; }
-    body[data-theme="coral"] { --accent: #EE6D52; --accent-text: #ffffff; }
     body { font-family: 'Space Grotesk', 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif; background-color: #ffffff; color: #111111; overflow-x: hidden; }
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
@@ -487,8 +485,6 @@
       --hero:#142c54; --hero-deep:#101e37; --hero-text:#f5f8ff; --hero-muted:#c5d6f2;
       --shadow-card:0 2px 4px #182f4d08,0 10px 30px #182f4d06;
     }
-    body[data-theme="yellow"] { --accent:#f5ca64; --primary:#8b530a; --primary-hover:#713e03; --tint:#fff0d7; --link:#784500; --focus-ring:#a26716; }
-    body[data-theme="coral"] { --accent:#ffa58f; --primary:#a63828; --primary-hover:#882b1e; --tint:#ffede8; --link:#963423; --focus-ring:#b64735; }
     body[data-theme="iron"] { --accent:#94a3b8; --primary:#475569; --primary-hover:#334155; --tint:#eef2f7; --link:#334155; --focus-ring:#64748b; --hero:#334155; --hero-deep:#172030; --hero-muted:#cbd5e1; }
     body[data-theme="bronze"] { --accent:#e09f74; --primary:#924a24; --primary-hover:#733818; --tint:#f8ece3; --link:#803f1c; --focus-ring:#b45f32; --hero:#6e3619; --hero-deep:#291409; --hero-muted:#f2d2be; }
     body[data-theme="silver"] { --accent:#cbd5e1; --primary:#475c7a; --primary-hover:#34455e; --tint:#edf2f8; --link:#394c68; --focus-ring:#647b9e; --hero:#3d506b; --hero-deep:#172130; --hero-muted:#d5e0ee; }
@@ -505,8 +501,6 @@
       --on-primary:#0b2149; --tint:#1e345c; --link:#a8c1ff; --focus-ring:#a9c5ff;
       --hero:#1a335c; --hero-deep:#0e1b33; --shadow-card:0 8px 28px rgba(0,0,0,.32);
     }
-    body[data-dark="true"][data-theme="yellow"] { --primary:#f5ca64; --primary-hover:#ffe1a0; --on-primary:#332100; --tint:#3e3220; --link:#f7d78d; --focus-ring:#f5ca64; }
-    body[data-dark="true"][data-theme="coral"] { --primary:#ffa58f; --primary-hover:#ffc2b1; --on-primary:#41190e; --tint:#482e30; --link:#ffb7a4; --focus-ring:#ffa58f; }
     body[data-dark="true"][data-theme="iron"] { --primary:#cbd5e1; --primary-hover:#e2e8f0; --on-primary:#0f172a; --tint:#273244; --link:#cbd5e1; --focus-ring:#94a3b8; --hero:#334155; --hero-deep:#131b29; }
     body[data-dark="true"][data-theme="bronze"] { --primary:#e0a882; --primary-hover:#f0c4a6; --on-primary:#2b1508; --tint:#3b271c; --link:#ebb998; --focus-ring:#e0a882; --hero:#6e3619; --hero-deep:#241107; }
     body[data-dark="true"][data-theme="silver"] { --primary:#c9d6e8; --primary-hover:#e2ebf6; --on-primary:#162033; --tint:#263449; --link:#d3dff0; --focus-ring:#a8b8d0; --hero:#3d506b; --hero-deep:#151f2e; }
@@ -1959,6 +1953,145 @@
       .calendar-day,.calendar-day-blank {height:3.15rem}
       .calendar-cell-time,.calendar-week-value {font-size:.62rem}
     }
+    /* Everyday palettes use separate surfaces and contrast tokens for each color scheme. */
+    body[data-theme="yellow"] {
+      --page:#f7f5e7;--surface:#fffef8;--soft:#f6f2dc;--line:#e5dbad;--ink:#292816;--muted:#625d3c;
+      --accent:#efd372;--accent-text:#2c240a;--primary:#68500b;--primary-hover:#4f3a06;--tint:#f8edba;--link:#5c470a;--focus-ring:#886907;
+      --hero:#534815;--hero-deep:#24220f;--hero-muted:#f6e9ae
+    }
+    body[data-dark="true"][data-theme="yellow"] {
+      --page:#14160f;--surface:#202318;--soft:#292d1f;--line:#3c412b;--ink:#faf6dc;--muted:#c6c3a0;
+      --accent:#f5d981;--accent-text:#2a2209;--primary:#f5d981;--primary-hover:#ffe9a8;--on-primary:#2a2209;
+      --tint:#3a3316;--link:#ffe299;--focus-ring:#f5d981;--hero:#48421b;--hero-deep:#191c11;--hero-muted:#f0e5b0
+    }
+    body[data-theme="coral"] {
+      --page:#faf0f1;--surface:#fffafb;--soft:#f8e7eb;--line:#e8cbd4;--ink:#38232c;--muted:#755261;
+      --accent:#e68199;--accent-text:#331320;--primary:#9d284c;--primary-hover:#801a3a;--tint:#f8dde6;--link:#912345;--focus-ring:#ad3154;
+      --hero:#722741;--hero-deep:#331523;--hero-muted:#f5cbd8
+    }
+    body[data-dark="true"][data-theme="coral"] {
+      --page:#1b1018;--surface:#291821;--soft:#35202c;--line:#523243;--ink:#fff0f5;--muted:#e0b3c4;
+      --accent:#ff9eb6;--accent-text:#380d20;--primary:#ff9eb6;--primary-hover:#ffc4d4;--on-primary:#380d20;
+      --tint:#492437;--link:#ffadc4;--focus-ring:#ff9eb6;--hero:#642842;--hero-deep:#25121e;--hero-muted:#f9cde0
+    }
+
+    /* Silver: reflective chrome and ice-white light. */
+    body:is([data-theme="yellow"],[data-theme="coral"]) #main-live-banner {
+      background-image:var(--study-hero-image,linear-gradient(118deg,var(--hero-deep) 4%,var(--hero) 88%))!important
+    }
+
+    body[data-theme="silver"] {
+      --page:#edf2fa;--surface:#fbfdff;--soft:#edf3fd;--line:#c6d5ed;
+      --accent:#c6ddff;--primary:#344c83;--primary-hover:#263961;--tint:#dce8ff;--link:#354a82;
+      --focus-ring:#4964b1;--hero:#425988;--hero-deep:#18213b;--hero-muted:#e2eaff;
+      --tier-edge:#c5ddff;--tier-glow:#a2bfff70;
+      --tier-button:linear-gradient(115deg,#25365f,#405b91 48%,#5871aa 64%,#344b7c);
+      --tier-material:
+        radial-gradient(ellipse at 84% 17%,#e8f4ff98,transparent 28%),
+        linear-gradient(119deg,transparent 49%,#c9e1ff22 50%,transparent 51% 59%,#ecf6ff72 60%,#b7d3ff2b 62%,transparent 65% 74%,#cfe7ff84 75%,transparent 78%),
+        linear-gradient(112deg,#181e33 4%,#243657 46%,#4767a4 77%,#334565 100%);
+      --tier-decor:
+        linear-gradient(135deg,transparent 49%,#eef8ff7a 50%,transparent 51%) 88% 33% / 31px 31px no-repeat,
+        linear-gradient(45deg,transparent 49%,#eef8ff7a 50%,transparent 51%) 88% 33% / 31px 31px no-repeat,
+        linear-gradient(110deg,transparent 47%,#e7eeff21 60%,transparent 62%)
+    }
+    body[data-dark="true"][data-theme="silver"] {
+      --page:#101629;--surface:#19233a;--soft:#202e49;--line:#3c4e74;--ink:#eef5ff;--muted:#b3c5e7;
+      --primary:#c4d8ff;--primary-hover:#eaf2ff;--on-primary:#17264b;--tint:#2b3f66;--link:#d1e0ff;--focus-ring:#c4d8ff;
+      --tier-button:linear-gradient(120deg,#adc7fe,#e6f4ff 48%,#cadcff 72%,#a4baf0)
+    }
+
+    /* Platinum: cool aqua enamel with concentric reflections. */
+    body[data-theme="platinum"] {
+      --page:#e9f6f8;--surface:#f7fdff;--soft:#e3f4f7;--line:#bedfe8;
+      --accent:#86e7ed;--primary:#116779;--primary-hover:#0d4c62;--tint:#d5f2f7;--link:#11586c;--focus-ring:#0b8294;
+      --hero:#127483;--hero-deep:#0a293e;--hero-muted:#c9f5fd;
+      --tier-edge:#8bfcf2;--tier-glow:#6aeee272;
+      --tier-button:linear-gradient(112deg,#103d56,#115d72 58%,#148492 77%,#126578);
+      --tier-material:
+        radial-gradient(ellipse at 80% 72%,#6cf3f96c,transparent 32%),
+        repeating-radial-gradient(ellipse at 83% 115%,transparent 0 23px,#9affff49 24px,#9affff08 26px,transparent 29px 49px),
+        linear-gradient(108deg,#071f32 3%,#10405a 48%,#147b84 85%,#174665);
+      --tier-decor:
+        linear-gradient(158deg,transparent 44%,#b4ffff53 45%,transparent 47% 65%,#a7faff5c 66%,transparent 67%),
+        radial-gradient(circle at 90% 19%,#baffffbd 0 2px,transparent 3px),
+        radial-gradient(circle at 77% 33%,#baffff9a 0 1px,transparent 2px)
+    }
+    body[data-dark="true"][data-theme="platinum"] {
+      --page:#0b1824;--surface:#102637;--soft:#183344;--line:#2b4c60;--ink:#eafaff;--muted:#acd2de;
+      --primary:#91e9f2;--primary-hover:#bef8fd;--on-primary:#0d3948;--tint:#1b4052;--link:#9cecf5;--focus-ring:#8ee9ee;
+      --tier-button:linear-gradient(115deg,#80dbe7,#bcffff 53%,#80d5e9)
+    }
+
+    /* Emerald: saturated gemstone facets with a warm green highlight. */
+    body[data-theme="emerald"] {
+      --page:#e9f5e9;--surface:#f8fdf5;--soft:#eaf5e4;--line:#c7dfbc;
+      --accent:#a8ec81;--primary:#1d683d;--primary-hover:#124c2b;--tint:#ddf4cb;--link:#1a6039;--focus-ring:#3b8e36;
+      --hero:#1b6842;--hero-deep:#0b251f;--hero-muted:#dcf7ca;
+      --tier-edge:#baff87;--tier-glow:#ceff7680;
+      --tier-button:linear-gradient(110deg,#0a452f,#1c603a 45%,#297845 72%,#235b33);
+      --tier-material:
+        radial-gradient(ellipse at 85% 48%,#aaff6180,transparent 32%),
+        conic-gradient(from 22deg at 84% 60%,#d7ff741c 0deg 23deg,#3dfb7445 24deg 72deg,#081f182e 73deg 111deg,#b8ff633a 112deg 153deg,#09170f2e 154deg 203deg,transparent 204deg 295deg,#b9ff862e 296deg 360deg),
+        linear-gradient(110deg,#071e19 5%,#123f2d 49%,#25894c 84%,#245331);
+      --tier-decor:
+        linear-gradient(137deg,transparent 58%,#b2ff614f 59%,transparent 60% 73%,#deff8563 74%,transparent 75%),
+        linear-gradient(36deg,transparent 63%,#dcff8065 64%,transparent 65%),
+        radial-gradient(circle at 89% 23%,#f5ffc2 0 1.5px,transparent 3px),
+        radial-gradient(circle at 77% 42%,#c1ff929d 0 1px,transparent 2px)
+    }
+    body[data-dark="true"][data-theme="emerald"] {
+      --page:#0d1c16;--surface:#132a20;--soft:#1b382a;--line:#38523d;--ink:#f3fdec;--muted:#b9d4ba;
+      --primary:#aff38a;--primary-hover:#dcffb8;--on-primary:#1a321b;--tint:#2c492e;--link:#c0f9a5;--focus-ring:#a9ec72;
+      --tier-button:linear-gradient(113deg,#9ce58d,#d6ffa5 56%,#8fe699)
+    }
+
+    body[data-theme="gold"] {
+      --tier-material:radial-gradient(ellipse at 87% 33%,#ffc66777,transparent 37%),linear-gradient(112deg,#291a08,#59400d 55%,#8b5814);
+      --tier-decor:repeating-conic-gradient(from 17deg at 86% 63%,#ffd69428 0deg 10deg,transparent 11deg 26deg)
+    }
+    body[data-theme="diamond"] {
+      --tier-material:radial-gradient(ellipse at 87% 30%,#65c9ff92,transparent 34%),linear-gradient(116deg,#101f47,#254c86 58%,#3354a1);
+      --tier-decor:linear-gradient(130deg,transparent 50%,#c5f1ff55 51%,transparent 52% 65%,#c5eaff40 66%,transparent 67%),linear-gradient(29deg,transparent 50%,#bfcaff57 51%,transparent 52%)
+    }
+    body[data-theme="master"] {
+      --tier-material:radial-gradient(ellipse at 85% 57%,#db86fc85,transparent 39%),linear-gradient(119deg,#241038,#4b247e 60%,#712986);
+      --tier-decor:radial-gradient(circle at 88% 28%,#f1c9ffab 0 2px,transparent 3px),radial-gradient(circle at 65% 26%,#ecccff8a 0 1px,transparent 2px),linear-gradient(138deg,transparent 48%,#e39aff4a 53%,transparent 59% 66%,#b48aff4f 71%,transparent 74%)
+    }
+    body[data-theme="grandmaster"] {
+      --tier-material:radial-gradient(ellipse at 89% 43%,#ff9c6599,transparent 34%),linear-gradient(114deg,#320e23,#732146 55%,#9a3b47);
+      --tier-decor:repeating-conic-gradient(from 28deg at 86% 53%,#ffd08330 0deg 5deg,transparent 6deg 23deg)
+    }
+    body[data-theme="challenger"] {
+      --tier-material:radial-gradient(ellipse at 89% 33%,#ffe89a99,transparent 28%),linear-gradient(117deg,#091533,#2450a2 52%,#07637a 76%,#8a6312);
+      --tier-decor:linear-gradient(121deg,transparent 44%,#98f4ff4a 48%,transparent 53% 62%,#fff49a8a 65%,transparent 68%),radial-gradient(circle at 91% 32%,#fff9d5 0 2px,transparent 3px),radial-gradient(circle at 76% 18%,#b5effe 0 1.5px,transparent 2.5px)
+    }
+
+    body:is([data-theme="silver"],[data-theme="gold"],[data-theme="platinum"],[data-theme="emerald"],[data-theme="diamond"],[data-theme="master"],[data-theme="grandmaster"],[data-theme="challenger"]) #main-live-banner {
+      background-image:var(--study-hero-image,var(--tier-material))!important
+    }
+    body:is([data-theme="silver"],[data-theme="gold"],[data-theme="platinum"],[data-theme="emerald"],[data-theme="diamond"],[data-theme="master"],[data-theme="grandmaster"],[data-theme="challenger"]) #focus-overlay[data-focus-theme="home"] .focus-home-scene {
+      background-image:var(--tier-material)!important
+    }
+    body:is([data-theme="silver"],[data-theme="gold"],[data-theme="platinum"],[data-theme="emerald"],[data-theme="diamond"],[data-theme="master"],[data-theme="grandmaster"],[data-theme="challenger"]) :is(#main-live-banner, :where(#focus-overlay[data-focus-theme="home"]) .focus-home-scene)::before {
+      background:var(--tier-decor);mask-image:linear-gradient(90deg,transparent 32%,#000 73%);opacity:.82
+    }
+    #main-live-banner[style*="--study-hero-image"]::before {opacity:.2!important}
+    body:is([data-theme="silver"],[data-theme="platinum"],[data-theme="emerald"]) :is(#main-live-banner, :where(#focus-overlay[data-focus-theme="home"]) .focus-home-scene) {
+      border-color:var(--tier-edge)!important;
+      box-shadow:inset 0 1px 0 #fff9,inset 0 -2px 0 #0005,0 16px 36px #071e3c38,0 0 24px var(--tier-glow)!important
+    }
+    body:is([data-theme="silver"],[data-theme="platinum"],[data-theme="emerald"]) .study-logo {
+      background-image:var(--tier-material);border-color:var(--tier-edge);box-shadow:0 0 12px var(--tier-glow)
+    }
+    body:is([data-theme="silver"],[data-theme="platinum"],[data-theme="emerald"]) .ed-btn-accent:not(#btn-checkin):not(#btn-google-login):not(:disabled) {
+      background:var(--tier-button)!important;color:var(--on-primary)!important;
+      border-color:var(--focus-ring);box-shadow:inset 0 1px 0 #ffffff6a,0 5px 16px var(--tier-glow)
+    }
+    body:is([data-theme="silver"],[data-theme="platinum"],[data-theme="emerald"]) .ed-btn-accent:not(#btn-checkin):not(#btn-google-login):hover:not(:disabled) {filter:brightness(1.12)}
+    body:is([data-theme="silver"],[data-theme="platinum"],[data-theme="emerald"]) .study-hero-stat {
+      border-color:var(--tier-edge);background:color-mix(in srgb,var(--hero-deep) 83%,transparent)
+    }
   </style>
 </head>
 <body data-theme="blue" class="bg-white text-slate-950 min-h-screen antialiased">
@@ -2306,8 +2439,8 @@
               </div>
               <div class="flex items-center gap-2">
                 <button type="button" data-set-theme="blue" data-theme-label="스카이 블루" data-min-lp="0" class="theme-swatch-basic" style="background:#5BB5F6" title="스카이 블루 (기본)"></button>
-                <button type="button" data-set-theme="yellow" data-theme-label="머스타드 옐로우" data-min-lp="0" class="theme-swatch-basic" style="background:#FACC15" title="머스타드 옐로우 (기본)"></button>
-                <button type="button" data-set-theme="coral" data-theme-label="코랄 오렌지" data-min-lp="0" class="theme-swatch-basic" style="background:#EE6D52" title="코랄 오렌지 (기본)"></button>
+                <button type="button" data-set-theme="yellow" data-theme-label="레몬 옐로우" data-min-lp="0" class="theme-swatch-basic" style="background:#efd372" title="레몬 옐로우 (기본)"></button>
+                <button type="button" data-set-theme="coral" data-theme-label="로즈 레드" data-min-lp="0" class="theme-swatch-basic" style="background:#e68199" title="로즈 레드 (기본)"></button>
               </div>
             </div>
             <div class="border-t border-slate-200/80 pt-2 space-y-1.5">
@@ -2318,10 +2451,10 @@
               <div class="grid grid-cols-5 gap-2 place-items-center">
                 <button type="button" data-set-theme="iron" data-theme-label="아이언 스틸" data-min-lp="0" data-tier-name="아이언" class="theme-swatch-tier" style="background:linear-gradient(135deg,#cbd5e1 0%,#64748b 52%,#334155 100%)" title="아이언 스틸 (아이언 0 LP)"></button>
                 <button type="button" data-set-theme="bronze" data-theme-label="브론즈 코퍼" data-min-lp="80" data-tier-name="브론즈" class="theme-swatch-tier" style="background:linear-gradient(135deg,#f6d0b4 0%,#c87b4e 48%,#7a3a18 100%)" title="브론즈 코퍼 (브론즈 80 LP)"></button>
-                <button type="button" data-set-theme="silver" data-theme-label="실버 미스트" data-min-lp="170" data-tier-name="실버" class="theme-swatch-tier" style="background:linear-gradient(135deg,#ffffff 0%,#cbd5e1 44%,#64748b 100%)" title="실버 미스트 (실버 170 LP)"></button>
+                <button type="button" data-set-theme="silver" data-theme-label="실버 크롬" data-min-lp="170" data-tier-name="실버" class="theme-swatch-tier" style="background:linear-gradient(132deg,#243554,#bbcfff 26%,#f5fdff 42%,#738fcb 57%,#2e4876 66%,#e4efff)" title="실버 크롬 (실버 170 LP)"></button>
                 <button type="button" data-set-theme="gold" data-theme-label="골드 앰버" data-min-lp="270" data-tier-name="골드" class="theme-swatch-tier" style="background:linear-gradient(135deg,#fef08a 0%,#eab308 46%,#9a6206 100%)" title="골드 앰버 (골드 270 LP)"></button>
-                <button type="button" data-set-theme="platinum" data-theme-label="플래티넘 틸" data-min-lp="380" data-tier-name="플래티넘" class="theme-swatch-tier" style="background:linear-gradient(135deg,#ccfbf1 0%,#2dd4bf 48%,#0f766e 100%)" title="플래티넘 틸 (플래티넘 380 LP)"></button>
-                <button type="button" data-set-theme="emerald" data-theme-label="에메랄드 포레스트" data-min-lp="500" data-tier-name="에메랄드" class="theme-swatch-tier" style="background:conic-gradient(from 45deg,#a7f3d0,#10b981,#047857,#34d399,#a7f3d0)" title="에메랄드 포레스트 (에메랄드 500 LP)"></button>
+                <button type="button" data-set-theme="platinum" data-theme-label="플래티넘 아쿠아" data-min-lp="380" data-tier-name="플래티넘" class="theme-swatch-tier" style="background:repeating-radial-gradient(ellipse at 80% 100%,#9ffff5 0 3px,#188e9d 4px 6px,#183e69 7px 9px)" title="플래티넘 아쿠아 (플래티넘 380 LP)"></button>
+                <button type="button" data-set-theme="emerald" data-theme-label="에메랄드 포레스트" data-min-lp="500" data-tier-name="에메랄드" class="theme-swatch-tier" style="background:conic-gradient(from 45deg,#b6fc72,#298447,#0b5736,#a6db51,#145638,#b6fc72)" title="에메랄드 포레스트 (에메랄드 500 LP)"></button>
                 <button type="button" data-set-theme="diamond" data-theme-label="다이아 사파이어" data-min-lp="630" data-tier-name="다이아몬드" class="theme-swatch-tier" style="background:conic-gradient(from 30deg,#e0f2fe,#38bdf8,#6366f1,#bae6fd,#e0f2fe)" title="다이아 사파이어 (다이아몬드 630 LP)"></button>
                 <button type="button" data-set-theme="master" data-theme-label="마스터 바이올렛" data-min-lp="770" data-tier-name="마스터" class="theme-swatch-tier" style="background:linear-gradient(135deg,#f5d0fe 0%,#a855f7 45%,#4c1d95 100%)" title="마스터 바이올렛 (마스터 770 LP)"></button>
                 <button type="button" data-set-theme="grandmaster" data-theme-label="그랜드마스터 크림슨" data-min-lp="930" data-tier-name="그랜드마스터" class="theme-swatch-tier" style="background:linear-gradient(135deg,#fde047 0%,#f43f5e 46%,#881337 100%)" title="그랜드마스터 크림슨 (그랜드마스터 930 LP)"></button>
@@ -2566,7 +2699,7 @@
         </div>
         <div id="rank-tier-table-wrap" class="overflow-visible p-1"></div>
         <div class="rounded-xl bg-slate-50 border border-slate-200 p-3 text-[11px] text-slate-600 leading-relaxed">
-          <strong class="text-slate-900">💎 LP 적립 체계</strong> : 울트라집중 교시 출석 <strong>+4</strong>(지각 +1, 면제 +2) · 자율모드 일일 출석 <strong>+5</strong> · 연속 출석 <strong>+3</strong>(5일마다 +15) · 공부 1시간당 <strong>+3</strong>(일 최대 8시간) · 리스펙 받기 <strong>+2</strong> · 챌린지 보상
+          <strong class="text-slate-900">💎 LP 적립 체계</strong> : 울트라집중 교시 출석 <strong>+4</strong>(지각 +1, 면제 +2) · 자율모드 일일 출석 <strong>+5</strong> · 연속 출석 <strong>+3</strong>(5일마다 +15) · 공부 1시간당 <strong>+3</strong>(일 최대 8시간) · 리스펙 첫 수신 <strong>+2</strong>(공부일당 1회) · 챌린지 보상
         </div>
       </div>
 
@@ -2989,7 +3122,7 @@
                   <span class="px-2 py-0.5 rounded-md bg-white border border-slate-200 text-[11px] font-semibold">자율 출석 <strong>+5</strong></span>
                   <span class="px-2 py-0.5 rounded-md bg-white border border-slate-200 text-[11px] font-semibold">연속 출석 <strong>+3</strong> (5일마다 +15)</span>
                   <span class="px-2 py-0.5 rounded-md bg-white border border-slate-200 text-[11px] font-semibold">공부 1시간당 <strong>+3</strong> (일 최대 8h)</span>
-                  <span class="px-2 py-0.5 rounded-md bg-white border border-slate-200 text-[11px] font-semibold">리스펙 받기 <strong>+2</strong> (1인 1회)</span>
+                  <span class="px-2 py-0.5 rounded-md bg-white border border-slate-200 text-[11px] font-semibold">리스펙 첫 수신 <strong>+2</strong> (공부일당 1회, 오전 5시 기준)</span>
                   <span class="px-2 py-0.5 rounded-md bg-white border border-slate-200 text-[11px] font-semibold">챌린지 보상</span>
                 </div>
               </li>
@@ -3655,7 +3788,7 @@
           reports: {},
           directMessages: {},
           lpHistory: {},
-          respectLpRewarded: {},
+          respectLpRewardedByDay: {},
           periodLpRewarded: {},
           hourlyLpGiven: {},
           lpCut30Migrated: true,
@@ -3737,7 +3870,7 @@
             parsed.encouragements = inboxRecords(parsed.encouragements);
             parsed.directMessages = memberMailboxes(parsed.directMessages);
             if (!parsed.lpHistory) parsed.lpHistory = {};
-            if (!parsed.respectLpRewarded) parsed.respectLpRewarded = {};
+            if (!parsed.respectLpRewardedByDay) parsed.respectLpRewardedByDay = {};
             if (!parsed.periodLpRewarded) parsed.periodLpRewarded = {};
             if (!parsed.hourlyLpGiven) parsed.hourlyLpGiven = {};
             if (!parsed.studySlotMins) parsed.studySlotMins = {};
@@ -3829,11 +3962,12 @@
       let syncDeferredValue = null;
       let syncGeneration = 0;
       let focusWriteBatch = false;
+      let respectWriteInProgress = false;
 
       function snapshotSharedState(obj) {
         const snap = {};
         if (!obj) return snap;
-        const twoLevel = ['studyLogs', 'studySubminuteMs', 'maxFocusLogs', 'periodStudySecs', 'studyBlocks', 'studyRankTimes', 'motemote', 'records', 'manualExempt', 'respectSentByDate', 'periodLpRewarded', 'hourlyLpGiven', 'studySlotMins', 'directMessages'];
+        const twoLevel = ['studyLogs', 'studySubminuteMs', 'maxFocusLogs', 'periodStudySecs', 'studyBlocks', 'studyRankTimes', 'motemote', 'records', 'manualExempt', 'respectSentByDate', 'respectLpRewardedByDay', 'periodLpRewarded', 'hourlyLpGiven', 'studySlotMins', 'directMessages'];
         const oneLevel = ['classes', 'praises', 'promoHistory', 'customBadges', 'memberChallenges', 'challengeLpGranted', 'respectLpRewarded', 'lpHistory', 'reports', 'suggestions', 'encouragements'];
         Object.keys(obj).forEach(k => {
           if (twoLevel.includes(k) && obj[k] && typeof obj[k] === 'object') {
@@ -3913,7 +4047,7 @@
       }
 
       function queueCloudWrite() {
-        if (!dbRef || !cloudConnected || cloudLinkLive === false || !syncDirty || syncFlight || syncQueued || syncRetryTimer || syncFailures >= 5) return;
+        if (!dbRef || !cloudConnected || cloudLinkLive === false || !syncDirty || syncFlight || syncQueued || respectWriteInProgress || syncRetryTimer || syncFailures >= 5) return;
         syncQueued = true;
         const generation = syncGeneration;
         queueMicrotask(() => {
@@ -3924,7 +4058,7 @@
       }
 
       async function flushCloudWrite() {
-        if (!dbRef || !cloudConnected || cloudLinkLive === false || !syncDirty || syncFlight || syncRetryTimer || syncFailures >= 5) return;
+        if (!dbRef || !cloudConnected || cloudLinkLive === false || !syncDirty || syncFlight || respectWriteInProgress || syncRetryTimer || syncFailures >= 5) return;
         const sent = snapshotSharedState(shared);
         const patch = makeCloudPatch(lastSyncedJson, sent);
         syncDirty = false;
@@ -4374,6 +4508,7 @@
               directMessages: memberMailboxes(v.directMessages),
               lpHistory: normArrMap(v.lpHistory),
               respectLpRewarded: v.respectLpRewarded || {},
+              respectLpRewardedByDay: v.respectLpRewardedByDay || {},
               periodLpRewarded: v.periodLpRewarded || {},
               hourlyLpGiven: v.hourlyLpGiven || {},
               studySlotMins: v.studySlotMins || {},
@@ -4715,7 +4850,7 @@
           ['classes', 'manualExempt', 'customBadges', 'memberChallenges', 'challengeLpGranted', 'praises', 'directMessages', 'lpHistory', 'promoHistory', 'respectLpRewarded'].forEach(k => {
             if (shared[k]) delete shared[k][memberId];
           });
-          ['records', 'studyLogs', 'studySubminuteMs', 'maxFocusLogs', 'periodStudySecs', 'studyBlocks', 'studyRankTimes', 'studySlotMins', 'hourlyLpGiven', 'motemote', 'periodLpRewarded', 'respectSentByDate'].forEach(k => {
+          ['records', 'studyLogs', 'studySubminuteMs', 'maxFocusLogs', 'periodStudySecs', 'studyBlocks', 'studyRankTimes', 'studySlotMins', 'hourlyLpGiven', 'motemote', 'periodLpRewarded', 'respectSentByDate', 'respectLpRewardedByDay'].forEach(k => {
             if (shared[k]) Object.keys(shared[k]).forEach(d => { if (shared[k][d]) delete shared[k][d][memberId]; });
           });
           if (shared.photos) shared.photos = shared.photos.filter(p => p.memberId !== memberId);
@@ -4848,36 +4983,44 @@
         if (changed) saveSharedData();
       }
 
-      function unlockChallengeFor(memberId, chId, silent, earnedAt) {
-        const ch = (shared.challenges || []).find(c => c.id === chId);
-        if (!ch) return;
-        if (!shared.memberChallenges) shared.memberChallenges = {};
-        if (!Array.isArray(shared.memberChallenges[memberId])) {
-          shared.memberChallenges[memberId] = Object.values(shared.memberChallenges[memberId] || {}).filter(Boolean);
-        }
-        if (shared.memberChallenges[memberId].includes(chId)) return;
-        shared.memberChallenges[memberId].push(chId);
-        if (!shared.challengeLpGranted) shared.challengeLpGranted = {};
-        if (!shared.challengeLpGranted[memberId]) shared.challengeLpGranted[memberId] = {};
-        shared.challengeLpGranted[memberId][chId] = ch.lp || 20;
-        addMemberLp(memberId, ch.lp || 20, `챌린지: ${ch.title}`, earnedAt);
-        const starterIdsAll = (shared.challenges || []).filter(c => challengeCategory(c) === 'starter').map(c => c.id);
-        const mClearObj = shared.members.find(x => x.id === memberId);
-        const allStarterDone = starterIdsAll.length > 0 && starterIdsAll.every(id => shared.memberChallenges[memberId].includes(id));
-        const justClearedAllStarter = !!(allStarterDone && mClearObj && !mClearObj.starterAllCleared);
-        if (justClearedAllStarter) mClearObj.starterAllCleared = true;
-        if (!silent && memberId === prefs.currentUserId) {
-          if (focusInterval && !focusPaused) {
-            pendingCelebrations.push(ch);
-            if (justClearedAllStarter) pendingCelebrations.push({ __starterAllClear: true });
-          } else {
-            triggerChallengeCelebration(ch);
-            if (justClearedAllStarter) {
-              const quiet = !!focusInterval || quietTimerStart;
-              setTimeout(() => playStarterAllClearCeremony(quiet), 500);
-            }
+      function grantChallengeReward(state, member, chId, earnedAt) {
+        if (!member) return null;
+        const challenges = Object.values(state.challenges || {}).filter(Boolean);
+        const ch = challenges.find(item => item.id === chId);
+        if (!ch) return null;
+        const allCompleted = state.memberChallenges ||= {};
+        const done = Object.values(allCompleted[member.id] || {}).filter(Boolean);
+        if (done.includes(chId)) return null;
+        allCompleted[member.id] = [...done, chId];
+        const amount = ch.lp || 20;
+        ((state.challengeLpGranted ||= {})[member.id] ||= {})[chId] = amount;
+        applyMemberLp(state, member, amount, `챌린지: ${ch.title}`, earnedAt);
+        const starters = challenges.filter(item => challengeCategory(item) === 'starter');
+        const justCleared = !member.starterAllCleared && starters.length > 0 &&
+          starters.every(item => allCompleted[member.id].includes(item.id));
+        if (justCleared) member.starterAllCleared = true;
+        return { ch, amount, justCleared };
+      }
+
+      function announceChallengeReward(memberId, reward, silent) {
+        if (!reward || memberId !== prefs.currentUserId) return;
+        announceLpGain(memberId, reward.amount);
+        if (silent) return;
+        if (focusInterval && !focusPaused) {
+          pendingCelebrations.push(reward.ch);
+          if (reward.justCleared) pendingCelebrations.push({ __starterAllClear: true });
+        } else {
+          triggerChallengeCelebration(reward.ch);
+          if (reward.justCleared) {
+            const quiet = !!focusInterval || quietTimerStart;
+            setTimeout(() => playStarterAllClearCeremony(quiet), 500);
           }
         }
+      }
+
+      function unlockChallengeFor(memberId, chId, silent, earnedAt) {
+        const member = shared.members.find(item => item.id === memberId);
+        announceChallengeReward(memberId, grantChallengeReward(shared, member, chId, earnedAt), silent);
       }
 
       let quietTimerStart = false;
@@ -4910,8 +5053,7 @@
         }
       }
 
-      function addMemberLp(memberId, delta, reason, earnedAt = new Date()) {
-        const m = shared.members.find(x => x.id === memberId);
+      function applyMemberLp(state, m, delta, reason, earnedAt = new Date()) {
         if (!m || !delta) return;
         if (typeof m.tierIdx !== 'number') {
           let nIdx = 0;
@@ -4933,9 +5075,10 @@
         } else {
           m.lp = Math.max(0, (Number(m.lp) || 0) + delta);
         }
-        if (!shared.lpHistory) shared.lpHistory = {};
-        if (!shared.lpHistory[memberId]) shared.lpHistory[memberId] = [];
-        shared.lpHistory[memberId].push({
+        const histories = state.lpHistory ||= {};
+        const history = histories[m.id] ||= [];
+        if (!Array.isArray(history)) histories[m.id] = Object.values(history).filter(Boolean);
+        histories[m.id].push({
           date: koreaDateKey(earnedAt),
           time: new Date(+earnedAt + 9 * 3600000).toISOString().slice(11, 16),
           studyDay: studyDayKey(earnedAt),
@@ -4943,7 +5086,16 @@
           source: lpSource({ reason }),
           reason: reason || (delta > 0 ? 'LP 획득' : 'LP 조정')
         });
+      }
 
+      function addMemberLp(memberId, delta, reason, earnedAt) {
+        const member = shared.members.find(item => item.id === memberId);
+        if (!member || !delta) return;
+        applyMemberLp(shared, member, delta, reason, earnedAt);
+        announceLpGain(memberId, delta);
+      }
+
+      function announceLpGain(memberId, delta) {
         if (memberId === prefs.currentUserId && delta > 0 && !prefs.adminMode) {
           if (focusInterval) focusSessionLp += delta;
           showFloatingLp(delta);
@@ -7959,6 +8111,79 @@
         setMemberCardMenu(menu, false);
         menu.focus({ preventScroll: true });
       });
+      function applyRespect(state, fromId, toId, praise, sentAt) {
+        const members = Object.values(state.members || {}).filter(Boolean);
+        const from = members.find(member => member.id === fromId && member.inStudy !== false);
+        const to = members.find(member => member.id === toId && member.inStudy !== false);
+        if (!from || !to || from === to) return null;
+        const received = Object.values(state.praises?.[toId] || {}).filter(Boolean);
+        if (received.some(item => item.id === praise.id)) return null;
+
+        const day = studyDayKey(sentAt);
+        const daily = ((state.respectLpRewardedByDay ||= {})[day] ||= {});
+        const pastRewards = Object.values(state.lpHistory?.[toId] || {});
+        const alreadyCredited = !!daily[toId] || pastRewards.some(record =>
+          record?.reason === '리스펙 받음' && Number(record.delta) > 0 && lpRecordStudyDay(record) === day
+        );
+        daily[toId] = true;
+        if (!alreadyCredited) applyMemberLp(state, to, 2, '리스펙 받음', sentAt);
+
+        to.respectCount = (Number(to.respectCount) || 0) + 1;
+        (state.praises ||= {})[toId] = [...received, praise];
+        const sent = (((state.respectSentByDate ||= {})[praise.date] ||= {})[fromId] ||= {});
+        sent[toId] = true;
+        const others = members.filter(member => member !== from && member.inStudy !== false);
+        const completed = [grantChallengeReward(state, from, 'ch_respect1', sentAt)];
+        if (others.length && others.every(member => sent[member.id])) {
+          completed.push(grantChallengeReward(state, from, 'ch_all_resp', sentAt));
+        }
+        if (received.length + 1 >= 5) grantChallengeReward(state, to, 'ch7', sentAt);
+        return { toName: to.name, credited: !alreadyCredited, completed: completed.filter(Boolean) };
+      }
+
+      async function sendRespect(toId) {
+        if (prefs.adminMode || respectWriteInProgress) return;
+        const fromId = prefs.currentUserId;
+        const sentAt = new Date();
+        const praise = {
+          id: 'pr_' + (globalThis.crypto?.randomUUID?.() || `${+sentAt}_${Math.random().toString(36).slice(2)}`),
+          msg: PRAISE_MESSAGES[Math.floor(Math.random() * PRAISE_MESSAGES.length)],
+          time: new Date(+sentAt + 9 * 3600000).toISOString().slice(11, 16),
+          date: koreaDateKey(sentAt), read: false
+        };
+        let outcome;
+        respectWriteInProgress = true;
+        try {
+          if (dbRef && !filePreview) {
+            const result = await dbRef.transaction(state => {
+              outcome = null;
+              if (!state) return state;
+              outcome = applyRespect(state, fromId, toId, praise, sentAt);
+              return outcome ? state : undefined;
+            }, undefined, false);
+            if (!result.committed) outcome = null;
+          } else {
+            outcome = applyRespect(shared, fromId, toId, praise, sentAt);
+            if (outcome) saveSharedData();
+          }
+          if (prefs.currentUserId !== fromId || prefs.adminMode) return;
+          if (!outcome) {
+            showToast('리스펙을 보낼 수 없어요. 스터디원 정보를 확인해 주세요.', 'warn');
+            return;
+          }
+          for (const reward of outcome.completed) announceChallengeReward(fromId, reward, false);
+          showToast(outcome.credited
+            ? `${outcome.toName}님에게 리스펙을 보냈어요. 오늘 첫 리스펙 보상으로 받는 분께 +2 LP가 지급됐어요.`
+            : `${outcome.toName}님에게 리스펙을 보냈어요.`, 'success');
+          renderAll();
+        } catch (error) {
+          showToast('리스펙을 전송하지 못했어요. 연결 상태를 확인해 주세요.', 'error');
+        } finally {
+          respectWriteInProgress = false;
+          queueCloudWrite();
+        }
+      }
+
       function handleMemberCardClick(e) {
         const menuBtn = e.target.closest('[data-card-menu-btn]');
         const openMenu = e.currentTarget.querySelector('[data-card-menu-btn][aria-expanded="true"]');
@@ -7983,38 +8208,7 @@
         }
         const rb = e.target.closest('[data-respect-member]');
         if (rb) {
-          const targetId = rb.dataset.respectMember;
-          const target = shared.members.find(m => m.id === targetId);
-          if (!target) return;
-          const tStr = todayStr();
-          target.respectCount = (target.respectCount || 0) + 1;
-          unlockChallengeFor(prefs.currentUserId, 'ch_respect1', false);
-          if (!shared.respectLpRewarded) shared.respectLpRewarded = {};
-          if (!shared.respectLpRewarded[prefs.currentUserId]) shared.respectLpRewarded[prefs.currentUserId] = {};
-          const alreadyRewardedResp = !!shared.respectLpRewarded[prefs.currentUserId][targetId];
-          if (!alreadyRewardedResp) {
-            shared.respectLpRewarded[prefs.currentUserId][targetId] = true;
-            addMemberLp(targetId, 2, '리스펙 받음');
-          }
-          if (!shared.praises) shared.praises = {};
-          if (!shared.praises[targetId]) shared.praises[targetId] = [];
-          const msg = PRAISE_MESSAGES[Math.floor(Math.random() * PRAISE_MESSAGES.length)];
-          shared.praises[targetId].push({ id: 'pr_' + Date.now(), msg, time: getNowParts().hhmm, date: tStr, read: false });
-          if (!shared.respectSentByDate) shared.respectSentByDate = {};
-          if (!shared.respectSentByDate[tStr]) shared.respectSentByDate[tStr] = {};
-          if (!shared.respectSentByDate[tStr][prefs.currentUserId]) shared.respectSentByDate[tStr][prefs.currentUserId] = {};
-
-          shared.respectSentByDate[tStr][prefs.currentUserId][targetId] = true;
-          const otherIds = shared.members.filter(x => x.id !== prefs.currentUserId && x.inStudy !== false).map(x => x.id);
-          if (otherIds.length > 0 && otherIds.every(oid => shared.respectSentByDate[tStr][prefs.currentUserId][oid])) {
-            unlockChallengeFor(prefs.currentUserId, 'ch_all_resp', false);
-          }
-          if ((shared.praises[targetId].length || 0) >= 5) {
-            unlockChallengeFor(targetId, 'ch7', true);
-          }
-          saveSharedData();
-          showToast(alreadyRewardedResp ? `${target.name}님에게 👏 리스펙을 보냈습니다!` : `${target.name}님에게 👏 리스펙을 보냈습니다! (+2 LP)`, 'success');
-          renderMembersTab();
+          sendRespect(rb.dataset.respectMember);
           return;
         }
         const repBtn = e.target.closest('[data-report-member]');
@@ -10930,7 +11124,7 @@
             ['classes', 'manualExempt', 'customBadges', 'memberChallenges', 'praises', 'directMessages', 'lpHistory', 'promoHistory', 'respectLpRewarded'].forEach(k => {
               if (shared[k]) delete shared[k][mid];
             });
-            ['records', 'studyLogs', 'studySubminuteMs', 'maxFocusLogs', 'periodStudySecs', 'studyBlocks', 'studyRankTimes', 'studySlotMins', 'hourlyLpGiven', 'motemote', 'periodLpRewarded', 'respectSentByDate'].forEach(k => {
+            ['records', 'studyLogs', 'studySubminuteMs', 'maxFocusLogs', 'periodStudySecs', 'studyBlocks', 'studyRankTimes', 'studySlotMins', 'hourlyLpGiven', 'motemote', 'periodLpRewarded', 'respectSentByDate', 'respectLpRewardedByDay'].forEach(k => {
               if (shared[k]) {
                 Object.keys(shared[k]).forEach(d => {
                   if (shared[k][d]) delete shared[k][d][mid];
