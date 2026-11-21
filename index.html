@@ -1234,6 +1234,7 @@
     .focus-quote-card { width: min(100%, 32rem); margin-inline: auto; justify-items: center; gap: 1.2rem; }
     #focus-quote-text { min-height: 4em; display: grid; align-items: center; margin: 0; color: var(--focus-fg); font-size: clamp(1.1rem, 4vw, 1.6rem); font-weight: 700; line-height: 1.65; word-break: keep-all; overflow-wrap: anywhere; }
     #focus-next-quote { min-height:44px; padding: .55rem .9rem; border: 1px solid var(--focus-divider); border-radius: 10px; color: var(--focus-subtle); font-size: .76rem; }
+    #focus-next-quote:disabled { opacity: .45; cursor: not-allowed; }
     #focus-mini-bar {background:linear-gradient(145deg,var(--hero-deep),var(--hero))!important;color:var(--hero-text)!important;border:1px solid #7da3e465!important;box-shadow:0 12px 30px #102a5933!important}
     #focus-mini-expand {min-height:44px;background:#e9f0ff;color:#182d50}
     .fancy-badge {animation:none!important}
@@ -2816,7 +2817,7 @@
         <div class="focus-time-stage">
           <p id="focus-rest-label" class="hidden">남은 휴식</p>
           <div id="focus-timer-display">00:00:00</div>
-          <p id="focus-today-total">공부일 누적 00:00:00</p>
+          <p id="focus-today-total">공부 시간 누적 00:00:00</p>
           <p id="focus-rest-note"></p>
         </div>
         <div class="focus-actions">
@@ -3715,7 +3716,7 @@
               <div class="guide-item">
                 <h5 class="guide-item-title">집중 스톱워치 <span class="guide-pill">오전 5시 기준</span></h5>
                 <ul class="guide-bullets">
-                  <li><strong>휴식 규칙:</strong> 첫 휴식은 10분이에요. 재개 후 10분을 채우기 전에 다시 쉬면 1분, 10분 이상 연속 공부하면 다시 10분을 쉴 수 있습니다.</li>
+                  <li><strong>휴식 규칙:</strong> 첫 휴식은 10분이에요. 쉬다가 다시 공부할 때 남은 휴식 시간이 유지되며(1분 미만이면 1분 보장), 다시 집중한 순공 시간이 10분을 채우면 다시 10분을 쉴 수 있습니다.</li>
                   <li><strong>자동 종료:</strong> 휴식 시간이 끝나면 타이머가 자동으로 닫히고, 그동안 공부한 시간은 누적 기록에 저장돼요.</li>
                   <li><strong>공부일 기준:</strong> 매일 <strong>오전 5시(한국 시간)</strong>부터 새 공부일로 집계됩니다. 오전 5시를 걸쳐 공부하면 이전 날과 새 공부일에 나눠 기록되며 스톱워치는 끊기지 않아요.</li>
                   <li><strong>타이머 안 탭:</strong> 타이머 화면 하단에서 공부 중인 부원(스터디)과 짧은 공부자극 문구도 볼 수 있어요.</li>
@@ -3726,7 +3727,7 @@
                   <h5 class="guide-item-title">스터디 플래너</h5>
                   <ul class="guide-bullets">
                     <li><strong>편집</strong>을 열고 과목·할 일을 고른 뒤 빈 칸을 누르거나 쓸어 계획을 채우세요.</li>
-                    <li>칠한 칸을 누르면 한 칸, 쓸면 여러 칸을 지워요. 편집을 마치면 <strong>저장</strong>을 눌러요.</li>
+                    <li>칠한 칸을 누르면 한 칸, 쓸면 여러 칸을 지워요. 편집을 마치면 <strong>완료</strong>를 눌러요.</li>
                     <li>실제 스톱워치 기록은 홈의 <strong>공부 시간 분포</strong>에서 10분 단위로 확인할 수 있습니다.</li>
                   </ul>
                 </div>
@@ -4642,6 +4643,9 @@
           } else if (k === 'members' && Array.isArray(obj[k])) {
             snap['members/__len'] = String(obj[k].length);
             obj[k].forEach((m, idx) => { snap[`members/${idx}`] = JSON.stringify(m); snap[`members_id/${idx}`] = m && m.id ? m.id : ''; });
+          } else if (k === 'photos' && Array.isArray(obj[k])) {
+            snap['photos/__len'] = String(obj[k].length);
+            obj[k].forEach((p, idx) => { snap[`photos/${idx}`] = JSON.stringify(p); snap[`photos_id/${idx}`] = p && p.id ? p.id : ''; });
           } else {
             snap[k] = JSON.stringify(obj[k]);
           }
@@ -4653,15 +4657,23 @@
         const changes = {};
         const replaceMembers = next['members/__len'] !== prev['members/__len'] ||
           Object.keys(next).some(key => key.startsWith('members_id/') && next[key] !== prev[key]);
+        const replacePhotos = next['photos/__len'] !== prev['photos/__len'] ||
+          Object.keys(next).some(key => key.startsWith('photos_id/') && next[key] !== prev[key]);
         if (replaceMembers) {
           const members = [];
           for (let i = 0; i < Number(next['members/__len'] || 0); i++) members.push(JSON.parse(next[`members/${i}`] || 'null'));
           changes.members = members.length ? members : null;
         }
+        if (replacePhotos) {
+          const photos = [];
+          for (let i = 0; i < Number(next['photos/__len'] || 0); i++) photos.push(JSON.parse(next[`photos/${i}`] || 'null'));
+          changes.photos = photos.length ? photos : null;
+        }
         for (const key of new Set([...Object.keys(prev), ...Object.keys(next)])) {
           if (key === 'members/__len' || key.startsWith('members_id/') || (replaceMembers && key.startsWith('members/'))) continue;
+          if (key === 'photos/__len' || key.startsWith('photos_id/') || (replacePhotos && key.startsWith('photos/'))) continue;
           if (next[key] === prev[key]) continue;
-          if (!replaceMembers && /^members\/\d+$/.test(key)) {
+          if ((!replaceMembers && /^members\/\d+$/.test(key)) || (!replacePhotos && /^photos\/\d+$/.test(key))) {
             const a = JSON.parse(prev[key] || '{}') || {}, b = JSON.parse(next[key] || '{}') || {};
             for (const field of new Set([...Object.keys(a), ...Object.keys(b)])) {
               if (JSON.stringify(a[field]) !== JSON.stringify(b[field])) changes[`${key}/${field}`] = b[field] ?? null;
@@ -4834,7 +4846,14 @@
 
       function saveSharedData() {
         if (focusWriteBatch) return;
-        try { localStorage.setItem(LOCAL_DATA_KEY, JSON.stringify(shared)); } catch (err) { /* Cloud saving can continue if browser storage is full. */ }
+        try {
+          localStorage.setItem(LOCAL_DATA_KEY, JSON.stringify(shared));
+        } catch (err) {
+          try {
+            const trimmed = { ...shared, photos: Array.isArray(shared.photos) ? shared.photos.slice(-10) : [] };
+            localStorage.setItem(LOCAL_DATA_KEY, JSON.stringify(trimmed));
+          } catch (_) { /* Cloud saving can continue if browser storage is full. */ }
+        }
         syncPrivateMotemote();
         if (!dbRef || !cloudConnected) return;
         syncDirty = true;
@@ -5428,8 +5447,11 @@
         } catch (e) { cloudConnected = false; updateCloudPill(); }
       }
 
+      function canVibrateNow() {
+        return typeof navigator !== 'undefined' && typeof navigator.vibrate === 'function' && (!navigator.userActivation || navigator.userActivation.hasBeenActive);
+      }
       function triggerHaptic(pattern = 12) {
-        try { if (typeof navigator !== 'undefined' && typeof navigator.vibrate === 'function') navigator.vibrate(pattern); } catch (e) {}
+        try { if (canVibrateNow()) navigator.vibrate(pattern); } catch (e) {}
       }
       function showToast(msg, type = 'info') {
         const c = document.getElementById('toast-container');
@@ -5526,6 +5548,28 @@
         const returnTarget = previousModalFocus?.isConnected ? previousModalFocus : document.getElementById(previousModalFocus?.id || '');
         if (returnTarget && !returnTarget.closest('[inert]')) returnTarget.focus({preventScroll:true});
         previousModalFocus = null;
+      }
+      function confirmModalAsync(message, { title = '확인', confirmLabel = '확인', cancelLabel = '취소', danger = false } = {}) {
+        return new Promise(resolve => {
+          let settled = false;
+          const finish = value => {
+            if (settled) return;
+            settled = true;
+            resolve(value);
+          };
+          openModal(title, `
+            <div class="space-y-4 py-1">
+              <p class="text-sm font-semibold text-slate-800 leading-relaxed">${escapeHtml(message)}</p>
+              <div class="flex justify-end gap-2 pt-1">
+                <button id="app-confirm-cancel" type="button" class="px-4 py-2 rounded-xl bg-slate-100 text-xs font-bold text-slate-700">${escapeHtml(cancelLabel)}</button>
+                <button id="app-confirm-ok" type="button" class="px-4 py-2 rounded-xl text-xs font-black ${danger ? 'bg-rose-600 text-white hover:bg-rose-700' : 'ed-btn-accent'}">${escapeHtml(confirmLabel)}</button>
+              </div>
+            </div>
+          `, 'confirm');
+          modalCleanupFn = () => finish(false);
+          document.getElementById('app-confirm-cancel')?.addEventListener('click', () => { closeModal(); finish(false); });
+          document.getElementById('app-confirm-ok')?.addEventListener('click', () => { modalCleanupFn = null; closeModal(); finish(true); });
+        });
       }
 
       function getNowParts() {
@@ -5844,7 +5888,7 @@
       function showFloatingLp(delta) {
         if (!delta || delta <= 0 || reduceMotion.matches || (focusInterval && !focusPaused)) return;
         try {
-          if (!focusInterval && !quietTimerStart && typeof navigator !== 'undefined' && typeof navigator.vibrate === 'function') {
+          if (!focusInterval && !quietTimerStart && canVibrateNow()) {
             navigator.vibrate(delta >= 25 ? [28, 35, 45] : delta >= 10 ? [22, 28, 22] : 18);
           }
         } catch (e) {}
@@ -7197,7 +7241,7 @@
         const editToggle = document.getElementById('planner-edit-toggle');
         editToggle.classList.toggle('hidden', !canEdit);
         editToggle.setAttribute('aria-pressed', String(editable && plannerEditing));
-        editToggle.textContent = plannerEditing ? '저장' : '편집';
+        editToggle.textContent = plannerEditing ? '완료' : '편집';
         document.getElementById('planner-editor').classList.toggle('hidden', !editable || !plannerEditing);
         const selected = tasks.find(task => task.id === plannerBrushId);
         document.getElementById('planner-selection').textContent = selected ? `선택한 할 일 · ${selected.subject} / ${selected.title}` : '과목 또는 할 일을 선택하세요.';
@@ -7216,7 +7260,7 @@
             const status = PLANNER_STATUS.find(([value]) => value === task.status)?.[1] || '미체크';
             const marker = { V: '✓', '△': '△', X: '×' }[task.status] || '○';
             const taskLabel = `${escapeHtml(name)} ${escapeHtml(task.title)}`;
-            const statusPicker = editable
+            const statusPicker = canEdit
               ? `<select id="planner-status-${id}" data-planner-status="${id}" aria-label="${taskLabel} 상태">${PLANNER_STATUS.map(([value, label]) => `<option value="${value}" ${(task.status || '') === value ? 'selected' : ''}>${label}</option>`).join('')}</select>`
               : '';
             const titleClass = `planner-task-title ${task.status === 'V' ? 'is-done' : ''}`;
@@ -7226,7 +7270,7 @@
                 <button type="button" id="planner-edit-${id}" class="planner-task-edit" data-planner-edit-task="${id}" aria-label="${taskLabel} 수정"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m4 16 12-12 4 4-12 12H4v-4Zm10-10 4 4"/></svg></button>`
               : `<span class="${titleClass}">${escapeHtml(task.title)}</span>`;
             return `<div class="planner-task" ${selectedTask ? 'aria-current="true"' : ''}>
-              <span class="planner-task-status ${task.status === 'V' ? 'is-done' : ''}" title="${escapeHtml(status)}"><span ${editable ? 'aria-hidden="true"' : `role="img" aria-label="${escapeHtml(status)}"`}>${marker}</span>${statusPicker}</span>
+              <span class="planner-task-status ${task.status === 'V' ? 'is-done' : ''}" title="${escapeHtml(status)}"><span ${canEdit ? 'aria-hidden="true"' : `role="img" aria-label="${escapeHtml(status)}"`}>${marker}</span>${statusPicker}</span>
               ${title}
             </div>`;
           }).join('');
@@ -7985,18 +8029,27 @@
 
       function renderAll() {
         if (focusInterval) updateFocusDisplay();
-        renderHeaderControls();
         renderFocusStudy();
-        renderLiveBanner();
-        if (prefs.activeTab === 'dashboard') renderDashboard();
-        if (prefs.activeTab === 'members') { renderMembersTab(); renderWeeklyReportCards(); renderRankingsTab(); renderBragTab(); requestAnimationFrame(() => updateSubTabSlider('members-sub-bar', 'members-sub-slider', '[data-members-sub]', 'membersSub', document.querySelector('[data-members-sub][aria-pressed="true"]')?.dataset.membersSub || 'live')); }
-        if (prefs.activeTab === 'brag') renderBragTab();
-        if (prefs.activeTab === 'planner') renderPlannerTab();
-        if (prefs.activeTab === 'calendar') renderCalendarTab();
-        if (prefs.activeTab === 'profile') renderProfileTab();
-        if (prefs.activeTab === 'timetable') renderTimetableTab();
-        if (prefs.activeTab === 'rankings') { prefs.activeTab = 'members'; }
-        if (prefs.activeTab === 'admin') { renderAdminTab(); requestAnimationFrame(() => updateSubTabSlider('admin-sub-bar', 'admin-sub-slider', '[data-admin-sub]', 'adminSub', document.querySelector('[data-admin-sub][aria-pressed="true"]')?.dataset.adminSub || 'attendance')); }
+        const focusOverlayOpen = shown(document.getElementById('focus-overlay'));
+        if (!focusOverlayOpen) {
+          renderHeaderControls();
+          renderLiveBanner();
+          if (prefs.activeTab === 'dashboard') renderDashboard();
+          if (prefs.activeTab === 'members') {
+            const activeSub = document.querySelector('[data-members-sub][aria-pressed="true"]')?.dataset.membersSub || 'live';
+            if (activeSub === 'live') renderMembersTab();
+            else if (activeSub === 'rank') { renderWeeklyReportCards(); renderRankingsTab(); }
+            else if (activeSub === 'brag') renderBragTab();
+            requestAnimationFrame(() => updateSubTabSlider('members-sub-bar', 'members-sub-slider', '[data-members-sub]', 'membersSub', activeSub));
+          }
+          if (prefs.activeTab === 'brag') renderBragTab();
+          if (prefs.activeTab === 'planner') renderPlannerTab();
+          if (prefs.activeTab === 'calendar') renderCalendarTab();
+          if (prefs.activeTab === 'profile') renderProfileTab();
+          if (prefs.activeTab === 'timetable') renderTimetableTab();
+          if (prefs.activeTab === 'rankings') { prefs.activeTab = 'members'; }
+          if (prefs.activeTab === 'admin') { renderAdminTab(); requestAnimationFrame(() => updateSubTabSlider('admin-sub-bar', 'admin-sub-slider', '[data-admin-sub]', 'adminSub', document.querySelector('[data-admin-sub][aria-pressed="true"]')?.dataset.adminSub || 'attendance')); }
+        }
         if (typeof tryAutoCompletePromotion === 'function') tryAutoCompletePromotion();
       }
 
@@ -8067,8 +8120,10 @@
               : 'members-sub-btn py-2 px-2 rounded-xl text-[11px] sm:text-xs font-bold text-slate-600 hover:text-slate-950 whitespace-nowrap transition';
           });
           updateSubTabSlider('members-sub-bar', 'members-sub-slider', '[data-members-sub]', 'membersSub', targetSub);
+          if (targetSub === 'live') renderMembersTab();
           if (targetSub === 'rank') {
             activeChallengeCat = null;
+            renderWeeklyReportCards();
             renderRankingsTab();
           }
           if (targetSub === 'brag') renderBragTab();
@@ -8391,27 +8446,39 @@
 
       // Check-in & Photos
       function handleBragPhotoSelect(e) {
-        const f = e.target.files[0]; if (!f) return;
+        const f = e.target.files[0];
+        e.target.value = '';
+        if (!f) return;
         compressImageFile(f, '', url => { pendingPhoto = url; renderBragTab(); showToast('사진이 준비되었습니다. 올리기 버튼을 눌러주세요!', 'success'); });
       }
       document.getElementById('desk-photo-input').addEventListener('change', handleBragPhotoSelect);
       document.getElementById('desk-camera-input').addEventListener('change', handleBragPhotoSelect);
 
-      document.getElementById('brag-upload-form').addEventListener('submit', e => {
+      document.getElementById('brag-upload-form').addEventListener('submit', async e => {
         e.preventDefault();
         if (!pendingPhoto) { showToast('먼저 사진을 선택해 주세요!', 'warn'); return; }
         const me = shared.members.find(m => m.id === prefs.currentUserId);
         if (!me) return;
         const cap = document.getElementById('brag-caption-input').value.trim();
-        const now = getNowParts(), t = todayStr();
+        const now = getNowParts(), t = studyDayKey();
+        const newPhoto = { id: 'ph_' + (globalThis.crypto?.randomUUID?.() || `${Date.now()}_${Math.random().toString(36).slice(2, 7)}`), memberId: me.id, memberName: me.name, periodLabel: 'STUDYGRAM', time: now.hhmm, date: t, caption: cap, dataUrl: pendingPhoto };
         if (!shared.photos) shared.photos = [];
-        shared.photos.push({ id: 'ph_' + Date.now(), memberId: me.id, memberName: me.name, periodLabel: 'STUDYGRAM', time: now.hhmm, date: t, caption: cap, dataUrl: pendingPhoto });
+        shared.photos.push(newPhoto);
         unlockChallengeFor(me.id, 'ch_brag1', false);
         me.bragUploadCount = (me.bragUploadCount || 0) + 1;
         const totalBrags = Math.max(me.bragUploadCount, shared.photos.filter(p => p.memberId === me.id).length);
         if (totalBrags >= 5) unlockChallengeFor(me.id, 'ch_brag5', false);
         pendingPhoto = null;
         document.getElementById('brag-caption-input').value = '';
+        if (dbRef && cloudConnected && !filePreview) {
+          try {
+            await dbRef.child('photos').transaction(cur => {
+              const list = Array.isArray(cur) ? cur.filter(Boolean) : Object.values(cur || {}).filter(Boolean);
+              if (!list.some(item => item.id === newPhoto.id)) list.push(newPhoto);
+              return list;
+            });
+          } catch (_) {}
+        }
         saveSharedData();
         showToast('STUDYGRAM 피드에 올라갔습니다!', 'success');
         renderBragTab();
@@ -8930,7 +8997,7 @@
           id: 'pr_' + (globalThis.crypto?.randomUUID?.() || `${+sentAt}_${Math.random().toString(36).slice(2)}`),
           msg: PRAISE_MESSAGES[Math.floor(Math.random() * PRAISE_MESSAGES.length)],
           time: new Date(+sentAt + 9 * 3600000).toISOString().slice(11, 16),
-          date: koreaDateKey(sentAt), read: false
+          date: studyDayKey(sentAt), read: false
         };
         let outcome;
         respectWriteInProgress = true;
@@ -9029,9 +9096,9 @@
           const m = shared.members.find(x => x.id === card.dataset.memberDetail);
           if (!m) return;
           if (!prefs.adminMode) { unlockChallengeFor(prefs.currentUserId, 'ch_spy', false); saveSharedData(); }
-          const t = todayStr();
+          const t = studyDayKey();
           const todayTotalMins = studyMinutes(m.id);
-          const maxF = shared.maxFocusLogs?.[studyDayKey()]?.[m.id] || 0;
+          const maxF = shared.maxFocusLogs?.[t]?.[m.id] || 0;
           const todayRespect = ((shared.praises && shared.praises[m.id]) || []).filter(p => p.date === t).length;
           const allB = getBadgesForMember(m, studyDayKey());
           openModal(`${m.name} 상세 기록`, `
@@ -9408,13 +9475,16 @@
           renderPlannerTab();
           showToast(taskId ? '할 일을 수정했어요.' : '할 일을 추가했어요.', 'success');
         });
-        document.getElementById('planner-delete-task')?.addEventListener('click', () => {
+        document.getElementById('planner-delete-task')?.addEventListener('click', async () => {
           if (!canModifyPlanner(context)) { closeModal(); return; }
           const mm = plannerContext().mm;
           const hasTime = Object.values(mm.blocks || {}).includes(taskId);
-          if (!window.confirm(hasTime ? '이 할 일과 연결된 시간표 칸을 모두 삭제할까요?' : '이 할 일을 삭제할까요?')) return;
-          removePlannerTasks(mm, new Set([taskId]));
-          closeModal();
+          const ok = await confirmModalAsync(
+            hasTime ? '이 할 일과 연결된 시간표 칸을 모두 삭제할까요?' : '이 할 일을 삭제할까요?',
+            { title: '할 일 삭제', confirmLabel: '삭제', danger: true }
+          );
+          if (!ok || !canModifyPlanner(plannerContext())) return;
+          removePlannerTasks(plannerContext().mm, new Set([taskId]));
           renderPlannerTab();
           if (!document.getElementById('planner-edit-' + taskId)) document.getElementById('planner-add-task').focus({ preventScroll: true });
           showToast('할 일을 삭제했어요.', 'success');
@@ -9468,7 +9538,7 @@
           form.querySelector('[role="alert"]').textContent = '시간표가 바뀌었어요. 창을 닫고 계획을 다시 열어 주세요.';
           return null;
         }
-        form.addEventListener('submit', event => {
+        form.addEventListener('submit', async event => {
           event.preventDefault();
           if (!canModifyPlanner(context)) { closeModal(); return; }
           const first = Number(form.elements.start.value);
@@ -9482,9 +9552,13 @@
           const oldRange = plannerRangeChanges(range.start, range.end, '');
           const changes = new Map([...oldRange, ...plannerRangeChanges(first, afterLast, taskId)]);
           const overlaps = [...changes].some(([key, id]) => id && mm.blocks?.[key] && mm.blocks[key] !== id && !oldRange.has(key));
-          if (overlaps && !window.confirm('겹치는 시간 칸을 지금 선택한 할 일로 바꿀까요?')) return;
-          closeModal();
-          applyPlannerBlocks(context, changes, '시간표에 저장했어요.');
+          if (overlaps) {
+            const ok = await confirmModalAsync('겹치는 시간 칸을 지금 선택한 할 일로 바꿀까요?', { title: '시간 계획 덮어쓰기', confirmLabel: '바꾸기' });
+            if (!ok || !canModifyPlanner(plannerContext())) return;
+          } else {
+            closeModal();
+          }
+          applyPlannerBlocks(plannerContext(), changes, '시간표에 저장했어요.');
         });
         document.getElementById('planner-delete-range')?.addEventListener('click', () => {
           if (!canModifyPlanner(context)) { closeModal(); return; }
@@ -9495,15 +9569,20 @@
       }
 
       document.getElementById('planner-add-task').addEventListener('click', () => openPlannerTask());
-      document.getElementById('planner-tasks-list').addEventListener('click', event => {
+      document.getElementById('planner-tasks-list').addEventListener('click', async event => {
         const context = plannerContext();
         if (!canModifyPlanner(context)) return;
         const remove = event.target.closest('[data-planner-delete-subject]');
         if (remove) {
           const name = remove.dataset.plannerDeleteSubject;
           const ids = new Set((context.mm.tasks || []).filter(task => plannerSubjectName(task.subject) === name).map(task => task.id));
-          if (!ids.size || !window.confirm(`${context.day} 플래너에서 ‘${name}’ 과목의 할 일 ${ids.size}개와 연결된 시간 칸을 삭제할까요?`)) return;
-          removePlannerTasks(context.mm, ids);
+          if (!ids.size) return;
+          const ok = await confirmModalAsync(
+            `${context.day} 플래너에서 ‘${name}’ 과목의 할 일 ${ids.size}개와 연결된 시간 칸을 삭제할까요?`,
+            { title: '과목 삭제', confirmLabel: '삭제', danger: true }
+          );
+          if (!ok || !canModifyPlanner(plannerContext())) return;
+          removePlannerTasks(plannerContext().mm, ids);
           renderPlannerTab();
           document.getElementById('planner-add-task').focus({preventScroll:true});
           return;
@@ -9527,7 +9606,7 @@
       document.getElementById('planner-tasks-list').addEventListener('change', event => {
         const control = event.target.closest('[data-planner-status]');
         const context = plannerContext();
-        if (!control || !canModifyPlanner(context)) return;
+        if (!control || !canEditPlanner(context)) return;
         const task = (context.mm.tasks || []).find(item => item.id === control.dataset.plannerStatus);
         if (!task) return;
         setPlannerTaskStatus(context.mm, task, control.value, context.memberId);
@@ -9570,7 +9649,10 @@
         if (!canModifyPlanner(context)) return;
         const index = Number(cell.dataset.plannerSlot);
         const erasing = !!context.mm.blocks?.[plannerSlotKey(index)];
-        if (!erasing && !plannerBrushId) return;
+        if (!erasing && !plannerBrushId) {
+          showToast('먼저 위에서 할 일을 선택해 주세요.', 'info');
+          return;
+        }
         event.preventDefault();
         plannerDrag = {
           context, pointerId: event.pointerId, start: index, end: index,
@@ -9772,12 +9854,18 @@
 
 
 
-      function deleteClassSlot(memberId, classId) {
+      async function deleteClassSlot(memberId, classId) {
         if (memberId !== (prefs.adminMode ? document.getElementById('class-member-select').value : prefs.currentUserId)) return false;
         const classes = shared.classes?.[memberId] || [];
         const course = classes.find(item => String(item.id) === classId);
-        if (!course || !window.confirm(`‘${course.name}’ ${'일월화수목금토'[course.day]}요일 ${course.start}~${course.end} 수업을 삭제할까요?`)) return false;
-        shared.classes[memberId] = classes.filter(item => String(item.id) !== classId);
+        if (!course) return false;
+        const ok = await confirmModalAsync(
+          `‘${course.name}’ ${'일월화수목금토'[course.day]}요일 ${course.start}~${course.end} 수업을 삭제할까요?`,
+          { title: '수업 삭제', confirmLabel: '삭제', danger: true }
+        );
+        if (!ok) return false;
+        const latestClasses = shared.classes?.[memberId] || [];
+        shared.classes[memberId] = latestClasses.filter(item => String(item.id) !== classId);
         saveSharedData();
         renderTimetableTab();
         showToast('선택한 수업 시간을 삭제했어요.', 'success');
@@ -9870,7 +9958,7 @@
             </form>
           `);
           document.getElementById('edit-cls-delete').addEventListener('click', () => {
-            if (deleteClassSlot(mid, editId)) closeModal();
+            deleteClassSlot(mid, editId);
           });
           document.getElementById('edit-cls-form').addEventListener('submit', ev => {
             ev.preventDefault();
@@ -10639,6 +10727,7 @@
       const FOCUS_REST_LIMIT_MS = 10 * 60 * 1000;
       const FOCUS_SHORT_REST_MS = 60 * 1000;
       let focusRestDurationMs = FOCUS_REST_LIMIT_MS;
+      let focusRestRechargeStudyMs = 0;
       let focusHasRested = false;
       let focusPaused = false;
       let focusElapsedSecs = 0;
@@ -10649,6 +10738,23 @@
       let focusModeBeforeChange = null;
       let focusOsNotifShown = false;
       let focusOsNotifRef = null;
+      let focusWakeLock = null;
+
+      async function requestFocusWakeLock() {
+        if (typeof navigator === 'undefined' || !navigator.wakeLock || focusWakeLock || !focusInterval || focusPaused || document.hidden) return;
+        try {
+          const sentinel = await navigator.wakeLock.request('screen');
+          focusWakeLock = sentinel;
+          sentinel.addEventListener('release', () => {
+            if (focusWakeLock === sentinel) focusWakeLock = null;
+          });
+        } catch (_) {}
+      }
+      function releaseFocusWakeLock() {
+        const sentinel = focusWakeLock;
+        focusWakeLock = null;
+        if (sentinel) sentinel.release().catch(() => {});
+      }
 
       function updateFocusOsNotification(force = false) {
         if (typeof Notification === 'undefined' || Notification.permission !== 'granted') return;
@@ -10724,16 +10830,19 @@
           if (!focusInterval) return;
           localStorage.setItem(FOCUS_STATE_KEY, JSON.stringify({
             memberId: prefs.currentUserId,
-            date: todayStr(),
+            date: studyDayKey(),
             accumulatedSecs: focusAccumulatedSecs,
             startedAt: focusStartedAt,
             paused: focusPaused,
             pauseStartedAt,
             restBudgetMs: focusRestDurationMs,
+            restRechargeStudyMs: focusRestRechargeStudyMs,
             hasRested: focusHasRested,
             sessionLp: focusSessionLp,
             syncedSecs: focusElapsedSecs,
-            modeBeforeChange: focusModeBeforeChange
+            modeBeforeChange: focusModeBeforeChange,
+            quoteDeck: focusQuoteDeck,
+            quoteCursor: focusQuoteCursor
           }));
         } catch (e) {}
       }
@@ -10746,10 +10855,11 @@
         try {
           const raw = localStorage.getItem(FOCUS_STATE_KEY);
           const st = raw ? JSON.parse(raw) : null;
-          const tToday = todayStr();
+          const tToday = studyDayKey();
           const tYesterday = addDaysStr(tToday, -1);
           const curMember = shared.members.find(m => m.id === memberId);
-          if (st?.memberId === memberId && curMember?.forceStoppedAt && (!st.startedAt || curMember.forceStoppedAt >= st.startedAt) && !curMember.isFocusing && !curMember.isFocusPaused) {
+          const sessionTs = Number(st?.startedAt) || Number(st?.pauseStartedAt) || 0;
+          if (st?.memberId === memberId && curMember?.forceStoppedAt && (!sessionTs || curMember.forceStoppedAt >= sessionTs) && !curMember.isFocusing && !curMember.isFocusPaused) {
             clearFocusState();
             closeFocusOsNotification();
             showToast('관리자에 의해 타이머가 종료되었습니다. 종료 시점까지의 공부 시간이 반영되었습니다.', 'info');
@@ -10775,8 +10885,18 @@
             ? Math.max(0, Math.min(FOCUS_REST_LIMIT_MS, st.restBudgetMs))
             : FOCUS_REST_LIMIT_MS;
           focusHasRested = st.hasRested ?? (focusPaused || focusRestDurationMs < FOCUS_REST_LIMIT_MS);
+          focusRestRechargeStudyMs = Number.isFinite(st.restRechargeStudyMs)
+            ? Math.max(0, st.restRechargeStudyMs)
+            : 0;
           focusSessionLp = Number(st.sessionLp) || 0;
           focusStartedAt = st.startedAt || null;
+          if (Array.isArray(st.quoteDeck) && st.quoteDeck.length) {
+            focusQuoteDeck = st.quoteDeck.slice();
+            focusQuoteCursor = Number.isFinite(st.quoteCursor)
+              ? Math.max(0, Math.min(focusQuoteDeck.length, st.quoteCursor))
+              : 0;
+            renderFocusQuote();
+          }
           openFocusOverlay(true);
           if (!focusPaused && syncFocusClock) syncFocusClock();
         } catch (e) {}
@@ -10798,8 +10918,35 @@
         '서두르지 말되, 멈추지 마라.',
         ...EXTRA_STUDY_QUOTES
       ];
-      let focusQuoteIndex = 0;
+      const FOCUS_QUOTES_EMPTY_MSG = '공부자극 문구 없으니까 공부나 하세요!';
+      let focusQuoteDeck = [];
+      let focusQuoteCursor = 0;
       let focusStudyMarkup = '';
+
+      function renderFocusQuote() {
+        const textEl = document.getElementById('focus-quote-text');
+        const nextBtn = document.getElementById('focus-next-quote');
+        if (!textEl || !nextBtn) return;
+        if (focusQuoteCursor < focusQuoteDeck.length) {
+          textEl.textContent = focusQuoteDeck[focusQuoteCursor];
+          nextBtn.disabled = false;
+          nextBtn.textContent = '다른 문구';
+        } else {
+          textEl.textContent = FOCUS_QUOTES_EMPTY_MSG;
+          nextBtn.disabled = true;
+          nextBtn.textContent = '문구 소진';
+        }
+      }
+
+      function resetFocusQuoteDeck() {
+        focusQuoteDeck = [...FOCUS_QUOTES];
+        for (let i = focusQuoteDeck.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [focusQuoteDeck[i], focusQuoteDeck[j]] = [focusQuoteDeck[j], focusQuoteDeck[i]];
+        }
+        focusQuoteCursor = 0;
+        renderFocusQuote();
+      }
       const focusViewSwitch = document.getElementById('focus-view-switch');
 
       function renderFocusPeer(member, mins, status) {
@@ -10816,7 +10963,7 @@
               ${member.avatarUrl ? `<img src="${escapeHtml(member.avatarUrl)}" alt="" loading="lazy">` : escapeHtml(String(member.name || '').slice(0, 1))}
             </button>
           </div>
-          <span class="focus-study-total" aria-label="공부일 누적 ${time}">${time}</span>
+          <span class="focus-study-total" aria-label="공부 시간 누적 ${time}">${time}</span>
         </article>`;
       }
 
@@ -10852,8 +10999,10 @@
         if (button) setFocusView(button.dataset.focusView);
       });
       document.getElementById('focus-next-quote').addEventListener('click', () => {
-        focusQuoteIndex = (focusQuoteIndex + 1) % FOCUS_QUOTES.length;
-        document.getElementById('focus-quote-text').textContent = FOCUS_QUOTES[focusQuoteIndex];
+        if (!focusQuoteDeck.length) resetFocusQuoteDeck();
+        if (focusQuoteCursor < focusQuoteDeck.length) focusQuoteCursor += 1;
+        renderFocusQuote();
+        if (focusInterval) saveFocusState();
       });
 
       function formatStopwatch(secs) {
@@ -10917,10 +11066,28 @@
         });
       }
 
+      function restRechargeStudyMs(now = Date.now()) {
+        const currentStudyMs = !focusPaused && focusStartedAt != null ? Math.max(0, now - focusStartedAt) : 0;
+        return focusRestRechargeStudyMs + currentStudyMs;
+      }
+      function isRestCycleRecharged(now = Date.now()) {
+        return !focusHasRested || restRechargeStudyMs(now) >= FOCUS_REST_LIMIT_MS;
+      }
       function restRemainingMs(now = Date.now()) {
         if (focusPaused) return Math.max(0, focusRestDurationMs - Math.max(0, now - pauseStartedAt));
-        const recharged = focusStartedAt != null && now - focusStartedAt >= FOCUS_REST_LIMIT_MS;
-        return !focusHasRested || recharged ? FOCUS_REST_LIMIT_MS : FOCUS_SHORT_REST_MS;
+        if (isRestCycleRecharged(now)) return FOCUS_REST_LIMIT_MS;
+        return Math.max(FOCUS_SHORT_REST_MS, focusRestDurationMs);
+      }
+      function resumeFocusFromRest(now = Date.now()) {
+        if (!focusInterval || !focusPaused) return false;
+        const remainingRest = Math.max(0, focusRestDurationMs - Math.max(0, now - pauseStartedAt));
+        focusRestDurationMs = Math.max(FOCUS_SHORT_REST_MS, remainingRest);
+        focusPaused = false;
+        pauseStartedAt = null;
+        focusStartedAt = now;
+        focusModeBeforeChange = null;
+        requestFocusWakeLock();
+        return true;
       }
       function expireFocusRest(now = Date.now()) {
         if (!focusInterval || !focusPaused || restRemainingMs(now) > 0) return false;
@@ -10946,19 +11113,22 @@
         screen.dataset.resting = String(focusPaused);
         const restLabel = document.getElementById('focus-rest-label');
         restLabel.classList.toggle('hidden', !focusPaused);
-        document.getElementById('focus-timer-display').textContent = focusPaused ? rest : formatted;
+        const displayClock = focusPaused ? rest : formatted;
+        document.getElementById('focus-timer-display').textContent = displayClock;
+        const miniTime = document.getElementById('focus-mini-time');
+        if (miniTime) miniTime.textContent = focusPaused ? `휴식 ${rest}` : formatted;
         const restNote = document.getElementById('focus-rest-note');
         if (focusPaused) {
           restNote.textContent = `연속 집중 ${formatted} · 휴식이 끝나면 자동 종료`;
-        } else if (remaining === FOCUS_SHORT_REST_MS && focusStartedAt != null) {
-          const recharge = FOCUS_REST_LIMIT_MS - Math.max(0, now - focusStartedAt);
-          restNote.textContent = `지금 쉬면 1분 · ${formatRestClock(recharge)} 더 공부하면 10분 휴식`;
+        } else if (!isRestCycleRecharged(now)) {
+          const recharge = Math.max(0, FOCUS_REST_LIMIT_MS - restRechargeStudyMs(now));
+          restNote.textContent = `지금 쉬면 ${formatRestClock(remaining)} · ${formatRestClock(recharge)} 더 공부하면 10분 휴식`;
         } else {
           restNote.textContent = '지금 쉬면 10분';
         }
         document.getElementById('focus-min-btn').classList.toggle('hidden', !focusPaused);
         document.getElementById('focus-pause-btn').textContent = focusPaused ? '공부 다시 시작하기' : '잠시 쉬기';
-        document.getElementById('focus-today-total').textContent = `공부일 누적 ${formatStopwatch(studySeconds(prefs.currentUserId))}`;
+        document.getElementById('focus-today-total').textContent = `공부 시간 누적 ${formatStopwatch(studySeconds(prefs.currentUserId))}`;
         updateFocusPromoSlot();
       }
 
@@ -11222,8 +11392,12 @@
             focusPaused = false;
             pauseStartedAt = null;
             focusRestDurationMs = FOCUS_REST_LIMIT_MS;
+            focusRestRechargeStudyMs = 0;
             focusHasRested = false;
             focusModeBeforeChange = null;
+            resetFocusQuoteDeck();
+          } else if (!focusQuoteDeck.length) {
+            resetFocusQuoteDeck();
           }
           focusInterval = setInterval(tickFocusTimer, 250);
           if (expireFocusRest()) return;
@@ -11245,6 +11419,8 @@
         ov.classList.add('flex');
         renderFocusStudy();
         refreshStudyDialogs();
+        if (!focusPaused) requestFocusWakeLock();
+        else releaseFocusWakeLock();
         ov.focus({preventScroll:true});
         try {
           if (!history.state || !history.state.focusOpen) {
@@ -11256,13 +11432,22 @@
       function minimizeFocusOverlay() {
         if (expireFocusRest()) return;
         leaveFocusFullscreen();
+        releaseFocusWakeLock();
+        updateFocusDisplay();
         const ov = document.getElementById('focus-overlay');
         ov.classList.add('hidden');
         ov.classList.remove('flex');
         const mini = document.getElementById('focus-mini-bar');
         mini.classList.remove('hidden');
         mini.classList.add('flex');
+        try {
+          if (history.state?.focusOpen) {
+            const { focusOpen, ...state } = history.state;
+            history.replaceState(state, '');
+          }
+        } catch (e) {}
         refreshStudyDialogs();
+        renderAll();
         document.getElementById('focus-mini-expand').focus({preventScroll:true});
       }
 
@@ -11279,6 +11464,7 @@
       function closeFocusOverlay(discard = false, { restExpired = false, quiet = false } = {}) {
         const wasOpen = !!focusInterval;
         leaveFocusFullscreen();
+        releaseFocusWakeLock();
         const ov = document.getElementById('focus-overlay');
         const wasFullScreen = shown(ov);
         if (wasOpen && !discard && !focusPaused) syncFocusClock(true);
@@ -11291,9 +11477,12 @@
         focusStartedAt = null;
         pauseStartedAt = null;
         focusRestDurationMs = FOCUS_REST_LIMIT_MS;
+        focusRestRechargeStudyMs = 0;
         focusHasRested = false;
         focusModeBeforeChange = null;
         focusPaused = false;
+        focusQuoteDeck = [];
+        focusQuoteCursor = 0;
         clearFocusState();
         closeFocusOsNotification();
         if (discard) pendingCelebrations.length = 0;
@@ -11364,7 +11553,19 @@
 
       document.getElementById('btn-open-focus').addEventListener('click', () => {
         quietTimerStart = true;
-        try { openFocusOverlay(false); }
+        try {
+          if (focusInterval && focusPaused) {
+            const now = Date.now();
+            if (expireFocusRest(now)) return;
+            resumeFocusFromRest(now);
+            const me = shared.members.find(member => member.id === prefs.currentUserId);
+            setMemberFocusStatus(me, 'studying');
+            saveSharedData();
+            saveFocusState();
+            renderAll();
+          }
+          openFocusOverlay(false);
+        }
         finally { quietTimerStart = false; }
       });
       let pendingCelebrations = [];
@@ -11530,17 +11731,21 @@
         if (!focusPaused) syncFocusClock(true);
         const me = shared.members.find(member => member.id === prefs.currentUserId);
         if (focusPaused) {
-          focusPaused = false;
-          pauseStartedAt = null;
-          focusStartedAt = now;
-          focusModeBeforeChange = null;
+          resumeFocusFromRest(now);
         } else {
-          focusRestDurationMs = restRemainingMs(now);
+          if (isRestCycleRecharged(now)) {
+            focusRestRechargeStudyMs = 0;
+            focusRestDurationMs = FOCUS_REST_LIMIT_MS;
+          } else {
+            focusRestRechargeStudyMs = restRechargeStudyMs(now);
+            focusRestDurationMs = Math.max(FOCUS_SHORT_REST_MS, focusRestDurationMs);
+          }
           focusHasRested = true;
           focusPaused = true;
           focusAccumulatedSecs = focusElapsedSecs;
           focusStartedAt = null;
           pauseStartedAt = now;
+          releaseFocusWakeLock();
           unlockChallengeFor(prefs.currentUserId, 'ch_pause1', false);
           flushCelebrations();
         }
@@ -11806,7 +12011,7 @@
             await new Promise(resolve => setTimeout(resolve, 75));
           }
           if (user !== currentAuthUser) return;
-          if (pending() && !window.confirm('서버에서 일부 기록의 저장을 아직 확인하지 못했어요. 지금 로그아웃할까요?')) return;
+          if (pending() && !(await confirmModalAsync('서버에서 일부 기록의 저장을 아직 확인하지 못했어요. 지금 로그아웃할까요?', { title: '로그아웃 확인', confirmLabel: '로그아웃', danger: true }))) return;
           await firebase.auth().signOut();
           showToast('로그아웃되었습니다.', 'info');
         } catch {
@@ -12147,7 +12352,21 @@
       });
 
       document.addEventListener('visibilitychange', () => {
-        if (!document.hidden) tickFocusTimer(true);
+        if (!document.hidden) {
+          tickFocusTimer(true);
+          if (focusInterval && !focusPaused && shown(document.getElementById('focus-overlay'))) requestFocusWakeLock();
+        }
+      });
+      window.addEventListener('storage', e => {
+        if (e.key !== FOCUS_STATE_KEY || !focusInterval) return;
+        try {
+          const next = e.newValue ? JSON.parse(e.newValue) : null;
+          if (!next || next.memberId === prefs.currentUserId) {
+            closeFocusOverlay(true, { quiet: true });
+            renderAll();
+            showToast('다른 탭에서 타이머 상태가 변경되어 이 탭의 중복 타이머를 정리했어요.', 'info');
+          }
+        } catch (_) {}
       });
       window.addEventListener('focus', () => tickFocusTimer(true));
       window.addEventListener('pagehide', () => {
