@@ -2267,7 +2267,7 @@
       background:color-mix(in srgb,var(--halo) 10%,var(--soft));
       border-color:var(--line);
     }
-    body:is([data-theme="iron"],[data-theme="bronze"],[data-theme="silver"],[data-theme="gold"],[data-theme="platinum"],[data-theme="emerald"],[data-theme="diamond"],[data-theme="master"],[data-theme="grandmaster"],[data-theme="challenger"]) #tab-dashboard #btn-open-focus:not(:disabled) {
+    body:is([data-theme="iron"],[data-theme="bronze"],[data-theme="silver"],[data-theme="gold"],[data-theme="platinum"],[data-theme="emerald"],[data-theme="diamond"],[data-theme="master"],[data-theme="grandmaster"],[data-theme="challenger"]) #main-live-banner #btn-open-focus:not(:disabled) {
       position:relative;isolation:isolate;overflow:hidden;
       background:var(--action-fill)!important;color:#fff!important;
       border:1px solid color-mix(in srgb,var(--halo) 57%,var(--wash-mid));
@@ -2283,7 +2283,7 @@
       background:#ffffff14;box-shadow:inset 0 0 0 1px #ffffff29;
     }
     @media (hover:hover) {
-      body:is([data-theme="iron"],[data-theme="bronze"],[data-theme="silver"],[data-theme="gold"],[data-theme="platinum"],[data-theme="emerald"],[data-theme="diamond"],[data-theme="master"],[data-theme="grandmaster"],[data-theme="challenger"]) #tab-dashboard #btn-open-focus:hover:not(:disabled) {filter:brightness(1.08);transform:translateY(-1px)}
+      body:is([data-theme="iron"],[data-theme="bronze"],[data-theme="silver"],[data-theme="gold"],[data-theme="platinum"],[data-theme="emerald"],[data-theme="diamond"],[data-theme="master"],[data-theme="grandmaster"],[data-theme="challenger"]) #main-live-banner #btn-open-focus:hover:not(:disabled) {filter:brightness(1.08);transform:translateY(-1px)}
     }
     @media (prefers-reduced-motion:no-preference) {
       body:is([data-theme="diamond"],[data-theme="master"],[data-theme="grandmaster"],[data-theme="challenger"]) #btn-open-focus::before {
@@ -2299,13 +2299,71 @@
         8px 3px 30px 4px #e7bf6b85,0 12px 58px 9px #367cbd62;
       --action-fill:linear-gradient(112deg,#122347 0%,#244876 43%,#226080 74%,#6b5a37 115%);
     }
-    body[data-theme="challenger"] #tab-dashboard #btn-open-focus:not(:disabled) {
+    body[data-theme="challenger"] #main-live-banner #btn-open-focus:not(:disabled) {
       border-color:#c4a875;
       box-shadow:inset 0 1px 0 #fff0c65e,0 3px 14px #548ec27d,3px 2px 12px #d1af666e;
     }
     body[data-theme="challenger"] #btn-open-focus svg {color:#ffde9c;background:#efd29419}
     body[data-theme="challenger"] #tab-dashboard #home-card-grid > .ed-card:first-child {
       background:linear-gradient(117deg,color-mix(in srgb,var(--surface) 83%,var(--halo)),var(--surface) 62%,color-mix(in srgb,var(--surface) 88%,#d4b785))!important;
+    }
+
+    /* Tier editions combine the day's total and the timer action in the banner. */
+    .tier-edition #study-header .study-brand-caption {
+      color:var(--link);font-size:.7rem;letter-spacing:.015em;font-weight:750;
+    }
+    .tier-edition #study-header .study-logo {
+      border-radius:12px 5px;
+      box-shadow:0 0 0 1px var(--line),0 2px 9px var(--halo-color);
+    }
+    .tier-edition #study-nav .nav-tab.tab-active {
+      background:var(--action-fill)!important;color:white!important;
+      border-color:var(--wash-mid)!important;border-radius:11px 5px;
+    }
+    .tier-edition #main-live-banner {
+      grid-template-columns:minmax(0,1fr) clamp(13rem,26%,17rem);
+      gap:0;padding:0;align-items:stretch;
+      border-radius:calc(16px + var(--tier-level) * .8px) 9px;
+    }
+    .tier-edition #main-live-banner > .space-y-1 {
+      align-self:center;padding:clamp(1.5rem,3.7vw,3rem);
+    }
+    body.tier-edition #main-live-banner .study-hero-stat {
+      align-content:center;align-items:start;border-radius:0;
+      padding:clamp(.95rem,2.2vw,1.65rem);
+      background:linear-gradient(105deg,color-mix(in srgb,var(--wash-deep) 66%,transparent),color-mix(in srgb,var(--wash-deep) 81%,transparent));
+      border-inline-start:1px solid #ffffff26;
+    }
+    .tier-edition #main-live-banner #live-clock-text {
+      font-size:clamp(1.75rem,3.1vw,2.6rem);margin:.24rem 0;
+    }
+    .tier-edition #main-live-banner #btn-open-focus {
+      width:100%;margin-top:.75rem;justify-content:flex-start;
+      gap:.55rem;padding:.38rem .65rem;min-height:44px;border-radius:12px 5px;
+    }
+    .tier-edition #main-live-banner #btn-open-focus::after {
+      content:'';width:.46rem;height:.46rem;flex:none;margin-inline-start:auto;margin-inline-end:.22rem;
+      border-inline-end:2px solid currentColor;border-top:2px solid currentColor;transform:rotate(45deg);
+    }
+    .tier-edition .study-home-actions:not(:has(button:not(.hidden))) {display:none}
+    .tier-edition .study-home-actions #btn-checkin {flex:1}
+    @media (max-width:640px) {
+      .tier-edition #main-live-banner {grid-template-columns:minmax(0,1fr)}
+      .tier-edition #main-live-banner > .space-y-1 {padding:1.3rem 1.15rem}
+      body.tier-edition #main-live-banner .study-hero-stat {
+        grid-template-columns:minmax(0,1fr) auto;align-items:center;
+        padding:.78rem 1.15rem;border-inline-start:0;border-top:1px solid #ffffff26;
+      }
+      .tier-edition #main-live-banner #live-clock-text {
+        grid-column:1;grid-row:2;font-size:1.55rem;margin:.08rem 0;
+      }
+      .tier-edition #main-live-banner #btn-open-focus {
+        grid-column:2;grid-row:1/4;align-self:center;width:auto;margin:0;padding-inline:.6rem;
+      }
+      .tier-edition #main-live-banner #live-study-day-range {grid-row:3}
+    }
+    @media (max-width:350px) {
+      .tier-edition #main-live-banner #btn-open-focus {grid-row:auto;grid-column:1/-1;width:100%;margin-top:.4rem}
     }
   </style>
 </head>
@@ -10001,7 +10059,22 @@
         renderAll();
       });
 
-      document.body.setAttribute('data-theme', prefs.theme || 'blue');
+      function applyThemeLayout(key) {
+        const swatch = Array.from(document.querySelectorAll('[data-set-theme]')).find(button => button.dataset.setTheme === key);
+        const edition = Boolean(swatch?.dataset.tierName);
+        document.body.dataset.theme = swatch?.dataset.setTheme || 'blue';
+        document.body.classList.toggle('tier-edition', edition);
+        document.querySelector('.study-brand-caption').textContent = edition ? swatch.dataset.themeLabel : 'Study Desk';
+
+        const startButton = document.getElementById('btn-open-focus');
+        const destination = document.querySelector(edition ? '.study-hero-stat' : '.study-home-actions');
+        if (startButton.parentElement !== destination) {
+          if (edition) destination.append(startButton);
+          else destination.prepend(startButton);
+        }
+      }
+
+      applyThemeLayout(prefs.theme || 'blue');
       document.querySelectorAll('[data-set-theme]').forEach(btn => {
         btn.setAttribute('aria-pressed', String(btn.dataset.setTheme === (prefs.theme || 'blue')));
         btn.setAttribute('aria-label', btn.title);
@@ -10012,7 +10085,7 @@
             return;
           }
           prefs.theme = btn.dataset.setTheme;
-          document.body.setAttribute('data-theme', prefs.theme);
+          applyThemeLayout(prefs.theme);
           syncFocusBrowserColor();
           const activeThemeLabelEl = document.getElementById('active-theme-label');
           if (activeThemeLabelEl && btn.dataset.themeLabel) activeThemeLabelEl.textContent = btn.dataset.themeLabel;
