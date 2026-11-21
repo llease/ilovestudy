@@ -2690,6 +2690,38 @@
       background: #10b981;
       flex-shrink: 0;
     }
+    /* Pre-tour Setup Bridge Overlay */
+    #tour-setup-bridge {
+      position: fixed;
+      inset: 0;
+      z-index: 125;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      opacity: 0;
+      transition: opacity 280ms ease;
+    }
+    #tour-setup-bridge.hidden { display: none !important; }
+    #tour-setup-bridge.is-open { opacity: 1; }
+    body[data-dark="true"] #tour-setup-bridge {
+      background: rgba(14, 15, 18, 0.94);
+      color: #f8fafc;
+    }
+    #tour-setup-bridge .bridge-spinner {
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      border: 3px solid rgba(99, 102, 241, 0.18);
+      border-top-color: #4f46e5;
+      animation: tourBridgeSpin 0.8s linear infinite;
+    }
+    @keyframes tourBridgeSpin {
+      to { transform: rotate(360deg); }
+    }
   </style>
 </head>
 <body data-theme="white" class="bg-white text-slate-950 min-h-screen antialiased">
@@ -4356,7 +4388,6 @@
             { id: 'ch_respect1', cat: 'starter', title: '👏 관객', desc: '다른 스터디원에게 첫 리스펙 보내기', lp: 7 },
             { id: 'ch_brag1', cat: 'starter', title: '✨ 관심 주세요', desc: 'STUDYGRAM 피드에 첫 사진 1장 올리기', lp: 7 },
             { id: 'ch_mailbox', cat: 'starter', title: '💌 사랑의 편지', desc: '상단 우편함 버튼 처음 열어보기', lp: 7 },
-            { id: 'ch_guide', cat: 'starter', title: '📖 설명 중', desc: '설명서 탭 처음 열어보기', lp: 7 },
             { id: 'ch_encourage', cat: 'starter', title: '💪 근육맨', desc: '격려해주세요 기능 처음 사용해 보기', lp: 7 },
             { id: 'ch_todo_v', cat: 'starter', title: '✅ 나르시스트', desc: '플래너에서 할 일 상태를 처음으로 V로 체크하기', lp: 7 },
             { id: 'ch_cal_day', cat: 'starter', title: '📅 탐험가', desc: '캘린더에서 날짜를 눌러 상세 기록 확인하기', lp: 7 },
@@ -4471,7 +4502,7 @@
             const parsed = JSON.parse(r);
             const base = buildDefaultSharedData(false).challenges;
             const existing = Array.isArray(parsed.challenges) ? parsed.challenges : [];
-            const filtered = existing.filter(c => !['ch_f10', 'ch_f30', 'ch_f60'].includes(c.id));
+            const filtered = existing.filter(c => !['ch_f10', 'ch_f30', 'ch_f60', 'ch_guide'].includes(c.id));
             const ids = new Set(filtered.map(c => c.id));
             let mergedCh = filtered.concat(base.filter(b => !ids.has(b.id)));
             if (!parsed.lpRebalanceV5) {
@@ -4489,7 +4520,7 @@
               parsed.lpRebalanceV5 = true;
             }
             if (!parsed.lpRebalanceV6) {
-              const starterSet = new Set(['ch_newbie','ch_join_study','ch_avatar','ch_timetable','ch_equip','ch_respect1','ch_brag1','ch_mailbox','ch_guide','ch_encourage','ch_todo_v','ch_cal_day','ch_spy','ch_rank_bottom','ch_ultra_reserve','ch_rename','ch_banner_bg']);
+              const starterSet = new Set(['ch_newbie','ch_join_study','ch_avatar','ch_timetable','ch_equip','ch_respect1','ch_brag1','ch_mailbox','ch_encourage','ch_todo_v','ch_cal_day','ch_spy','ch_rank_bottom','ch_ultra_reserve','ch_rename','ch_banner_bg']);
               mergedCh = mergedCh.map(c => starterSet.has(c.id) ? { ...c, cat: 'starter', lp: 7 } : c);
               parsed.lpRebalanceV6 = true;
             }
@@ -5181,7 +5212,7 @@
                   });
                 }
                 if (!v.lpRebalanceV6) {
-                  const starterSet = new Set(['ch_newbie','ch_join_study','ch_avatar','ch_timetable','ch_equip','ch_respect1','ch_brag1','ch_mailbox','ch_guide','ch_encourage','ch_todo_v','ch_cal_day','ch_spy','ch_rank_bottom','ch_ultra_reserve','ch_rename','ch_banner_bg']);
+                  const starterSet = new Set(['ch_newbie','ch_join_study','ch_avatar','ch_timetable','ch_equip','ch_respect1','ch_brag1','ch_mailbox','ch_encourage','ch_todo_v','ch_cal_day','ch_spy','ch_rank_bottom','ch_ultra_reserve','ch_rename','ch_banner_bg']);
                   mergedCh = mergedCh.map(c => starterSet.has(c.id) ? { ...c, cat: 'starter', lp: 7 } : c);
                 }
                 if (!v.lpRebalanceV7) {
@@ -5620,7 +5651,7 @@
         if (!done.length) return;
         if (!shared.challengeLpGranted) shared.challengeLpGranted = {};
         if (!shared.challengeLpGranted[memberId]) shared.challengeLpGranted[memberId] = {};
-        const oldStarter5 = new Set(['ch_newbie','ch_join_study','ch_avatar','ch_timetable','ch_equip','ch_respect1','ch_brag1','ch_mailbox','ch_guide','ch_encourage','ch_todo_v','ch_cal_day','ch_spy','ch_rank_bottom','ch_ultra_reserve','ch_rename','ch_banner_bg']);
+        const oldStarter5 = new Set(['ch_newbie','ch_join_study','ch_avatar','ch_timetable','ch_equip','ch_respect1','ch_brag1','ch_mailbox','ch_encourage','ch_todo_v','ch_cal_day','ch_spy','ch_rank_bottom','ch_ultra_reserve','ch_rename','ch_banner_bg']);
         let changed = false;
         done.forEach(chId => {
           const ch = (shared.challenges || []).find(c => c.id === chId);
@@ -6212,6 +6243,7 @@
         ];
         const meBanner = shared.members.find(m => m.id === prefs.currentUserId);
         const bannerEl = document.getElementById('main-live-banner');
+        if (bannerEl) bannerEl.scrollLeft = 0;
         const isFreeBanner = getMemberMode(meBanner) === 'free';
         bannerEl.dataset.content = isFreeBanner ? 'quote' : 'schedule';
         if (isFreeBanner && /^data:image\/(?:png|jpe?g|webp);base64,[a-z0-9+/=]+$/i.test(prefs.bannerBgImg || '')) {
@@ -6279,7 +6311,6 @@
         ch_newbie: { label: '스톱워치 켜기', action: 'focus' },
         ch_avatar: { label: '프로필 사진', action: 'tab:profile' },
         ch_timetable: { label: '수업 등록', action: 'tab:timetable' },
-        ch_guide: { label: '설명서 보기', action: 'tab:guide' },
         ch_mailbox: { label: '우편함 열기', action: 'mailbox' },
         ch_todo_v: { label: '할 일 V 체크', action: 'tab:planner' },
         ch_cal_day: { label: '캘린더 보기', action: 'tab:calendar' },
@@ -7420,7 +7451,7 @@
         }
       }
 
-      const STARTER_CHALLENGE_IDS = new Set(['ch_newbie','ch_join_study','ch_avatar','ch_timetable','ch_equip','ch_respect1','ch_brag1','ch_mailbox','ch_guide','ch_encourage','ch_todo_v','ch_cal_day','ch_spy','ch_rank_bottom','ch_ultra_reserve','ch_rename','ch_banner_bg','ch_flipflop','ch_minimal','ch_pause1','ch_timetravel','ch_justice','ch_theme']);
+      const STARTER_CHALLENGE_IDS = new Set(['ch_newbie','ch_join_study','ch_avatar','ch_timetable','ch_equip','ch_respect1','ch_brag1','ch_mailbox','ch_encourage','ch_todo_v','ch_cal_day','ch_spy','ch_rank_bottom','ch_ultra_reserve','ch_rename','ch_banner_bg','ch_flipflop','ch_minimal','ch_pause1','ch_timetravel','ch_justice','ch_theme']);
       function challengeCategory(ch) {
         if (STARTER_CHALLENGE_IDS.has(ch.id) || ch.cat === 'starter') return 'starter';
         if (ch.cat) return ch.cat;
@@ -7861,7 +7892,6 @@
         }
         if (tab === 'guide') {
           if (prefs.guideHintUnread) prefs.guideHintUnread = false;
-          if (!prefs.adminMode) { unlockChallengeFor(prefs.currentUserId, 'ch_guide', false); saveSharedData(); }
         }
         if (tab === 'members' && prefs.activeTab !== tab) activeChallengeCat = null;
         prefs.activeTab = tab;
@@ -12073,53 +12103,92 @@
         if (pwaBanner) pwaBanner.classList.add('hidden');
         try { localStorage.setItem(DISMISS_KEY, '1'); } catch (e) {}
       });
-      // Smooth 60fps 5-Step First-Join Spotlight Tour (SVG cutout + GPU opacity/transform only)
+      // Smooth 60fps 7-Step First-Join Spotlight Tour (with setup bridge, mode toggle, tier table & horizontal scroll fix)
       const SPOTLIGHT_TOUR_STEPS = [
         {
           tab: 'dashboard',
           selector: '#btn-open-focus',
           fallback: '#main-live-banner',
-          badge: '1 / 5 · 집중 타이머',
+          badge: '1 / 7 · 집중 스톱워치',
           title: '공부 시작은 이 버튼 하나로!',
-          desc: "'집중 시작하기'를 누르면 스톱워치가 켜지고 공부 시간과 출석이 자동으로 기록돼요. 더 몰입하고 싶을 땐 울트라집중모드도 켜보세요."
+          desc: "'집중 시작하기'를 누르면 스톱워치가 켜지고 공부 시간과 출석이 자동으로 기록돼요."
+        },
+        {
+          tab: 'dashboard',
+          selector: '#study-mode-btn',
+          fallback: '#study-header',
+          isHeaderTarget: true,
+          badge: '2 / 7 · 공부 모드 전환',
+          title: '울트라집중모드로 바꿀 수 있어요',
+          desc: "상단 모드 버튼을 누르면 자유롭게 공부하는 '자율모드'와 교시별로 빡세게 관리하는 '울트라집중모드'를 언제든 전환할 수 있어요."
         },
         {
           tab: 'planner',
           selector: '.planner-sheet-header',
           fallback: '#tab-planner',
-          badge: '2 / 5 · 스터디 플래너',
+          badge: '3 / 7 · 스터디 플래너',
           title: '오늘 할 일과 공부 목표를 정리해요',
-          desc: "날짜별로 과목과 할 일을 적고, '편집' 버튼을 눌러 나만의 공부 계획표를 자유롭게 채워나갈 수 있어요."
+          desc: "날짜별로 목표 공부시간과 과목별 할 일을 적고, '편집' 버튼을 눌러 나만의 공부 계획표를 자유롭게 채워나갈 수 있어요."
         },
         {
           tab: 'timetable',
-          selector: '#btn-load-cnu-ee',
-          fallback: '#tab-timetable .tt-card',
-          badge: '3 / 5 · 수업 시간표',
-          title: '충남대 시간표도 한 번에 불러와요',
-          desc: '내 수업 시간을 등록해두면 일정을 한눈에 볼 수 있고, 울트라집중모드에서 수업 시간은 자동으로 면제 처리돼요.'
+          selector: '#tab-timetable .tt-card',
+          fallback: '#tab-timetable',
+          badge: '4 / 7 · 수업 시간표',
+          title: '대학 수업 일정을 한눈에 관리해요',
+          desc: '내 수업 시간표를 등록해두면 일정을 한눈에 볼 수 있고, 울트라집중모드에서는 수업 시간이 자동으로 면제돼요. 충남대 전자공학과 시간표도 바로 불러올 수 있어요!'
         },
         {
           tab: 'members',
+          subTab: 'live',
           selector: '#members-sub-bar',
           fallback: '#tab-members',
-          badge: '4 / 5 · 스터디 · 랭킹',
+          badge: '5 / 7 · 스터디 · 랭킹',
           title: '원할 때 스터디에 참가해 함께 달려요',
           desc: '스터디에 참가하면 부원들과 실시간 공부 현황·랭킹·STUDYGRAM을 즐길 수 있어요. 원하면 언제든지 탈퇴할 수 있어요!'
+        },
+        {
+          tab: 'members',
+          subTab: 'rank',
+          selector: '#rank-tier-table-wrap',
+          fallback: '#members-sub-rank',
+          badge: '6 / 7 · 티어 & 랭크 체계',
+          title: '공부할수록 티어가 올라가요!',
+          desc: '공부 시간과 챌린지로 LP를 모아 아이언부터 챌린저까지 승급해 보세요. 티어가 오를수록 멋진 전용 테마도 열려요!'
         },
         {
           tab: 'guide',
           selector: '#nav-tab-guide',
           fallback: '#study-nav',
           isNavTarget: true,
-          badge: '5 / 5 · 사용법 안내',
+          badge: '7 / 7 · 사용법 안내',
           title: "모르는 게 있으면 '설명서'를 눌러보세요!",
           desc: "기능이 헷갈리거나 사용법이 궁금할 땐 언제든지 상단 '설명서' 탭에서 한눈에 확인할 수 있어요.",
           cta: '완료'
         }
       ];
 
-
+      function ensureTourSetupBridgeEl() {
+        let el = document.getElementById('tour-setup-bridge');
+        if (!el) {
+          el = document.createElement('div');
+          el.id = 'tour-setup-bridge';
+          el.className = 'hidden';
+          el.setAttribute('role', 'status');
+          el.setAttribute('aria-live', 'polite');
+          el.innerHTML = `
+            <div class="text-center space-y-3 max-w-xs">
+              <div class="bridge-spinner mx-auto" aria-hidden="true"></div>
+              <div class="space-y-1">
+                <p class="text-sm sm:text-base font-black tracking-tight">세부 설정을 준비하고 있어요…</p>
+                <p class="text-xs opacity-70">맞춤 공부 공간을 세팅하는 중입니다</p>
+              </div>
+            </div>
+          `;
+          document.body.appendChild(el);
+        }
+        return el;
+      }
 
       function ensureSpotlightTourEls() {
         let scrim = document.getElementById('spotlight-tour-scrim');
@@ -12197,8 +12266,14 @@
         return target;
       }
 
+      function resetBannerHorizontalScroll() {
+        const liveBanner = document.getElementById('main-live-banner');
+        if (liveBanner && liveBanner.scrollLeft !== 0) liveBanner.scrollLeft = 0;
+      }
+
       function positionSpotlightTour(stepObj) {
         if (!spotlightTourState.active || !stepObj) return;
+        resetBannerHorizontalScroll();
         const { scrim, ring, card } = ensureSpotlightTourEls();
         const target = resolveSpotlightTarget(stepObj);
         if (!target) return;
@@ -12210,7 +12285,8 @@
         const rLeft = Math.max(6, Math.round(rect.left - pad));
         const rTop = Math.max(6, Math.round(rect.top - pad));
         const rWidth = Math.max(24, Math.min(vw - 12, Math.round(rect.width + pad * 2)));
-        const rHeight = Math.max(24, Math.min(vh - 12, Math.round(rect.height + pad * 2)));
+        const maxHighlightH = Math.min(vh - 190, Math.round(rect.height + pad * 2));
+        const rHeight = Math.max(24, Math.min(vh - 12, Math.max(84, maxHighlightH)));
 
         const cutout = scrim.querySelector('#spotlight-cutout');
         if (cutout) {
@@ -12257,8 +12333,11 @@
           if (prefs.activeTab !== stepObj.tab) {
             switchTab(stepObj.tab, true);
           }
+          if (stepObj.tab === 'members' && stepObj.subTab) {
+            const subBtn = document.querySelector(`[data-members-sub="${stepObj.subTab}"]`);
+            if (subBtn && subBtn.getAttribute('aria-pressed') !== 'true') subBtn.click();
+          }
 
-          // Populate card content synchronously BEFORE measuring card height
           card.querySelector('.st-badge').textContent = stepObj.badge;
           card.querySelector('.st-title').textContent = stepObj.title;
           card.querySelector('.st-desc').textContent = stepObj.desc;
@@ -12272,7 +12351,6 @@
           ring.classList.remove('hidden');
           card.classList.remove('hidden');
 
-          // Wait for tab layout, position scroll cleanly (nav vs page), then measure & fade in smoothly
           requestAnimationFrame(() => {
             const target = resolveSpotlightTarget(stepObj);
             if (stepObj.isNavTarget && target) {
@@ -12281,9 +12359,12 @@
               if (nav) {
                 nav.scrollLeft = Math.max(0, target.offsetLeft - Math.round((nav.clientWidth - target.offsetWidth) / 2));
               }
+            } else if (stepObj.isHeaderTarget) {
+              window.scrollTo({ top: 0, behavior: 'auto' });
             } else if (target) {
-              try { target.scrollIntoView({ behavior: 'auto', block: 'center', inline: 'center' }); } catch (e) {}
+              try { target.scrollIntoView({ behavior: 'auto', block: 'center', inline: 'nearest' }); } catch (e) {}
             }
+            resetBannerHorizontalScroll();
             requestAnimationFrame(() => {
               if (!spotlightTourState.active) return;
               if (stepObj.isNavTarget && target) {
@@ -12292,6 +12373,7 @@
                   nav.scrollLeft = Math.max(0, target.offsetLeft - Math.round((nav.clientWidth - target.offsetWidth) / 2));
                 }
               }
+              resetBannerHorizontalScroll();
               positionSpotlightTour(stepObj);
               scrim.classList.add('is-open');
               ring.classList.add('is-open');
@@ -12314,18 +12396,22 @@
 
       function startFirstJoinTour(nickname) {
         if (prefs.adminMode) {
-          switchTab('dashboard');
+          switchTab('dashboard', true);
           playFirstJoinWelcome(nickname);
           return;
         }
-        spotlightTourState = { active: true, step: 0, nickname: nickname || '', transitioning: false };
+        spotlightTourState = { active: true, step: 0, nickname: nickname || '', transitioning: true };
         welcomePlayedForSession = true;
-        // Brief settle after auth overlay closes so dashboard & #btn-open-focus layout is 100% ready
-        requestAnimationFrame(() => {
-          requestAnimationFrame(() => {
+        const bridge = ensureTourSetupBridgeEl();
+        bridge.classList.remove('hidden');
+        requestAnimationFrame(() => bridge.classList.add('is-open'));
+        setTimeout(() => {
+          bridge.classList.remove('is-open');
+          setTimeout(() => {
+            bridge.classList.add('hidden');
             if (spotlightTourState.active) goSpotlightStep(0, true);
-          });
-        });
+          }, 260);
+        }, reduceMotion.matches ? 400 : 1500);
       }
 
       function finishFirstJoinTour(playWelcomeCinematic) {
@@ -12348,9 +12434,12 @@
           card.classList.add('hidden');
           const nav = document.getElementById('study-nav');
           if (nav) nav.scrollLeft = 0;
+          const liveSub = document.querySelector('[data-members-sub="live"]');
+          if (liveSub && liveSub.getAttribute('aria-pressed') !== 'true') liveSub.click();
           switchTab('dashboard', true);
           applyThemeLayout(prefs.theme || 'white');
           renderLiveBanner();
+          resetBannerHorizontalScroll();
           window.scrollTo({ top: 0, behavior: 'auto' });
           if (playWelcomeCinematic) {
             playFirstJoinWelcome(nick);
