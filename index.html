@@ -2749,7 +2749,7 @@
       </div>
 
       <div id="auth-login-step" class="space-y-4">
-        <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">Google 계정으로 로그인하면 휴대폰·태블릿·PC에서 같은 공부 기록과 시간표를 확인할 수 있어요.</p>
+        <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">Google 계정은 기기 간 공부 기록 연동용으로 쓰여요. 휴대폰·태블릿·PC에서 같은 공부 기록과 시간표를 이어서 확인할 수 있어요.</p>
         <p id="auth-error-msg" class="hidden text-xs font-bold text-rose-600 bg-rose-50 border border-rose-200 rounded-xl p-2.5"></p>
         <button id="btn-google-login" type="button" class="w-full py-3 px-4 rounded-xl ed-btn-accent font-black text-sm flex items-center justify-center gap-2.5">
           <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17Z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.11-6.72-4.96H1.29v3.14C3.26 21.3 7.31 24 12 24Z"/><path fill="#FBBC05" d="M5.28 14.24c-.24-.72-.38-1.49-.38-2.24s.14-1.52.38-2.24V6.62H1.29C.47 8.24 0 10.06 0 12s.47 3.76 1.29 5.38l3.99-3.14Z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.62l3.99 3.14c.95-2.85 3.6-4.96 6.72-4.96Z"/></svg>
@@ -2784,25 +2784,17 @@
           </div>
         </div>
 
-        <!-- Step 1: Security & Name -->
+        <!-- Step 1: Nickname -->
         <div data-onboard-pane="1" class="onboard-step-pane space-y-3">
           <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-900 space-y-0.5">
             <p class="font-black">반가워요! 딱 1분이면 준비 끝나요 👋</p>
             <p id="onboard-google-email" class="text-[11px] opacity-80"></p>
           </div>
-          <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 text-[11px] text-slate-700 leading-relaxed space-y-1">
-            <p class="font-black text-slate-900">🔒 Google 보안 인프라로 안전하게 보호됩니다</p>
-            <p>모든 정보는 <strong>Google Firebase Authentication</strong>과 <strong>HTTPS/TLS 암호화 통신</strong>으로 안전하게 지켜집니다. 실명은 관리자 확인용으로만 쓰이며 타인에게 절대 보이지 않고, 모든 활동은 <strong>별명</strong>으로만 이루어져요.</p>
-          </div>
           <div class="space-y-2.5">
-            <div>
-              <label for="onboard-realname-input" class="block text-xs font-bold text-slate-700 mb-1">본인 실명 <span class="text-rose-600">(가입 후 변경 불가)</span></label>
-              <input id="onboard-realname-input" type="text" autocomplete="off" maxlength="16" placeholder="반드시 본인 실명을 적어주세요" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm font-bold" />
-            </div>
             <div>
               <label for="onboard-nickname-input" class="block text-xs font-bold text-slate-700 mb-1">활동할 별명 <span class="text-slate-400 font-normal">(스터디원에게 표시됨)</span></label>
               <input id="onboard-nickname-input" type="text" autocomplete="off" aria-describedby="onboard-nickname-help" maxlength="16" placeholder="예: 열공하는 스터디원" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm font-bold" />
-              <p id="onboard-nickname-help" class="mt-1 text-[11px] text-slate-600">별명은 가입 후 내 프로필에서 언제든지 바꿀 수 있어요.</p>
+              <p id="onboard-nickname-help" class="mt-1 text-[11px] text-slate-600">모든 활동은 별명으로만 표시되며, 가입 후 내 프로필에서 언제든지 바꿀 수 있어요.</p>
             </div>
           </div>
           <button type="button" data-onboard-next="2" class="w-full py-3 px-4 rounded-xl ed-btn-accent font-black text-sm">다음으로 →</button>
@@ -2870,9 +2862,9 @@
           <div class="flex items-center justify-between gap-2 px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs">
             <label class="flex items-center gap-2 font-bold text-slate-900 cursor-pointer min-w-0">
               <input id="onboard-privacy-agree" type="checkbox" class="shrink-0" />
-              <span class="truncate">[필수] 개인정보 수집·이용 동의</span>
+              <span class="truncate">[필수] 공부 기록 저장 및 이용 안내 동의</span>
             </label>
-            <button type="button" id="btn-open-privacy-policy" class="text-[11px] font-bold text-indigo-600 hover:underline shrink-0 whitespace-nowrap">보기</button>
+            <button type="button" id="btn-open-privacy-policy" class="text-[11px] font-bold text-indigo-600 hover:underline shrink-0 whitespace-nowrap">자세히 보기</button>
           </div>
           <div class="grid grid-cols-3 gap-2 pt-1">
             <button type="button" data-onboard-prev="3" class="py-3 rounded-xl bg-slate-100 text-xs font-bold text-slate-700">← 이전</button>
@@ -3929,9 +3921,9 @@
           <div id="admin-encouragements-list" class="space-y-2 max-h-64 overflow-y-auto scrollbar-thin"></div>
         </div>
 
-        <!-- Admin Onboarding Real Name & Survey Viewer -->
+        <!-- Admin Onboarding Survey Viewer -->
         <div class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-sm space-y-2">
-          <h4 class="text-xs sm:text-sm font-black text-slate-900">📋 가입자 실명 · 설문 응답함 (관리자 전용)</h4>
+          <h4 class="text-xs sm:text-sm font-black text-slate-900">📋 가입자 설문 응답함 (관리자 전용)</h4>
           <div id="admin-onboarding-list" class="space-y-2 max-h-64 overflow-y-auto scrollbar-thin"></div>
         </div>
 
@@ -4413,7 +4405,7 @@
       let dbRef = null;
       let privateRef = null;
       let allPrivateRef = null;
-      let myPrivateData = { realName: '', onboardingSurvey: null, motemote: {} };
+      let myPrivateData = { onboardingSurvey: null, motemote: {} };
       let allPrivateData = {};
       let lastPrivateMotemoteJson = '{}';
       let dbListenerAttached = false;
@@ -4944,7 +4936,6 @@
           privateRef.on('value', snap => {
             const pv = snap.val() || {};
             myPrivateData = {
-              realName: pv.realName || '',
               onboardingSurvey: pv.onboardingSurvey || null,
               motemote: pv.motemote || {}
             };
@@ -4977,7 +4968,7 @@
       function detachPrivateDb() {
         if (privateRef) { try { privateRef.off(); } catch (e) {} privateRef = null; }
         if (allPrivateRef) { try { allPrivateRef.off(); } catch (e) {} allPrivateRef = null; }
-        myPrivateData = { realName: '', onboardingSurvey: null, motemote: {} };
+        myPrivateData = { onboardingSurvey: null, motemote: {} };
         allPrivateData = {};
         lastPrivateMotemoteJson = '{}';
       }
@@ -7649,7 +7640,6 @@
                 return `<div class="rounded-xl border ${r.read ? 'border-slate-200 bg-slate-50' : 'border-indigo-200 bg-white'} p-2.5 text-xs space-y-1.5">
                   <div class="flex items-center justify-between gap-2">
                     <div class="flex items-center gap-1.5 min-w-0 flex-wrap">
-                      <span class="px-2 py-0.5 rounded-md bg-slate-950 text-white text-[10px] font-black shrink-0">실명: ${escapeHtml(pRec.realName || '미확인')}</span>
                       <span class="font-bold text-slate-900 truncate">${escapeHtml(r.nickname)}</span>
                       ${r.read ? '<span class="px-1.5 py-0.5 rounded bg-slate-200 text-slate-600 text-[10px] font-bold shrink-0">읽음</span>' : '<span class="px-1.5 py-0.5 rounded bg-amber-400 text-slate-950 text-[10px] font-black shrink-0">미확인</span>'}
                     </div>
@@ -7680,18 +7670,16 @@
             if (m.uid) seenUids.add(m.uid);
             const pRec = (m.uid && allPrivateData[m.uid]) ? allPrivateData[m.uid] : {};
             if (pRec.surveyHidden) return;
-            const realName = pRec.realName || m.realName || '';
             const survey = pRec.onboardingSurvey || m.onboardingSurvey || null;
-            if (realName || survey) obRows.push({ uid: m.uid, name: m.name, email: pRec.email || '', realName, survey, withdrawn: false });
+            if (survey) obRows.push({ uid: m.uid, name: m.name, email: pRec.email || '', survey, withdrawn: false });
           });
           Object.entries(allPrivateData || {}).forEach(([uid, pRec]) => {
             if (seenUids.has(uid) || !pRec || pRec.surveyHidden) return;
-            if (pRec.realName || pRec.onboardingSurvey) {
+            if (pRec.onboardingSurvey) {
               obRows.push({
                 uid,
                 name: pRec.nickname || (pRec.status === 'withdrawn' ? '탈퇴 회원' : '가입 신청자'),
                 email: pRec.email || '',
-                realName: pRec.realName || '',
                 survey: pRec.onboardingSurvey || null,
                 withdrawn: pRec.status === 'withdrawn',
                 withdrawnAt: pRec.withdrawnAt || ''
@@ -7706,7 +7694,6 @@
                 return `<div class="rounded-xl border ${item.withdrawn ? 'border-rose-200 bg-rose-50/60' : 'border-slate-200 bg-slate-50'} p-2.5 text-xs space-y-1.5">
                   <div class="flex items-center justify-between gap-2">
                     <div class="flex items-center gap-1.5 min-w-0 flex-wrap">
-                      <span class="px-2 py-0.5 rounded-md bg-slate-950 text-white text-[10px] font-black shrink-0">실명: ${escapeHtml(item.realName || '미등록')}</span>
                       <span class="font-bold text-slate-800 truncate">별명: ${escapeHtml(item.name)}</span>
                       ${item.withdrawn ? `<span class="px-1.5 py-0.5 rounded bg-rose-600 text-white text-[10px] font-black shrink-0">탈퇴${item.withdrawnAt ? ' (' + escapeHtml(item.withdrawnAt) + ')' : ''}</span>` : ''}
                     </div>
@@ -7724,7 +7711,7 @@
                   </div>` : ''}
                 </div>`;
               }).join('')
-            : '<p class="text-xs text-slate-400">아직 등록된 실명·설문 응답이 없습니다.</p>';
+            : '<p class="text-xs text-slate-400">아직 등록된 설문 응답이 없습니다.</p>';
         }
       }
 
@@ -11345,7 +11332,6 @@
         if (nextB) {
           const targetStep = Number(nextB.dataset.onboardNext);
           if (targetStep === 2) {
-            if (!document.getElementById('onboard-realname-input').value.trim()) { showToast('본인의 실명을 반드시 입력해 주세요.', 'warn'); return; }
             if (!document.getElementById('onboard-nickname-input').value.trim()) { showToast('사용할 별명을 입력해 주세요.', 'warn'); return; }
           } else if (targetStep === 3) {
             if (!document.getElementById('onboard-survey-source').value) { showToast('가입 경로를 선택해 주세요.', 'warn'); return; }
@@ -11364,16 +11350,14 @@
         e.preventDefault();
         const user = currentAuthUser;
         if (!user || onboardingBusy) return;
-        const realName = document.getElementById('onboard-realname-input').value.trim();
         const nickname = document.getElementById('onboard-nickname-input').value.trim();
         const source = document.getElementById('onboard-survey-source').value;
         const feature = document.getElementById('onboard-survey-feature').value;
         const goalHours = document.getElementById('onboard-survey-goal-hours').value.trim();
         const agreed = document.getElementById('onboard-privacy-agree').checked;
-        if (!realName) { showToast('본인의 실명을 반드시 입력해 주세요.', 'warn'); return; }
         if (!nickname) { showToast('사용할 별명을 입력해 주세요.', 'warn'); return; }
         if (!source || !feature || !goalHours) { showToast('간단한 가입 설문을 모두 작성해 주세요.', 'warn'); return; }
-        if (!agreed) { showToast('개인정보 수집·이용 동의에 체크해 주세요.', 'warn'); return; }
+        if (!agreed) { showToast('이용 안내 동의에 체크해 주세요.', 'warn'); return; }
         if (!dbRef || !cloudConnected || cloudLinkLive === false) { showToast('연결된 뒤에 다시 시작하기를 눌러 주세요.', 'warn'); return; }
         const button = e.currentTarget.querySelector('button[type="submit"]');
         const onboardingSurvey = { source, feature, goalHours: Number(goalHours), submittedAt: Date.now(), agreedAt: `${todayStr()} ${getNowParts().hhmm}` };
@@ -11383,13 +11367,12 @@
           name:nickname, avatarUrl:user.photoURL || '', mode:'free', inStudy:false,
           streak:0, lp:0, respectCount:0, equippedTitle:'', lateNight:false, firstTime:null, lastTime:null
         };
-        if (sMode === 'open') pendingFirstJoinWelcome = { realName, nickname };
+        if (sMode === 'open') pendingFirstJoinWelcome = { nickname };
         onboardingBusy = true;
         button.disabled = true;
         button.textContent = sMode === 'approval' ? '요청서 전송 중…' : '기록 준비 중…';
         try {
           await firebase.database().ref('privateData/' + user.uid).set({
-            realName,
             nickname,
             email: user.email || '',
             onboardingSurvey,
@@ -11585,28 +11568,24 @@
       });
 
       function openPrivacyPolicyModal() {
-        openModal('📄 개인정보처리방침 (I LOVE STUDY)', `
+        openModal('📄 이용 및 정보 보관 안내 (I LOVE STUDY)', `
           <div class="space-y-3 text-xs text-slate-700 leading-relaxed">
-            <p><strong>I LOVE STUDY (충남대 전자공학과)</strong>는 스터디원의 개인정보를 소중히 다루며 관련 법령을 준수합니다.</p>
+            <p><strong>I LOVE STUDY (충남대 전자공학과)</strong>는 스터디 운영과 기기 간 공부 기록 연동에 꼭 필요한 최소한의 정보만 보관해요.</p>
             <div class="space-y-1">
-              <p class="font-black text-slate-900">1. 수집하는 개인정보 항목</p>
-              <p>Google 로그인 식별 정보(UID·이메일), 실명, 활동 별명, 가입 설문 응답(가입 경로·기대 기능·하루 목표 공부시간), 공부 시간·플래너 기록</p>
+              <p class="font-black text-slate-900">1. 저장되는 정보</p>
+              <p>Google 로그인 식별 정보(이메일·고유 ID), 활동 별명, 가입 설문(가입 경로·기대 기능·하루 목표 공부시간), 공부 시간·플래너 기록</p>
             </div>
             <div class="space-y-1">
-              <p class="font-black text-slate-900">2. 개인정보의 수집 및 이용 목적</p>
-              <p>스터디원 본인 확인, 부정 이용 및 보안 사고 예방·대응, 스터디 출석·랭킹·플래너 서비스 제공 및 운영</p>
+              <p class="font-black text-slate-900">2. 사용되는 곳</p>
+              <p>기기 간 공부 기록·시간표 연동, 스터디 출석·랭킹·플래너 기능 제공 및 동아리 스터디 운영</p>
             </div>
             <div class="space-y-1">
-              <p class="font-black text-slate-900">3. 비공개 분리 저장 및 제3자 제공 금지</p>
-              <p>실명·가입 설문·개인 플래너는 일반 스터디원에게 절대 공개되지 않으며(별도 비공개 경로 분리 저장), 외부 제3자에게 제공하지 않습니다.</p>
+              <p class="font-black text-slate-900">3. 비공개 보관</p>
+              <p>이메일·가입 설문·개인 플래너는 다른 스터디원에게 보이지 않도록 분리 보관하며, 외부에 공유하지 않아요.</p>
             </div>
             <div class="space-y-1">
-              <p class="font-black text-slate-900">4. 보유 및 이용 기간</p>
-              <p>회원 탈퇴 시 공부 시간·플래너·출석·사진 등 서비스 이용 기록은 즉시 파기합니다. 단, 부정 이용 방지 및 보안 사고·분쟁 대응을 위해 <strong>가입 시 제출한 실명·이메일·가입 설문 기록은 탈퇴 후 7일간(일주일) 관리자 전용 보관함에 별도 보존</strong> 후 파기합니다.</p>
-            </div>
-            <div class="space-y-1">
-              <p class="font-black text-slate-900">5. 이용자의 권리 (직접 탈퇴 및 삭제 요청)</p>
-              <p>언제든지 <strong>👤 내 프로필 → 계정 탈퇴</strong>를 통해 직접 계정을 탈퇴하고 모든 개인정보(실명·설문·기록)를 즉시 삭제할 수 있으며, 상단 더보기(⋯)의 <strong>💬 건의하기</strong> 또는 관리자 이메일(<code>spacerocket099@gmail.com</code>)을 통해서도 열람·삭제를 요청하실 수 있습니다.</p>
+              <p class="font-black text-slate-900">4. 탈퇴 및 삭제</p>
+              <p>언제든지 <strong>👤 내 프로필 → 계정 탈퇴</strong>에서 직접 탈퇴하고 모든 기록을 바로 삭제할 수 있어요. 문의나 삭제 요청은 상단 더보기(⋯)의 <strong>💬 건의하기</strong> 또는 관리자 이메일(<code>spacerocket099@gmail.com</code>)로 편하게 알려주세요.</p>
             </div>
           </div>
         `);
@@ -11638,7 +11617,7 @@
           <form id="confirm-delete-account-form" class="space-y-3 text-xs">
             <div class="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-900 space-y-1">
               <p class="font-black">정말 계정을 탈퇴하시겠습니까?</p>
-              <p>탈퇴 시 <strong>실명·가입 설문·공부 시간·플래너·출석·티어(LP)·사진</strong> 등 모든 데이터가 즉시 삭제되며 복구할 수 없습니다.</p>
+              <p>탈퇴 시 <strong>가입 설문·공부 시간·플래너·출석·티어(LP)·사진</strong> 등 모든 데이터가 즉시 삭제되며 복구할 수 없습니다.</p>
             </div>
             <div>
               <label for="delete-account-confirm-input" class="block font-bold text-slate-700 mb-1">확인을 위해 아래에 <strong>탈퇴</strong> 라고 입력해 주세요.</label>
