@@ -1245,11 +1245,40 @@
     body[data-dark="true"] #brag-story-strip .bg-white,
     body[data-dark="true"] #photo-feed-list .bg-white.p-\[1\.5px\] {background-color:var(--surface)!important}
     body[data-dark="true"] [data-photo-stage] {background-color:#09101d!important}
-    body[data-dark="true"] .eta-hour-col {background-color:#0e1729!important;border-color:var(--line)!important}
-    body[data-dark="true"] #weekly-exemption-grid .border-slate-100 {border-color:rgba(51,65,85,0.55)!important}
-    body[data-dark="true"] .eta-class-block {background:var(--eta-bg-dark)!important;color:var(--eta-text-dark)!important;border:1px solid var(--eta-border-dark)!important}
-    body[data-dark="true"] #ultra-exempt-table-wrap [data-toggle-exempt].bg-sky-500 {background-color:#0284c7!important;color:#f0f9ff!important;border-color:#38bdf8!important}
-    body[data-dark="true"] #ultra-exempt-table-wrap [data-toggle-exempt]:not(.bg-sky-500) {background-color:#0e1729!important;color:#94a3b8!important;border-color:#334155!important}
+    #tab-timetable .tt-card {background:var(--surface)!important;color:var(--ink)!important;border:1px solid var(--line)!important;border-radius:18px;box-shadow:var(--shadow-card)}
+    #tab-timetable .tt-preset-bar {background:var(--tint)!important;border:1px solid var(--line)!important}
+    #tab-timetable #btn-load-cnu-ee {background:var(--primary)!important;color:var(--on-primary)!important;border:1px solid transparent;box-shadow:none}
+    #tab-timetable #btn-load-cnu-ee:hover {background:var(--primary-hover)!important}
+    #tab-timetable #btn-add-form-slot {color:var(--link)!important}
+    #tab-timetable #class-form button[type="submit"] {background:var(--tint)!important;color:var(--link)!important;border:1px solid var(--line)!important}
+    #tab-timetable #class-form button[type="submit"]:hover {background:var(--primary)!important;color:var(--on-primary)!important;border-color:var(--primary)!important}
+    #tab-timetable .tt-grid-shell {background:var(--surface)!important;border-color:var(--line)!important}
+    #tab-timetable .tt-grid-head {background:var(--soft)!important;color:var(--muted)!important;border-color:var(--line)!important}
+    #tab-timetable .tt-grid-head > div {border-color:var(--line)!important}
+    #tab-timetable .eta-hour-col {background:color-mix(in srgb,var(--soft) 68%,var(--surface))!important;border-color:var(--line)!important}
+    #tab-timetable #weekly-exemption-grid .border-slate-200 {border-color:var(--line)!important}
+    #tab-timetable #weekly-exemption-grid .border-slate-100 {border-color:color-mix(in srgb,var(--line) 55%,transparent)!important}
+    #tab-timetable .eta-class-block {
+      background:var(--eta-bg)!important;color:var(--eta-text)!important;
+      border:1px solid color-mix(in srgb,var(--eta-accent) 30%,transparent)!important;
+      box-shadow:inset 3px 0 0 color-mix(in srgb,var(--eta-accent) 70%,transparent)
+    }
+    body[data-dark="true"] #tab-timetable input,
+    body[data-dark="true"] #tab-timetable select {background-color:var(--page)!important;color:var(--ink)!important;border-color:var(--line)!important}
+    body[data-dark="true"] #tab-timetable .class-slot-row {background:color-mix(in srgb,var(--soft) 60%,transparent)!important;border-color:var(--line)!important}
+    body[data-dark="true"] #tab-timetable #registered-classes-list > div {background:var(--soft)!important;border-color:var(--line)!important}
+    body[data-dark="true"] #tab-timetable #registered-classes-list > div > div > div {background:var(--surface)!important;border-color:var(--line)!important}
+    body[data-dark="true"] #tab-timetable .eta-class-block {
+      background:color-mix(in srgb,var(--eta-accent-dark) 20%,var(--surface))!important;
+      color:color-mix(in srgb,var(--eta-accent-dark) 26%,var(--ink))!important;
+      border:1px solid color-mix(in srgb,var(--eta-accent-dark) 36%,var(--line))!important;
+      box-shadow:inset 3px 0 0 color-mix(in srgb,var(--eta-accent-dark) 78%,var(--surface))
+    }
+    #tab-timetable #ultra-exempt-table-wrap thead tr {background:var(--soft)!important;color:var(--muted)!important}
+    #tab-timetable #ultra-exempt-table-wrap tbody tr {border-color:var(--line)!important}
+    #tab-timetable #ultra-exempt-table-wrap [data-toggle-exempt].bg-sky-500 {background-color:var(--primary)!important;color:var(--on-primary)!important;border-color:var(--primary)!important}
+    #tab-timetable #ultra-exempt-table-wrap [data-toggle-exempt]:not(.bg-sky-500) {background-color:var(--soft)!important;color:var(--muted)!important;border-color:var(--line)!important}
+    body[data-dark="true"] #tab-timetable #ultra-exempt-table-wrap [data-toggle-exempt]:not(.bg-sky-500) {background-color:var(--page)!important;color:var(--muted)!important;border-color:var(--line)!important}
     body[data-dark="true"] .tier-pill[data-tier="아이언"] {background:#27272a!important;color:#e4e4e7!important;border-color:#52525b!important}
     body[data-dark="true"] .tier-pill[data-tier="브론즈"] {background:#451a03!important;color:#fed7aa!important;border-color:#b45309!important}
     body[data-dark="true"] .tier-pill[data-tier="실버"] {background:linear-gradient(135deg,#1e293b,#334155)!important;color:#f1f5f9!important;border-color:#94a3b8!important}
@@ -1385,11 +1414,11 @@
     #login-welcome-overlay {
       position:fixed; inset:0; z-index:80;
       display:none; align-items:center; justify-content:center; flex-direction:column; gap:1.15rem;
-      background:rgba(241,245,251,.94); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+      background:color-mix(in srgb, var(--page) 94%, transparent); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
       transition:opacity 480ms cubic-bezier(.22,1,.36,1), background-color 480ms ease;
       pointer-events:none;
     }
-    body[data-dark="true"] #login-welcome-overlay { background:rgba(13,22,38,.94); }
+    body[data-dark="true"] #login-welcome-overlay { background:color-mix(in srgb, var(--page) 94%, transparent); }
     #login-welcome-overlay.is-active {
       display:flex;
       pointer-events:all;
@@ -1404,7 +1433,7 @@
     }
     #welcome-glow-aura {
       position:absolute; width:168px; height:168px; border-radius:9999px;
-      background:radial-gradient(circle, rgba(148,163,184,.26) 0%, transparent 70%);
+      background:radial-gradient(circle, color-mix(in srgb, var(--halo, var(--primary)) 26%, transparent) 0%, transparent 70%);
       opacity:0; transform:scale(.6); pointer-events:none;
       transition:opacity 900ms ease, transform 1100ms cubic-bezier(.16,1,.3,1);
     }
@@ -1413,12 +1442,22 @@
     #welcome-logo-fly {
       position:relative; width:92px; height:92px; border-radius:28px;
       display:grid; place-items:center;
-      background:linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
-      color:#f8fafc;
-      border:1.5px solid rgba(255,255,255,.18);
-      box-shadow:0 20px 48px rgba(15,23,42,.3), 0 0 0 6px rgba(148,163,184,.16);
+      background:var(--hero-deep);
+      color:var(--hero-text);
+      border:1.5px solid color-mix(in srgb, var(--hero-text) 18%, transparent);
+      box-shadow:0 20px 48px rgba(15,23,42,.26), 0 0 0 6px color-mix(in srgb, var(--halo, var(--primary)) 16%, transparent);
       transform:scale(.82) translateY(12px); opacity:0;
       transition:transform 700ms cubic-bezier(.22,1.18,.36,1), opacity 420ms ease, box-shadow 500ms ease;
+    }
+    body[data-theme="white"]:not([data-dark="true"]) #welcome-logo-fly {
+      background:#181a20; color:#ffffff; border-color:#181a20;
+    }
+    body.tier-edition #welcome-logo-fly {
+      background:var(--tier-wash);
+      color:#ffffff;
+      border:0;
+      border-radius:28px 12px;
+      box-shadow:0 20px 48px rgba(15,23,42,.28), 0 0 0 1px var(--line), 0 0 24px var(--halo-color);
     }
     #welcome-logo-fly svg { width:54px; height:54px; overflow:visible; }
     #login-welcome-overlay.is-entered #welcome-logo-fly { transform:scale(1) translateY(0); opacity:1; }
@@ -1457,7 +1496,7 @@
     }
     #login-welcome-overlay.is-reconstruct #welcome-logo-fly::after {
       content:''; position:absolute; inset:-14px; border-radius:36px;
-      border:1.5px solid rgba(148,163,184,.7); opacity:0; pointer-events:none;
+      border:1.5px solid color-mix(in srgb, var(--halo, var(--primary)) 65%, transparent); opacity:0; pointer-events:none;
       animation:welcomeHeartHalo 1800ms cubic-bezier(.16,1,.3,1) 2750ms both;
     }
     #login-welcome-overlay.is-reconstruct #welcome-logo-fly svg .book-left {
@@ -1923,8 +1962,11 @@
     body:is([data-theme="blue"],[data-theme="yellow"],[data-theme="coral"],[data-theme="white"]):not([data-mode="strict"]) #main-live-banner[data-content="quote"] #live-period-title {
       text-shadow:none
     }
-    body[data-theme="white"]:not([data-dark="true"]):not([data-mode="strict"]) .study-logo {
+    body[data-theme="white"]:not([data-dark="true"]) .study-logo {
       background:#181a20;color:#ffffff;border-color:#181a20
+    }
+    body[data-theme="white"][data-mode="strict"] {
+      --hero:#451226;--hero-deep:#1a1225;--hero-text:#f8fafc;--hero-muted:#fecdd3
     }
     body[data-theme="white"]:not([data-dark="true"]):not([data-mode="strict"]) #main-live-banner {
       background:#ffffff!important;
@@ -2459,7 +2501,7 @@
     }
   </style>
 </head>
-<body data-theme="blue" class="bg-white text-slate-950 min-h-screen antialiased">
+<body data-theme="white" class="bg-white text-slate-950 min-h-screen antialiased">
   <a class="skip-link" href="#study-main">본문으로 건너뛰기</a>
   <!-- Login Welcome Animation Overlay -->
   <div id="login-welcome-overlay" aria-hidden="true">
@@ -2800,7 +2842,7 @@
             <div class="space-y-1.5">
               <div class="flex items-center justify-between gap-1">
                 <span class="text-[11px] font-black text-slate-700 whitespace-nowrap">기본 포인트 컬러</span>
-                <span id="active-theme-label" class="text-[10px] font-bold text-slate-500 truncate">스카이 블루</span>
+                <span id="active-theme-label" class="text-[10px] font-bold text-slate-500 truncate">퓨어 화이트</span>
               </div>
               <div class="flex items-center gap-2">
                 <button type="button" data-set-theme="blue" data-theme-label="스카이 블루" data-min-lp="0" class="theme-swatch-basic" style="background:#5BB5F6" title="스카이 블루 (기본)"></button>
@@ -3295,14 +3337,14 @@
     <div id="tab-timetable" class="tab-panel hidden space-y-6">
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <div class="lg:col-span-5 space-y-5 order-2 lg:order-1">
-          <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm space-y-3">
+          <div class="tt-card bg-white rounded-2xl border border-slate-200 p-4 shadow-sm space-y-3">
             <div>
               <h3 class="text-sm font-black text-slate-900">대학 수업 시간 등록</h3>
               <p class="text-[11px] text-slate-500 mt-0.5">울트라집중모드 시 수업과 겹치거나 애매하게 끝나는 다음 교시까지 자동 면제로 표시됩니다.</p>
             </div>
             <!-- Quick Preset Bar -->
-            <div class="bg-indigo-50/70 border border-indigo-200 rounded-xl p-2">
-              <button id="btn-load-cnu-ee" type="button" class="w-full py-1.5 px-3 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow-sm transition whitespace-nowrap">
+            <div class="tt-preset-bar rounded-xl p-2">
+              <button id="btn-load-cnu-ee" type="button" class="w-full py-2 px-3 rounded-lg text-xs font-bold transition whitespace-nowrap">
                 ⚡ 충남대 전자과 시간표 불러오기
               </button>
             </div>
@@ -3328,7 +3370,7 @@
           </div>
         </div>
 
-        <div class="lg:col-span-7 order-1 lg:order-2 bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-sm">
+        <div class="tt-card lg:col-span-7 order-1 lg:order-2 bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-sm">
           <div class="mb-3">
             <h3 id="weekly-grid-title" class="text-base font-bold text-slate-900">주간 시간표</h3>
             <p id="weekly-grid-desc" class="text-xs text-slate-500"></p>
@@ -3336,7 +3378,7 @@
           <div id="weekly-exemption-grid" class="overflow-x-auto"></div>
         </div>
       </div>
-      <div id="ultra-exempt-card" class="hidden bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-sm space-y-2.5">
+      <div id="ultra-exempt-card" class="tt-card hidden bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-sm space-y-2.5">
         <div>
           <h4 class="text-sm font-black text-slate-900">⚡ 울트라집중모드 · 전용 면제 시간표</h4>
           <p class="text-[11px] text-slate-500">등록한 대학 수업이 자동 면제되며, 칸을 눌러 직접 <strong>수업면제</strong>를 켜고 끌 수도 있습니다.</p>
@@ -4194,7 +4236,7 @@
 
       function loadPrefs() {
         try { const r = localStorage.getItem(LOCAL_PREFS_KEY); if (r) return JSON.parse(r); } catch (e) {}
-        return { currentUserId: 'm1', adminMode: false, alertEnabled: true, simTime: null, adminBrush: 'present', activeTab: 'dashboard', theme: 'blue' };
+        return { currentUserId: 'm1', adminMode: false, alertEnabled: true, simTime: null, adminBrush: 'present', activeTab: 'dashboard', theme: 'white' };
       }
       function loadLocalData() {
         try {
@@ -5841,7 +5883,7 @@
           guideBtn.classList.toggle('ring-rose-400', showHint);
         }
         const myTierIndex = meHdr ? getMemberTier(meHdr).idx : 0;
-        const activeThemeKey = prefs.theme || 'blue';
+        const activeThemeKey = prefs.theme || 'white';
         const activeThemeLabelEl = document.getElementById('active-theme-label');
         document.querySelectorAll('[data-set-theme]').forEach(btn => {
           const themeTier = LOL_TIERS.findIndex(tier => tier.name === btn.dataset.tierName);
@@ -7053,14 +7095,14 @@
         const pxPerHour = 52;
         const totalHeight = totalHours * pxPerHour;
         const ETA_PALETTE = [
-          { bg: '#fef3c7', border: '#f59e0b', text: '#78350f', dBg: 'rgba(180, 83, 9, 0.36)', dBorder: 'rgba(251, 191, 36, 0.55)', dText: '#fef3c7' },
-          { bg: '#dbeafe', border: '#3b82f6', text: '#1e3a8a', dBg: 'rgba(29, 78, 216, 0.36)', dBorder: 'rgba(96, 165, 250, 0.55)', dText: '#dbeafe' },
-          { bg: '#dcfce7', border: '#22c55e', text: '#14532d', dBg: 'rgba(21, 128, 61, 0.36)', dBorder: 'rgba(74, 222, 128, 0.5)', dText: '#dcfce7' },
-          { bg: '#fce7f3', border: '#ec4899', text: '#831843', dBg: 'rgba(190, 24, 93, 0.36)', dBorder: 'rgba(244, 114, 182, 0.55)', dText: '#fce7f3' },
-          { bg: '#ede9fe', border: '#8b5cf6', text: '#4c1d95', dBg: 'rgba(109, 40, 217, 0.38)', dBorder: 'rgba(167, 139, 250, 0.55)', dText: '#ede9fe' },
-          { bg: '#ffedd5', border: '#f97316', text: '#7c2d12', dBg: 'rgba(194, 65, 12, 0.36)', dBorder: 'rgba(251, 146, 60, 0.55)', dText: '#ffedd5' },
-          { bg: '#cffafe', border: '#06b6d4', text: '#164e63', dBg: 'rgba(14, 116, 144, 0.38)', dBorder: 'rgba(34, 211, 238, 0.55)', dText: '#cffafe' },
-          { bg: '#ffe4e6', border: '#f43f5e', text: '#881337', dBg: 'rgba(190, 18, 60, 0.36)', dBorder: 'rgba(251, 113, 133, 0.55)', dText: '#ffe4e6' }
+          { bg: '#f8f2dc', accent: '#c99b3b', text: '#5c4412', dAccent: '#c9aa63' },
+          { bg: '#e6effa', accent: '#4d82c7', text: '#1d3a63', dAccent: '#6fa2db' },
+          { bg: '#e4f3ea', accent: '#439968', text: '#184a2f', dAccent: '#6bb38a' },
+          { bg: '#f7e9ef', accent: '#c26b8c', text: '#63263e', dAccent: '#cc829e' },
+          { bg: '#eeeafc', accent: '#7c69c4', text: '#3a2b6e', dAccent: '#998ad4' },
+          { bg: '#f9ede2', accent: '#cc7b47', text: '#663415', dAccent: '#cf9169' },
+          { bg: '#e2f2f5', accent: '#3d95a3', text: '#184952', dAccent: '#68b0bc' },
+          { bg: '#f7e8ea', accent: '#c46874', text: '#63252e', dAccent: '#cc808b' }
         ];
         function getSubjectPalette(name) {
           let h = 0;
@@ -7068,8 +7110,8 @@
           return ETA_PALETTE[h % ETA_PALETTE.length];
         }
 
-        let etaHtml = `<div class="rounded-xl border border-slate-200 overflow-hidden bg-white">
-          <div class="grid border-b border-slate-200 bg-slate-100 text-[11px] font-bold text-slate-600" style="grid-template-columns:34px repeat(${dayCols.length}, minmax(0, 1fr))">
+        let etaHtml = `<div class="tt-grid-shell rounded-xl border border-slate-200 overflow-hidden bg-white">
+          <div class="tt-grid-head grid border-b border-slate-200 bg-slate-100 text-[11px] font-bold text-slate-600" style="grid-template-columns:34px repeat(${dayCols.length}, minmax(0, 1fr))">
             <div class="py-1.5 text-center">시</div>
             ${dayCols.map(d => `<div class="py-1.5 text-center border-l border-slate-200">${days[d]}</div>`).join('')}
           </div>
@@ -7090,7 +7132,7 @@
             const topPx = ((sM - startHour * 60) / 60) * pxPerHour;
             const heightPx = Math.max(24, ((eM - sM) / 60) * pxPerHour - 2);
             const pal = getSubjectPalette(c.name);
-            etaHtml += `<button type="button" data-eta-edit="${c.id}" class="eta-class-block absolute left-0.5 right-0.5 rounded-lg px-1 py-1 flex items-center justify-center text-center overflow-y-auto no-scrollbar hover:brightness-95 transition" style="top:${topPx + 1}px; height:${heightPx}px; background:${pal.bg}; color:${pal.text}; --eta-bg-dark:${pal.dBg}; --eta-border-dark:${pal.dBorder}; --eta-text-dark:${pal.dText}" title="${escapeHtml(c.name)} (${c.start}~${c.end}) · 클릭해 수정">
+            etaHtml += `<button type="button" data-eta-edit="${c.id}" class="eta-class-block absolute left-0.5 right-0.5 rounded-lg px-1 py-1 flex items-center justify-center text-center overflow-y-auto no-scrollbar hover:brightness-95 transition" style="top:${topPx + 1}px; height:${heightPx}px; --eta-bg:${pal.bg}; --eta-text:${pal.text}; --eta-accent:${pal.accent}; --eta-accent-dark:${pal.dAccent}" title="${escapeHtml(c.name)} (${c.start}~${c.end}) · 클릭해 수정">
               <span class="w-full text-[10px] sm:text-[11px] font-extrabold leading-[1.2] break-all">${escapeHtml(c.name)}</span>
             </button>`;
           }
@@ -10155,7 +10197,7 @@
       function applyThemeLayout(key) {
         const swatch = Array.from(document.querySelectorAll('[data-set-theme]')).find(button => button.dataset.setTheme === key);
         const edition = Boolean(swatch?.dataset.tierName);
-        document.body.dataset.theme = swatch?.dataset.setTheme || 'blue';
+        document.body.dataset.theme = swatch?.dataset.setTheme || 'white';
         document.body.classList.toggle('tier-edition', edition);
         document.querySelector('.study-brand-caption').textContent = edition ? swatch.dataset.themeLabel : 'Study Desk';
 
@@ -10166,9 +10208,9 @@
         }
       }
 
-      applyThemeLayout(prefs.theme || 'blue');
+      applyThemeLayout(prefs.theme || 'white');
       document.querySelectorAll('[data-set-theme]').forEach(btn => {
-        btn.setAttribute('aria-pressed', String(btn.dataset.setTheme === (prefs.theme || 'blue')));
+        btn.setAttribute('aria-pressed', String(btn.dataset.setTheme === (prefs.theme || 'white')));
         btn.setAttribute('aria-label', btn.title);
         btn.addEventListener('click', ev => {
           if (btn.dataset.locked === 'true') {
