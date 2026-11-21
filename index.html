@@ -1665,6 +1665,7 @@
     .planner-stats dt {font-size:.69rem;font-weight:750;color:var(--muted)}
     .planner-stats dd {margin:0;font-size:.83rem;font-weight:850}
     .planner-stat-actual dd {color:var(--planner-actual);font-size:1.08rem}
+    #planner-goal-edit {min-height:1.55rem;padding:.2rem .34rem;color:var(--link);font-size:.66rem}
     .planner-button,.planner-field {
       box-sizing:border-box;min-height:2rem;max-width:100%;border:1px solid var(--line);
       border-radius:7px;background:var(--surface);color:var(--ink);padding:.25rem .5rem;
@@ -1693,14 +1694,8 @@
     .planner-section-heading #planner-add-task {background:var(--tint)}
     .planner-card-list {display:grid;align-content:start;gap:.5rem;max-height:calc(24 * var(--planner-row) + 1.2rem);overflow:auto;scrollbar-color:var(--line) transparent;padding:1px}
     .planner-subject-group {min-width:0;border:1px solid var(--line);border-radius:9px;overflow:hidden}
-    .planner-subject-head {
-      display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:.3rem;align-items:center;
-      min-height:2rem;padding:.22rem .38rem;background:var(--soft)
-    }
+    .planner-subject-head {min-height:2rem;padding:.36rem .45rem;background:var(--soft)}
     .planner-subject-name {display:flex;align-items:center;gap:.28rem;min-width:0;font-size:.8rem;font-weight:850;overflow-wrap:anywhere}
-    .planner-subject-time {font-size:.72rem;font-weight:850;color:var(--muted);white-space:nowrap}
-    .planner-subject-head .planner-icon {min-width:1.65rem;min-height:1.6rem;padding:.13rem;color:var(--link);font-size:.68rem}
-    .planner-play-icon {width:0;height:0;border-block:4px solid transparent;border-inline-start:6px solid currentColor}
     .planner-task {display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:.35rem;padding:.22rem .35rem;min-height:1.85rem}
     .planner-task + .planner-task {border-top:1px solid var(--line)}
     .planner-task[aria-current="true"] {background:var(--tint)}
@@ -1720,8 +1715,7 @@
     .planner-legend span {display:inline-flex;gap:.25rem;align-items:center}
     .planner-day-note {color:var(--muted);font-size:.66rem}
     .planner-dot {display:inline-block;width:.65rem;height:.65rem;border-radius:3px;flex:none;background:var(--task-color,var(--planner-plan))}
-    .planner-dot.actual {background:linear-gradient(90deg,#527bd4 50%,var(--planner-actual) 50%)}
-    .planner-dot.planned {border:1px dashed var(--planner-plan);background:var(--tint)}
+    .planner-dot.planned {background:var(--planner-plan)}
     .planner-dot.class {background:var(--line)}
     .planner-clock-head,.planner-hour {display:grid;grid-template-columns:2.3rem minmax(0,1fr);align-items:center}
     .planner-clock-head {font-size:.66rem;font-weight:750;color:var(--muted);padding-bottom:.17rem}
@@ -1737,13 +1731,10 @@
       height:calc(var(--planner-row) - 2px);border:1px solid var(--line);border-radius:2px;background:var(--soft);
       cursor:pointer;touch-action:pan-y
     }
-    .planner-plan-cell.has-plan {background:color-mix(in srgb,var(--task-color) 20%,var(--surface));border:1px dashed var(--task-color)}
+    .planner-plan-cell.has-plan {background:var(--task-color);border-color:color-mix(in srgb,var(--task-color) 72%,var(--ink))}
     .planner-plan-cell.has-class {background:var(--line)}
     .planner-plan-cell:hover:not(:disabled),.planner-plan-cell:focus-visible {outline:2px solid var(--focus-ring);outline-offset:-2px;z-index:1}
     .planner-plan-cell:disabled {cursor:default}
-    .planner-cell-fill {position:absolute;inset:0;display:flex;overflow:hidden;pointer-events:none}
-    .planner-cell-fill > i {flex:0 0 var(--study-width);min-width:2px;background:var(--study-color,var(--planner-actual))}
-    .planner-plan-cell.is-legacy .planner-cell-fill {background:repeating-linear-gradient(135deg,transparent 0 3px,color-mix(in srgb,var(--planner-actual) 55%,transparent) 3px 5px)}
     #planner-grid.can-paint .planner-plan-cell {touch-action:none;cursor:crosshair}
     .planner-plan-cell.is-drag-preview {outline:2px solid var(--primary)!important;outline-offset:-2px;z-index:2}
     #planner-grid[data-erasing="true"] .planner-plan-cell.is-drag-preview {outline-color:#db4961!important}
@@ -1768,7 +1759,6 @@
     .planner-form-actions .planner-primary {margin-inline-start:auto}
     .planner-form-error {margin:0;color:#b42338;font-size:.8rem;font-weight:750}
     body[data-dark="true"] .planner-form-error {color:#fda4af}
-    #focus-planner-subject {margin:0;color:var(--focus-subtle);font-size:.83rem;font-weight:750;text-align:center;overflow-wrap:anywhere}
     @media(max-width:600px) {
       #tab-planner {--planner-row:1.01rem;--planner-inset:clamp(.48rem,2.5vw,.68rem)}
       .planner-heading h3 {font-size:1.09rem}
@@ -1779,12 +1769,52 @@
       .planner-hour time {font-size:.62rem}
       .planner-clock-head {font-size:.58rem}
       .planner-subject-name,.planner-task-title {font-size:.72rem}
-      .planner-subject-head {gap:.19rem}
-      .planner-subject-time {font-size:.65rem}
       .planner-stats {padding-inline:.36rem;gap:.22rem .36rem}
       .planner-stats dt {font-size:.62rem}
       .planner-stats dd {font-size:.74rem}
       .planner-stat-actual dd {font-size:.9rem}
+    }
+    .study-distribution {padding:clamp(.9rem,2.3vw,1.35rem)}
+    .distribution-heading,.distribution-summary,.distribution-date {display:flex;align-items:center;justify-content:space-between;gap:.4rem .75rem;flex-wrap:wrap}
+    .distribution-heading h3 {margin:0;font-size:1.05rem;font-weight:900;letter-spacing:-.035em}
+    .distribution-heading p,.distribution-summary {margin:.1rem 0 0;font-size:.75rem;color:var(--muted)}
+    .distribution-date {gap:.3rem}
+    .distribution-date .planner-field {width:auto}
+    .distribution-summary {margin:.65rem 0;padding:.4rem .65rem;border-radius:8px;background:var(--soft);min-height:2.55rem}
+    .distribution-summary strong {margin-inline-start:.18rem;color:var(--link);font-size:.95rem;font-weight:850}
+    #home-distribution-detail {min-width:0}
+    .distribution-tables {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(.55rem,2.5vw,1.25rem)}
+    .distribution-table {border-collapse:separate;border-spacing:2px;width:100%;table-layout:fixed;font-variant-numeric:tabular-nums}
+    .distribution-table th {color:var(--muted);font-size:.68rem;font-weight:750;text-align:center;white-space:nowrap}
+    .distribution-table .distribution-hour {width:2.05rem;text-align:start}
+    .distribution-table td {padding:0;height:1.16rem;vertical-align:middle}
+    .distribution-slot {position:relative;display:block;width:100%;height:1.13rem;overflow:hidden;border:1px solid var(--line);border-radius:3px;background:var(--soft)}
+    .distribution-slot > i {position:absolute;inset:0 auto 0 0;width:var(--record-width);min-width:2px;background:var(--primary);pointer-events:none}
+    .distribution-slot.is-legacy > i {background:repeating-linear-gradient(135deg,transparent 0 3px,var(--primary) 3px 5px)}
+    button.distribution-slot {cursor:pointer}
+    button.distribution-slot[aria-pressed="true"],button.distribution-slot:hover {outline:2px solid var(--focus-ring);outline-offset:-2px}
+    @media(max-width:520px) {
+      .distribution-table th {font-size:.6rem}
+      .distribution-table .distribution-hour {width:1.55rem}
+    }
+
+    #modal-overlay[data-variant="planner-form"] {
+      inset:auto 0 auto;top:var(--planner-viewport-top,0px);height:var(--planner-viewport-height,100dvh);
+    }
+    #modal-overlay[data-variant="planner-form"] #modal-box {max-height:100%;overscroll-behavior:contain}
+    @media(max-width:640px) {
+      #modal-overlay[data-variant="planner-form"] {
+        align-items:flex-start!important;
+        padding:max(.55rem,env(safe-area-inset-top)) .6rem .55rem!important;
+      }
+      #modal-overlay[data-variant="planner-form"] #modal-box {
+        max-height:100%!important;
+        border-radius:16px!important;
+        padding:.75rem .85rem 1rem!important;
+        animation:none!important;
+      }
+      #modal-overlay[data-variant="planner-form"] #modal-box > :first-child {display:none}
+      #modal-overlay[data-variant="planner-form"] #modal-box > :nth-child(2) {margin-bottom:.5rem}
     }
   </style>
 </head>
@@ -1907,7 +1937,6 @@
         <div class="focus-time-stage">
           <p id="focus-rest-label" class="hidden">남은 휴식</p>
           <div id="focus-timer-display">00:00:00</div>
-          <p id="focus-planner-subject" class="hidden"></p>
           <p id="focus-today-total">공부일 누적 00:00:00</p>
           <p id="focus-rest-note"></p>
         </div>
@@ -2288,6 +2317,23 @@
           <div id="schedule-list-wrap" class="space-y-1 max-h-80 overflow-y-auto scrollbar-thin pr-1"></div>
         </div>
       </div>
+      <section id="home-study-distribution" class="ed-card study-distribution" aria-labelledby="home-distribution-title">
+        <div class="distribution-heading">
+          <div>
+            <h3 id="home-distribution-title">공부 시간 분포</h3>
+            <p>스톱워치 기록 · 10분 단위 · 오전 5시 기준</p>
+          </div>
+          <div class="distribution-date">
+            <input id="home-distribution-date" class="planner-field" type="date" aria-label="공부 시간 분포 날짜" />
+            <button id="home-distribution-today" type="button" class="planner-button">오늘</button>
+          </div>
+        </div>
+        <div class="distribution-summary">
+          <span>실제 공부 <strong id="home-distribution-total">0분</strong></span>
+          <span id="home-distribution-detail" role="status"></span>
+        </div>
+        <div id="home-distribution-hours" class="distribution-tables"></div>
+      </section>
     </div>
 
     <!-- TAB 2: UNIFIED STUDY & RANKING HUB -->
@@ -2450,8 +2496,8 @@
             </div>
           </div>
           <dl class="planner-stats">
+            <div><dt>목표 공부시간</dt><dd id="planner-goal-value">미설정</dd><button id="planner-goal-edit" type="button" aria-haspopup="dialog" class="planner-button" aria-label="목표 공부시간 설정">설정</button></div>
             <div class="planner-stat-actual"><dt>실제 공부</dt><dd id="planner-study-mins-pill">0분</dd></div>
-            <div><dt>계획</dt><dd id="planner-planned-total">0분</dd></div>
             <div><dt>완료</dt><dd id="planner-task-total">0 / 0</dd></div>
           </dl>
         </div>
@@ -2496,7 +2542,6 @@
 
         <footer class="planner-sheet-footer">
           <div class="planner-legend" aria-label="시간표 표시">
-            <span><i class="planner-dot actual"></i> 실제 공부</span>
             <span><i class="planner-dot planned"></i> 계획</span>
             <span id="planner-class-legend" class="hidden"><i class="planner-dot class"></i> 등록 수업</span>
           </div>
@@ -2713,7 +2758,7 @@
               </li>
               <li class="space-y-0.5">
                 <div class="font-black text-slate-900">📝 스터디 플래너</div>
-                <p>시간표의 편집을 열고 할 일을 고른 뒤 10분 칸을 쓸면 계획이 자동 저장됩니다. 저장한 칸을 눌러 시간을 수정할 수 있습니다. 과목 옆의 ▶로 타이머를 켜면 실제 공부 시간이 시간표에 과목 색으로 기록됩니다.</p>
+                <p>시간표의 편집을 열고 할 일을 고른 뒤 10분 칸을 쓸면 계획이 자동 저장됩니다. 저장한 칸을 눌러 시간을 수정할 수 있습니다. 스톱워치로 공부한 시간대는 홈의 공부 시간 분포에서 확인할 수 있습니다.</p>
               </li>
               <li class="space-y-0.5">
                 <div class="font-black text-slate-900">📅 캘린더 &amp; ✨ STUDYGRAM</div>
@@ -4743,7 +4788,7 @@
           if (!myPrivateData.motemote) myPrivateData.motemote = {};
           if (!myPrivateData.motemote[dateStr]) {
             const legacy = shared.motemote && shared.motemote[dateStr] && shared.motemote[dateStr][memId];
-            if (legacy && ((legacy.tasks && legacy.tasks.length) || (legacy.blocks && Object.keys(legacy.blocks).length))) {
+            if (legacy && ((legacy.tasks && legacy.tasks.length) || (legacy.blocks && Object.keys(legacy.blocks).length) || legacy.goalMinutes)) {
               myPrivateData.motemote[dateStr] = JSON.parse(JSON.stringify(legacy));
               syncPrivateMotemote();
             } else {
@@ -5298,6 +5343,7 @@
         document.getElementById('home-card-grid').classList.toggle('is-free', isFreeDash);
         document.getElementById('my-period-wrap').classList.toggle('hidden', isFreeDash);
         document.getElementById('schedule-list-card').classList.toggle('hidden', isFreeDash);
+        renderHomeDistribution(me.id, t);
         const todayLogMins = studyMinutes(me.id);
         animateCountUp(document.getElementById('my-today-study-mins'), todayLogMins, formatStudyMins);
         const attendanceRate = calcAttendanceRate(me.id, t);
@@ -5867,29 +5913,57 @@
         return String(value || '').trim() || '기타';
       }
 
-      function plannerDayStudy(mm) {
-        const subjects = new Map();
-        const slots = new Map();
-        for (const session of Object.values(mm.timerSubjects || {})) {
-          if (!session?.subject) continue;
-          const name = plannerSubjectName(session.subject);
-          if (!subjects.has(name)) subjects.set(name, { color: plannerColor(session.color), ms: 0, tasks: [] });
-          const subject = subjects.get(name);
-          for (const [slot, elapsed] of Object.entries(session.slots || {})) {
-            const ms = Math.max(0, Number(elapsed) || 0);
-            if (!slots.has(slot)) slots.set(slot, new Map());
-            const amounts = slots.get(slot);
-            amounts.set(name, (amounts.get(name) || 0) + ms);
-            subject.ms += ms;
-          }
-        }
-        return { subjects, slots };
-      }
+      let homeDistributionDay = '';
+      let homeDistributionToday = '';
+      let homeDistributionMember = '';
+      let homeDistributionSelection = null;
 
-      function plannerShortDuration(seconds) {
-        if (seconds < 60) return seconds ? `${Math.floor(seconds)}초` : '—';
-        const mins = Math.floor(seconds / 60);
-        return mins >= 60 ? `${Math.floor(mins / 60)}:${String(mins % 60).padStart(2, '0')}` : `${mins}분`;
+      function renderHomeDistribution(memberId, today) {
+        if (homeDistributionMember !== memberId || !homeDistributionDay || homeDistributionDay === homeDistributionToday) {
+          if (homeDistributionDay !== today || homeDistributionMember !== memberId) homeDistributionSelection = null;
+          homeDistributionDay = today;
+        }
+        homeDistributionMember = memberId;
+        homeDistributionToday = today;
+        const dateInput = document.getElementById('home-distribution-date');
+        if (dateInput.value !== homeDistributionDay) dateInput.value = homeDistributionDay;
+        dateInput.max = today;
+        document.getElementById('home-distribution-today').disabled = homeDistributionDay === today;
+        document.getElementById('home-distribution-total').textContent = plannerDuration(studySeconds(memberId, homeDistributionDay));
+
+        const nextDate = addDaysStr(homeDistributionDay, 1);
+        const ranges = [[5, 17, '05시부터 17시까지'], [17, 29, '17시부터 다음 날 05시까지']];
+        let hasRecords = false;
+        let selectedLabel = '';
+        const html = ranges.map(([start, end, title]) => {
+          let rows = '';
+          for (let hour = start; hour < end; hour++) {
+            const date = hour < 24 ? homeDistributionDay : nextDate;
+            const minutes = shared.studySlotMins?.[date]?.[memberId] || {};
+            const markers = shared.studyBlocks?.[date]?.[memberId] || {};
+            const hourLabel = `${String(hour % 24).padStart(2, '0')}시`;
+            let cells = '';
+            for (let index = hour * 6; index < (hour + 1) * 6; index++) {
+              const key = plannerSlotKey(index);
+              const seconds = Math.min(600, Math.max(0, (Number(minutes[key]) || 0) * 60));
+              const legacy = !seconds && Boolean(markers[key]);
+              const label = `${plannerTimeLabel(index)} ~ ${plannerTimeLabel(index + 1)} · ${legacy ? '기록 있음 · 분량 미상' : plannerDuration(seconds)}`;
+              if (seconds || legacy) {
+                hasRecords = true;
+                if (index === homeDistributionSelection) selectedLabel = label;
+                cells += `<td><button type="button" id="home-study-slot-${index}" data-home-study-slot="${index}" class="distribution-slot ${legacy ? 'is-legacy' : ''}" aria-label="${escapeHtml(label)}" aria-pressed="${index === homeDistributionSelection}"><i style="--record-width:${legacy ? 100 : seconds / 6}%" aria-hidden="true"></i></button></td>`;
+              } else {
+                cells += '<td><span class="distribution-slot" aria-label="기록 없음"></span></td>';
+              }
+            }
+            rows += `<tr><th scope="row" class="distribution-hour" title="${hour < 24 ? hourLabel : '익일 ' + hourLabel}">${hourLabel}</th>${cells}</tr>`;
+          }
+          return `<table class="distribution-table" aria-label="${title}"><thead><tr><th scope="col" class="distribution-hour">시각</th>${['00', '10', '20', '30', '40', '50'].map(label => `<th scope="col">${label}</th>`).join('')}</tr></thead><tbody>${rows}</tbody></table>`;
+        }).join('');
+        setPlannerMarkup('home-distribution-hours', html);
+        const detail = selectedLabel || (hasRecords ? '색이 있는 칸을 눌러 공부 시간을 확인하세요.' : '시간대별 스톱워치 기록이 없어요.');
+        const detailElement = document.getElementById('home-distribution-detail');
+        if (detailElement.textContent !== detail) detailElement.textContent = detail;
       }
 
       function renderPlannerTab() {
@@ -5911,22 +5985,20 @@
         const today = day === studyDayKey();
         const tasks = mm.tasks || [];
         const ranges = plannerRanges(mm);
-        const actual = plannerDayStudy(mm);
         const subjects = new Map();
         for (const task of tasks) {
           const name = plannerSubjectName(task.subject);
-          if (!subjects.has(name)) subjects.set(name, { color: plannerColor(task.color), ms: actual.subjects.get(name)?.ms || 0, tasks: [] });
+          if (!subjects.has(name)) subjects.set(name, { color: plannerColor(task.color), tasks: [] });
           subjects.get(name).tasks.push(task);
-        }
-        for (const [name, subject] of actual.subjects) {
-          if (!subjects.has(name)) subjects.set(name, subject);
         }
         if (!tasks.some(task => task.id === plannerBrushId)) plannerBrushId = '';
 
-        const plannedSecs = ranges.reduce((total, range) => total + (range.end - range.start) * 600, 0);
-        const actualSecs = studySeconds(memberId, day);
-        document.getElementById('planner-planned-total').textContent = plannerDuration(plannedSecs);
-        document.getElementById('planner-study-mins-pill').textContent = plannerDuration(actualSecs);
+        const goal = Number(mm.goalMinutes) || 0;
+        document.getElementById('planner-goal-value').textContent = goal ? plannerDuration(goal * 60) : '미설정';
+        const goalButton = document.getElementById('planner-goal-edit');
+        goalButton.classList.toggle('hidden', !editable);
+        goalButton.textContent = goal ? '변경' : '설정';
+        document.getElementById('planner-study-mins-pill').textContent = plannerDuration(studySeconds(memberId, day));
         document.getElementById('planner-task-total').textContent = `${tasks.filter(task => task.status === 'V').length} / ${tasks.length}`;
         document.getElementById('planner-today').disabled = today;
         document.getElementById('planner-add-task').classList.toggle('hidden', !editable);
@@ -5950,20 +6022,8 @@
         document.getElementById('planner-enter-time').disabled = !tasks.length;
         document.getElementById('planner-undo').disabled = !plannerUndo || plannerUndo.day !== day || plannerUndo.memberId !== memberId;
 
-        function subjectHeading(name, color, ms, startButton = '') {
-          const seconds = Math.floor(ms / 1000);
-          return `<div class="planner-subject-head">
-            <strong class="planner-subject-name"><i class="planner-dot" style="--task-color:${color}"></i><span>${escapeHtml(name)}</span></strong>
-            <span class="planner-subject-time" title="${plannerDuration(seconds)}" aria-label="${plannerDuration(seconds)}">${plannerShortDuration(seconds)}</span>
-            ${startButton}
-          </div>`;
-        }
-
         let listHtml = '';
         for (const [name, subject] of subjects) {
-          const timer = today && editable && subject.tasks.length
-            ? `<button type="button" class="planner-button planner-icon" data-planner-start="${escapeHtml(name)}" aria-label="${escapeHtml(name)} 타이머 시작" title="${escapeHtml(name)} 타이머 시작"><i class="planner-play-icon" aria-hidden="true"></i></button>`
-            : '';
           const taskRows = subject.tasks.map(task => {
             const id = escapeHtml(task.id);
             const status = PLANNER_STATUS.find(([value]) => value === task.status)?.[1] || '미체크';
@@ -5981,11 +6041,11 @@
               ${title}
             </div>`;
           }).join('');
-          listHtml += `<section class="planner-subject-group">${subjectHeading(name, subject.color, subject.ms, timer)}${taskRows}</section>`;
+          listHtml += `<section class="planner-subject-group">
+            <div class="planner-subject-head"><strong class="planner-subject-name"><i class="planner-dot" style="--task-color:${subject.color}"></i><span>${escapeHtml(name)}</span></strong></div>
+            ${taskRows}
+          </section>`;
         }
-        const taggedSecs = [...subjects.values()].reduce((sum, subject) => sum + subject.ms, 0) / 1000;
-        const unknownSecs = Math.max(0, actualSecs - taggedSecs);
-        if (unknownSecs >= 1) listHtml += `<div class="planner-subject-group">${subjectHeading('과목 미지정', 'var(--planner-actual)', unknownSecs * 1000)}</div>`;
         setPlannerMarkup('planner-tasks-list', listHtml || '<p class="planner-empty">＋ 버튼으로 과목과 할 일을 추가하세요.</p>');
 
         const nextDate = addDaysStr(day, 1);
@@ -6008,37 +6068,17 @@
         const byId = new Map(tasks.map(task => [task.id, task]));
         let gridHtml = '';
         for (let hour = 5; hour < 29; hour++) {
-          const date = hour < 24 ? day : nextDate;
           const courses = hour < 24 ? dayClasses : nightClasses;
-          const minutesBySlot = shared.studySlotMins?.[date]?.[memberId] || {};
-          const legacyBlocks = shared.studyBlocks?.[date]?.[memberId] || {};
           let cells = '';
           for (let index = hour * 6; index < (hour + 1) * 6; index++) {
             const key = plannerSlotKey(index);
             const task = byId.get(mm.blocks?.[key]);
             const courseTime = (index % 144) * 10;
             const course = courses.find(item => toMins(item.start) < courseTime + 10 && toMins(item.end) > courseTime);
-            const amounts = actual.slots.get(key) || new Map();
-            const timedMs = Math.min(600000, Math.max(0, Number(minutesBySlot[key]) || 0) * 60000);
-            const recordedMs = [...amounts.values()].reduce((sum, ms) => sum + ms, 0);
-            const unassignedMs = Math.max(0, timedMs - recordedMs);
-            const totalMs = Math.max(timedMs, recordedMs);
-            const legacy = !totalMs && Boolean(legacyBlocks[key]);
-            let fill = '';
-            let freePercent = 100;
-            for (const [name, ms] of [...amounts, ['', unassignedMs]]) {
-              if (ms < 1 || freePercent <= 0) continue;
-              const width = Math.min(freePercent, Math.max(4, ms / 6000));
-              const color = name ? `color-mix(in srgb,${subjects.get(name).color} 86%,#233856)` : 'var(--planner-actual)';
-              fill += `<i style="--study-width:${width}%;--study-color:${color}"></i>`;
-              freePercent -= width;
-            }
-            const names = [...amounts.keys()].join(', ');
-            const actualLabel = legacy ? '실제 공부 기록 있음' : totalMs ? `실제 공부 ${plannerDuration(totalMs / 1000)}${names ? ` (${names})` : ''}` : '';
-            const label = [plannerTimeLabel(index), task ? `계획 ${task.subject} ${task.title}` : '빈 계획 칸', course?.name, actualLabel].filter(Boolean).join(' · ');
+            const label = [plannerTimeLabel(index), task ? `계획 ${task.subject} ${task.title}` : '빈 계획 칸', course?.name].filter(Boolean).join(' · ');
             const planColor = task ? subjects.get(plannerSubjectName(task.subject)).color : '';
-            cells += `<button type="button" id="planner-slot-${index}" data-planner-slot="${index}" class="planner-plan-cell ${task ? 'has-plan' : course ? 'has-class' : ''} ${legacy ? 'is-legacy' : ''}"
-              ${task ? `style="--task-color:${planColor}"` : ''} ${editable ? `tabindex="${index === PLANNER_DAY_START ? '0' : '-1'}"` : 'disabled'} aria-label="${escapeHtml(label)}" title="${escapeHtml(label)}">${fill || legacy ? `<span class="planner-cell-fill" aria-hidden="true">${fill}</span>` : ''}</button>`;
+            cells += `<button type="button" id="planner-slot-${index}" data-planner-slot="${index}" class="planner-plan-cell ${task ? 'has-plan' : course ? 'has-class' : ''}"
+              ${task ? `style="--task-color:${planColor}"` : ''} ${editable ? `tabindex="${index === PLANNER_DAY_START ? '0' : '-1'}"` : 'disabled'} aria-label="${escapeHtml(label)}" title="${escapeHtml(label)}"></button>`;
           }
           const text = `${String(hour % 24).padStart(2, '0')}시`;
           gridHtml += `<div class="planner-hour ${hour >= 24 ? 'is-night' : ''} ${hour % 6 === 0 ? 'is-divider' : ''}">
@@ -7006,7 +7046,7 @@
         const mBox = document.getElementById('modal-box');
         let sheetStartY = 0, sheetCurY = 0, sheetDragging = false;
         mBox.addEventListener('touchstart', e => {
-          if (['member-photo', 'studygram-photo'].includes(document.getElementById('modal-overlay').dataset.variant) ||
+          if (['member-photo', 'studygram-photo', 'planner-form'].includes(document.getElementById('modal-overlay').dataset.variant) ||
               window.innerWidth > 640 || mBox.scrollTop > 0 || e.touches.length !== 1) return;
           if (e.target.closest('input, textarea, select, canvas')) return;
           sheetStartY = e.touches[0].clientY;
@@ -7841,6 +7881,99 @@
       });
 
 
+      const homeDistributionInput = document.getElementById('home-distribution-date');
+      function selectHomeDistributionDay(day) {
+        homeDistributionDay = day && day <= studyDayKey() ? day : studyDayKey();
+        homeDistributionSelection = null;
+        renderHomeDistribution(homeDistributionMember, studyDayKey());
+      }
+      homeDistributionInput.addEventListener('change', () => selectHomeDistributionDay(homeDistributionInput.value));
+      document.getElementById('home-distribution-today').addEventListener('click', () => selectHomeDistributionDay(studyDayKey()));
+      document.getElementById('home-distribution-hours').addEventListener('click', event => {
+        const cell = event.target.closest('[data-home-study-slot]');
+        if (!cell) return;
+        homeDistributionSelection = Number(cell.dataset.homeStudySlot);
+        renderHomeDistribution(homeDistributionMember, studyDayKey());
+      });
+
+      function openPlannerForm(title, html) {
+        openModal(title, html, 'planner-form');
+        const overlay = document.getElementById('modal-overlay');
+        const box = document.getElementById('modal-box');
+        const viewport = window.visualViewport;
+        let frame = 0;
+        const syncViewport = () => {
+          const height = viewport?.height || window.innerHeight;
+          overlay.style.setProperty('--planner-viewport-height', `${height}px`);
+          overlay.style.setProperty('--planner-viewport-top', `${viewport?.offsetTop || 0}px`);
+          const field = document.activeElement;
+          if (!box.contains(field) || !field.matches('input, textarea, select')) return;
+          const visible = box.getBoundingClientRect();
+          const bounds = field.getBoundingClientRect();
+          if (bounds.bottom > visible.bottom - 12) box.scrollTop += bounds.bottom - visible.bottom + 12;
+          else if (bounds.top < visible.top + 12) box.scrollTop += bounds.top - visible.top - 12;
+        };
+        const queueSync = () => {
+          cancelAnimationFrame(frame);
+          frame = requestAnimationFrame(syncViewport);
+        };
+        box.scrollTop = 0;
+        syncViewport();
+        viewport?.addEventListener('resize', queueSync);
+        viewport?.addEventListener('scroll', queueSync);
+        window.addEventListener('resize', queueSync);
+        box.addEventListener('focusin', queueSync);
+        modalCleanupFn = () => {
+          cancelAnimationFrame(frame);
+          viewport?.removeEventListener('resize', queueSync);
+          viewport?.removeEventListener('scroll', queueSync);
+          window.removeEventListener('resize', queueSync);
+          box.removeEventListener('focusin', queueSync);
+          overlay.style.removeProperty('--planner-viewport-height');
+          overlay.style.removeProperty('--planner-viewport-top');
+        };
+      }
+
+      document.getElementById('planner-goal-edit').addEventListener('click', () => {
+        const context = plannerContext();
+        if (!canEditPlanner(context)) return;
+        const goal = Number(context.mm.goalMinutes) || 0;
+        openPlannerForm('목표 공부시간 설정', `
+          <form id="planner-goal-form" class="planner-form">
+            <p class="planner-empty">${escapeHtml(context.day)} 공부일의 목표를 설정하세요.</p>
+            <div class="planner-time-fields">
+              <label>시간<input type="number" inputmode="numeric" class="planner-field" name="hours" min="0" max="24" step="1" value="${Math.floor(goal / 60)}"></label>
+              <label>분<input type="number" inputmode="numeric" class="planner-field" name="minutes" min="0" max="59" step="1" value="${goal % 60}"></label>
+            </div>
+            <p class="planner-form-error" role="alert"></p>
+            <div class="planner-form-actions">
+              ${goal ? '<button type="button" id="planner-goal-clear" class="planner-button">목표 지우기</button>' : ''}
+              <button type="submit" class="planner-button planner-primary">목표 저장</button>
+            </div>
+          </form>
+        `);
+        const form = document.getElementById('planner-goal-form');
+        const saveGoal = minutes => {
+          if (!canEditPlanner(context)) { closeModal(); return; }
+          const { mm } = plannerContext();
+          if (minutes) mm.goalMinutes = minutes;
+          else delete mm.goalMinutes;
+          saveSharedData();
+          closeModal();
+          renderPlannerTab();
+        };
+        form.addEventListener('submit', event => {
+          event.preventDefault();
+          const minutes = Number(form.elements.hours.value) * 60 + Number(form.elements.minutes.value);
+          if (!Number.isInteger(minutes) || minutes < 1 || minutes > 1440) {
+            form.querySelector('[role="alert"]').textContent = '1분부터 24시간까지 설정할 수 있어요.';
+            return;
+          }
+          saveGoal(minutes);
+        });
+        document.getElementById('planner-goal-clear')?.addEventListener('click', () => saveGoal(0));
+      });
+
       const plannerGrid = document.getElementById('planner-grid');
       const plannerDate = document.getElementById('planner-date-input');
 
@@ -7921,7 +8054,7 @@
         let pickedColor = false;
         const colors = [...new Set([...PLANNER_COLORS, color])];
         const colorNames = ['하늘색', '연한 남색', '연보라', '분홍색', '연한 빨강', '주황색', '노란색', '연두색', '민트색', '청록색', '보라색', '회색'];
-        openModal(task ? '할 일 수정' : '할 일 추가', `
+        openPlannerForm(task ? '할 일 수정' : '할 일 추가', `
           <form id="planner-task-form" class="planner-form">
             <label>과목<input name="subject" class="planner-field" required placeholder="예: 수학" value="${escapeHtml(task?.subject || '')}"></label>
             <label>할 일<textarea name="title" class="planner-field" required rows="2" placeholder="예: 기출 문제 20개 풀기">${escapeHtml(task?.title || '')}</textarea></label>
@@ -7939,7 +8072,7 @@
           </form>
         `);
         const form = document.getElementById('planner-task-form');
-        form.elements.subject.focus({ preventScroll: true });
+        if (window.matchMedia('(pointer: fine) and (min-width: 641px)').matches) form.elements.subject.focus({ preventScroll: true });
         form.addEventListener('click', event => {
           const swatch = event.target.closest('[data-planner-color]');
           if (!swatch) return;
@@ -8008,7 +8141,7 @@
           const slot = first + offset;
           return `<option value="${slot}" ${slot === value ? 'selected' : ''}>${plannerTimeLabel(slot)}</option>`;
         }).join('');
-        openModal(range ? '시간 계획 수정' : '시간 계획 추가', `
+        openPlannerForm(range ? '시간 계획 수정' : '시간 계획 추가', `
           <form id="planner-time-form" class="planner-form">
             <label>할 일<select name="task" class="planner-field" required>${plannerTaskOptions(tasks)}</select></label>
             <div class="planner-time-fields">
@@ -8071,23 +8204,7 @@
       });
       document.getElementById('planner-tasks-list').addEventListener('click', event => {
         const button = event.target.closest('[data-planner-edit-task]');
-        if (button) { openPlannerTask(button.dataset.plannerEditTask); return; }
-        const start = event.target.closest('[data-planner-start]');
-        if (!start) return;
-        const context = plannerContext();
-        if (!canEditPlanner(context) || context.day !== studyDayKey()) return;
-        if (focusInterval) {
-          openFocusOverlay();
-          return;
-        }
-        const task = (context.mm.tasks || []).find(item => plannerSubjectName(item.subject) === start.dataset.plannerStart);
-        if (!task) return;
-        openFocusOverlay(false, {
-          id: 's_' + (globalThis.crypto?.randomUUID?.() || `${Date.now()}_${Math.random().toString(36).slice(2)}`),
-          memberId: context.memberId,
-          subject: plannerSubjectName(task.subject),
-          color: plannerColor(task.color)
-        });
+        if (button) openPlannerTask(button.dataset.plannerEditTask);
       });
       document.getElementById('planner-tasks-list').addEventListener('change', event => {
         const control = event.target.closest('[data-planner-status]');
@@ -8993,7 +9110,6 @@
       let focusStartedAt = null;
       let focusInterval = null;
       let focusModeBeforeChange = null;
-      let focusPlannerSubject = null;
       let focusOsNotifShown = false;
       let focusOsNotifRef = null;
 
@@ -9080,8 +9196,7 @@
             hasRested: focusHasRested,
             sessionLp: focusSessionLp,
             syncedSecs: focusElapsedSecs,
-            modeBeforeChange: focusModeBeforeChange,
-            plannerSubject: focusPlannerSubject
+            modeBeforeChange: focusModeBeforeChange
           }));
         } catch (e) {}
       }
@@ -9111,7 +9226,6 @@
             return;
           }
           focusModeBeforeChange = st.modeBeforeChange || null;
-          focusPlannerSubject = st.plannerSubject || null;
           focusAccumulatedSecs = Number(st.accumulatedSecs) || 0;
           focusElapsedSecs = Number(st.syncedSecs) || 0;
           focusPaused = !!st.paused;
@@ -9292,10 +9406,6 @@
         const restLabel = document.getElementById('focus-rest-label');
         restLabel.classList.toggle('hidden', !focusPaused);
         document.getElementById('focus-timer-display').textContent = focusPaused ? rest : formatted;
-        const subjectLabel = document.getElementById('focus-planner-subject');
-        subjectLabel.textContent = focusPlannerSubject?.subject || '';
-        subjectLabel.classList.toggle('hidden', !focusPlannerSubject);
-        document.getElementById('focus-mini-time').textContent = focusPaused ? `휴식 ${rest}` : formatted;
         const restNote = document.getElementById('focus-rest-note');
         if (focusPaused) {
           restNote.textContent = `연속 집중 ${formatted} · 휴식이 끝나면 자동 종료`;
@@ -9327,7 +9437,7 @@
         const times = (((shared.studyRankTimes ||= {})[day] ||= {})[member.id] ||= { first: startMs, last: +date });
         times.first = Math.min(times.first, startMs);
         times.last = Math.max(times.last, +date);
-        creditPlannerStudySlot(member.id, date, endMs - startMs);
+        creditStudyDistributionSlot(member.id, date, endMs - startMs);
         const remainder = ((shared.studySubminuteMs ||= {})[day] ||= {});
         const elapsed = (Number(remainder[member.id]) || 0) + endMs - startMs;
         remainder[member.id] = elapsed % 60000;
@@ -9363,21 +9473,11 @@
         if (koreaDateKey(date) !== day) member.nightOwlDate = day;
       }
 
-      function creditPlannerStudySlot(memberId, date, elapsedMs) {
-        // Time-of-day slots use Korean calendar dates. The planner joins the next morning to the study day.
+      function creditStudyDistributionSlot(memberId, date, elapsedMs) {
+        // The home distribution joins the next morning to the Korean study day.
         const localDay = koreaDateKey(date);
         const clock = new Date(+date + 9 * 3600000);
         const slot = plannerSlotKey(clock.getUTCHours() * 6 + Math.floor(clock.getUTCMinutes() / 10));
-        const member = shared.members.find(item => item.id === memberId);
-        const tag = focusPlannerSubject;
-        const ownPrivate = currentAuthUser && privateRef && member?.uid === currentAuthUser.uid;
-        if (tag?.memberId === memberId && !prefs.adminMode && (filePreview || ownPrivate)) {
-          const mm = getMemberMotemote(studyDayKey(date), memberId);
-          const records = mm.timerSubjects ||= {};
-          const session = records[tag.id] ||= { subject: tag.subject, color: tag.color, slots: {} };
-          session.slots ||= {};
-          session.slots[slot] = Math.min(600000, (Number(session.slots[slot]) || 0) + elapsedMs);
-        }
         const blocks = ((shared.studyBlocks[localDay] ||= {})[memberId] ||= {});
         const minutes = ((shared.studySlotMins[localDay] ||= {})[memberId] ||= {});
         // Older records may have only a marker, so their elapsed time cannot be reconstructed.
@@ -9493,7 +9593,7 @@
         }
       }
 
-      function openFocusOverlay(isRestoring = false, subject = null) {
+      function openFocusOverlay(isRestoring = false) {
         if (prefs.adminMode) {
           showToast('관리자 모드에서는 멤버 타이머 충돌 방지를 위해 스톱워치를 켤 수 없습니다.', 'warn');
           return;
@@ -9519,7 +9619,6 @@
 
         if (!focusInterval) {
           if (isRestoring !== true) {
-            focusPlannerSubject = subject;
             focusElapsedSecs = 0;
             focusAccumulatedSecs = 0;
             focusSessionLp = 0;
@@ -9598,7 +9697,6 @@
         focusRestDurationMs = FOCUS_REST_LIMIT_MS;
         focusHasRested = false;
         focusModeBeforeChange = null;
-        focusPlannerSubject = null;
         focusPaused = false;
         clearFocusState();
         closeFocusOsNotification();
