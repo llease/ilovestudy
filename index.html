@@ -1651,7 +1651,7 @@
       font-variant-numeric:tabular-nums;
     }
     body[data-dark="true"] #tab-planner {--planner-actual:#63be9f;--planner-plan:#a2baff}
-    .planner-sheet {max-width:57rem;margin-inline:auto}
+    .planner-sheet {position:relative;max-width:57rem;margin-inline:auto}
     .planner-sheet-header,.planner-sheet-body,.planner-editor,.planner-sheet-footer {padding-inline:var(--planner-inset)}
     .planner-sheet-header {padding-block:.52rem .55rem;border-bottom:1px solid var(--line)}
     .planner-heading,.planner-date-nav,.planner-section-heading,.planner-stats,.planner-legend,.planner-toolbar {
@@ -1698,7 +1698,14 @@
     .planner-subject-name {display:flex;align-items:center;gap:.28rem;min-width:0;font-size:.8rem;font-weight:850;overflow-wrap:anywhere}
     .planner-task {display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:.35rem;padding:.22rem .35rem;min-height:1.85rem}
     .planner-task + .planner-task {border-top:1px solid var(--line)}
-    .planner-task[aria-current="true"] {background:var(--tint)}
+    .planner-task[aria-current="true"],.planner-subject-pick[aria-pressed="true"] {background:var(--tint)}
+    .planner-subject-pick {width:100%;text-align:left;border-radius:4px}
+    .planner-subject-pick[aria-pressed="true"] {box-shadow:0 0 0 1px var(--primary);color:var(--link)}
+    .planner-task:has(.planner-task-edit) {grid-template-columns:auto minmax(0,1fr) auto}
+    .planner-task-edit {min-width:1.35rem;min-height:1.45rem;padding:.12rem;color:var(--link);border-radius:4px}
+    .planner-task-edit svg {width:.8rem;height:.8rem}
+    .planner-task-edit:hover {background:var(--tint)}
+    .planner-task-title[aria-pressed="true"] {font-weight:850;color:var(--link)}
     .planner-task-title {font-size:.75rem;text-align:left;line-height:1.3;overflow-wrap:anywhere}
     button.planner-task-title:hover {color:var(--link);text-decoration:underline}
     .planner-task-title.is-done {text-decoration:line-through;color:var(--muted)}
@@ -1735,13 +1742,18 @@
     .planner-plan-cell.has-class {background:var(--line)}
     .planner-plan-cell:hover:not(:disabled),.planner-plan-cell:focus-visible {outline:2px solid var(--focus-ring);outline-offset:-2px;z-index:1}
     .planner-plan-cell:disabled {cursor:default}
-    #planner-grid.can-paint .planner-plan-cell {touch-action:none;cursor:crosshair}
+    #planner-grid.can-paint .planner-plan-cell,#planner-grid.can-erase .planner-plan-cell.has-plan {touch-action:none;cursor:crosshair}
     .planner-plan-cell.is-drag-preview {outline:2px solid var(--primary)!important;outline-offset:-2px;z-index:2}
     #planner-grid[data-erasing="true"] .planner-plan-cell.is-drag-preview {outline-color:#db4961!important}
     .planner-editor {padding-block:.44rem;border-bottom:1px solid var(--line);background:var(--soft)}
-    .planner-toolbar {flex-wrap:wrap}
-    #planner-brush {width:auto;min-width:5.5rem;flex:1 1 7rem}
-    .planner-feedback {display:flex;justify-content:space-between;align-items:baseline;gap:.2rem .6rem;flex-wrap:wrap;margin-top:.3rem}
+    .planner-editor {position:relative}
+    .planner-toolbar {justify-content:space-between;flex-wrap:wrap}
+    #planner-edit-guide {
+      position:absolute;z-index:4;top:calc(100% + .3rem);inset-inline-end:var(--planner-inset);
+      max-width:min(27rem,calc(100% - 2 * var(--planner-inset)));margin:0;padding:.48rem .66rem;
+      background:var(--ink);color:var(--surface);border-radius:.55rem;box-shadow:0 3px 12px #0f172a30;
+      font-size:.72rem;line-height:1.45;font-weight:700;pointer-events:none
+    }
     #planner-save-status {color:var(--planner-actual);font-size:.72rem;font-weight:850}
     .planner-class-list {display:flex;flex-wrap:wrap;gap:.3rem;width:100%;margin:0;padding:0;list-style:none}
     .planner-class-list li {border:1px solid var(--line);border-radius:7px;padding:.18rem .45rem;font-size:.68rem;color:var(--muted);overflow-wrap:anywhere}
@@ -1815,6 +1827,46 @@
       }
       #modal-overlay[data-variant="planner-form"] #modal-box > :first-child {display:none}
       #modal-overlay[data-variant="planner-form"] #modal-box > :nth-child(2) {margin-bottom:.5rem}
+    }
+    #tab-profile:not(.hidden) {
+      display:grid;grid-template: "account history" auto "collection history" 1fr/minmax(0,.88fr) minmax(0,1.12fr);
+      align-items:start;gap:1rem
+    }
+    .profile-card,.lp-home-card {min-width:0;padding:clamp(.9rem,2.4vw,1.4rem)}
+    .profile-account-card {grid-area:account}
+    .profile-lp-card {grid-area:history;scroll-margin-top:11rem}
+    .profile-collection-card {grid-area:collection}
+    .profile-card > :first-child {margin-top:0}
+    .profile-lp-card,.lp-home-card {display:grid;gap:.75rem}
+    .lp-panel-heading {display:flex;align-items:center;justify-content:space-between;gap:.35rem .8rem;flex-wrap:wrap}
+    .lp-panel-heading h3 {margin:0;color:var(--ink);font-size:1.08rem;font-weight:880;letter-spacing:-.03em}
+    .lp-panel-heading p {margin:.15rem 0 0;color:var(--muted);font-size:.76rem}
+    .lp-panel-heading strong {color:var(--link);font-variant-numeric:tabular-nums}
+    #home-lp-title strong {margin-inline-start:.35rem}
+    .lp-summary {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.4rem;margin:0}
+    .lp-summary > div {display:grid;align-content:start;gap:.05rem;padding:.4rem .6rem;border:1px solid var(--line);border-radius:.65rem;background:var(--soft);min-width:0}
+    .lp-summary dt {color:var(--muted);font-size:.71rem;font-weight:750}
+    .lp-summary dd {margin:0;color:var(--ink);font-size:.95rem;font-weight:850;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+    .lp-summary .lp-study dd {color:var(--link)}
+    .lp-summary .lp-challenge dd,.lp-entry-tag.lp-challenge {color:#7d3ab3}
+    body[data-dark="true"] :is(.lp-summary .lp-challenge dd,.lp-entry-tag.lp-challenge) {color:#d1abff}
+    .lp-filter {display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.25rem;padding:.25rem;background:var(--soft);border:1px solid var(--line);border-radius:.65rem}
+    .lp-filter button {min-height:2rem;padding:.2rem .14rem;border:1px solid transparent;border-radius:.45rem;color:var(--muted);font-size:.75rem;font-weight:750}
+    .lp-filter button[aria-pressed="true"] {background:var(--surface);border-color:var(--line);color:var(--link)}
+    .lp-entry-list {list-style:none;margin:0;padding:0;border-block:1px solid var(--line)}
+    .lp-entry {display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:.4rem;padding:.48rem .08rem}
+    .lp-entry + .lp-entry {border-top:1px solid var(--line)}
+    .lp-entry-main {display:grid;gap:.12rem;min-width:0}
+    .lp-entry-meta {display:flex;align-items:center;flex-wrap:wrap;gap:.12rem .35rem;font-size:.69rem;color:var(--muted);font-variant-numeric:tabular-nums}
+    .lp-entry-tag {padding:.04rem .32rem;border-radius:.28rem;background:var(--soft);font-weight:750}
+    .lp-entry-reason {color:var(--ink);font-size:.82rem;font-weight:720;overflow-wrap:anywhere}
+    .lp-entry-amount {color:var(--link);font-variant-numeric:tabular-nums;font-weight:850;white-space:nowrap}
+    .lp-entry-amount.is-negative {color:#bc334d}
+    body[data-dark="true"] .lp-entry-amount.is-negative {color:#fba3b5}
+    .lp-pager {display:flex;align-items:center;justify-content:space-between;gap:.4rem;color:var(--muted);font-size:.72rem;font-weight:700}
+    .lp-empty {margin:0;padding:1rem .2rem;color:var(--muted);font-size:.81rem;text-align:center}
+    @media(max-width:760px) {
+      #tab-profile:not(.hidden) {grid-template:"account" auto "history" auto "collection" auto/minmax(0,1fr)}
     }
   </style>
 </head>
@@ -2016,11 +2068,11 @@
         </div>
       </div>
 
-      <form id="auth-onboard-step" class="hidden space-y-3.5" novalidate>
+      <form id="auth-onboard-step" class="hidden space-y-3.5" autocomplete="off" novalidate>
         <!-- Progress Header -->
         <div class="space-y-1.5">
           <div class="flex items-center justify-between text-[11px] font-bold">
-            <span id="onboard-step-label" class="text-indigo-600">1단계 · 기본 정보</span>
+            <span id="onboard-step-label" tabindex="-1" class="text-indigo-600">1단계 · 기본 정보</span>
             <span id="onboard-step-counter" class="font-mono text-slate-400">1 / 4</span>
           </div>
           <div class="h-1.5 w-full rounded-full bg-slate-100 overflow-hidden">
@@ -2041,11 +2093,12 @@
           <div class="space-y-2.5">
             <div>
               <label for="onboard-realname-input" class="block text-xs font-bold text-slate-700 mb-1">본인 실명 <span class="text-rose-600">(가입 후 변경 불가)</span></label>
-              <input id="onboard-realname-input" type="text" maxlength="16" placeholder="반드시 본인 실명을 적어주세요" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm font-bold" />
+              <input id="onboard-realname-input" type="text" autocomplete="off" maxlength="16" placeholder="반드시 본인 실명을 적어주세요" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm font-bold" />
             </div>
             <div>
               <label for="onboard-nickname-input" class="block text-xs font-bold text-slate-700 mb-1">활동할 별명 <span class="text-slate-400 font-normal">(스터디원에게 표시됨)</span></label>
-              <input id="onboard-nickname-input" type="text" maxlength="16" placeholder="예: 열공하는 스터디원" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm font-bold" />
+              <input id="onboard-nickname-input" type="text" autocomplete="off" aria-describedby="onboard-nickname-help" maxlength="16" placeholder="예: 열공하는 스터디원" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm font-bold" />
+              <p id="onboard-nickname-help" class="mt-1 text-[11px] text-slate-600">별명은 가입 후 내 프로필에서 언제든지 바꿀 수 있어요.</p>
             </div>
           </div>
           <button type="button" data-onboard-next="2" class="w-full py-3 px-4 rounded-xl ed-btn-accent font-black text-sm">다음으로 →</button>
@@ -2085,6 +2138,7 @@
           </div>
           <div class="space-y-2">
             <p class="text-sm font-black text-slate-900">하루 목표 공부시간은 몇 시간인가요? 🎯</p>
+            <p class="text-[11px] text-slate-600">플래너의 기본 목표로 적용돼요. 플래너에서 날짜별로 바꿀 수 있어요.</p>
             <div class="flex flex-wrap gap-1.5">
               <button type="button" data-goal-preset="3" class="px-2.5 py-1.5 rounded-lg border border-slate-200 bg-slate-50 hover:bg-slate-100 text-xs font-bold">3시간</button>
               <button type="button" data-goal-preset="5" class="px-2.5 py-1.5 rounded-lg border border-slate-200 bg-slate-50 hover:bg-slate-100 text-xs font-bold">5시간</button>
@@ -2317,6 +2371,17 @@
           <div id="schedule-list-wrap" class="space-y-1 max-h-80 overflow-y-auto scrollbar-thin pr-1"></div>
         </div>
       </div>
+      <section id="home-lp-panel" class="ed-card lp-home-card" aria-labelledby="home-lp-title">
+        <div class="lp-panel-heading">
+          <h3 id="home-lp-title">오늘 획득한 LP <strong id="home-lp-earned-total">0 LP</strong></h3>
+          <button id="home-open-lp-history" type="button" class="planner-button">LP 기록 보기</button>
+        </div>
+        <dl class="lp-summary">
+          <div class="lp-study"><dt>공부시간</dt><dd id="home-lp-earned-study">0 LP</dd></div>
+          <div class="lp-challenge"><dt>챌린지</dt><dd id="home-lp-earned-challenge">0 LP</dd></div>
+          <div><dt>기타</dt><dd id="home-lp-earned-other">0 LP</dd></div>
+        </dl>
+      </section>
       <section id="home-study-distribution" class="ed-card study-distribution" aria-labelledby="home-distribution-title">
         <div class="distribution-heading">
           <div>
@@ -2503,17 +2568,12 @@
         </div>
 
         <div id="planner-editor" class="planner-editor hidden">
-          <div id="planner-toolbar" class="planner-toolbar">
-            <label class="sr-only" for="planner-brush">칠할 할 일</label>
-            <select id="planner-brush" class="planner-field"></select>
-            <button type="button" id="planner-eraser" class="planner-button" aria-pressed="false">지우개</button>
-            <button type="button" id="planner-enter-time" class="planner-button">시간 입력</button>
+          <div class="planner-toolbar">
+            <p id="planner-selection" class="planner-empty">과목 또는 할 일을 선택하세요.</p>
+            <span id="planner-save-status" role="status"></span>
             <button type="button" id="planner-undo" class="planner-button" disabled>되돌리기</button>
           </div>
-          <div class="planner-feedback">
-            <p id="planner-drag-hint" class="planner-empty"></p>
-            <span id="planner-save-status" role="status"></span>
-          </div>
+          <p id="planner-edit-guide" class="hidden" role="status"></p>
         </div>
 
         <div class="planner-sheet-body">
@@ -2552,11 +2612,11 @@
     </div>
 
     <!-- TAB: MY PROFILE -->
-    <div id="tab-profile" class="tab-panel hidden space-y-5">
-      <div class="ed-card max-w-xl mx-auto p-5 sm:p-6 space-y-4">
+    <div id="tab-profile" class="tab-panel hidden">
+      <section class="ed-card profile-card profile-account-card space-y-4" aria-labelledby="profile-title">
         <div class="profile-heading pb-3 border-b border-slate-100">
           <div>
-            <h3 class="text-base sm:text-lg font-black text-slate-900">👤 내 프로필</h3>
+            <h3 id="profile-title" class="text-base sm:text-lg font-black text-slate-900">내 프로필</h3>
             <p id="profile-account-email" class="text-xs text-slate-500 mt-0.5">별명과 프로필 사진을 설정할 수 있습니다.</p>
           </div>
           <button id="profile-mode-pill" type="button" title="공부 모드 전환 (다음 공부일 오전 5시 적용)" aria-describedby="profile-mode-pending" class="px-2.5 py-1 rounded-full text-[11px] font-black bg-emerald-100 text-emerald-800 cursor-pointer hover:opacity-80 transition">자율모드</button>
@@ -2578,16 +2638,45 @@
             <select id="profile-member-select" class="w-full rounded-xl border border-slate-300 px-2.5 py-1.5 text-xs bg-white"></select>
           </div>
           <div class="flex gap-2">
-            <input id="profile-nickname-input" type="text" placeholder="별명을 입력하세요" class="flex-1 min-w-0 rounded-xl border border-slate-300 px-3 py-2 text-xs sm:text-sm" required />
+            <label for="profile-nickname-input" class="sr-only">별명</label>
+            <input id="profile-nickname-input" type="text" maxlength="16" placeholder="별명을 입력하세요" class="flex-1 min-w-0 rounded-xl border border-slate-300 px-3 py-2 text-xs sm:text-sm" required />
             <button type="submit" class="px-4 py-2 rounded-xl bg-slate-950 hover:bg-slate-800 text-white text-xs sm:text-sm font-bold whitespace-nowrap shrink-0">저장</button>
           </div>
         </form>
 
-        <div id="profile-achievements-box" class="border-t border-slate-100 pt-4 space-y-3.5">
+        <div class="border-t border-slate-100 pt-3">
           <div class="flex items-center justify-between gap-2 flex-wrap">
             <span class="inline-flex items-center gap-1.5 text-xs font-black text-slate-900"><span class="w-1.5 h-1.5 rounded-full bg-slate-400 inline-block"></span>현재 티어 &amp; LP</span>
             <div id="profile-tier-lp" class="flex items-center gap-1.5 flex-wrap"></div>
           </div>
+        </div>
+      </section>
+      <section id="profile-lp-panel" class="ed-card profile-card profile-lp-card" aria-labelledby="profile-lp-title">
+        <div class="lp-panel-heading">
+          <div>
+            <h3 id="profile-lp-title" tabindex="-1">LP 획득 기록</h3>
+            <p>누적 획득 <strong id="profile-lp-earned-total">0 LP</strong></p>
+          </div>
+        </div>
+        <dl class="lp-summary">
+          <div class="lp-study"><dt>공부시간</dt><dd id="profile-lp-earned-study">0 LP</dd></div>
+          <div class="lp-challenge"><dt>챌린지</dt><dd id="profile-lp-earned-challenge">0 LP</dd></div>
+          <div><dt>기타</dt><dd id="profile-lp-earned-other">0 LP</dd></div>
+        </dl>
+        <div class="lp-filter" role="group" aria-label="LP 기록 필터">
+          <button type="button" data-profile-lp-source="all" aria-pressed="true">전체</button>
+          <button type="button" data-profile-lp-source="study" aria-pressed="false">공부시간</button>
+          <button type="button" data-profile-lp-source="challenge" aria-pressed="false">챌린지</button>
+          <button type="button" data-profile-lp-source="other" aria-pressed="false">기타</button>
+        </div>
+        <div id="profile-lp-history"></div>
+        <div id="profile-lp-pager" class="lp-pager hidden" aria-label="LP 기록 페이지">
+          <button id="profile-lp-prev" type="button" class="planner-button">이전</button>
+          <span id="profile-lp-page-label" role="status"></span>
+          <button id="profile-lp-next" type="button" class="planner-button">다음</button>
+        </div>
+      </section>
+      <section id="profile-achievements-box" class="ed-card profile-card profile-collection-card space-y-3.5" aria-label="칭호와 꾸미기">
           <div class="space-y-1.5">
             <div class="flex items-center justify-between gap-2 flex-wrap">
               <span class="inline-flex items-center gap-1.5 text-xs font-black text-slate-900"><span class="w-1.5 h-1.5 rounded-full bg-slate-400 inline-block"></span>보유한 칭호</span>
@@ -2606,15 +2695,10 @@
               <button id="btn-edit-bg" type="button" class="px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-xs font-bold text-slate-800 whitespace-nowrap">배경 설정</button>
             </div>
           </div>
-          <div class="space-y-2 pt-2.5 border-t border-slate-100">
-            <span class="inline-flex items-center gap-1.5 text-xs font-black text-slate-900"><span class="w-1.5 h-1.5 rounded-full bg-slate-400 inline-block"></span>최근 LP 획득 기록</span>
-            <div id="profile-lp-history" class="space-y-1.5"></div>
-          </div>
           <div class="pt-3 border-t border-slate-100 text-right">
             <button id="btn-delete-my-account" type="button" class="text-[11px] text-slate-400 hover:text-slate-600 underline underline-offset-2">계정 탈퇴</button>
           </div>
-        </div>
-      </div>
+      </section>
     </div>
 
     <!-- TAB 4: UNIVERSITY TIMETABLE -->
@@ -2758,7 +2842,7 @@
               </li>
               <li class="space-y-0.5">
                 <div class="font-black text-slate-900">📝 스터디 플래너</div>
-                <p>시간표의 편집을 열고 할 일을 고른 뒤 10분 칸을 쓸면 계획이 자동 저장됩니다. 저장한 칸을 눌러 시간을 수정할 수 있습니다. 스톱워치로 공부한 시간대는 홈의 공부 시간 분포에서 확인할 수 있습니다.</p>
+                <p>편집을 열고 과목이나 할 일을 선택한 뒤 빈 칸부터 쓸어 계획을 넣으세요. 칠한 칸부터 쓸면 지워지고, 칠한 칸을 누르면 시간을 수정할 수 있습니다. 스톱워치로 공부한 시간대는 홈의 공부 시간 분포에서 확인할 수 있습니다.</p>
               </li>
               <li class="space-y-0.5">
                 <div class="font-black text-slate-900">📅 캘린더 &amp; ✨ STUDYGRAM</div>
@@ -2982,13 +3066,10 @@
           </form>
           <div class="flex flex-wrap items-center justify-between gap-2 bg-amber-50/70 border border-amber-200 rounded-xl px-3 py-2">
             <div>
-              <p class="text-xs font-black text-slate-900">🔁 승급전 하루 연속 도전 허용</p>
-              <p class="text-[11px] text-slate-600">켜면 하루에 승급전을 여러 번 연속으로 통과할 수 있습니다.</p>
+              <p class="text-xs font-black text-slate-900">승급전 추가 도전</p>
+              <p id="admin-extra-promo-status" class="text-[11px] text-slate-600" role="status">선택한 부원에게 오늘 도전 기회를 한 번 더 줍니다.</p>
             </div>
-            <label class="inline-flex items-center gap-1.5 cursor-pointer select-none">
-              <input id="admin-toggle-consecutive-promo" type="checkbox" class="w-4 h-4 accent-amber-500 rounded" />
-              <span id="admin-consecutive-promo-label" class="text-xs font-black text-slate-700">꺼짐 (하루 1회)</span>
-            </label>
+            <button id="btn-admin-extra-promo" type="button" class="px-3.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-black disabled:opacity-60">승급전 1회 추가</button>
           </div>
         </div>
       </div>
@@ -3175,13 +3256,24 @@
         if (member.promoLegacyCarryDate) days.push(member.promoActiveDate, member.promoLegacyCarryDate);
         return [...new Set(days.filter(Boolean))];
       }
-      function promotionAttemptUsed(member, day = studyDayKey()) {
-        if (shared.allowConsecutivePromo) return false;
+      function regularPromotionAttemptUsed(member, day) {
         if (member.promoAttemptDay) return member.promoAttemptDay === day;
         const legacyResult = shared.promoHistory?.[member.id]?.[day];
         return (member.promoActiveDate && promotionStudyDay(member) === day) ||
           (member.promoCooldownUntil && day < member.promoCooldownUntil) ||
           (!!legacyResult && !String(legacyResult).includes('관리자 건너뛰기'));
+      }
+      function hasExtraPromotionAttempt(member, day = studyDayKey()) {
+        return member.promoExtraGrantedDay === day && member.promoExtraUsedDay !== day;
+      }
+      function promotionAttemptUsed(member, day = studyDayKey()) {
+        return !hasExtraPromotionAttempt(member, day) && regularPromotionAttemptUsed(member, day);
+      }
+      function markPromotionAttempt(member, day) {
+        if (regularPromotionAttemptUsed(member, day) && hasExtraPromotionAttempt(member, day)) {
+          member.promoExtraUsedDay = day;
+        }
+        member.promoAttemptDay = day;
       }
       function localDateKey(d) {
         return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
@@ -3266,9 +3358,9 @@
             changed = true;
           }
           if (m.promoPendingDate && studyDay >= m.promoPendingDate) {
+            markPromotionAttempt(m, m.promoPendingDate);
             m.promoActiveDate = m.promoPendingDate;
             m.promoActiveStudyDay = m.promoPendingDate;
-            m.promoAttemptDay = m.promoPendingDate;
             m.promoPendingDate = null;
             changed = true;
           }
@@ -3565,10 +3657,10 @@
 
       let activeChallengeCat = null;
       let plannerBrushId = '';
-      let plannerErase = false;
+      let plannerGuideTimer;
       let plannerEditing = false;
       let plannerDrag = null;
-      let plannerUndo = null;
+      const plannerUndoByDate = new Map();
       let plannerMemberId = null;
       const plannerMarkup = new WeakMap();
 
@@ -3788,6 +3880,8 @@
         if (pill.textContent !== label) pill.textContent = label;
       }
 
+      let onboardIdentityUid = null;
+
       function showAuthOverlay(step, errText) {
         const ov = document.getElementById('auth-overlay');
         const loginStep = document.getElementById('auth-login-step');
@@ -3796,6 +3890,7 @@
         const pendingStep = document.getElementById('auth-pending-step');
         const errEl = document.getElementById('auth-error-msg');
         if (!ov) return;
+        const alreadyOnboard = !ov.classList.contains('hidden') && !onboardStep.classList.contains('hidden');
         ov.classList.remove('hidden');
         ov.classList.add('flex');
         [loginStep, loadingStep, onboardStep, pendingStep].forEach(el => el && el.classList.add('hidden'));
@@ -3808,8 +3903,14 @@
           if (sBtn) sBtn.textContent = sMode === 'approval' ? '가입 요청서 보내기' : '설정 완료하고 시작하기';
           if (currentAuthUser) {
             document.getElementById('onboard-google-email').textContent = currentAuthUser.email || 'Google 계정 연결됨';
-            const nickEl = document.getElementById('onboard-nickname-input');
-            if (!nickEl.value) nickEl.value = (currentAuthUser.displayName || '').slice(0, 16);
+            if (onboardIdentityUid !== currentAuthUser.uid) {
+              onboardIdentityUid = currentAuthUser.uid;
+              onboardStep.reset();
+              document.getElementById('onboard-survey-source').value = '';
+              document.getElementById('onboard-survey-feature').value = '';
+              onboardStep.querySelectorAll('[aria-pressed="true"]').forEach(button => button.setAttribute('aria-pressed', 'false'));
+              setOnboardStep(1);
+            }
           }
         } else if (step === 'pending' || step === 'rejected') {
           pendingStep.classList.remove('hidden');
@@ -3840,7 +3941,7 @@
           }
         }
         refreshStudyDialogs();
-        if (step === 'onboard') document.getElementById('onboard-nickname-input').focus({preventScroll:true});
+        if (step === 'onboard' && !alreadyOnboard) document.getElementById('onboard-step-label').focus({preventScroll:true});
         else if (step === 'login') document.getElementById('btn-google-login').focus({preventScroll:true});
       }
 
@@ -4623,7 +4724,7 @@
         if (changed) saveSharedData();
       }
 
-      function unlockChallengeFor(memberId, chId, silent) {
+      function unlockChallengeFor(memberId, chId, silent, earnedAt) {
         const ch = (shared.challenges || []).find(c => c.id === chId);
         if (!ch) return;
         if (!shared.memberChallenges) shared.memberChallenges = {};
@@ -4635,7 +4736,7 @@
         if (!shared.challengeLpGranted) shared.challengeLpGranted = {};
         if (!shared.challengeLpGranted[memberId]) shared.challengeLpGranted[memberId] = {};
         shared.challengeLpGranted[memberId][chId] = ch.lp || 20;
-        addMemberLp(memberId, ch.lp || 20, `챌린지: ${ch.title}`);
+        addMemberLp(memberId, ch.lp || 20, `챌린지: ${ch.title}`, earnedAt);
         const starterIdsAll = (shared.challenges || []).filter(c => challengeCategory(c) === 'starter').map(c => c.id);
         const mClearObj = shared.members.find(x => x.id === memberId);
         const allStarterDone = starterIdsAll.length > 0 && starterIdsAll.every(id => shared.memberChallenges[memberId].includes(id));
@@ -4685,7 +4786,7 @@
         }
       }
 
-      function addMemberLp(memberId, delta, reason) {
+      function addMemberLp(memberId, delta, reason, earnedAt = new Date()) {
         const m = shared.members.find(x => x.id === memberId);
         if (!m || !delta) return;
         if (typeof m.tierIdx !== 'number') {
@@ -4711,9 +4812,11 @@
         if (!shared.lpHistory) shared.lpHistory = {};
         if (!shared.lpHistory[memberId]) shared.lpHistory[memberId] = [];
         shared.lpHistory[memberId].push({
-          date: todayStr(),
-          time: getNowParts().hhmm,
+          date: koreaDateKey(earnedAt),
+          time: new Date(+earnedAt + 9 * 3600000).toISOString().slice(11, 16),
+          studyDay: studyDayKey(earnedAt),
           delta,
+          source: lpSource({ reason }),
           reason: reason || (delta > 0 ? 'LP 획득' : 'LP 조정')
         });
 
@@ -5066,7 +5169,7 @@
           const mission = getPromoMission(tierInfo.nextName);
           const needsTomorrow = mission.type === 'ultra' && getMemberMode(meHdr) !== 'strict';
           promoBar.classList.remove('hidden');
-          promoBadge.textContent = '승급전';
+          promoBadge.textContent = !needsTomorrow && hasExtraPromotionAttempt(meHdr) ? '승급전 추가 기회 1회' : '승급전';
           promoBadge.className = 'px-2 py-0.5 rounded-md text-[11px] font-black bg-amber-400 text-slate-950';
           promoTitle.textContent = `${tierInfo.nextName} 승급전 도전 가능`;
           promoDesc.textContent = `${needsTomorrow ? `울트라집중모드 필요 · ${studyDayStartLabel(nextStudyDay())} 시작 · ` : '지금 바로 시작 가능 · '}${mission.desc}${tierInfo.banked > 0 ? ` · 보관 LP +${tierInfo.banked}` : ''}`;
@@ -5343,6 +5446,7 @@
         document.getElementById('home-card-grid').classList.toggle('is-free', isFreeDash);
         document.getElementById('my-period-wrap').classList.toggle('hidden', isFreeDash);
         document.getElementById('schedule-list-card').classList.toggle('hidden', isFreeDash);
+        renderLpSummary('home', lpRecords(me.id), t);
         renderHomeDistribution(me.id, t);
         const todayLogMins = studyMinutes(me.id);
         animateCountUp(document.getElementById('my-today-study-mins'), todayLogMins, formatStudyMins);
@@ -5851,6 +5955,19 @@
         return seconds > 0 ? `${Math.max(1, Math.round(seconds))}초` : '0분';
       }
 
+      function signupGoalMinutes(memberId) {
+        const member = shared.members.find(item => item.id === memberId);
+        if (!member) return 0;
+        let survey = member.onboardingSurvey;
+        if (currentAuthUser && member.uid === currentAuthUser.uid) {
+          survey = myPrivateData.onboardingSurvey || survey;
+        } else if (member.uid && prefs.adminMode && isAdminUser()) {
+          survey = allPrivateData[member.uid]?.onboardingSurvey || survey;
+        }
+        const hours = Number(survey?.goalHours);
+        return Number.isFinite(hours) && hours > 0 && hours <= 24 ? Math.round(hours * 60) : 0;
+      }
+
       function plannerColor(color) {
         return /^#[\da-f]{6}$/i.test(color || '') ? color : PLANNER_COLORS[0];
       }
@@ -5866,6 +5983,10 @@
         const input = document.getElementById('planner-date-input');
         return !prefs.adminMode && prefs.activeTab === 'planner' &&
           prefs.currentUserId === context.memberId && (input.value || studyDayKey()) === context.day;
+      }
+
+      function canModifyPlanner(context) {
+        return plannerEditing && canEditPlanner(context);
       }
 
       function plannerRanges(mm) {
@@ -5973,18 +6094,18 @@
           if (plannerMemberId !== null) input.value = '';
           plannerMemberId = prefs.currentUserId;
           plannerBrushId = '';
-          plannerErase = false;
           plannerEditing = false;
-          plannerUndo = null;
+          plannerUndoByDate.clear();
+          hidePlannerEditGuide();
           document.getElementById('planner-save-status').textContent = '';
         }
         if (!input.value) input.value = studyDayKey();
         const context = plannerContext();
         const { day, memberId, mm } = context;
-        const editable = canEditPlanner(context);
+        const canEdit = canEditPlanner(context);
+        const editable = canEdit && plannerEditing;
         const today = day === studyDayKey();
         const tasks = mm.tasks || [];
-        const ranges = plannerRanges(mm);
         const subjects = new Map();
         for (const task of tasks) {
           const name = plannerSubjectName(task.subject);
@@ -5993,7 +6114,7 @@
         }
         if (!tasks.some(task => task.id === plannerBrushId)) plannerBrushId = '';
 
-        const goal = Number(mm.goalMinutes) || 0;
+        const goal = Number(mm.goalMinutes) || signupGoalMinutes(memberId);
         document.getElementById('planner-goal-value').textContent = goal ? plannerDuration(goal * 60) : '미설정';
         const goalButton = document.getElementById('planner-goal-edit');
         goalButton.classList.toggle('hidden', !editable);
@@ -6004,23 +6125,13 @@
         document.getElementById('planner-add-task').classList.toggle('hidden', !editable);
 
         const editToggle = document.getElementById('planner-edit-toggle');
-        editToggle.classList.toggle('hidden', !editable);
+        editToggle.classList.toggle('hidden', !canEdit);
         editToggle.setAttribute('aria-pressed', String(editable && plannerEditing));
         editToggle.textContent = plannerEditing ? '닫기' : '편집';
         document.getElementById('planner-editor').classList.toggle('hidden', !editable || !plannerEditing);
-        document.getElementById('planner-drag-hint').textContent = plannerErase
-          ? '시간표에서 쓸어 지우세요.'
-          : tasks.length
-            ? '할 일을 골라 시간표를 쓸면 자동 저장돼요.'
-            : '할 일을 추가한 뒤 시간표에 넣어 보세요.';
-        setPlannerMarkup('planner-brush', '<option value="">칠할 할 일 선택</option>' + plannerTaskOptions(tasks));
-        const brush = document.getElementById('planner-brush');
-        brush.value = plannerErase ? '' : plannerBrushId;
-        brush.disabled = !tasks.length;
-        document.getElementById('planner-eraser').disabled = !ranges.length && !plannerErase;
-        document.getElementById('planner-eraser').setAttribute('aria-pressed', String(plannerErase));
-        document.getElementById('planner-enter-time').disabled = !tasks.length;
-        document.getElementById('planner-undo').disabled = !plannerUndo || plannerUndo.day !== day || plannerUndo.memberId !== memberId;
+        const selected = tasks.find(task => task.id === plannerBrushId);
+        document.getElementById('planner-selection').textContent = selected ? `선택한 할 일 · ${selected.subject} / ${selected.title}` : '과목 또는 할 일을 선택하세요.';
+        document.getElementById('planner-undo').disabled = !editable || !plannerUndoByDate.get(day)?.length;
 
         let listHtml = '';
         for (const [name, subject] of subjects) {
@@ -6033,20 +6144,27 @@
               ? `<select id="planner-status-${id}" data-planner-status="${id}" aria-label="${taskLabel} 상태">${PLANNER_STATUS.map(([value, label]) => `<option value="${value}" ${(task.status || '') === value ? 'selected' : ''}>${label}</option>`).join('')}</select>`
               : '';
             const titleClass = `planner-task-title ${task.status === 'V' ? 'is-done' : ''}`;
+            const selectedTask = editable && plannerBrushId === task.id;
             const title = editable
-              ? `<button type="button" id="planner-edit-${id}" class="${titleClass}" data-planner-edit-task="${id}" aria-label="${taskLabel} 수정">${escapeHtml(task.title)}</button>`
+              ? `<button type="button" id="planner-pick-${id}" class="${titleClass}" data-planner-pick-task="${id}" aria-pressed="${selectedTask}">${escapeHtml(task.title)}</button>
+                <button type="button" id="planner-edit-${id}" class="planner-task-edit" data-planner-edit-task="${id}" aria-label="${taskLabel} 수정"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m4 16 12-12 4 4-12 12H4v-4Zm10-10 4 4"/></svg></button>`
               : `<span class="${titleClass}">${escapeHtml(task.title)}</span>`;
-            return `<div class="planner-task" ${plannerEditing && !plannerErase && plannerBrushId === task.id ? 'aria-current="true"' : ''}>
-              <span class="planner-task-status ${task.status === 'V' ? 'is-done' : ''}" title="${escapeHtml(status)}"><span aria-hidden="true">${marker}</span>${statusPicker}</span>
+            return `<div class="planner-task" ${selectedTask ? 'aria-current="true"' : ''}>
+              <span class="planner-task-status ${task.status === 'V' ? 'is-done' : ''}" title="${escapeHtml(status)}"><span ${editable ? 'aria-hidden="true"' : `role="img" aria-label="${escapeHtml(status)}"`}>${marker}</span>${statusPicker}</span>
               ${title}
             </div>`;
           }).join('');
+          const subjectLabel = `<i class="planner-dot" style="--task-color:${subject.color}"></i><span>${escapeHtml(name)}</span>`;
+          const subjectSelected = subject.tasks.some(task => task.id === plannerBrushId);
+          const heading = editable
+            ? `<button type="button" id="planner-pick-subject-${escapeHtml(subject.tasks[0].id)}" class="planner-subject-name planner-subject-pick" data-planner-pick-subject="${escapeHtml(name)}" aria-label="${escapeHtml(name)} 과목 선택" aria-pressed="${subjectSelected}">${subjectLabel}</button>`
+            : `<strong class="planner-subject-name">${subjectLabel}</strong>`;
           listHtml += `<section class="planner-subject-group">
-            <div class="planner-subject-head"><strong class="planner-subject-name"><i class="planner-dot" style="--task-color:${subject.color}"></i><span>${escapeHtml(name)}</span></strong></div>
+            <div class="planner-subject-head">${heading}</div>
             ${taskRows}
           </section>`;
         }
-        setPlannerMarkup('planner-tasks-list', listHtml || '<p class="planner-empty">＋ 버튼으로 과목과 할 일을 추가하세요.</p>');
+        setPlannerMarkup('planner-tasks-list', listHtml || '<p class="planner-empty">편집을 눌러 과목과 할 일을 추가하세요.</p>');
 
         const nextDate = addDaysStr(day, 1);
         const dateClasses = date => {
@@ -6063,8 +6181,8 @@
         ).join(''));
 
         const grid = document.getElementById('planner-grid');
-        grid.classList.toggle('can-paint', editable && plannerEditing && Boolean(plannerBrushId || plannerErase));
-        grid.dataset.erasing = String(plannerErase);
+        grid.classList.toggle('can-paint', editable && Boolean(plannerBrushId));
+        grid.classList.toggle('can-erase', editable);
         const byId = new Map(tasks.map(task => [task.id, task]));
         let gridHtml = '';
         for (let hour = 5; hour < 29; hour++) {
@@ -6086,6 +6204,85 @@
           </div>`;
         }
         setPlannerMarkup('planner-hours', gridHtml);
+      }
+
+      const LP_SOURCE_LABELS = { study: '공부시간', challenge: '챌린지', other: '기타' };
+      const LP_PAGE_SIZE = 8;
+      let profileLpSource = 'all';
+      let profileLpPage = 0;
+      let profileLpMemberId = '';
+
+      function lpSource(record) {
+        if (Object.hasOwn(LP_SOURCE_LABELS, record.source)) return record.source;
+        const reason = String(record.reason || '').trim();
+        if (reason.startsWith('챌린지')) return 'challenge';
+        if (/^(누적\s*)?공부\s*시간\s*(보상|보너스)/.test(reason)) return 'study';
+        return 'other';
+      }
+
+      function lpRecords(memberId) {
+        const records = shared.lpHistory?.[memberId] || [];
+        return Array.isArray(records) ? records : Object.values(records);
+      }
+
+      function lpRecordStudyDay(record) {
+        if (record.studyDay) return record.studyDay;
+        const date = record.date || '';
+        if (/^\d{4}-\d{2}-\d{2}$/.test(date) && /^0[0-4]:/.test(record.time || '')) return addDaysStr(date, -1);
+        return date;
+      }
+
+      function formatLp(number) {
+        return `${number.toLocaleString('ko-KR')} LP`;
+      }
+
+      function renderLpSummary(prefix, records, studyDay = '') {
+        const total = { study: 0, challenge: 0, other: 0 };
+        for (const record of records) {
+          const amount = Number(record?.delta);
+          if (!Number.isFinite(amount) || amount <= 0 || (studyDay && lpRecordStudyDay(record) !== studyDay)) continue;
+          total[lpSource(record)] += amount;
+        }
+        for (const source of Object.keys(total)) {
+          document.getElementById(`${prefix}-lp-earned-${source}`).textContent = formatLp(total[source]);
+        }
+        document.getElementById(`${prefix}-lp-earned-total`).textContent = formatLp(total.study + total.challenge + total.other);
+      }
+
+      function renderProfileLp(memberId) {
+        if (profileLpMemberId !== memberId) {
+          profileLpMemberId = memberId;
+          profileLpSource = 'all';
+          profileLpPage = 0;
+        }
+        const records = lpRecords(memberId);
+        renderLpSummary('profile', records);
+        const filtered = records.filter(record => record && (profileLpSource === 'all' || lpSource(record) === profileLpSource))
+          .reverse()
+          .sort((a, b) => `${b.date || ''} ${b.time || ''}`.localeCompare(`${a.date || ''} ${a.time || ''}`));
+        const pages = Math.max(1, Math.ceil(filtered.length / LP_PAGE_SIZE));
+        profileLpPage = Math.min(Math.max(0, profileLpPage), pages - 1);
+        const start = profileLpPage * LP_PAGE_SIZE;
+        const rows = filtered.slice(start, start + LP_PAGE_SIZE);
+        const markup = rows.map(record => {
+          const amount = Number(record.delta) || 0;
+          const type = lpSource(record);
+          return `<li class="lp-entry">
+            <div class="lp-entry-main">
+              <div class="lp-entry-meta"><span class="lp-entry-tag lp-${type}">${LP_SOURCE_LABELS[type]}</span><span>${escapeHtml(record.date || '')} ${escapeHtml(record.time || '')}</span></div>
+              <span class="lp-entry-reason">${escapeHtml(record.reason || 'LP 기록')}</span>
+            </div>
+            <strong class="lp-entry-amount ${amount < 0 ? 'is-negative' : ''}">${amount > 0 ? '+' : ''}${formatLp(amount)}</strong>
+          </li>`;
+        }).join('');
+        setPlannerMarkup('profile-lp-history', markup ? `<ul class="lp-entry-list">${markup}</ul>` : '<p class="lp-empty">이 항목에 표시할 LP 기록이 없어요.</p>');
+        document.querySelectorAll('[data-profile-lp-source]').forEach(button => {
+          button.setAttribute('aria-pressed', String(button.dataset.profileLpSource === profileLpSource));
+        });
+        document.getElementById('profile-lp-pager').classList.toggle('hidden', pages === 1);
+        document.getElementById('profile-lp-prev').disabled = profileLpPage === 0;
+        document.getElementById('profile-lp-next').disabled = profileLpPage >= pages - 1;
+        document.getElementById('profile-lp-page-label').textContent = `${profileLpPage + 1} / ${pages} 페이지 · ${filtered.length.toLocaleString('ko-KR')}건`;
       }
 
       function renderProfileTab() {
@@ -6140,13 +6337,7 @@
               ? allB.map(renderBadgePill).join('')
               : '<span class="text-xs text-slate-400">아직 획득한 뱃지가 없습니다.</span>';
           }
-          const lpHistEl = document.getElementById('profile-lp-history');
-          if (lpHistEl) {
-            const logs = ((shared.lpHistory && shared.lpHistory[tm.id]) || []).slice().reverse();
-            lpHistEl.innerHTML = logs.length
-              ? logs.map(item => `<div class="flex items-center justify-between gap-2 rounded-lg bg-slate-50 border border-slate-200 px-2.5 py-1.5 text-[11px]"><span class="text-slate-700 font-semibold truncate">${escapeHtml(item.reason)}</span><div class="flex items-center gap-2 shrink-0"><span class="text-[10px] text-slate-400">${item.date || ''} ${item.time || ''}</span><span class="font-mono font-black ${item.delta > 0 ? 'text-indigo-600' : 'text-rose-600'}">${item.delta > 0 ? '+' : ''}${item.delta} LP</span></div></div>`).join('')
-              : '<span class="text-xs text-slate-400">아직 기록된 LP 내역이 없습니다.</span>';
-          }
+          renderProfileLp(tm.id);
         }
       }
 
@@ -6534,10 +6725,6 @@
         const rankMemSel = document.getElementById('admin-rank-member');
         const curRankMem = validMemberId(rankMemSel.value);
         rankMemSel.innerHTML = shared.members.map(m => `<option value="${m.id}" ${m.id === curRankMem ? 'selected' : ''}>${escapeHtml(m.name)}</option>`).join('');
-        const consPromoChk = document.getElementById('admin-toggle-consecutive-promo');
-        const consPromoLbl = document.getElementById('admin-consecutive-promo-label');
-        if (consPromoChk) consPromoChk.checked = !!shared.allowConsecutivePromo;
-        if (consPromoLbl) consPromoLbl.textContent = shared.allowConsecutivePromo ? '켜짐 (연속 허용)' : '꺼짐 (하루 1회)';
         const rankPresetSel = document.getElementById('admin-rank-tier-preset');
         const draftTier = rankPresetSel.value;
         rankPresetSel.innerHTML = LOL_TIERS.map(t => `<option value="${t.min}">${t.icon} ${t.name} (${t.min} LP~)</option>`).join('');
@@ -6761,7 +6948,7 @@
         if (prefs.activeTab === 'planner' && tab !== 'planner') {
           cancelPlannerDrag();
           plannerEditing = false;
-          plannerErase = false;
+          hidePlannerEditGuide();
         }
         if (tab === 'guide') {
           if (prefs.guideHintUnread) prefs.guideHintUnread = false;
@@ -6925,7 +7112,7 @@
         if (e.target.id === 'btn-join-promo') {
           const requestDay = studyDayKey();
           const tmr = nextStudyDay(requestDay);
-          if (me.promoActiveDate || me.promoPendingDate || promotionAttemptUsed(me)) {
+          if (!tierInfo.inPromo || !tierInfo.nextName || me.promoActiveDate || me.promoPendingDate || promotionAttemptUsed(me, requestDay)) {
             showToast('승급전 도전 횟수는 오전 5시에 초기화돼요.', 'warn');
             return;
           }
@@ -6952,7 +7139,7 @@
               syncMemberPendingModes();
               const member = shared.members.find(m => m.id === me.id);
               if (!member || member.promoActiveDate || member.promoPendingDate || promotionAttemptUsed(member) ||
-                  getMemberTier(member).nextName !== targetTier.name || studyDayKey() !== requestDay) {
+                  !getMemberTier(member).inPromo || getMemberTier(member).nextName !== targetTier.name || studyDayKey() !== requestDay) {
                 closePromotion();
                 renderAll();
                 showToast('승급전 상태가 바뀌었어요. 다시 확인해 주세요.', 'warn');
@@ -6964,9 +7151,9 @@
                 member.pendingMode = 'strict';
                 member.pendingDate = tmr;
               } else {
+                markPromotionAttempt(member, requestDay);
                 member.promoActiveDate = koreaDateKey();
-                member.promoActiveStudyDay = studyDayKey();
-                member.promoAttemptDay = member.promoActiveStudyDay;
+                member.promoActiveStudyDay = requestDay;
               }
               member.promoTargetTier = targetTier.name;
               saveSharedData();
@@ -7936,25 +8123,27 @@
 
       document.getElementById('planner-goal-edit').addEventListener('click', () => {
         const context = plannerContext();
-        if (!canEditPlanner(context)) return;
-        const goal = Number(context.mm.goalMinutes) || 0;
+        if (!canModifyPlanner(context)) return;
+        const defaultGoal = signupGoalMinutes(context.memberId);
+        const overrideGoal = Number(context.mm.goalMinutes) || 0;
+        const goal = overrideGoal || defaultGoal;
         openPlannerForm('목표 공부시간 설정', `
           <form id="planner-goal-form" class="planner-form">
-            <p class="planner-empty">${escapeHtml(context.day)} 공부일의 목표를 설정하세요.</p>
+            <p class="planner-empty">${escapeHtml(context.day)} 공부일의 목표를 설정하세요. ${defaultGoal ? `가입 설문 기본 목표는 ${plannerDuration(defaultGoal * 60)}이에요.` : ''}</p>
             <div class="planner-time-fields">
               <label>시간<input type="number" inputmode="numeric" class="planner-field" name="hours" min="0" max="24" step="1" value="${Math.floor(goal / 60)}"></label>
               <label>분<input type="number" inputmode="numeric" class="planner-field" name="minutes" min="0" max="59" step="1" value="${goal % 60}"></label>
             </div>
             <p class="planner-form-error" role="alert"></p>
             <div class="planner-form-actions">
-              ${goal ? '<button type="button" id="planner-goal-clear" class="planner-button">목표 지우기</button>' : ''}
+              ${overrideGoal ? `<button type="button" id="planner-goal-clear" class="planner-button">${defaultGoal ? '가입 목표로 되돌리기' : '목표 지우기'}</button>` : ''}
               <button type="submit" class="planner-button planner-primary">목표 저장</button>
             </div>
           </form>
         `);
         const form = document.getElementById('planner-goal-form');
         const saveGoal = minutes => {
-          if (!canEditPlanner(context)) { closeModal(); return; }
+          if (!canModifyPlanner(context)) { closeModal(); return; }
           const { mm } = plannerContext();
           if (minutes) mm.goalMinutes = minutes;
           else delete mm.goalMinutes;
@@ -7982,7 +8171,7 @@
         cancelPlannerDrag();
         plannerDate.value = day;
         document.getElementById('planner-save-status').textContent = '';
-        plannerErase = false;
+        plannerBrushId = '';
         renderPlannerTab();
       }
 
@@ -7990,19 +8179,27 @@
       document.getElementById('planner-prev-day').addEventListener('click', () => selectPlannerDay(addDaysStr(plannerContext().day, -1)));
       document.getElementById('planner-next-day').addEventListener('click', () => selectPlannerDay(addDaysStr(plannerContext().day, 1)));
       document.getElementById('planner-today').addEventListener('click', () => selectPlannerDay(studyDayKey()));
+      function hidePlannerEditGuide() {
+        clearTimeout(plannerGuideTimer);
+        const guide = document.getElementById('planner-edit-guide');
+        guide.classList.add('hidden');
+        guide.textContent = '';
+      }
+
+      function showPlannerEditGuide() {
+        hidePlannerEditGuide();
+        const guide = document.getElementById('planner-edit-guide');
+        guide.classList.remove('hidden');
+        guide.textContent = '과목을 누르고 빈 곳부터 쓸어 채우세요. 칠한 곳부터 다시 쓸면 지워져요.';
+        plannerGuideTimer = setTimeout(hidePlannerEditGuide, 5500);
+      }
+
       document.getElementById('planner-edit-toggle').addEventListener('click', () => {
+        if (!canEditPlanner(plannerContext())) return;
+        cancelPlannerDrag();
         plannerEditing = !plannerEditing;
-        plannerErase = false;
-        renderPlannerTab();
-      });
-      document.getElementById('planner-brush').addEventListener('change', event => {
-        plannerBrushId = event.target.value;
-        plannerErase = false;
-        renderPlannerTab();
-      });
-      document.getElementById('planner-eraser').addEventListener('click', () => {
-        plannerErase = !plannerErase;
-        if (plannerErase) plannerBrushId = '';
+        if (plannerEditing) showPlannerEditGuide();
+        else hidePlannerEditGuide();
         renderPlannerTab();
       });
 
@@ -8013,7 +8210,7 @@
       }
 
       function applyPlannerBlocks(context, changes, message, rememberUndo = true) {
-        if (!canEditPlanner(context)) return false;
+        if (!canModifyPlanner(context)) return false;
         const { day, memberId, mm } = plannerContext();
         const blocks = mm.blocks ||= {};
         const undo = new Map();
@@ -8025,7 +8222,10 @@
           undo.set(key, { before, after: taskId });
         }
         if (!undo.size) return false;
-        plannerUndo = rememberUndo ? { day, memberId, slots: undo } : null;
+        if (rememberUndo) {
+          if (!plannerUndoByDate.has(day)) plannerUndoByDate.set(day, []);
+          plannerUndoByDate.get(day).push(undo);
+        }
         if (Object.keys(blocks).length >= 30) unlockChallengeFor(memberId, 'ch9', false);
         saveSharedData();
         renderPlannerTab();
@@ -8035,19 +8235,22 @@
 
       document.getElementById('planner-undo').addEventListener('click', () => {
         const context = plannerContext();
-        if (!canEditPlanner(context) || plannerUndo?.day !== context.day || plannerUndo.memberId !== context.memberId) return;
-        const changes = new Map();
+        const history = plannerUndoByDate.get(context.day);
+        if (!canModifyPlanner(context) || !history?.length) return;
         const ids = new Set((context.mm.tasks || []).map(task => task.id));
-        for (const [key, { before, after }] of plannerUndo.slots) {
-          if ((context.mm.blocks?.[key] || '') === after && (!before || ids.has(before))) changes.set(key, before);
+        while (history.length) {
+          const changes = new Map();
+          for (const [key, { before, after }] of history.pop()) {
+            if ((context.mm.blocks?.[key] || '') === after && (!before || ids.has(before))) changes.set(key, before);
+          }
+          if (applyPlannerBlocks(context, changes, '시간표 변경을 되돌렸어요.', false)) return;
         }
-        plannerUndo = null;
-        if (!applyPlannerBlocks(context, changes, '시간표 변경을 되돌렸어요.', false)) renderPlannerTab();
+        renderPlannerTab();
       });
 
       function openPlannerTask(taskId = '') {
         const context = plannerContext();
-        if (!canEditPlanner(context)) return;
+        if (!canModifyPlanner(context)) return;
         const task = (context.mm.tasks || []).find(item => item.id === taskId);
         if (taskId && !task) return;
         let color = plannerColor(task?.color || PLANNER_COLORS[(context.mm.tasks || []).length % PLANNER_COLORS.length]);
@@ -8084,7 +8287,7 @@
         });
         form.addEventListener('submit', event => {
           event.preventDefault();
-          if (!canEditPlanner(context)) { closeModal(); return; }
+          if (!canModifyPlanner(context)) { closeModal(); return; }
           const subject = form.elements.subject.value.trim();
           const title = form.elements.title.value.trim();
           if (!subject || !title) {
@@ -8103,8 +8306,6 @@
             const id = 't_' + (globalThis.crypto?.randomUUID?.() || `${Date.now()}_${Math.random().toString(36).slice(2)}`);
             (mm.tasks ||= []).push({ id, subject, title, color: subjectColor, status: '' });
             plannerBrushId = id;
-            plannerErase = false;
-            plannerEditing = true;
             checkStarterChallenge(context.memberId);
           }
           saveSharedData();
@@ -8113,7 +8314,7 @@
           showToast(taskId ? '할 일을 수정했어요.' : '할 일을 추가했어요.', 'success');
         });
         document.getElementById('planner-delete-task')?.addEventListener('click', () => {
-          if (!canEditPlanner(context)) { closeModal(); return; }
+          if (!canModifyPlanner(context)) { closeModal(); return; }
           const mm = plannerContext().mm;
           const hasTime = Object.values(mm.blocks || {}).includes(taskId);
           if (!window.confirm(hasTime ? '이 할 일과 연결된 시간표 칸을 모두 삭제할까요?' : '이 할 일을 삭제할까요?')) return;
@@ -8129,34 +8330,32 @@
         });
       }
 
-      function openPlannerTime(index, editing = false) {
+      function openPlannerTime(index) {
         const context = plannerContext();
-        if (!canEditPlanner(context)) return;
+        if (!canModifyPlanner(context)) return;
         const tasks = context.mm.tasks || [];
-        if (!tasks.length) { openPlannerTask(); return; }
-        const range = editing ? plannerRanges(context.mm).find(item => item.start <= index && index < item.end) : null;
-        const start = range?.start ?? index;
-        const end = range?.end ?? Math.min(index + 3, PLANNER_DAY_END);
+        const range = plannerRanges(context.mm).find(item => item.start <= index && index < item.end);
+        if (!range) return;
         const timeOptions = (first, last, value) => Array.from({ length: last - first + 1 }, (_, offset) => {
           const slot = first + offset;
           return `<option value="${slot}" ${slot === value ? 'selected' : ''}>${plannerTimeLabel(slot)}</option>`;
         }).join('');
-        openPlannerForm(range ? '시간 계획 수정' : '시간 계획 추가', `
+        openPlannerForm('시간 계획 수정', `
           <form id="planner-time-form" class="planner-form">
             <label>할 일<select name="task" class="planner-field" required>${plannerTaskOptions(tasks)}</select></label>
             <div class="planner-time-fields">
-              <label>시작<select name="start" class="planner-field">${timeOptions(PLANNER_DAY_START, PLANNER_DAY_END - 1, start)}</select></label>
-              <label>끝<select name="end" class="planner-field">${timeOptions(PLANNER_DAY_START + 1, PLANNER_DAY_END, end)}</select></label>
+              <label>시작<select name="start" class="planner-field">${timeOptions(PLANNER_DAY_START, PLANNER_DAY_END - 1, range.start)}</select></label>
+              <label>끝<select name="end" class="planner-field">${timeOptions(PLANNER_DAY_START + 1, PLANNER_DAY_END, range.end)}</select></label>
             </div>
             <p class="planner-form-error" role="alert"></p>
             <div class="planner-form-actions">
-              ${range ? '<button type="button" id="planner-delete-range" class="planner-button planner-danger">이 시간 지우기</button>' : ''}
+              <button type="button" id="planner-delete-range" class="planner-button planner-danger">이 시간 지우기</button>
               <button type="submit" class="planner-button planner-primary">시간표에 저장</button>
             </div>
           </form>
         `);
         const form = document.getElementById('planner-time-form');
-        form.elements.task.value = range?.task.id || plannerBrushId || tasks[0].id;
+        form.elements.task.value = range.task.id;
         form.elements.start.addEventListener('change', () => {
           if (Number(form.elements.end.value) <= Number(form.elements.start.value)) {
             form.elements.end.value = String(Math.min(Number(form.elements.start.value) + 3, PLANNER_DAY_END));
@@ -8164,7 +8363,7 @@
         });
         function currentPlannerRange() {
           const latest = plannerContext();
-          if (!range || plannerRanges(latest.mm).some(item =>
+          if (plannerRanges(latest.mm).some(item =>
             item.start === range.start && item.end === range.end && item.task.id === range.task.id
           )) return latest.mm;
           form.querySelector('[role="alert"]').textContent = '시간표가 바뀌었어요. 창을 닫고 계획을 다시 열어 주세요.';
@@ -8172,7 +8371,7 @@
         }
         form.addEventListener('submit', event => {
           event.preventDefault();
-          if (!canEditPlanner(context)) { closeModal(); return; }
+          if (!canModifyPlanner(context)) { closeModal(); return; }
           const first = Number(form.elements.start.value);
           const afterLast = Number(form.elements.end.value);
           const taskId = form.elements.task.value;
@@ -8181,7 +8380,7 @@
           const mm = currentPlannerRange();
           if (!mm) return;
           if (!(mm.tasks || []).some(task => task.id === taskId)) { error.textContent = '할 일이 바뀌었어요. 창을 닫고 다시 열어 주세요.'; return; }
-          const oldRange = range ? plannerRangeChanges(range.start, range.end, '') : new Map();
+          const oldRange = plannerRangeChanges(range.start, range.end, '');
           const changes = new Map([...oldRange, ...plannerRangeChanges(first, afterLast, taskId)]);
           const overlaps = [...changes].some(([key, id]) => id && mm.blocks?.[key] && mm.blocks[key] !== id && !oldRange.has(key));
           if (overlaps && !window.confirm('겹치는 시간 칸을 지금 선택한 할 일로 바꿀까요?')) return;
@@ -8189,7 +8388,7 @@
           applyPlannerBlocks(context, changes, '시간표에 저장했어요.');
         });
         document.getElementById('planner-delete-range')?.addEventListener('click', () => {
-          if (!canEditPlanner(context)) { closeModal(); return; }
+          if (!canModifyPlanner(context)) { closeModal(); return; }
           if (!currentPlannerRange()) return;
           closeModal();
           applyPlannerBlocks(context, plannerRangeChanges(range.start, range.end, ''), '선택한 시간 계획을 지웠어요.');
@@ -8197,19 +8396,29 @@
       }
 
       document.getElementById('planner-add-task').addEventListener('click', () => openPlannerTask());
-      document.getElementById('planner-enter-time').addEventListener('click', () => {
-        const now = new Date(Date.now() + 9 * 3600000);
-        const slot = now.getUTCHours() * 6 + Math.floor(now.getUTCMinutes() / 10);
-        openPlannerTime(plannerContext().day === studyDayKey() ? slot + (slot < PLANNER_DAY_START ? 144 : 0) : 54);
-      });
       document.getElementById('planner-tasks-list').addEventListener('click', event => {
-        const button = event.target.closest('[data-planner-edit-task]');
-        if (button) openPlannerTask(button.dataset.plannerEditTask);
+        const context = plannerContext();
+        if (!canModifyPlanner(context)) return;
+        const edit = event.target.closest('[data-planner-edit-task]');
+        if (edit) { openPlannerTask(edit.dataset.plannerEditTask); return; }
+        const taskButton = event.target.closest('[data-planner-pick-task]');
+        const subject = event.target.closest('[data-planner-pick-subject]');
+        const tasks = context.mm.tasks || [];
+        if (taskButton) {
+          plannerBrushId = taskButton.dataset.plannerPickTask;
+        } else if (subject) {
+          const group = tasks.filter(task => plannerSubjectName(task.subject) === subject.dataset.plannerPickSubject);
+          const chosen = group.find(task => task.id === plannerBrushId) || group[0];
+          if (!chosen) return;
+          plannerBrushId = chosen.id;
+        } else return;
+        document.getElementById('planner-save-status').textContent = '';
+        renderPlannerTab();
       });
       document.getElementById('planner-tasks-list').addEventListener('change', event => {
         const control = event.target.closest('[data-planner-status]');
         const context = plannerContext();
-        if (!control || !canEditPlanner(context)) return;
+        if (!control || !canModifyPlanner(context)) return;
         const task = (context.mm.tasks || []).find(item => item.id === control.dataset.plannerStatus);
         if (!task) return;
         setPlannerTaskStatus(context.mm, task, control.value, context.memberId);
@@ -8218,12 +8427,13 @@
 
       function previewPlannerDrag(index) {
         const drag = plannerDrag;
-        drag.end = index;
         const first = Math.min(drag.start, index);
         const last = Math.max(drag.start, index);
+        const blocks = drag.blocks;
         plannerGrid.querySelectorAll('[data-planner-slot]').forEach(cell => {
           const slot = Number(cell.dataset.plannerSlot);
-          cell.classList.toggle('is-drag-preview', first <= slot && slot <= last);
+          const filled = !!blocks[plannerSlotKey(slot)];
+          cell.classList.toggle('is-drag-preview', first <= slot && slot <= last && filled === drag.erasing);
         });
       }
 
@@ -8232,42 +8442,60 @@
         const { pointerId } = plannerDrag;
         plannerDrag = null;
         if (plannerGrid.hasPointerCapture(pointerId)) plannerGrid.releasePointerCapture(pointerId);
+        delete plannerGrid.dataset.erasing;
         plannerGrid.querySelectorAll('.is-drag-preview').forEach(cell => cell.classList.remove('is-drag-preview'));
+      }
+
+      function updatePlannerDrag(event) {
+        const drag = plannerDrag;
+        const cell = document.elementFromPoint(event.clientX, event.clientY)?.closest('[data-planner-slot]');
+        if (cell && plannerGrid.contains(cell)) drag.end = Number(cell.dataset.plannerSlot);
+        drag.moved ||= drag.end !== drag.start || Math.hypot(event.clientX - drag.x, event.clientY - drag.y) >= 6;
+        if (drag.moved && (drag.erasing || drag.taskId)) previewPlannerDrag(drag.end);
       }
 
       plannerGrid.addEventListener('pointerdown', event => {
         const cell = event.target.closest('[data-planner-slot]');
-        if (!cell || event.button !== 0 || !event.isPrimary || plannerDrag || !plannerEditing || !(plannerErase || plannerBrushId)) return;
+        if (!cell || event.button !== 0 || !event.isPrimary || plannerDrag) return;
         const context = plannerContext();
-        if (!canEditPlanner(context) || (!plannerErase && !(context.mm.tasks || []).some(task => task.id === plannerBrushId))) return;
-        event.preventDefault();
+        if (!canModifyPlanner(context)) return;
         const index = Number(cell.dataset.plannerSlot);
-        plannerDrag = { context, pointerId: event.pointerId, start: index, end: index, taskId: plannerErase ? '' : plannerBrushId };
+        const erasing = !!context.mm.blocks?.[plannerSlotKey(index)];
+        if (!erasing && !plannerBrushId) return;
+        event.preventDefault();
+        plannerDrag = {
+          context, pointerId: event.pointerId, start: index, end: index,
+          x: event.clientX, y: event.clientY, moved: false, erasing, blocks: { ...context.mm.blocks },
+          taskId: erasing ? '' : plannerBrushId
+        };
+        plannerGrid.dataset.erasing = String(erasing);
         plannerGrid.setPointerCapture(event.pointerId);
-        previewPlannerDrag(index);
       });
       plannerGrid.addEventListener('pointermove', event => {
-        if (event.pointerId !== plannerDrag?.pointerId) return;
-        const cell = document.elementFromPoint(event.clientX, event.clientY)?.closest('[data-planner-slot]');
-        if (!cell || Number(cell.dataset.plannerSlot) === plannerDrag.end) return;
-        previewPlannerDrag(Number(cell.dataset.plannerSlot));
+        if (event.pointerId === plannerDrag?.pointerId) updatePlannerDrag(event);
       });
       plannerGrid.addEventListener('pointerup', event => {
         if (event.pointerId !== plannerDrag?.pointerId) return;
+        updatePlannerDrag(event);
         const drag = plannerDrag;
-        const cell = document.elementFromPoint(event.clientX, event.clientY)?.closest('[data-planner-slot]');
-        const end = cell ? Number(cell.dataset.plannerSlot) : drag.end;
         cancelPlannerDrag();
-        if (drag.taskId && drag.start === end && canEditPlanner(drag.context) && plannerContext().mm.blocks?.[plannerSlotKey(end)]) {
-          document.getElementById('planner-slot-' + end)?.focus({ preventScroll: true });
-          openPlannerTime(end, true);
+        if (!canModifyPlanner(drag.context)) { renderPlannerTab(); return; }
+        if (!drag.moved) {
+          if (drag.erasing && plannerContext().mm.blocks?.[plannerSlotKey(drag.start)]) {
+            document.getElementById('planner-slot-' + drag.start)?.focus({ preventScroll: true });
+            openPlannerTime(drag.start);
+          }
           return;
         }
-        if (canEditPlanner(drag.context) && (!drag.taskId || (plannerContext().mm.tasks || []).some(task => task.id === drag.taskId))) {
-          const changes = plannerRangeChanges(Math.min(drag.start, end), Math.max(drag.start, end) + 1, drag.taskId);
-          if (applyPlannerBlocks(drag.context, changes, drag.taskId ? '시간표에 저장했어요.' : '선택한 시간 계획을 지웠어요.')) return;
+        const { mm } = plannerContext();
+        if (!drag.erasing && !(mm.tasks || []).some(task => task.id === drag.taskId)) { renderPlannerTab(); return; }
+        const changes = plannerRangeChanges(Math.min(drag.start, drag.end), Math.max(drag.start, drag.end) + 1, drag.taskId);
+        for (const key of changes.keys()) {
+          const before = drag.blocks[key] || '';
+          const current = mm.blocks?.[key] || '';
+          if (!!before !== drag.erasing || current !== before) changes.delete(key);
         }
-        renderPlannerTab();
+        if (!applyPlannerBlocks(drag.context, changes, drag.erasing ? '선택한 칸을 지웠어요.' : '시간표에 저장했어요.')) renderPlannerTab();
       });
       for (const eventName of ['pointercancel', 'lostpointercapture']) {
         plannerGrid.addEventListener(eventName, event => {
@@ -8282,23 +8510,17 @@
         renderPlannerTab();
       });
       plannerGrid.addEventListener('click', event => {
+        // Pointer taps are handled at pointerup so they cannot also apply a swipe.
+        if (event.detail) return;
         const cell = event.target.closest('[data-planner-slot]');
         const context = plannerContext();
-        if (!cell || !canEditPlanner(context)) return;
+        if (!cell || !canModifyPlanner(context)) return;
         const index = Number(cell.dataset.plannerSlot);
-        if (plannerEditing && (plannerErase || plannerBrushId)) {
-          if (event.detail) return;
-          if (!plannerErase && context.mm.blocks?.[plannerSlotKey(index)]) {
-            openPlannerTime(index, true);
-            return;
-          }
-          const task = (context.mm.tasks || []).find(item => item.id === plannerBrushId);
-          if (!plannerErase && !task) return;
-          applyPlannerBlocks(context, plannerRangeChanges(index, index + 1, plannerErase ? '' : task.id),
-            plannerErase ? '선택한 시간 계획을 지웠어요.' : '시간표에 저장했어요.');
-          return;
+        if (context.mm.blocks?.[plannerSlotKey(index)]) {
+          openPlannerTime(index);
+        } else if ((context.mm.tasks || []).some(task => task.id === plannerBrushId)) {
+          applyPlannerBlocks(context, plannerRangeChanges(index, index + 1, plannerBrushId), '시간표에 저장했어요.');
         }
-        openPlannerTime(index, true);
       });
       plannerGrid.addEventListener('keydown', event => {
         const cell = event.target.closest('[data-planner-slot]');
@@ -8313,6 +8535,29 @@
       });
 
       // Tab 4: Nickname & Class Timetable
+      document.querySelectorAll('[data-profile-lp-source]').forEach(button => {
+        button.addEventListener('click', () => {
+          profileLpSource = button.dataset.profileLpSource;
+          profileLpPage = 0;
+          renderProfileLp(profileLpMemberId);
+        });
+      });
+      document.getElementById('profile-lp-prev').addEventListener('click', () => {
+        profileLpPage--;
+        renderProfileLp(profileLpMemberId);
+      });
+      document.getElementById('profile-lp-next').addEventListener('click', () => {
+        profileLpPage++;
+        renderProfileLp(profileLpMemberId);
+      });
+      document.getElementById('home-open-lp-history').addEventListener('click', () => {
+        profileLpSource = 'all';
+        profileLpPage = 0;
+        switchTab('profile');
+        const heading = document.getElementById('profile-lp-title');
+        heading.focus({ preventScroll: true });
+        document.getElementById('profile-lp-panel').scrollIntoView({ block: 'start' });
+      });
       document.getElementById('profile-member-select').addEventListener('change', e => { document.getElementById('class-member-select').value = e.target.value; renderProfileTab(); renderTimetableTab(); });
       document.getElementById('class-member-select').addEventListener('change', e => { document.getElementById('profile-member-select').value = e.target.value; renderTimetableTab(); });
       document.getElementById('nickname-form').addEventListener('submit', e => {
@@ -8717,10 +8962,23 @@
         return true;
       }
 
+      function canGrantExtraPromotion(member, day = studyDayKey()) {
+        return !!(member && member.inStudy !== false && getMemberTier(member).nextName &&
+          member.promoExtraGrantedDay !== day && member.promoExtraUsedDay !== day);
+      }
+
       function syncAdminRankControls(mid) {
         const m = shared.members.find(x => x.id === mid);
         const infoEl = document.getElementById('admin-rank-current-info');
         const skipBtn = document.getElementById('btn-admin-skip-promo');
+        const extraButton = document.getElementById('btn-admin-extra-promo');
+        const day = studyDayKey();
+        extraButton.disabled = !prefs.adminMode || !isAdminUser() || !canGrantExtraPromotion(m, day);
+        document.getElementById('admin-extra-promo-status').textContent = m?.promoExtraUsedDay === day
+          ? '오늘 추가 도전 기회를 사용했습니다.'
+          : m?.promoExtraGrantedDay === day
+            ? '오늘 추가 도전 기회 1회가 남아 있습니다.'
+            : '선택한 부원에게 오늘 도전 기회를 한 번 더 줍니다.';
         document.getElementById('btn-admin-resume-promo').classList.toggle('hidden', !prefs.adminMode || !canResumeMidnightPromotion(m));
         const lpIn = document.getElementById('admin-rank-lp-input');
         const tierSel = document.getElementById('admin-rank-tier-preset');
@@ -8784,12 +9042,15 @@
         showToast(`${m.name}님의 랭크가 ${tInfo.icon} ${tInfo.name} (${m.lp} LP)로 변경되었습니다!`, 'success');
         renderAll();
       });
-      document.getElementById('admin-toggle-consecutive-promo')?.addEventListener('change', e => {
-        if (!prefs.adminMode) return;
-        shared.allowConsecutivePromo = !!e.target.checked;
+      document.getElementById('btn-admin-extra-promo').addEventListener('click', () => {
+        if (!prefs.adminMode || !isAdminUser()) return;
+        const member = shared.members.find(item => item.id === document.getElementById('admin-rank-member').value);
+        const day = studyDayKey();
+        if (!canGrantExtraPromotion(member, day)) return;
+        member.promoExtraGrantedDay = day;
         saveSharedData();
-        showToast(shared.allowConsecutivePromo ? '승급전 하루 연속 도전이 허용되었습니다!' : '승급전이 하루 1회로 제한되었습니다.', 'info');
         renderAll();
+        showToast(`${member.name}님에게 오늘 승급전 도전 기회를 1회 추가했어요.`, 'success');
       });
       document.getElementById('btn-admin-resume-promo').addEventListener('click', () => {
         if (!prefs.adminMode) return;
@@ -9465,11 +9726,11 @@
         const earnedHours = Math.min(8, Math.floor(totals[id] / 60));
         if (earnedHours > priorHours) {
           rewarded[id] = earnedHours;
-          addMemberLp(id, (earnedHours - priorHours) * 3, '누적 공부시간 보상');
+          addMemberLp(id, (earnedHours - priorHours) * 3, '누적 공부시간 보상', date);
         }
         recordMemberActivityForStreak(member, day);
-        if (hours === 4) unlockChallengeFor(id, 'ch_4am', false);
-        if (hours === 0 && mins <= 5 && continuousMins >= 6) unlockChallengeFor(id, 'ch_cinderella', false);
+        if (hours === 4) unlockChallengeFor(id, 'ch_4am', false, date);
+        if (hours === 0 && mins <= 5 && continuousMins >= 6) unlockChallengeFor(id, 'ch_cinderella', false, date);
         if (koreaDateKey(date) !== day) member.nightOwlDate = day;
       }
 
