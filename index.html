@@ -1047,70 +1047,6 @@
     #header-more-menu [data-set-theme="master"] {border-color:#6d28d9;box-shadow:inset 0 1px 3px rgba(243,232,255,.85),0 0 13px rgba(168,85,247,.55)}
     #header-more-menu [data-set-theme="grandmaster"] {border-color:#be123c;box-shadow:inset 0 1px 3px rgba(254,240,138,.8),0 0 14px rgba(244,63,94,.58)}
     #header-more-menu [data-set-theme="challenger"] {border-color:#eab308;box-shadow:inset 0 1px 3px rgba(255,255,255,.95),0 0 14px rgba(250,204,21,.65),0 0 6px rgba(56,189,248,.55)}
-    /* Applied tier theme polish (scales up with tier, while keeping Bronze & Gold genuinely classy) */
-    body[data-theme="bronze"] .ed-btn-accent:not(#btn-checkin):not(#btn-google-login) {background:linear-gradient(135deg,#9a4e26 0%,#c77d50 100%);border-color:#7c3a17}
-    /* Tier Themes: Remove Grid Pattern & Add 3D Metallic Raised Plaque + Richer Aura */
-    body:is([data-theme="iron"],[data-theme="bronze"],[data-theme="silver"],[data-theme="gold"],[data-theme="platinum"],[data-theme="emerald"],[data-theme="diamond"],[data-theme="master"],[data-theme="grandmaster"],[data-theme="challenger"]) #main-live-banner {
-      transform: translateY(-2px);
-    }
-    body:is([data-theme="iron"],[data-theme="bronze"],[data-theme="silver"],[data-theme="gold"],[data-theme="platinum"],[data-theme="emerald"],[data-theme="diamond"],[data-theme="master"],[data-theme="grandmaster"],[data-theme="challenger"]) :is(#main-live-banner, :where(#focus-overlay[data-focus-theme="home"]) .focus-home-scene)::before {
-      background-image: none;
-      mask-image: none; -webkit-mask-image: none;
-      background: linear-gradient(126deg, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0.03) 34%, transparent 56%, rgba(255,255,255,0.08) 82%, transparent 100%);
-      opacity: 1;
-    }
-    body[data-theme="iron"] :is(#main-live-banner, :where(#focus-overlay[data-focus-theme="home"]) .focus-home-scene) {
-      border-color: #94a3b899 !important;
-      box-shadow: inset 0 1.5px 0 rgba(255,255,255,0.34), inset 0 -2px 0 rgba(0,0,0,0.42), 0 14px 32px rgba(51,65,85,0.34), 0 0 18px rgba(148,163,184,0.16) !important;
-    }
-    body[data-theme="bronze"] :is(#main-live-banner, :where(#focus-overlay[data-focus-theme="home"]) .focus-home-scene) {
-      border-color: #e09f74b8 !important;
-      box-shadow: inset 0 1.5px 0 rgba(255,228,204,0.4), inset 0 -2px 0 rgba(0,0,0,0.42), 0 16px 36px rgba(124,58,23,0.36), 0 0 22px rgba(217,119,6,0.2) !important;
-    }
-    body[data-theme="silver"] .ed-btn-accent:not(#btn-checkin):not(#btn-google-login) {background:linear-gradient(135deg,#475c7a 0%,#6c82a3 100%);border-color:#3a4b63}
-    body[data-theme="silver"] :is(#main-live-banner, :where(#focus-overlay[data-focus-theme="home"]) .focus-home-scene) {
-      border-color: #e2e8f0b8 !important;
-      box-shadow: inset 0 1.5px 0 rgba(255,255,255,0.48), inset 0 -2px 0 rgba(0,0,0,0.38), 0 16px 36px rgba(51,65,85,0.36), 0 0 24px rgba(203,213,225,0.24) !important;
-    }
-    body[data-theme="gold"] .ed-btn-accent:not(#btn-checkin):not(#btn-google-login) {background:linear-gradient(135deg,#9a6906 0%,#d99b16 55%,#b87d09 100%);border-color:#825704;box-shadow:0 4px 14px rgba(217,155,22,.28)}
-    body[data-theme="gold"] :is(#main-live-banner, :where(#focus-overlay[data-focus-theme="home"]) .focus-home-scene) {
-      border-color: #fde047c8 !important;
-      box-shadow: inset 0 1.5px 0 rgba(254,249,195,0.52), inset 0 -2px 0 rgba(0,0,0,0.4), 0 18px 40px rgba(161,98,7,0.4), 0 0 28px rgba(250,204,21,0.3) !important;
-    }
-    body[data-theme="platinum"] .ed-btn-accent:not(#btn-checkin):not(#btn-google-login) {background:linear-gradient(135deg,#0f766e 0%,#14b8a6 100%);box-shadow:0 4px 14px rgba(20,184,166,.28)}
-    body[data-theme="platinum"] :is(#main-live-banner, :where(#focus-overlay[data-focus-theme="home"]) .focus-home-scene) {
-      border-color: #5eead4c0 !important;
-      box-shadow: inset 0 1.5px 0 rgba(204,251,241,0.48), inset 0 -2px 0 rgba(0,0,0,0.4), 0 18px 40px rgba(15,118,110,0.42), 0 0 30px rgba(45,212,191,0.3) !important;
-    }
-    body[data-theme="emerald"] .ed-btn-accent:not(#btn-checkin):not(#btn-google-login) {background:linear-gradient(135deg,#0d6b47 0%,#10b981 100%);box-shadow:0 4px 16px rgba(16,185,129,.3)}
-    body[data-theme="emerald"] :is(#main-live-banner, :where(#focus-overlay[data-focus-theme="home"]) .focus-home-scene) {
-      border-color: #6ee7b7c4 !important;
-      box-shadow: inset 0 1.5px 0 rgba(209,250,229,0.48), inset 0 -2px 0 rgba(0,0,0,0.4), 0 18px 42px rgba(13,107,71,0.44), 0 0 32px rgba(16,185,129,0.32) !important;
-    }
-    body[data-theme="diamond"] .ed-btn-accent:not(#btn-checkin):not(#btn-google-login) {background:linear-gradient(135deg,#1864ab 0%,#38bdf8 52%,#4f46e5 100%);box-shadow:0 4px 16px rgba(56,189,248,.34)}
-    body[data-theme="diamond"] :is(#main-live-banner, :where(#focus-overlay[data-focus-theme="home"]) .focus-home-scene) {
-      border-color: #7dd3fcd8 !important;
-      box-shadow: inset 0 1.5px 0 rgba(224,242,254,0.55), inset 0 -2px 0 rgba(0,0,0,0.42), 0 20px 46px rgba(24,100,171,0.48), 0 0 36px rgba(56,189,248,0.38) !important;
-    }
-    body[data-theme="master"] .ed-btn-accent:not(#btn-checkin):not(#btn-google-login) {background:linear-gradient(135deg,#5b21b6 0%,#9333ea 55%,#7c3aed 100%);box-shadow:0 4px 18px rgba(147,51,234,.36)}
-    body[data-theme="master"] :is(#main-live-banner, :where(#focus-overlay[data-focus-theme="home"]) .focus-home-scene) {
-      border-color: #d8b4fed8 !important;
-      box-shadow: inset 0 1.5px 0 rgba(243,232,255,0.52), inset 0 -2px 0 rgba(0,0,0,0.44), 0 20px 48px rgba(91,33,182,0.5), 0 0 40px rgba(168,85,247,0.42) !important;
-    }
-    body[data-theme="grandmaster"] .ed-btn-accent:not(#btn-checkin):not(#btn-google-login) {background:linear-gradient(135deg,#9f1239 0%,#e11d48 55%,#f59e0b 100%);box-shadow:0 4px 18px rgba(225,29,72,.38)}
-    body[data-theme="grandmaster"] :is(#main-live-banner, :where(#focus-overlay[data-focus-theme="home"]) .focus-home-scene) {
-      border-color: #fda4afde !important;
-      box-shadow: inset 0 1.5px 0 rgba(254,226,226,0.52), inset 0 -2px 0 rgba(0,0,0,0.44), 0 22px 50px rgba(159,18,57,0.54), 0 0 44px rgba(244,63,94,0.45) !important;
-    }
-    body[data-theme="challenger"] .ed-btn-accent:not(#btn-checkin):not(#btn-google-login) {background:linear-gradient(135deg,#1d4ed8 0%,#0284c7 50%,#d97706 100%);box-shadow:0 4px 20px rgba(59,130,246,.36),0 0 12px rgba(245,158,11,.28)}
-    body[data-theme="challenger"] :is(#main-live-banner, :where(#focus-overlay[data-focus-theme="home"]) .focus-home-scene) {
-      background-image: var(--study-hero-image,linear-gradient(122deg,#091533 0%,#1d4ed8 55%,#0e7490 82%,#92620a 100%)) !important;
-      border-color: #fde047e0 !important;
-      box-shadow: inset 0 1.5px 0 rgba(255,255,255,0.6), inset 0 -2px 0 rgba(0,0,0,0.45), 0 24px 54px rgba(29,78,216,0.54), 0 0 48px rgba(250,204,21,0.42), 0 0 24px rgba(56,189,248,0.34) !important;
-    }
-    body[data-dark="true"][data-theme="bronze"] .ed-btn-accent:not(#btn-checkin):not(#btn-google-login) {background:linear-gradient(135deg,#e0a882 0%,#f0c4a6 100%);border-color:#c2845e}
-    body[data-dark="true"][data-theme="gold"] .ed-btn-accent:not(#btn-checkin):not(#btn-google-login) {background:linear-gradient(135deg,#eab308 0%,#fde047 100%);border-color:#ca8a04}
-    body[data-dark="true"][data-theme="challenger"] .ed-btn-accent:not(#btn-checkin):not(#btn-google-login) {background:linear-gradient(135deg,#93c5fd 0%,#fde047 100%);border-color:#f5ca64}
     #study-nav {gap:.3rem;border-color:var(--line);padding-block:.4rem;scroll-padding-inline:1rem;scrollbar-width:thin;scrollbar-color:var(--line) transparent}
     #study-nav::-webkit-scrollbar {display:block;height:4px}
     #study-nav::-webkit-scrollbar-thumb {background:var(--line);border-radius:1em}
@@ -1966,224 +1902,217 @@
       --tint:#492437;--link:#ffadc4;--focus-ring:#ff9eb6;--hero:#642842;--hero-deep:#25121e;--hero-muted:#f9cde0
     }
 
-    /* Silver: reflective chrome and ice-white light. */
     body:is([data-theme="yellow"],[data-theme="coral"]) #main-live-banner {
       background-image:var(--study-hero-image,linear-gradient(118deg,var(--hero-deep) 4%,var(--hero) 88%))!important
     }
 
-    body[data-theme="silver"] {
-      --page:#edf2fa;--surface:#fbfdff;--soft:#edf3fd;--line:#c6d5ed;
-      --accent:#c6ddff;--primary:#344c83;--primary-hover:#263961;--tint:#dce8ff;--link:#354a82;
-      --focus-ring:#4964b1;--hero:#425988;--hero-deep:#18213b;--hero-muted:#e2eaff;
-      --tier-edge:#c5ddff;--tier-glow:#a2bfff70;
-      --tier-button:linear-gradient(115deg,#25365f,#405b91 48%,#5871aa 64%,#344b7c);
-      --tier-material:
-        radial-gradient(ellipse at 84% 17%,#e8f4ff98,transparent 28%),
-        linear-gradient(119deg,transparent 49%,#c9e1ff22 50%,transparent 51% 59%,#ecf6ff72 60%,#b7d3ff2b 62%,transparent 65% 74%,#cfe7ff84 75%,transparent 78%),
-        linear-gradient(112deg,#181e33 4%,#243657 46%,#4767a4 77%,#334565 100%);
-      --tier-decor:
-        linear-gradient(135deg,transparent 49%,#eef8ff7a 50%,transparent 51%) 88% 33% / 31px 31px no-repeat,
-        linear-gradient(45deg,transparent 49%,#eef8ff7a 50%,transparent 51%) 88% 33% / 31px 31px no-repeat,
-        linear-gradient(110deg,transparent 47%,#e7eeff21 60%,transparent 62%)
-    }
-    body[data-dark="true"][data-theme="silver"] {
-      --page:#101629;--surface:#19233a;--soft:#202e49;--line:#3c4e74;--ink:#eef5ff;--muted:#b3c5e7;
-      --primary:#c4d8ff;--primary-hover:#eaf2ff;--on-primary:#17264b;--tint:#2b3f66;--link:#d1e0ff;--focus-ring:#c4d8ff;
-      --tier-button:linear-gradient(120deg,#adc7fe,#e6f4ff 48%,#cadcff 72%,#a4baf0)
-    }
-
-    /* Platinum: cool aqua enamel with concentric reflections. */
-    body[data-theme="platinum"] {
-      --page:#e9f6f8;--surface:#f7fdff;--soft:#e3f4f7;--line:#bedfe8;
-      --accent:#86e7ed;--primary:#116779;--primary-hover:#0d4c62;--tint:#d5f2f7;--link:#11586c;--focus-ring:#0b8294;
-      --hero:#127483;--hero-deep:#0a293e;--hero-muted:#c9f5fd;
-      --tier-edge:#8bfcf2;--tier-glow:#6aeee272;
-      --tier-button:linear-gradient(112deg,#103d56,#115d72 58%,#148492 77%,#126578);
-      --tier-material:
-        radial-gradient(ellipse at 80% 72%,#6cf3f96c,transparent 32%),
-        repeating-radial-gradient(ellipse at 83% 115%,transparent 0 23px,#9affff49 24px,#9affff08 26px,transparent 29px 49px),
-        linear-gradient(108deg,#071f32 3%,#10405a 48%,#147b84 85%,#174665);
-      --tier-decor:
-        linear-gradient(158deg,transparent 44%,#b4ffff53 45%,transparent 47% 65%,#a7faff5c 66%,transparent 67%),
-        radial-gradient(circle at 90% 19%,#baffffbd 0 2px,transparent 3px),
-        radial-gradient(circle at 77% 33%,#baffff9a 0 1px,transparent 2px)
-    }
-    body[data-dark="true"][data-theme="platinum"] {
-      --page:#0b1824;--surface:#102637;--soft:#183344;--line:#2b4c60;--ink:#eafaff;--muted:#acd2de;
-      --primary:#91e9f2;--primary-hover:#bef8fd;--on-primary:#0d3948;--tint:#1b4052;--link:#9cecf5;--focus-ring:#8ee9ee;
-      --tier-button:linear-gradient(115deg,#80dbe7,#bcffff 53%,#80d5e9)
-    }
-
-    /* Emerald: saturated gemstone facets with a warm green highlight. */
-    body[data-theme="emerald"] {
-      --page:#e9f5e9;--surface:#f8fdf5;--soft:#eaf5e4;--line:#c7dfbc;
-      --accent:#a8ec81;--primary:#1d683d;--primary-hover:#124c2b;--tint:#ddf4cb;--link:#1a6039;--focus-ring:#3b8e36;
-      --hero:#1b6842;--hero-deep:#0b251f;--hero-muted:#dcf7ca;
-      --tier-edge:#baff87;--tier-glow:#ceff7680;
-      --tier-button:linear-gradient(110deg,#0a452f,#1c603a 45%,#297845 72%,#235b33);
-      --tier-material:
-        radial-gradient(ellipse at 85% 48%,#aaff6180,transparent 32%),
-        conic-gradient(from 22deg at 84% 60%,#d7ff741c 0deg 23deg,#3dfb7445 24deg 72deg,#081f182e 73deg 111deg,#b8ff633a 112deg 153deg,#09170f2e 154deg 203deg,transparent 204deg 295deg,#b9ff862e 296deg 360deg),
-        linear-gradient(110deg,#071e19 5%,#123f2d 49%,#25894c 84%,#245331);
-      --tier-decor:
-        linear-gradient(137deg,transparent 58%,#b2ff614f 59%,transparent 60% 73%,#deff8563 74%,transparent 75%),
-        linear-gradient(36deg,transparent 63%,#dcff8065 64%,transparent 65%),
-        radial-gradient(circle at 89% 23%,#f5ffc2 0 1.5px,transparent 3px),
-        radial-gradient(circle at 77% 42%,#c1ff929d 0 1px,transparent 2px)
-    }
-    body[data-dark="true"][data-theme="emerald"] {
-      --page:#0d1c16;--surface:#132a20;--soft:#1b382a;--line:#38523d;--ink:#f3fdec;--muted:#b9d4ba;
-      --primary:#aff38a;--primary-hover:#dcffb8;--on-primary:#1a321b;--tint:#2c492e;--link:#c0f9a5;--focus-ring:#a9ec72;
-      --tier-button:linear-gradient(113deg,#9ce58d,#d6ffa5 56%,#8fe699)
-    }
-
-    body:is([data-theme="iron"],[data-theme="bronze"],[data-theme="silver"],[data-theme="gold"],[data-theme="platinum"],[data-theme="emerald"],[data-theme="diamond"],[data-theme="master"],[data-theme="grandmaster"],[data-theme="challenger"]) #main-live-banner {
-      background-image:var(--study-hero-image,var(--tier-material))!important
-    }
-    body:is([data-theme="iron"],[data-theme="bronze"],[data-theme="silver"],[data-theme="gold"],[data-theme="platinum"],[data-theme="emerald"],[data-theme="diamond"],[data-theme="master"],[data-theme="grandmaster"],[data-theme="challenger"]) #focus-overlay[data-focus-theme="home"] .focus-home-scene {
-      background-image:var(--tier-material)!important
-    }
-    body:is([data-theme="iron"],[data-theme="bronze"],[data-theme="silver"],[data-theme="gold"],[data-theme="platinum"],[data-theme="emerald"],[data-theme="diamond"],[data-theme="master"],[data-theme="grandmaster"],[data-theme="challenger"]) :is(#main-live-banner, :where(#focus-overlay[data-focus-theme="home"]) .focus-home-scene)::before {
-      background:var(--tier-decor);mask-image:linear-gradient(90deg,transparent 32%,#000 73%);opacity:.82
-    }
-    #main-live-banner[style*="--study-hero-image"]::before {opacity:.2!important}
-    body:is([data-theme="silver"],[data-theme="platinum"],[data-theme="emerald"]) :is(#main-live-banner, :where(#focus-overlay[data-focus-theme="home"]) .focus-home-scene) {
-      border-color:var(--tier-edge)!important;
-      box-shadow:inset 0 1px 0 #fff9,inset 0 -2px 0 #0005,0 16px 36px #071e3c38,0 0 24px var(--tier-glow)!important
-    }
-    body:is([data-theme="silver"],[data-theme="platinum"],[data-theme="emerald"]) .study-logo {
-      background-image:var(--tier-material);border-color:var(--tier-edge);box-shadow:0 0 12px var(--tier-glow)
-    }
-    body:is([data-theme="silver"],[data-theme="platinum"],[data-theme="emerald"]) .ed-btn-accent:not(#btn-checkin):not(#btn-google-login):not(:disabled) {
-      background:var(--tier-button)!important;color:var(--on-primary)!important;
-      border-color:var(--focus-ring);box-shadow:inset 0 1px 0 #ffffff6a,0 5px 16px var(--tier-glow)
-    }
-    body:is([data-theme="silver"],[data-theme="platinum"],[data-theme="emerald"]) .ed-btn-accent:not(#btn-checkin):not(#btn-google-login):hover:not(:disabled) {filter:brightness(1.12)}
-    body:is([data-theme="silver"],[data-theme="platinum"],[data-theme="emerald"]) .study-hero-stat {
-      border-color:var(--tier-edge);background:color-mix(in srgb,var(--hero-deep) 83%,transparent)
-    }
-    /* Material faces and reflections shared by the home banner and the home timer theme. */
     body[data-theme="iron"] {
-      --tier-edge:#a8b5c4;
-      --tier-glow:#60798f65;
-      --tier-material:
-        radial-gradient(ellipse at 80% -36%,#cdd9e284,transparent 60%),
-        linear-gradient(134deg,#121923 5%,#323f50 43%,#617180 77%,#28333f);
-      --tier-decor:
-        repeating-linear-gradient(174deg,#eff8ff10 0 1px,transparent 1px 3px,#0c172228 4px,transparent 5px 8px),
-        linear-gradient(174deg,transparent 29%,#f4f8fc59 31%,#bccbd129 37%,transparent 41%,#101b2882 78%,#b5c7d235 81%,transparent 82%);
+      --surface:#f9fafc;
+      --soft:#edf0f4;
+      --line:#d5dce4;
+      --page:#eff1f3;
+      --wash-deep:#212a34;
+      --wash-mid:#515e69;
+      --wash-light:#84919a;
+    }
+    body[data-dark="true"][data-theme="iron"] {
+      --surface:#181f29;
+      --soft:#222c38;
+      --line:#384453;
+      --page:#11171e;
     }
     body[data-theme="bronze"] {
-      --tier-edge:#e4aa85;
-      --tier-glow:#b36a4166;
-      --tier-material:
-        radial-gradient(ellipse at 90% 12%,#eab48a89,transparent 47%),
-        linear-gradient(120deg,#23150f 4%,#573021 47%,#9d5d38 76%,#634031);
-      --tier-decor:
-        repeating-radial-gradient(ellipse at 89% 108%,#ffc99d24 0 1px,#3019124d 1px 2px,transparent 3px 13px),
-        radial-gradient(ellipse at 93% 90%,#4b776936,transparent 42%),
-        linear-gradient(163deg,transparent 22%,#ffeecc50 38%,transparent 54%);
+      --surface:#fffaf5;
+      --soft:#f6eae0;
+      --line:#e6ccba;
+      --page:#f6f0ea;
+      --wash-deep:#392419;
+      --wash-mid:#865338;
+      --wash-light:#c58e67;
+    }
+    body[data-dark="true"][data-theme="bronze"] {
+      --surface:#261c18;
+      --soft:#30231e;
+      --line:#513b32;
+      --page:#1d1612;
+    }
+    body[data-theme="silver"] {
+      --page:#eef2f8;
+      --surface:#fbfdff;
+      --soft:#edf3fd;
+      --line:#c6d5ed;
+      --accent:#c6ddff;
+      --primary:#344c83;
+      --primary-hover:#263961;
+      --tint:#dce8ff;
+      --link:#354a82;
+      --focus-ring:#4964b1;
+      --hero:#425988;
+      --hero-deep:#18213b;
+      --hero-muted:#e2eaff;
+      --wash-deep:#242f46;
+      --wash-mid:#667f9f;
+      --wash-light:#c8d9e8;
+    }
+    body[data-dark="true"][data-theme="silver"] {
+      --page:#101723;
+      --surface:#19233a;
+      --soft:#202e49;
+      --line:#3c4e74;
+      --ink:#eef5ff;
+      --muted:#b3c5e7;
+      --primary:#c4d8ff;
+      --primary-hover:#eaf2ff;
+      --on-primary:#17264b;
+      --tint:#2b3f66;
+      --link:#d1e0ff;
+      --focus-ring:#c4d8ff;
     }
     body[data-theme="gold"] {
-      --tier-edge:#f5cf8b;
-      --tier-glow:#d5a25472;
-      --tier-material:
-        radial-gradient(ellipse at 92% 4%,#ffe3ab91,transparent 43%),
-        linear-gradient(119deg,#211709,#493116 48%,#885e2b 73%,#583711);
-      --tier-decor:
-        repeating-linear-gradient(128deg,transparent 0 31px,#ffdf973c 32px,#33190d72 34px,transparent 35px 46px),
-        linear-gradient(120deg,transparent 40%,#e6ab604f 65%,#fff3cf71 67%,#2617086b 71%,transparent 81%);
+      --surface:#fffcf5;
+      --soft:#f8eedb;
+      --line:#eaddba;
+      --page:#f7f3e8;
+      --wash-deep:#3d2e15;
+      --wash-mid:#8e6e32;
+      --wash-light:#dcb971;
+    }
+    body[data-dark="true"][data-theme="gold"] {
+      --surface:#272016;
+      --soft:#342a1d;
+      --line:#53432c;
+      --page:#1d190e;
+    }
+    body[data-theme="platinum"] {
+      --page:#edf5f5;
+      --surface:#f7fdff;
+      --soft:#e3f4f7;
+      --line:#bedfe8;
+      --accent:#86e7ed;
+      --primary:#116779;
+      --primary-hover:#0d4c62;
+      --tint:#d5f2f7;
+      --link:#11586c;
+      --focus-ring:#0b8294;
+      --hero:#127483;
+      --hero-deep:#0a293e;
+      --hero-muted:#c9f5fd;
+      --wash-deep:#12363f;
+      --wash-mid:#327781;
+      --wash-light:#90c9c9;
+    }
+    body[data-dark="true"][data-theme="platinum"] {
+      --page:#0c1b21;
+      --surface:#102637;
+      --soft:#183344;
+      --line:#2b4c60;
+      --ink:#eafaff;
+      --muted:#acd2de;
+      --primary:#91e9f2;
+      --primary-hover:#bef8fd;
+      --on-primary:#0d3948;
+      --tint:#1b4052;
+      --link:#9cecf5;
+      --focus-ring:#8ee9ee;
+    }
+    body[data-theme="emerald"] {
+      --page:#edf5ee;
+      --surface:#f8fdf5;
+      --soft:#eaf5e4;
+      --line:#c7dfbc;
+      --accent:#a8ec81;
+      --primary:#1d683d;
+      --primary-hover:#124c2b;
+      --tint:#ddf4cb;
+      --link:#1a6039;
+      --focus-ring:#3b8e36;
+      --hero:#1b6842;
+      --hero-deep:#0b251f;
+      --hero-muted:#dcf7ca;
+      --wash-deep:#0c3226;
+      --wash-mid:#23784d;
+      --wash-light:#7cbd83;
+    }
+    body[data-dark="true"][data-theme="emerald"] {
+      --page:#0d1b15;
+      --surface:#132a20;
+      --soft:#1b382a;
+      --line:#38523d;
+      --ink:#f3fdec;
+      --muted:#b9d4ba;
+      --primary:#aff38a;
+      --primary-hover:#dcffb8;
+      --on-primary:#1a321b;
+      --tint:#2c492e;
+      --link:#c0f9a5;
+      --focus-ring:#a9ec72;
     }
     body[data-theme="diamond"] {
-      --tier-edge:#b5e8ff;
-      --tier-glow:#6ebbf97d;
-      --tier-material:
-        radial-gradient(ellipse at 88% 20%,#b1deff68,transparent 41%),
-        conic-gradient(from 21deg at 84% 61%,#4562b55c 0deg 49deg,#a6f1ff63 50deg 88deg,#35548a75 89deg 133deg,#f2faff60 134deg 165deg,#324b8fb5 166deg 204deg,#81cce42f 205deg 266deg,#141b4a48 267deg 313deg,#9e9eff52 314deg 360deg),
-        linear-gradient(113deg,#111c39,#263f77 51%,#416397 81%,#272d5f);
-      --tier-decor:
-        linear-gradient(133deg,transparent 53%,#d3f3ff78 53.3%,transparent 54% 72%,#d2e2ff75 72.3%,transparent 73%),
-        linear-gradient(32deg,transparent 61%,#a4efff7e 61.3%,transparent 62%),
-        radial-gradient(circle at 84% 61%,#ecffffb3,transparent 11%);
-      --tier-light:radial-gradient(ellipse at 66% 38%,#b4eeff85,transparent 44%);
+      --surface:#f9fcff;
+      --soft:#eaf2fc;
+      --line:#c6d9ef;
+      --page:#edf3fb;
+      --wash-deep:#142f55;
+      --wash-mid:#467cbd;
+      --wash-light:#a0cffa;
       --tier-light-duration:21s;
     }
+    body[data-dark="true"][data-theme="diamond"] {
+      --surface:#172436;
+      --soft:#1d2e45;
+      --line:#334c67;
+      --page:#0b1627;
+    }
     body[data-theme="master"] {
-      --tier-edge:#dcc3fc;
-      --tier-glow:#a56df895;
-      --tier-material:
-        radial-gradient(ellipse at 93% 4%,#9d7ef07a,transparent 45%),
-        conic-gradient(from 116deg at 82% 74%,#b987e067 0deg 42deg,#3c276d68 43deg 93deg,#b288ff36 94deg 141deg,#2113369e 142deg 202deg,#d8baff38 203deg 259deg,#4c347b80 260deg 309deg,#8062c66b 310deg 360deg),
-        linear-gradient(113deg,#1b122c,#392452 53%,#573b8e 80%,#392568);
-      --tier-decor:
-        repeating-radial-gradient(ellipse at 82% 122%,transparent 0 24px,#d1bcff51 25px,#1f113556 27px,transparent 29px 45px),
-        linear-gradient(151deg,transparent 47%,#bc9bef50 63%,transparent 67% 82%,#a2adff6c 86%,transparent 92%),
-        radial-gradient(circle at 88% 30%,#ede7ffc7 0 1px,transparent 2px),
-        radial-gradient(circle at 76% 20%,#ead8ffc7 0 1px,transparent 2px);
-      --tier-light:
-        radial-gradient(ellipse at 61% 45%,#b992ff9c,transparent 43%),
-        radial-gradient(ellipse at 90% 30%,#779aff8c,transparent 47%);
+      --surface:#fcf9ff;
+      --soft:#f3edf9;
+      --line:#dfd0ee;
+      --page:#f3eff8;
+      --wash-deep:#2a163f;
+      --wash-mid:#6939a0;
+      --wash-light:#b787d6;
       --tier-light-duration:16s;
     }
+    body[data-dark="true"][data-theme="master"] {
+      --surface:#221a31;
+      --soft:#2e2343;
+      --line:#483660;
+      --page:#191322;
+    }
     body[data-theme="grandmaster"] {
-      --tier-edge:#ffc6a5;
-      --tier-glow:#ef79848d;
-      --tier-material:
-        radial-gradient(ellipse at 96% 30%,#da856e8a,transparent 48%),
-        conic-gradient(from 39deg at 86% 55%,#64264e67 0deg 45deg,#f2927457 46deg 79deg,#90304674 80deg 149deg,#f4a68940 150deg 193deg,#32132470 194deg 233deg,#b9668175 234deg 279deg,#572035b3 280deg 327deg,#c983702f 328deg 360deg),
-        linear-gradient(112deg,#25111f,#531f34 48%,#8f3f49 81%,#712f3b);
-      --tier-decor:
-        repeating-linear-gradient(128deg,transparent 0 27px,#ffbb9651 28px,#49202e5c 30px,transparent 31px 52px),
-        linear-gradient(10deg,transparent 45%,#ffad7155 56%,#ffe0bc81 56.4%,#60273c82 58%,transparent 62%),
-        radial-gradient(circle at 86% 55%,#ffdca1a5,transparent 9%);
-      --tier-light:
-        radial-gradient(ellipse at 67% 47%,#ffc194a1,transparent 38%),
-        radial-gradient(ellipse at 84% 62%,#f15ea38c,transparent 55%);
+      --surface:#fffbfa;
+      --soft:#faedf0;
+      --line:#efcfd4;
+      --page:#f8eff0;
+      --wash-deep:#3a1727;
+      --wash-mid:#95364f;
+      --wash-light:#dd927c;
       --tier-light-duration:14s;
     }
+    body[data-dark="true"][data-theme="grandmaster"] {
+      --surface:#281b25;
+      --soft:#38242f;
+      --line:#533542;
+      --page:#201218;
+    }
     body[data-theme="challenger"] {
-      --tier-edge:#f7dfa6;
-      --tier-glow:#ecce7385;
-      --tier-material:
-        radial-gradient(ellipse at 94% 19%,#ebce7d7d,transparent 38%),
-        radial-gradient(ellipse at 72% 72%,#24a6b45e,transparent 47%),
-        conic-gradient(from 81deg at 84% 49%,#e5e4c358 0deg 32deg,#678ca061 33deg 84deg,#fddc8d56 85deg 114deg,#25467594 115deg 172deg,#67dfca42 173deg 206deg,#456ab073 207deg 273deg,#e3da9f5c 274deg 308deg,#2f4f835b 309deg 360deg),
-        linear-gradient(117deg,#0d1932,#19395b 51%,#205e70 78%,#5a4a32);
-      --tier-decor:
-        radial-gradient(ellipse at 91% 110%,transparent 46%,#a3ffed6b 56%,#a6efe877 57%,transparent 66%),
-        radial-gradient(ellipse at 92% 90%,transparent 29%,#f8dfa85e 30%,transparent 32%),
-        radial-gradient(circle at 84% 49%,#fff5cdad,transparent 11%),
-        radial-gradient(circle at 95% 25%,#fff6c7 0 1px,transparent 2px),
-        radial-gradient(circle at 74% 19%,#e0fffa 0 1px,transparent 2px);
-      --tier-light:
-        radial-gradient(ellipse at 59% 61%,#63e9d6a6,transparent 39%),
-        radial-gradient(ellipse at 81% 12%,#a0bbff88,transparent 45%),
-        radial-gradient(ellipse at 93% 54%,#ffe7a48e,transparent 40%);
+      --surface:#f8fcfd;
+      --soft:#edf4f6;
+      --line:#cddfe5;
+      --page:#edf3f6;
+      --wash-deep:#112853;
+      --wash-mid:#285999;
+      --wash-light:#b49d65;
       --tier-light-duration:18s;
     }
-
-    body:is([data-theme="iron"],[data-theme="bronze"],[data-theme="silver"],[data-theme="gold"],[data-theme="platinum"],[data-theme="emerald"],[data-theme="diamond"],[data-theme="master"],[data-theme="grandmaster"],[data-theme="challenger"]) {
-      background-image:radial-gradient(ellipse at 87% 0,color-mix(in srgb,var(--tier-glow) 23%,transparent),transparent 71%)!important;
-      background-size:100% 37rem!important;
-      background-repeat:no-repeat!important;
+    body[data-dark="true"][data-theme="challenger"] {
+      --surface:#142331;
+      --soft:#1b2d3d;
+      --line:#354a5d;
+      --page:#0a1722;
     }
-    body[data-theme="iron"] {--surface:#f9fafc;--soft:#edf0f4;--line:#d5dce4}
-    body[data-theme="bronze"] {--surface:#fffaf5;--soft:#f6eae0;--line:#e6ccba}
-    body[data-theme="gold"] {--surface:#fffcf5;--soft:#f8eedb;--line:#eaddba}
-    body[data-theme="diamond"] {--surface:#f9fcff;--soft:#eaf2fc;--line:#c6d9ef}
-    body[data-theme="master"] {--surface:#fcf9ff;--soft:#f3edf9;--line:#dfd0ee}
-    body[data-theme="grandmaster"] {--surface:#fffbfa;--soft:#faedf0;--line:#efcfd4}
-    body[data-theme="challenger"] {--surface:#f8fcfd;--soft:#edf4f6;--line:#cddfe5}
-    body[data-dark="true"][data-theme="iron"] {--surface:#181f29;--soft:#222c38;--line:#384453}
-    body[data-dark="true"][data-theme="bronze"] {--surface:#261c18;--soft:#30231e;--line:#513b32}
-    body[data-dark="true"][data-theme="gold"] {--surface:#272016;--soft:#342a1d;--line:#53432c}
-    body[data-dark="true"][data-theme="diamond"] {--surface:#172436;--soft:#1d2e45;--line:#334c67}
-    body[data-dark="true"][data-theme="master"] {--surface:#221a31;--soft:#2e2343;--line:#483660}
-    body[data-dark="true"][data-theme="grandmaster"] {--surface:#281b25;--soft:#38242f;--line:#533542}
-    body[data-dark="true"][data-theme="challenger"] {--surface:#142331;--soft:#1b2d3d;--line:#354a5d}
-
     #main-live-banner {
-      --banner-trim:var(--tier-edge,var(--accent));
+      --banner-trim:var(--accent);
       grid-template-columns:minmax(0,1fr) minmax(10.5rem,13rem);
       gap:clamp(1rem,4vw,3rem);
       min-height:212px;
@@ -2280,6 +2209,35 @@
       #live-study-day-range,#live-studying-mini {grid-column:1}
       #main-live-banner[data-content="quote"] #live-period-title {margin-top:.48rem}
     }
+
+    /* The tier hue is shared by the page, controls and the two home-theme scenes. */
+    body:is([data-theme="iron"],[data-theme="bronze"],[data-theme="silver"],[data-theme="gold"],[data-theme="platinum"],[data-theme="emerald"],[data-theme="diamond"],[data-theme="master"],[data-theme="grandmaster"],[data-theme="challenger"]) {
+      background-color:var(--viewport-bg,var(--page))!important;
+      --tier-wash:linear-gradient(116deg,var(--wash-deep) 5%,var(--wash-mid) 68%,var(--wash-light) 120%);
+      --tier-light:radial-gradient(ellipse at 79% 30%,color-mix(in srgb,var(--wash-light) 60%,transparent),transparent 62%);
+    }
+    body[data-theme="challenger"] {
+      --tier-wash:linear-gradient(112deg,#0e2143 3%,#274f93 47%,#286e85 76%,#a99059 113%);
+    }
+    body:is([data-theme="iron"],[data-theme="bronze"],[data-theme="silver"],[data-theme="gold"],[data-theme="platinum"],[data-theme="emerald"],[data-theme="diamond"],[data-theme="master"],[data-theme="grandmaster"],[data-theme="challenger"]) #main-live-banner {
+      background-image:var(--study-hero-image,var(--tier-wash))!important;
+      border-color:color-mix(in srgb,var(--wash-mid) 75%,var(--wash-light))!important;
+      box-shadow:0 8px 22px color-mix(in srgb,var(--wash-deep) 16%,transparent)!important;
+    }
+    body:is([data-theme="iron"],[data-theme="bronze"],[data-theme="silver"],[data-theme="gold"],[data-theme="platinum"],[data-theme="emerald"],[data-theme="diamond"],[data-theme="master"],[data-theme="grandmaster"],[data-theme="challenger"]) #focus-overlay[data-focus-theme="home"] .focus-home-scene {background-image:var(--tier-wash)!important}
+    body:is([data-theme="iron"],[data-theme="bronze"],[data-theme="silver"],[data-theme="gold"],[data-theme="platinum"],[data-theme="emerald"],[data-theme="diamond"],[data-theme="master"],[data-theme="grandmaster"],[data-theme="challenger"]) #main-live-banner::before,body:is([data-theme="iron"],[data-theme="bronze"],[data-theme="silver"],[data-theme="gold"],[data-theme="platinum"],[data-theme="emerald"],[data-theme="diamond"],[data-theme="master"],[data-theme="grandmaster"],[data-theme="challenger"]) #main-live-banner::after,
+    body:is([data-theme="iron"],[data-theme="bronze"],[data-theme="silver"],[data-theme="gold"],[data-theme="platinum"],[data-theme="emerald"],[data-theme="diamond"],[data-theme="master"],[data-theme="grandmaster"],[data-theme="challenger"]) #focus-overlay[data-focus-theme="home"] .focus-home-scene::before {content:none;background:none}
+    body:is([data-theme="iron"],[data-theme="bronze"],[data-theme="silver"],[data-theme="gold"],[data-theme="platinum"],[data-theme="emerald"],[data-theme="diamond"],[data-theme="master"],[data-theme="grandmaster"],[data-theme="challenger"]) #main-live-banner .study-hero-stat {
+      background:color-mix(in srgb,var(--wash-deep) 80%,transparent);
+      border:0;box-shadow:none;
+    }
+    body:is([data-theme="iron"],[data-theme="bronze"],[data-theme="silver"],[data-theme="gold"],[data-theme="platinum"],[data-theme="emerald"],[data-theme="diamond"],[data-theme="master"],[data-theme="grandmaster"],[data-theme="challenger"]) .study-logo {background:var(--tier-wash);border:0;color:white}
+    body:is([data-theme="iron"],[data-theme="bronze"],[data-theme="silver"],[data-theme="gold"],[data-theme="platinum"],[data-theme="emerald"],[data-theme="diamond"],[data-theme="master"],[data-theme="grandmaster"],[data-theme="challenger"]) #study-header,body:is([data-theme="iron"],[data-theme="bronze"],[data-theme="silver"],[data-theme="gold"],[data-theme="platinum"],[data-theme="emerald"],[data-theme="diamond"],[data-theme="master"],[data-theme="grandmaster"],[data-theme="challenger"]) #study-main .ed-card {border-color:var(--line)!important}
+    body:is([data-theme="iron"],[data-theme="bronze"],[data-theme="silver"],[data-theme="gold"],[data-theme="platinum"],[data-theme="emerald"],[data-theme="diamond"],[data-theme="master"],[data-theme="grandmaster"],[data-theme="challenger"]) .ed-btn-accent:not(#btn-checkin):not(#btn-google-login):not(:disabled) {
+      background:var(--primary)!important;color:var(--on-primary)!important;
+      border-color:transparent;box-shadow:none;
+    }
+    body:is([data-theme="iron"],[data-theme="bronze"],[data-theme="silver"],[data-theme="gold"],[data-theme="platinum"],[data-theme="emerald"],[data-theme="diamond"],[data-theme="master"],[data-theme="grandmaster"],[data-theme="challenger"]) .ed-btn-accent:not(#btn-checkin):not(#btn-google-login):hover:not(:disabled) {background:var(--primary-hover)!important}
   </style>
 </head>
 <body data-theme="blue" class="bg-white text-slate-950 min-h-screen antialiased">
@@ -2637,16 +2595,16 @@
                 <span class="text-[10px] font-semibold text-slate-400">그라데이션 · 광택</span>
               </div>
               <div class="grid grid-cols-5 gap-2 place-items-center">
-                <button type="button" data-set-theme="iron" data-theme-label="아이언 스틸" data-min-lp="0" data-tier-name="아이언" class="theme-swatch-tier" style="background:linear-gradient(135deg,#cbd5e1 0%,#64748b 52%,#334155 100%)" title="아이언 스틸 (아이언 0 LP)"></button>
-                <button type="button" data-set-theme="bronze" data-theme-label="브론즈 코퍼" data-min-lp="80" data-tier-name="브론즈" class="theme-swatch-tier" style="background:linear-gradient(135deg,#f6d0b4 0%,#c87b4e 48%,#7a3a18 100%)" title="브론즈 코퍼 (브론즈 80 LP)"></button>
-                <button type="button" data-set-theme="silver" data-theme-label="실버 크롬" data-min-lp="170" data-tier-name="실버" class="theme-swatch-tier" style="background:linear-gradient(132deg,#243554,#bbcfff 26%,#f5fdff 42%,#738fcb 57%,#2e4876 66%,#e4efff)" title="실버 크롬 (실버 170 LP)"></button>
-                <button type="button" data-set-theme="gold" data-theme-label="골드 앰버" data-min-lp="270" data-tier-name="골드" class="theme-swatch-tier" style="background:linear-gradient(135deg,#fef08a 0%,#eab308 46%,#9a6206 100%)" title="골드 앰버 (골드 270 LP)"></button>
-                <button type="button" data-set-theme="platinum" data-theme-label="플래티넘 아쿠아" data-min-lp="380" data-tier-name="플래티넘" class="theme-swatch-tier" style="background:repeating-radial-gradient(ellipse at 80% 100%,#9ffff5 0 3px,#188e9d 4px 6px,#183e69 7px 9px)" title="플래티넘 아쿠아 (플래티넘 380 LP)"></button>
-                <button type="button" data-set-theme="emerald" data-theme-label="에메랄드 포레스트" data-min-lp="500" data-tier-name="에메랄드" class="theme-swatch-tier" style="background:conic-gradient(from 45deg,#b6fc72,#298447,#0b5736,#a6db51,#145638,#b6fc72)" title="에메랄드 포레스트 (에메랄드 500 LP)"></button>
-                <button type="button" data-set-theme="diamond" data-theme-label="다이아 사파이어" data-min-lp="630" data-tier-name="다이아몬드" class="theme-swatch-tier" style="background:conic-gradient(from 30deg,#e0f2fe,#38bdf8,#6366f1,#bae6fd,#e0f2fe)" title="다이아 사파이어 (다이아몬드 630 LP)"></button>
-                <button type="button" data-set-theme="master" data-theme-label="마스터 바이올렛" data-min-lp="770" data-tier-name="마스터" class="theme-swatch-tier" style="background:linear-gradient(135deg,#f5d0fe 0%,#a855f7 45%,#4c1d95 100%)" title="마스터 바이올렛 (마스터 770 LP)"></button>
-                <button type="button" data-set-theme="grandmaster" data-theme-label="그랜드마스터 크림슨" data-min-lp="930" data-tier-name="그랜드마스터" class="theme-swatch-tier" style="background:linear-gradient(135deg,#fde047 0%,#f43f5e 46%,#881337 100%)" title="그랜드마스터 크림슨 (그랜드마스터 930 LP)"></button>
-                <button type="button" data-set-theme="challenger" data-theme-label="챌린저 오로라" data-min-lp="1200" data-tier-name="챌린저" class="theme-swatch-tier" style="background:conic-gradient(from 0deg,#fde047,#38bdf8,#a855f7,#f43f5e,#fde047)" title="챌린저 오로라 (챌린저 1200 LP)"></button>
+                <button type="button" data-set-theme="iron" data-theme-label="아이언 스틸" data-min-lp="0" data-tier-name="아이언" class="theme-swatch-tier" style="background:linear-gradient(120deg,#212a34,#515e69 58%,#84919a)" title="아이언 스틸 (아이언 0 LP)"></button>
+                <button type="button" data-set-theme="bronze" data-theme-label="브론즈 코퍼" data-min-lp="80" data-tier-name="브론즈" class="theme-swatch-tier" style="background:linear-gradient(120deg,#392419,#865338 58%,#c58e67)" title="브론즈 코퍼 (브론즈 80 LP)"></button>
+                <button type="button" data-set-theme="silver" data-theme-label="실버 크롬" data-min-lp="170" data-tier-name="실버" class="theme-swatch-tier" style="background:linear-gradient(120deg,#242f46,#667f9f 58%,#c8d9e8)" title="실버 크롬 (실버 170 LP)"></button>
+                <button type="button" data-set-theme="gold" data-theme-label="골드 앰버" data-min-lp="270" data-tier-name="골드" class="theme-swatch-tier" style="background:linear-gradient(120deg,#3d2e15,#8e6e32 58%,#dcb971)" title="골드 앰버 (골드 270 LP)"></button>
+                <button type="button" data-set-theme="platinum" data-theme-label="플래티넘 아쿠아" data-min-lp="380" data-tier-name="플래티넘" class="theme-swatch-tier" style="background:linear-gradient(120deg,#12363f,#327781 58%,#90c9c9)" title="플래티넘 아쿠아 (플래티넘 380 LP)"></button>
+                <button type="button" data-set-theme="emerald" data-theme-label="에메랄드 포레스트" data-min-lp="500" data-tier-name="에메랄드" class="theme-swatch-tier" style="background:linear-gradient(120deg,#0c3226,#23784d 58%,#7cbd83)" title="에메랄드 포레스트 (에메랄드 500 LP)"></button>
+                <button type="button" data-set-theme="diamond" data-theme-label="다이아 사파이어" data-min-lp="630" data-tier-name="다이아몬드" class="theme-swatch-tier" style="background:linear-gradient(120deg,#142f55,#467cbd 58%,#a0cffa)" title="다이아 사파이어 (다이아몬드 630 LP)"></button>
+                <button type="button" data-set-theme="master" data-theme-label="마스터 바이올렛" data-min-lp="770" data-tier-name="마스터" class="theme-swatch-tier" style="background:linear-gradient(120deg,#2a163f,#6939a0 58%,#b787d6)" title="마스터 바이올렛 (마스터 770 LP)"></button>
+                <button type="button" data-set-theme="grandmaster" data-theme-label="그랜드마스터 크림슨" data-min-lp="930" data-tier-name="그랜드마스터" class="theme-swatch-tier" style="background:linear-gradient(120deg,#3a1727,#95364f 58%,#dd927c)" title="그랜드마스터 크림슨 (그랜드마스터 930 LP)"></button>
+                <button type="button" data-set-theme="challenger" data-theme-label="챌린저 오로라" data-min-lp="1200" data-tier-name="챌린저" class="theme-swatch-tier" style="background:linear-gradient(120deg,#112853,#285999 58%,#b49d65)" title="챌린저 오로라 (챌린저 1200 LP)"></button>
               </div>
             </div>
           </div>
