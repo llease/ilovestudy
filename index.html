@@ -4839,6 +4839,10 @@
 
       let welcomePlayedForSession = false;
       let pendingFirstJoinWelcome = null;
+      let spotlightTourState = { active: false, step: 0, nickname: '', transitioning: false };
+      let spotlightStepTimer = 0;
+      let spotlightRaf = 0;
+      let lastFocusPromoSlotKey = '';
       function playLoginWelcome(memberDisplayName) {
         if (welcomePlayedForSession) return;
         welcomePlayedForSession = true;
@@ -8119,7 +8123,7 @@
         const promoOv = document.getElementById('promotion-overlay');
         if (focusInterval || (focusOv && !focusOv.classList.contains('hidden'))) return false;
         if ((authOv && !authOv.classList.contains('hidden')) || (promoOv && !promoOv.classList.contains('hidden'))) return false;
-        if (typeof spotlightTourState !== 'undefined' && spotlightTourState.active) return false;
+        if (spotlightTourState.active) return false;
         const me = shared.members.find(m => m.id === prefs.currentUserId);
         if (!me || !promotionIsActive(me)) return false;
         const tierInfo = getMemberTier(me);
@@ -10758,7 +10762,6 @@
         updateFocusPromoSlot();
       }
 
-      let lastFocusPromoSlotKey = '';
       function updateFocusPromoSlot() {
         const slot = document.getElementById('focus-promo-slot');
         if (!slot) return;
@@ -12116,9 +12119,7 @@
         }
       ];
 
-      let spotlightTourState = { active: false, step: 0, nickname: '', transitioning: false };
-      let spotlightStepTimer = 0;
-      let spotlightRaf = 0;
+
 
       function ensureSpotlightTourEls() {
         let scrim = document.getElementById('spotlight-tour-scrim');
