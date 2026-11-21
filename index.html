@@ -1882,28 +1882,92 @@
     }
     /* Everyday palettes use separate surfaces and contrast tokens for each color scheme. */
     body[data-theme="yellow"] {
-      --page:#f7f5e7;--surface:#fffef8;--soft:#f6f2dc;--line:#e5dbad;--ink:#292816;--muted:#625d3c;
-      --accent:#efd372;--accent-text:#2c240a;--primary:#68500b;--primary-hover:#4f3a06;--tint:#f8edba;--link:#5c470a;--focus-ring:#886907;
-      --hero:#534815;--hero-deep:#24220f;--hero-muted:#f6e9ae
+      --page:#f8f7f3;--surface:#ffffff;--soft:#f6f4ee;--line:#e5e2d8;--ink:#22211d;--muted:#656156;
+      --accent:#e5c97b;--accent-text:#2a2414;--primary:#8a6c27;--primary-hover:#70561d;--tint:#f5efe0;--link:#7c6020;--focus-ring:#b5923e;
+      --hero:#3b3526;--hero-deep:#221f18;--hero-muted:#ddd4be
     }
     body[data-dark="true"][data-theme="yellow"] {
-      --page:#14160f;--surface:#202318;--soft:#292d1f;--line:#3c412b;--ink:#faf6dc;--muted:#c6c3a0;
-      --accent:#f5d981;--accent-text:#2a2209;--primary:#f5d981;--primary-hover:#ffe9a8;--on-primary:#2a2209;
-      --tint:#3a3316;--link:#ffe299;--focus-ring:#f5d981;--hero:#48421b;--hero-deep:#191c11;--hero-muted:#f0e5b0
+      --page:#121210;--surface:#1b1a17;--soft:#24221e;--line:#36332c;--ink:#f3f1eb;--muted:#aba698;
+      --accent:#e0c47a;--accent-text:#211c10;--primary:#dec27c;--primary-hover:#ebd59b;--on-primary:#211c10;
+      --tint:#2e2a1f;--link:#e5cc8a;--focus-ring:#d6b669;--hero:#332e22;--hero-deep:#191712;--hero-muted:#d9d0bb
     }
     body[data-theme="coral"] {
-      --page:#faf0f1;--surface:#fffafb;--soft:#f8e7eb;--line:#e8cbd4;--ink:#38232c;--muted:#755261;
-      --accent:#e68199;--accent-text:#331320;--primary:#9d284c;--primary-hover:#801a3a;--tint:#f8dde6;--link:#912345;--focus-ring:#ad3154;
-      --hero:#722741;--hero-deep:#331523;--hero-muted:#f5cbd8
+      --page:#f9f5f6;--surface:#ffffff;--soft:#f6f1f2;--line:#e6dcdf;--ink:#272023;--muted:#695c62;
+      --accent:#df9ba8;--accent-text:#2e1820;--primary:#a64b63;--primary-hover:#8c3c52;--tint:#f6eaed;--link:#964158;--focus-ring:#be6b80;
+      --hero:#472834;--hero-deep:#26161d;--hero-muted:#e2ccd3
     }
     body[data-dark="true"][data-theme="coral"] {
-      --page:#1b1018;--surface:#291821;--soft:#35202c;--line:#523243;--ink:#fff0f5;--muted:#e0b3c4;
-      --accent:#ff9eb6;--accent-text:#380d20;--primary:#ff9eb6;--primary-hover:#ffc4d4;--on-primary:#380d20;
-      --tint:#492437;--link:#ffadc4;--focus-ring:#ff9eb6;--hero:#642842;--hero-deep:#25121e;--hero-muted:#f9cde0
+      --page:#141113;--surface:#1e191c;--soft:#282125;--line:#3d3238;--ink:#f6eff2;--muted:#b8a6ae;
+      --accent:#e5a3b2;--accent-text:#2b141c;--primary:#e3a1b0;--primary-hover:#f0bcc8;--on-primary:#2b141c;
+      --tint:#332229;--link:#eab0be;--focus-ring:#d98fa0;--hero:#3f242f;--hero-deep:#1d1116;--hero-muted:#dec8d0
+    }
+    body[data-theme="white"] {
+      --page:#f7f7f8;--surface:#ffffff;--soft:#f2f3f5;--line:#e2e4e8;--ink:#111318;--muted:#5c606a;
+      --accent:#c8ccd4;--accent-text:#111318;--primary:#181a20;--primary-hover:#2d313b;--on-primary:#ffffff;
+      --tint:#eceef2;--link:#1f232b;--focus-ring:#4b5563;
+      --hero:#f4f5f7;--hero-deep:#ffffff;--hero-text:#111318;--hero-muted:#5c606a
+    }
+    body[data-dark="true"][data-theme="white"] {
+      --page:#0e0f12;--surface:#16181d;--soft:#1f2229;--line:#2e323c;--ink:#f4f5f7;--muted:#9ca3af;
+      --accent:#d4d7de;--accent-text:#111318;--primary:#f3f4f6;--primary-hover:#ffffff;--on-primary:#111318;
+      --tint:#262932;--link:#e5e7eb;--focus-ring:#9ca3af;
+      --hero:#1f2229;--hero-deep:#13151a;--hero-text:#f4f5f7;--hero-muted:#a1a8b5
     }
 
     body:is([data-theme="yellow"],[data-theme="coral"]) #main-live-banner {
-      background-image:var(--study-hero-image,linear-gradient(118deg,var(--hero-deep) 4%,var(--hero) 88%))!important
+      background-image:var(--study-hero-image,linear-gradient(118deg,var(--hero-deep) 4%,var(--hero) 88%))!important;
+      border-color:color-mix(in srgb,var(--accent) 34%,transparent)!important;
+      box-shadow:0 12px 28px rgba(15,23,42,.12)!important
+    }
+    body[data-theme="white"]:not([data-dark="true"]):not([data-mode="strict"]) .study-logo {
+      background:#181a20;color:#ffffff;border-color:#181a20
+    }
+    body[data-theme="white"]:not([data-dark="true"]):not([data-mode="strict"]) #main-live-banner {
+      background:linear-gradient(118deg,#ffffff 0%,#f4f5f7 100%)!important;
+      background-image:var(--study-hero-image,linear-gradient(118deg,#ffffff 0%,#f4f5f7 100%))!important;
+      border-color:var(--line)!important;
+      box-shadow:var(--shadow-card)!important
+    }
+    body[data-theme="white"]:not([data-dark="true"]):not([data-mode="strict"]) #main-live-banner::before {
+      background:radial-gradient(ellipse at 92% -10%,rgba(17,19,24,.04),transparent 58%)!important;
+      mask-image:none;opacity:1
+    }
+    body[data-theme="white"]:not([data-dark="true"]):not([data-mode="strict"]) #main-live-banner::after {
+      border-color:rgba(17,19,24,.06);box-shadow:none
+    }
+    body[data-theme="white"]:not([data-dark="true"]):not([data-mode="strict"]) #main-live-banner .study-hero-stat {
+      background:#f6f7f9;border-color:var(--line);box-shadow:none
+    }
+    body[data-theme="white"]:not([data-dark="true"]):not([data-mode="strict"]) #main-live-banner[data-content="quote"] #live-period-title {
+      text-shadow:none
+    }
+    body[data-theme="white"]:not([data-dark="true"]):not([data-mode="strict"]) #live-phase-badge {
+      background:#181a20!important;color:#ffffff!important;border-color:#181a20
+    }
+    body[data-theme="white"]:not([data-dark="true"]):not([data-mode="strict"]) #main-live-banner[data-content="quote"] #live-phase-badge {
+      background:transparent!important;color:var(--muted)!important;border:0
+    }
+    body[data-theme="white"]:not([data-dark="true"]):not([data-mode="strict"]) #main-live-banner[data-content="quote"] #live-phase-badge::before,
+    body[data-theme="white"]:not([data-dark="true"]):not([data-mode="strict"]) .study-kicker::before {
+      background:#181a20
+    }
+    body[data-theme="white"]:not([data-dark="true"]):not([data-mode="strict"]) #main-live-banner[style*="--study-hero-image"] {
+      --hero-text:#ffffff;--hero-muted:#e5e7eb
+    }
+    body[data-theme="white"]:not([data-dark="true"]):not([data-mode="strict"]) #main-live-banner[style*="--study-hero-image"] .study-hero-stat {
+      background:rgba(17,19,24,.72);border-color:rgba(255,255,255,.22)
+    }
+    body[data-theme="white"]:not([data-dark="true"]) #focus-mini-bar {
+      background:rgba(255,255,255,.94)!important;color:#111318!important;
+      border-color:#d4d7de!important;box-shadow:0 10px 28px rgba(15,23,42,.12)!important
+    }
+    body[data-theme="white"]:not([data-dark="true"]) #focus-mini-expand {
+      background:#181a20;color:#ffffff
+    }
+    body[data-dark="true"][data-theme="white"] #main-live-banner {
+      background-image:var(--study-hero-image,linear-gradient(118deg,var(--hero-deep) 4%,var(--hero) 88%))!important;
+      border-color:var(--line)!important;
+      box-shadow:0 12px 28px rgba(0,0,0,.32)!important
     }
 
     body[data-theme="iron"] {
@@ -2712,8 +2776,9 @@
               </div>
               <div class="flex items-center gap-2">
                 <button type="button" data-set-theme="blue" data-theme-label="스카이 블루" data-min-lp="0" class="theme-swatch-basic" style="background:#5BB5F6" title="스카이 블루 (기본)"></button>
-                <button type="button" data-set-theme="yellow" data-theme-label="레몬 옐로우" data-min-lp="0" class="theme-swatch-basic" style="background:#efd372" title="레몬 옐로우 (기본)"></button>
-                <button type="button" data-set-theme="coral" data-theme-label="로즈 레드" data-min-lp="0" class="theme-swatch-basic" style="background:#e68199" title="로즈 레드 (기본)"></button>
+                <button type="button" data-set-theme="yellow" data-theme-label="소프트 옐로우" data-min-lp="0" class="theme-swatch-basic" style="background:#e5c97b" title="소프트 옐로우 (기본)"></button>
+                <button type="button" data-set-theme="coral" data-theme-label="소프트 로즈" data-min-lp="0" class="theme-swatch-basic" style="background:#df9ba8" title="소프트 로즈 (기본)"></button>
+                <button type="button" data-set-theme="white" data-theme-label="퓨어 화이트" data-min-lp="0" class="theme-swatch-basic" style="background:#ffffff;border-color:#cbd5e1" title="퓨어 화이트 (기본)"></button>
               </div>
             </div>
             <div class="border-t border-slate-200/80 pt-2 space-y-1.5">
@@ -4935,7 +5000,7 @@
         const viewportColor = timerColor || getComputedStyle(document.body).getPropertyValue('--page').trim();
         if (rootStyle.getPropertyValue('--viewport-bg') !== viewportColor) rootStyle.setProperty('--viewport-bg', viewportColor);
         if (rootStyle.backgroundColor !== viewportColor) rootStyle.backgroundColor = viewportColor;
-        const isDarkViewport = !!(prefs.darkMode || (timerOpen && timer.dataset.focusTheme === 'home'));
+        const isDarkViewport = !!(prefs.darkMode || (timerOpen && timer.dataset.focusTheme === 'home' && document.body.dataset.theme !== 'white'));
         rootStyle.colorScheme = isDarkViewport ? 'dark' : 'light';
         const color = timerColor || getComputedStyle(document.getElementById('study-header')).backgroundColor || defaultBrowserThemeColor;
         if (browserThemeColor.content !== color) browserThemeColor.content = color;
