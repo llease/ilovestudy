@@ -1868,6 +1868,97 @@
     @media(max-width:760px) {
       #tab-profile:not(.hidden) {grid-template:"account" auto "history" auto "collection" auto/minmax(0,1fr)}
     }
+    #tab-calendar {
+      --calendar-heat:var(--link);
+      --calendar-ultra:#c03761;
+      --calendar-promotion:#7954bb;
+      --calendar-promoted:#a46915;
+      font-variant-numeric:tabular-nums
+    }
+    body[data-dark="true"] #tab-calendar {--calendar-ultra:#ff87ab;--calendar-promotion:#c9aaff;--calendar-promoted:#ffd377}
+    .calendar-page {
+      display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);grid-template-areas:"month detail" "week week";
+      gap:clamp(.65rem,2vw,1rem);align-items:start
+    }
+    .calendar-card {min-width:0;padding:clamp(.72rem,2vw,1.3rem)}
+    .calendar-month {grid-area:month}
+    .calendar-detail {grid-area:detail}
+    .calendar-week {grid-area:week}
+    .calendar-month,.calendar-detail,.calendar-week {display:grid;gap:.7rem}
+    #calendar-month-panel,#calendar-day-panel {scroll-margin-top:10.4rem}
+    .calendar-heading,.calendar-navigation,.calendar-legend {display:flex;align-items:center;gap:.35rem .6rem;flex-wrap:wrap}
+    .calendar-heading {justify-content:space-between}
+    .calendar-heading h3 {margin:0;font-size:1.09rem;color:var(--ink);font-weight:880;letter-spacing:-.03em}
+    #cal-month-label {font-size:clamp(1.12rem,2.4vw,1.52rem)}
+    .calendar-caption {margin:0;color:var(--muted);font-size:.72rem;font-weight:750}
+    .calendar-navigation {gap:.25rem}
+    .calendar-navigation .calendar-arrow {width:2rem;padding:0;font-size:1.2rem}
+    .calendar-month-stats,.calendar-week-totals,.calendar-facts {display:grid;margin:0;gap:.4rem}
+    .calendar-month-stats {grid-template-columns:repeat(2,minmax(0,1fr))}
+    .calendar-month-stats > div,.calendar-facts > div {min-width:0;background:var(--soft);border:1px solid var(--line);border-radius:.62rem;padding:.36rem .58rem}
+    .calendar-month-stats dt,.calendar-week-totals dt,.calendar-facts dt {font-size:.69rem;font-weight:750;color:var(--muted)}
+    .calendar-month-stats dd,.calendar-week-totals dd,.calendar-facts dd {margin:0;color:var(--ink);font-size:.87rem;font-weight:850;overflow-wrap:anywhere}
+    .calendar-month-stats dd {color:var(--link)}
+    .calendar-table {table-layout:fixed;width:100%;border-collapse:separate;border-spacing:3px}
+    .calendar-table th {padding:0 0 .2rem;text-align:center;color:var(--muted);font-size:.73rem;font-weight:800}
+    .calendar-table th:first-child,.calendar-day.is-sunday .calendar-date-number {color:var(--calendar-ultra)}
+    .calendar-table th:last-child,.calendar-day.is-saturday .calendar-date-number {color:var(--link)}
+    .calendar-table td {min-width:0;padding:0;vertical-align:middle}
+    .calendar-day,.calendar-day-blank {
+      width:100%;height:3.45rem;border-radius:.56rem
+    }
+    .calendar-day {
+      display:grid;grid-template-rows:.88rem .83rem .34rem;align-content:center;gap:.16rem;min-width:0;
+      padding:0 .2rem;border:1px solid var(--line);background:var(--surface);text-align:center;color:var(--ink);cursor:pointer
+    }
+    .calendar-day-blank {display:block;background:color-mix(in srgb,var(--soft) 48%,transparent)}
+    .calendar-day[data-intensity="1"] {background:color-mix(in srgb,var(--calendar-heat) 8%,var(--surface))}
+    .calendar-day[data-intensity="2"] {background:color-mix(in srgb,var(--calendar-heat) 14%,var(--surface))}
+    .calendar-day[data-intensity="3"] {background:color-mix(in srgb,var(--calendar-heat) 21%,var(--surface))}
+    .calendar-day[data-intensity="4"] {background:color-mix(in srgb,var(--calendar-heat) 29%,var(--surface))}
+    .calendar-day:hover,.calendar-day[aria-pressed="true"] {border-color:var(--focus-ring);box-shadow:inset 0 0 0 1px var(--focus-ring)}
+    .calendar-date-number {font-size:.74rem;line-height:.88rem;font-weight:850}
+    .calendar-day[aria-current="date"] .calendar-date-number {text-decoration:underline;text-underline-offset:.21rem;text-decoration-thickness:1.5px}
+    .calendar-cell-time {font-size:.68rem;line-height:.83rem;font-weight:850;white-space:nowrap;color:var(--link);min-width:0}
+    .calendar-markers {display:flex;align-items:center;justify-content:center;gap:3px}
+    .calendar-dot {display:inline-block;width:5px;height:5px;border-radius:50%;flex:none;background:currentColor}
+    .calendar-dot.is-ultra {color:var(--calendar-ultra)}
+    .calendar-dot.is-promotion {color:var(--calendar-promotion)}
+    .calendar-dot.is-promoted {color:var(--calendar-promoted)}
+    .calendar-fill-key {width:.75rem;height:.53rem;border-radius:3px;background:color-mix(in srgb,var(--calendar-heat) 34%,var(--surface));border:1px solid var(--line)}
+    .calendar-legend {color:var(--muted);font-size:.69rem}
+    .calendar-legend > span,.calendar-event {display:inline-flex;align-items:center;gap:.24rem}
+    .calendar-back {display:none}
+    .calendar-detail-body {display:grid;gap:.65rem}
+    .calendar-day-study {padding:.65rem .75rem;border:1px solid var(--line);border-radius:.78rem;background:var(--soft)}
+    .calendar-day-study-top,.calendar-goal-line,.calendar-detail-row {display:flex;align-items:baseline;justify-content:space-between;gap:.35rem .5rem;flex-wrap:wrap}
+    .calendar-day-study-top > span,.calendar-goal-line,.calendar-detail-key {color:var(--muted);font-size:.74rem;font-weight:750}
+    .calendar-day-study-top strong {color:var(--link);font-size:clamp(1.16rem,2.5vw,1.55rem);font-weight:900}
+    .calendar-goal-line {margin-top:.18rem}
+    .calendar-goal-line strong,.calendar-detail-row > strong {color:var(--ink);font-size:.76rem;font-weight:820}
+    .calendar-goal-bar {display:block;height:.32rem;margin-top:.4rem;background:var(--line);border-radius:10px;overflow:hidden}
+    .calendar-goal-bar > span {display:block;height:100%;width:var(--calendar-progress);background:var(--primary);border-radius:10px}
+    .calendar-facts {grid-template-columns:repeat(2,minmax(0,1fr))}
+    .calendar-detail-row {padding:.13rem .12rem .36rem;border-bottom:1px solid var(--line)}
+    .calendar-events {display:grid;gap:.22rem;margin:0;padding:0;list-style:none;color:var(--ink);font-size:.78rem;font-weight:750;overflow-wrap:anywhere}
+    .calendar-detail-actions {display:flex;justify-content:flex-end}
+    .calendar-week-totals {display:flex;gap:.5rem 1rem;flex-wrap:wrap}
+    .calendar-week-days {display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:clamp(.19rem,.8vw,.45rem)}
+    .calendar-week-day {display:grid;min-width:0;gap:.18rem;padding:.3rem .2rem;border:1px solid var(--line);border-radius:.54rem;background:var(--soft);text-align:center;font-size:.68rem;color:var(--muted);cursor:pointer}
+    .calendar-week-day[aria-current="date"] {border-color:var(--focus-ring)}
+    .calendar-week-day[aria-pressed="true"],.calendar-week-day:hover {background:var(--tint);color:var(--link)}
+    .calendar-week-plot {display:flex;align-items:flex-end;justify-content:center;height:1.65rem}
+    .calendar-week-plot i {display:block;width:min(42%,1.18rem);height:var(--calendar-bar);background:var(--primary);border-radius:.2rem .2rem 0 0}
+    .calendar-week-value {font-size:.69rem;font-weight:850;color:var(--link);white-space:nowrap}
+    @media(max-width:760px) {
+      .calendar-page {grid-template-columns:minmax(0,1fr);grid-template-areas:"month" "detail" "week"}
+      .calendar-back {display:inline-flex}
+    }
+    @media(max-width:400px) {
+      .calendar-table {border-spacing:2px}
+      .calendar-day,.calendar-day-blank {height:3.15rem}
+      .calendar-cell-time,.calendar-week-value {font-size:.62rem}
+    }
   </style>
 </head>
 <body data-theme="blue" class="bg-white text-slate-950 min-h-screen antialiased">
@@ -2755,23 +2846,56 @@
       </div>
     </div>
 
-    <!-- TAB: CALENDAR (월간 캘린더) -->
-    <div id="tab-calendar" class="tab-panel hidden space-y-5">
-      <div class="ed-card p-5 sm:p-6 space-y-4">
-        <div class="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <h3 class="text-lg font-black text-slate-950">📅 스터디 캘린더</h3>
-            <p class="text-xs text-slate-500">날짜별 공부 시간, 울트라집중모드 일정, 승급전 및 승급일을 한눈에 확인하세요.</p>
+    <!-- TAB: STUDY CALENDAR -->
+    <div id="tab-calendar" class="tab-panel hidden">
+      <div class="calendar-page">
+        <section id="calendar-month-panel" class="ed-card calendar-card calendar-month" aria-labelledby="cal-month-label">
+          <div class="calendar-heading">
+            <div>
+              <p class="calendar-caption">스터디 캘린더</p>
+              <h3 id="cal-month-label" aria-live="polite"></h3>
+            </div>
+            <div class="calendar-navigation" aria-label="월 이동">
+              <button id="cal-today-btn" type="button" class="planner-button">오늘</button>
+              <button id="cal-prev-btn" type="button" class="planner-button calendar-arrow" aria-label="이전 달">‹</button>
+              <button id="cal-next-btn" type="button" class="planner-button calendar-arrow" aria-label="다음 달">›</button>
+            </div>
           </div>
-          <div class="flex items-center gap-2">
-            <button id="cal-prev-btn" type="button" class="px-2.5 py-1 rounded-lg border border-slate-300 text-xs font-bold hover:bg-slate-100">◀</button>
-            <span id="cal-month-label" class="text-sm font-black text-slate-900 min-w-[90px] text-center"></span>
-            <button id="cal-next-btn" type="button" class="px-2.5 py-1 rounded-lg border border-slate-300 text-xs font-bold hover:bg-slate-100">▶</button>
+          <dl class="calendar-month-stats">
+            <div><dt>이달 누적 공부</dt><dd id="cal-month-total">0분</dd></div>
+            <div><dt>공부한 날</dt><dd id="cal-month-days">0일</dd></div>
+          </dl>
+          <div id="calendar-grid-wrap"></div>
+          <div class="calendar-legend" aria-label="달력 표시 안내">
+            <span><i class="calendar-fill-key" aria-hidden="true"></i> 공부량</span>
+            <span><i class="calendar-dot is-ultra" aria-hidden="true"></i> 울트라집중</span>
+            <span><i class="calendar-dot is-promotion" aria-hidden="true"></i> 승급전</span>
+            <span><i class="calendar-dot is-promoted" aria-hidden="true"></i> 승급</span>
           </div>
-        </div>
-        <div id="calendar-weekly-summary" class="rounded-xl bg-slate-50 border border-slate-200 p-3 space-y-2"></div>
-        <div id="calendar-grid-wrap" class="overflow-x-auto"></div>
-        <div id="calendar-day-detail" class="p-4 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-700">날짜를 클릭하면 상세 기록이 표시됩니다.</div>
+        </section>
+        <section id="calendar-day-panel" class="ed-card calendar-card calendar-detail" aria-labelledby="cal-detail-date">
+          <div class="calendar-heading">
+            <div>
+              <p class="calendar-caption">일일 기록</p>
+              <h3 id="cal-detail-date" tabindex="-1" aria-live="polite"></h3>
+            </div>
+            <button id="cal-back-to-month" type="button" class="planner-button calendar-back">달력으로</button>
+          </div>
+          <div id="calendar-day-detail" class="calendar-detail-body"></div>
+        </section>
+        <section class="ed-card calendar-card calendar-week" aria-labelledby="cal-week-heading">
+          <div class="calendar-heading">
+            <div>
+              <h3 id="cal-week-heading">이번 주 내 공부 요약</h3>
+              <p id="cal-week-range" class="calendar-caption"></p>
+            </div>
+            <dl class="calendar-week-totals">
+              <div><dt>주간 누적</dt><dd id="cal-week-total">0분</dd></div>
+              <div><dt>7일 평균</dt><dd id="cal-week-average">0분</dd></div>
+            </dl>
+          </div>
+          <div id="calendar-weekly-summary" class="calendar-week-days"></div>
+        </section>
       </div>
     </div>
 
@@ -2846,7 +2970,7 @@
               </li>
               <li class="space-y-0.5">
                 <div class="font-black text-slate-900">📅 캘린더 &amp; ✨ STUDYGRAM</div>
-                <p>캘린더에서 월간 기록(⏱️ 공부 · 🔥 울트라 · ⚔️/👑 승급)과 주간 요약을 확인하고, <code>스터디 · 랭킹 → ✨ STUDYGRAM</code>에서 공부 인증 사진과 한마디를 올리고 좋아요(더블탭)·댓글로 응원할 수 있습니다.</p>
+                <p>캘린더에서 월간 공부 시간과 주간 요약을 확인하세요. 날짜를 누르면 목표 달성률, 할 일 완료, 획득 LP와 승급 기록이 표시됩니다. <code>스터디 · 랭킹 → ✨ STUDYGRAM</code>에서 공부 인증 사진과 한마디를 올리고 좋아요(더블탭)·댓글로 응원할 수 있습니다.</p>
               </li>
             </ul>
           </section>
@@ -4885,12 +5009,13 @@
       }
 
       // Motemote Planner Helpers (isolated in privateData per UID when signed in)
-      function getMemberMotemote(dateStr, memId) {
+      function getMemberMotemote(dateStr, memId, create = true) {
         const targetM = (shared.members || []).find(m => m.id === memId);
+        const legacy = shared.motemote?.[dateStr]?.[memId];
         if (currentAuthUser && targetM && targetM.uid === currentAuthUser.uid && privateRef) {
+          if (!create) return myPrivateData.motemote?.[dateStr] || legacy || null;
           if (!myPrivateData.motemote) myPrivateData.motemote = {};
           if (!myPrivateData.motemote[dateStr]) {
-            const legacy = shared.motemote && shared.motemote[dateStr] && shared.motemote[dateStr][memId];
             if (legacy && ((legacy.tasks && legacy.tasks.length) || (legacy.blocks && Object.keys(legacy.blocks).length) || legacy.goalMinutes)) {
               myPrivateData.motemote[dateStr] = JSON.parse(JSON.stringify(legacy));
               syncPrivateMotemote();
@@ -4901,9 +5026,11 @@
           return myPrivateData.motemote[dateStr];
         }
         if (prefs.adminMode && targetM && targetM.uid && allPrivateData[targetM.uid] && allPrivateData[targetM.uid].motemote) {
+          if (!create) return allPrivateData[targetM.uid].motemote[dateStr] || null;
           if (!allPrivateData[targetM.uid].motemote[dateStr]) allPrivateData[targetM.uid].motemote[dateStr] = { tasks: [], blocks: {} };
           return allPrivateData[targetM.uid].motemote[dateStr];
         }
+        if (!create) return legacy || null;
         if (!shared.motemote) shared.motemote = {};
         if (!shared.motemote[dateStr]) shared.motemote[dateStr] = {};
         if (!shared.motemote[dateStr][memId]) shared.motemote[dateStr][memId] = { tasks: [], blocks: {} };
@@ -9182,79 +9309,207 @@
       document.getElementById('btn-cleanup-7d').addEventListener('click', () => confirmPhotoCleanup(PHOTO_CLEANUP_DAYS, '7일 이상 지난'));
       document.getElementById('btn-cleanup-old').addEventListener('click', () => confirmPhotoCleanup(1, '어제 및 이전 날짜의'));
 
-      let calCursor = new Date();
-      let selectedCalDay = null;
-      function renderCalendarTab() {
-        const y = calCursor.getFullYear(), m = calCursor.getMonth();
-        document.getElementById('cal-month-label').textContent = `${y}년 ${m + 1}월`;
-        const firstDay = new Date(y, m, 1).getDay();
-        const daysInMonth = new Date(y, m + 1, 0).getDate();
-        const me = shared.members.find(x => x.id === prefs.currentUserId) || shared.members[0];
-        if (!me) return;
-        const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
-        let html = '<table class="w-full text-xs border-collapse"><thead><tr class="bg-slate-100 text-slate-600">' + dayNames.map(d => `<th class="p-2 text-center">${d}</th>`).join('') + '</tr></thead><tbody><tr>';
-        for (let i = 0; i < firstDay; i++) html += '<td class="p-1.5 border border-slate-100 bg-slate-50/40"></td>';
-        for (let d = 1; d <= daysInMonth; d++) {
-          const dStr = `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
-          const mins = (shared.studyLogs && shared.studyLogs[dStr] && shared.studyLogs[dStr][me.id]) || 0;
-          const promoEvt = (shared.promoHistory && shared.promoHistory[me.id] && shared.promoHistory[me.id][dStr]) || null;
-          const isPromoSched = (me.promoPendingDate === dStr || me.promoActiveDate === dStr);
-          const isUltraSched = (me.pendingMode === 'strict' && me.pendingDate === dStr) || (dStr === studyDayKey() && getMemberMode(me) === 'strict');
-          const icons = [];
-          if (mins > 0) icons.push('⏱️');
-          if (isUltraSched) icons.push('🔥');
-          if (promoEvt) icons.push('👑');
-          else if (isPromoSched) icons.push('⚔️');
-          const isSelCal = selectedCalDay === dStr;
-          html += `<td class="p-1.5 border border-slate-200 align-top h-14 hover:bg-slate-50 cursor-pointer text-center transition-shadow ${isSelCal ? 'ring-2 ring-indigo-500 ring-inset bg-indigo-50/40' : ''}" data-cal-day="${dStr}">
-            <div class="font-bold text-[11px] ${dStr === todayStr() ? 'text-indigo-600 underline' : 'text-slate-700'}">${d}</div>
-            <div class="text-xs leading-tight mt-0.5">${icons.join('')}</div>
-          </td>`;
-          if ((firstDay + d) % 7 === 0 && d < daysInMonth) html += '</tr><tr>';
+      const CALENDAR_WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'];
+      let selectedCalDay = studyDayKey();
+      let calendarLastToday = selectedCalDay;
+
+      function calendarCompactDuration(seconds) {
+        const mins = Math.floor(seconds / 60);
+        if (mins >= 60) return `${Math.floor(mins / 60)}:${String(mins % 60).padStart(2, '0')}`;
+        return seconds ? plannerDuration(seconds) : '';
+      }
+
+      function calendarEvents(member, day, today) {
+        const events = [];
+        if ((day === today && getMemberMode(member) === 'strict') || (member.pendingMode === 'strict' && member.pendingDate === day)) {
+          events.push({ type: 'ultra', label: day === today ? '울트라집중모드' : '울트라집중모드 예정' });
         }
-        html += '</tr></tbody></table>';
-        document.getElementById('calendar-grid-wrap').innerHTML = html;
-        const wkDates = getCurrentWeekDates(new Date(studyDayKey() + 'T12:00:00'));
-        const wkLabels = ['월', '화', '수', '목', '금', '토', '일'];
-        let wkTotal = 0;
-        const wkItems = wkDates.map((dStr, idx) => {
-          const mins = (shared.studyLogs && shared.studyLogs[dStr] && shared.studyLogs[dStr][me.id]) || 0;
-          wkTotal += mins;
-          const isT = dStr === todayStr();
-          return `<div class="rounded-lg border px-1.5 py-1 text-center ${isT ? 'border-indigo-400 bg-indigo-50/70' : 'border-slate-200 bg-white'}">
-            <div class="text-[10px] font-bold text-slate-500">${wkLabels[idx]}</div>
-            <div class="text-[10px] font-mono font-black ${mins > 0 ? 'text-indigo-600' : 'text-slate-400'}">${mins > 0 ? formatStudyMins(mins) : '-'}</div>
-          </div>`;
-        }).join('');
-        const sumCalEl = document.getElementById('calendar-weekly-summary');
-        if (sumCalEl) {
-          sumCalEl.innerHTML = `
-            <div class="flex flex-wrap items-center justify-between gap-2 text-xs">
-              <span class="font-black text-slate-900">📊 이번 주 내 공부 요약</span>
-              <span class="font-mono font-black text-indigo-600">주간 누적 ${formatStudyMins(wkTotal)} · 일 평균 ${formatStudyMins(Math.round(wkTotal / 7))}</span>
+        if (member.promoPendingDate === day) events.push({ type: 'promotion', label: '승급전 예정' });
+        else if (member.promoActiveDate && promotionStudyDay(member) === day) events.push({ type: 'promotion', label: '승급전 진행' });
+        const result = shared.promoHistory?.[member.id]?.[day];
+        if (result) events.push({ type: 'promoted', label: String(result) });
+        return events;
+      }
+
+      function calendarClock(timestamp, day) {
+        const time = Number(timestamp) || 0;
+        if (!time) return '—';
+        const date = new Date(time);
+        const hhmm = new Date(time + 9 * 3600000).toISOString().slice(11, 16);
+        return `${koreaDateKey(date) !== day ? '익일 ' : ''}${hhmm}`;
+      }
+
+      function renderCalendarDetail(member, day, today) {
+        const [y, m, d] = day.split('-').map(Number);
+        const weekday = CALENDAR_WEEKDAYS[new Date(y, m - 1, d).getDay()];
+        document.getElementById('cal-detail-date').textContent = `${m}월 ${d}일 ${weekday}요일`;
+        const seconds = studySeconds(member.id, day);
+        const mm = getMemberMotemote(day, member.id, false);
+        const goal = Number(mm?.goalMinutes) || signupGoalMinutes(member.id);
+        const percent = goal ? Math.floor(seconds * 100 / (goal * 60)) : 0;
+        const tasks = (mm?.tasks || []).filter(Boolean);
+        const done = tasks.filter(task => task.status === 'V').length;
+        const earned = lpRecords(member.id).reduce((sum, record) => {
+          const amount = Number(record?.delta);
+          return Number.isFinite(amount) && amount > 0 && lpRecordStudyDay(record) === day ? sum + amount : sum;
+        }, 0);
+        const times = shared.studyRankTimes?.[day]?.[member.id];
+        const events = calendarEvents(member, day, today);
+        const attendance = Object.values(shared.records?.[day]?.[member.id] || {}).reduce((counts, status) => {
+          if (Object.hasOwn(counts, status)) counts[status]++;
+          return counts;
+        }, { present: 0, late: 0, exempt: 0, awol: 0, early: 0 });
+        const attendanceLabel = Object.entries(attendance).filter(([, count]) => count)
+          .map(([status, count]) => `${getStatusMeta(status).text} ${count}`).join(' · ');
+        setPlannerMarkup('calendar-day-detail', `
+          <div class="calendar-day-study">
+            <div class="calendar-day-study-top"><span>실제 공부</span><strong>${day > today ? '—' : plannerDuration(seconds)}</strong></div>
+            <div class="calendar-goal-line">
+              <span>목표 <strong>${goal ? plannerDuration(goal * 60) : '미설정'}</strong></span>
+              ${goal && day <= today ? `<strong>${percent}% 달성</strong>` : ''}
             </div>
-            <div class="grid grid-cols-7 gap-1">${wkItems}</div>
-          `;
+            ${goal && day <= today ? `<div class="calendar-goal-bar" role="progressbar" aria-label="목표 달성률" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.min(percent, 100)}"><span style="--calendar-progress:${Math.min(percent, 100)}%"></span></div>` : ''}
+          </div>
+          <dl class="calendar-facts">
+            <div><dt>할 일 완료</dt><dd>${tasks.length ? `${done} / ${tasks.length}개` : '—'}</dd></div>
+            <div><dt>획득 LP</dt><dd>${day > today ? '—' : formatLp(earned)}</dd></div>
+            ${times?.first || times?.last ? `
+              <div><dt>첫 공부 기록</dt><dd>${calendarClock(times.first, day)}</dd></div>
+              <div><dt>마지막 공부 기록</dt><dd>${calendarClock(times.last, day)}</dd></div>` : ''}
+          </dl>
+          ${attendanceLabel ? `<div class="calendar-detail-row"><span class="calendar-detail-key">출결</span><strong>${escapeHtml(attendanceLabel)}</strong></div>` : ''}
+          ${events.length ? `<ul class="calendar-events" aria-label="공부 일정">${events.map(event => `<li class="calendar-event"><i class="calendar-dot is-${event.type}" aria-hidden="true"></i><span>${escapeHtml(event.label)}</span></li>`).join('')}</ul>` : ''}
+          ${!prefs.adminMode ? '<div class="calendar-detail-actions"><button id="cal-open-planner" type="button" class="planner-button">이날 플래너 보기</button></div>' : ''}
+        `);
+      }
+
+      function renderCalendarWeek(memberId, today) {
+        const dates = getCurrentWeekDates(new Date(today + 'T12:00:00'));
+        const seconds = dates.map(day => studySeconds(memberId, day));
+        const total = seconds.reduce((sum, value) => sum + value, 0);
+        const max = Math.max(...seconds, 1);
+        const shortDate = day => day.split('-').slice(1).map(Number).join('.');
+        document.getElementById('cal-week-range').textContent = `${shortDate(dates[0])} ~ ${shortDate(dates[6])}`;
+        document.getElementById('cal-week-total').textContent = plannerDuration(total);
+        document.getElementById('cal-week-average').textContent = plannerDuration(total / 7);
+        setPlannerMarkup('calendar-weekly-summary', dates.map((day, index) =>
+          `<button id="cal-week-${day}" type="button" class="calendar-week-day" data-cal-week-day="${day}" aria-pressed="${day === selectedCalDay}" ${day === today ? 'aria-current="date"' : ''} aria-label="${day} ${CALENDAR_WEEKDAYS[(index + 1) % 7]}요일, ${plannerDuration(seconds[index])}">
+            <span>${CALENDAR_WEEKDAYS[(index + 1) % 7]}</span>
+            <span class="calendar-week-plot" aria-hidden="true"><i style="--calendar-bar:${seconds[index] ? Math.max(8, seconds[index] / max * 100) : 0}%"></i></span>
+            <span class="calendar-week-value">${calendarCompactDuration(seconds[index]) || '—'}</span>
+          </button>`
+        ).join(''));
+      }
+
+      function renderCalendarTab() {
+        const today = studyDayKey();
+        if (selectedCalDay === calendarLastToday) selectedCalDay = today;
+        calendarLastToday = today;
+        const [y, m] = selectedCalDay.split('-').map(Number);
+        const me = shared.members.find(member => member.id === prefs.currentUserId) || shared.members[0];
+        document.getElementById('cal-month-label').textContent = `${y}년 ${m}월`;
+        if (!me) return;
+
+        const firstWeekday = new Date(y, m - 1, 1).getDay();
+        const daysInMonth = new Date(y, m, 0).getDate();
+        const slots = Math.ceil((firstWeekday + daysInMonth) / 7) * 7;
+        let monthlySeconds = 0;
+        let studiedDays = 0;
+        let rows = '';
+        for (let index = 0; index < slots; index++) {
+          const weekday = index % 7;
+          if (weekday === 0) rows += '<tr>';
+          const n = index - firstWeekday + 1;
+          if (n < 1 || n > daysInMonth) {
+            rows += '<td><span class="calendar-day-blank"></span></td>';
+          } else {
+            const day = `${selectedCalDay.slice(0, 7)}-${String(n).padStart(2, '0')}`;
+            const seconds = studySeconds(me.id, day);
+            monthlySeconds += seconds;
+            if (seconds > 0) studiedDays++;
+            const intensity = seconds >= 14400 ? 4 : seconds >= 7200 ? 3 : seconds >= 3600 ? 2 : seconds ? 1 : 0;
+            const events = calendarEvents(me, day, today);
+            const label = [`${m}월 ${n}일 ${CALENDAR_WEEKDAYS[weekday]}요일`, seconds ? `공부 ${plannerDuration(seconds)}` : '공부 기록 없음', ...events.map(event => event.label)].join(', ');
+            const selected = selectedCalDay === day;
+            rows += `<td aria-selected="${selected}"><button type="button" id="cal-day-${day}" class="calendar-day ${weekday === 0 ? 'is-sunday' : weekday === 6 ? 'is-saturday' : ''}" data-cal-day="${day}" data-intensity="${intensity}"
+              tabindex="${selected ? '0' : '-1'}" ${day === today ? 'aria-current="date"' : ''} aria-pressed="${selected}" aria-label="${escapeHtml(label)}" title="${escapeHtml(label)}">
+              <span class="calendar-date-number">${n}</span>
+              <span class="calendar-cell-time">${calendarCompactDuration(seconds)}</span>
+              <span class="calendar-markers" aria-hidden="true">${events.map(event => `<i class="calendar-dot is-${event.type}"></i>`).join('')}</span>
+            </button></td>`;
+          }
+          if (weekday === 6) rows += '</tr>';
+        }
+        document.getElementById('cal-month-total').textContent = plannerDuration(monthlySeconds);
+        document.getElementById('cal-month-days').textContent = `${studiedDays}일`;
+        setPlannerMarkup('calendar-grid-wrap', `<table class="calendar-table" role="grid" aria-labelledby="cal-month-label"><thead><tr>${CALENDAR_WEEKDAYS.map(day => `<th scope="col">${day}</th>`).join('')}</tr></thead><tbody>${rows}</tbody></table>`);
+        renderCalendarDetail(me, selectedCalDay, today);
+        renderCalendarWeek(me.id, today);
+      }
+
+      function selectCalendarDay(day, { goToDetail = false, focusCell = false } = {}) {
+        selectedCalDay = day;
+        renderCalendarTab();
+        if (focusCell) document.getElementById(`cal-day-${day}`)?.focus();
+        if (goToDetail && window.matchMedia('(max-width:760px)').matches) {
+          const detail = document.getElementById('calendar-day-panel');
+          const bounds = detail.getBoundingClientRect();
+          const navBottom = document.getElementById('study-header').getBoundingClientRect().bottom;
+          if (bounds.top < navBottom || bounds.top + Math.min(bounds.height, 165) > window.innerHeight) {
+            document.getElementById('cal-detail-date').focus({ preventScroll: true });
+            detail.scrollIntoView({ block: 'start', behavior: reduceMotion.matches ? 'instant' : 'smooth' });
+          }
         }
       }
 
-      document.getElementById('cal-prev-btn').addEventListener('click', () => { if (!prefs.adminMode) { unlockChallengeFor(prefs.currentUserId, 'ch_timetravel', false); saveSharedData(); } calCursor.setMonth(calCursor.getMonth() - 1); renderCalendarTab(); });
-      document.getElementById('cal-next-btn').addEventListener('click', () => { calCursor.setMonth(calCursor.getMonth() + 1); renderCalendarTab(); });
-      document.getElementById('calendar-grid-wrap').addEventListener('click', e => {
-        const td = e.target.closest('[data-cal-day]'); if (!td) return;
-        if (!prefs.adminMode) { unlockChallengeFor(prefs.currentUserId, 'ch_cal_day', false); saveSharedData(); }
-        const dStr = td.dataset.calDay, me = shared.members.find(x => x.id === prefs.currentUserId);
-        selectedCalDay = dStr;
-        document.querySelectorAll('#calendar-grid-wrap [data-cal-day]').forEach(cell => {
-          const on = cell.dataset.calDay === dStr;
-          cell.classList.toggle('ring-2', on);
-          cell.classList.toggle('ring-indigo-500', on);
-          cell.classList.toggle('ring-inset', on);
-          cell.classList.toggle('bg-indigo-50/40', on);
-        });
-        const mins = (shared.studyLogs && shared.studyLogs[dStr] && shared.studyLogs[dStr][me.id]) || 0;
-        const promoEvt = (shared.promoHistory && shared.promoHistory[me.id] && shared.promoHistory[me.id][dStr]) || '없음';
-        document.getElementById('calendar-day-detail').innerHTML = `<strong>${dStr}</strong> (${escapeHtml(me.name)}) · 누적 공부: <strong>${formatStudyMins(mins)}</strong> · 승급 기록: <strong>${escapeHtml(promoEvt)}</strong>`;
+      function openCalendarDay(day, options) {
+        if (!prefs.adminMode) {
+          unlockChallengeFor(prefs.currentUserId, 'ch_cal_day', false);
+          saveSharedData();
+        }
+        selectCalendarDay(day, options);
+      }
+
+      function moveCalendarMonth(offset) {
+        const [year, month] = selectedCalDay.split('-').map(Number);
+        // Start on the first so moving from a long month can't skip a shorter one.
+        const date = new Date(year, month - 1 + offset, 1, 12);
+        selectCalendarDay(localDateKey(date));
+      }
+
+      document.getElementById('cal-prev-btn').addEventListener('click', () => {
+        if (!prefs.adminMode) {
+          unlockChallengeFor(prefs.currentUserId, 'ch_timetravel', false);
+          saveSharedData();
+        }
+        moveCalendarMonth(-1);
+      });
+      document.getElementById('cal-next-btn').addEventListener('click', () => moveCalendarMonth(1));
+      document.getElementById('cal-today-btn').addEventListener('click', () => selectCalendarDay(studyDayKey()));
+      document.getElementById('calendar-grid-wrap').addEventListener('click', event => {
+        const button = event.target.closest('[data-cal-day]');
+        if (button) openCalendarDay(button.dataset.calDay, { goToDetail: true });
+      });
+      document.getElementById('calendar-grid-wrap').addEventListener('keydown', event => {
+        const button = event.target.closest('[data-cal-day]');
+        const steps = { ArrowLeft: -1, ArrowRight: 1, ArrowUp: -7, ArrowDown: 7 };
+        if (!button || !Object.hasOwn(steps, event.key)) return;
+        event.preventDefault();
+        selectCalendarDay(addDaysStr(button.dataset.calDay, steps[event.key]), { focusCell: true });
+      });
+      document.getElementById('calendar-weekly-summary').addEventListener('click', event => {
+        const button = event.target.closest('[data-cal-week-day]');
+        if (button) openCalendarDay(button.dataset.calWeekDay, { goToDetail: true });
+      });
+      document.getElementById('calendar-day-detail').addEventListener('click', event => {
+        if (!event.target.closest('#cal-open-planner') || prefs.adminMode) return;
+        switchTab('planner');
+        selectPlannerDay(selectedCalDay);
+        window.scrollTo({ top: 0, behavior: 'instant' });
+      });
+      document.getElementById('cal-back-to-month').addEventListener('click', () => {
+        document.getElementById(`cal-day-${selectedCalDay}`)?.focus({ preventScroll: true });
+        document.getElementById('calendar-month-panel').scrollIntoView({ block: 'start', behavior: reduceMotion.matches ? 'instant' : 'smooth' });
       });
 
       function applyDarkMode() {
@@ -10846,6 +11101,7 @@
           if (shown(document.getElementById('members-sub-rank'))) renderStudyTimeRankings();
           if (dayChanged) renderWeeklyReportCards();
         }
+        if (dayChanged && prefs.activeTab === 'calendar') renderCalendarTab();
         if (dayChanged && prefs.activeTab === 'admin') renderAdminTab();
       }
       setInterval(refreshScheduleMinute, 1000);
