@@ -2572,6 +2572,76 @@
       font-size: .8rem; line-height: 1.6; color: var(--ink);
     }
     .guide-note-bar strong { color: var(--link); }
+    /* Smooth First-Join Spotlight Tour */
+    #spotlight-tour-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 119;
+      background: transparent;
+      opacity: 0;
+      transition: opacity 320ms ease;
+    }
+    #spotlight-tour-backdrop.is-open { opacity: 1; }
+    #spotlight-tour-ring {
+      position: fixed;
+      z-index: 120;
+      pointer-events: none;
+      border-radius: 16px;
+      box-shadow: 0 0 0 9999px rgba(15, 23, 42, 0.62), 0 0 0 3px rgba(99, 102, 241, 0.92), 0 0 32px rgba(99, 102, 241, 0.36);
+      opacity: 0;
+      transition: top 420ms cubic-bezier(0.22, 1, 0.36, 1), left 420ms cubic-bezier(0.22, 1, 0.36, 1), width 420ms cubic-bezier(0.22, 1, 0.36, 1), height 420ms cubic-bezier(0.22, 1, 0.36, 1), border-radius 320ms ease, opacity 320ms ease;
+    }
+    #spotlight-tour-ring.is-open { opacity: 1; }
+    #spotlight-tour-card {
+      position: fixed;
+      z-index: 122;
+      width: min(352px, calc(100vw - 24px));
+      border-radius: 20px;
+      padding: 16px 18px;
+      background: #ffffff;
+      color: #0f172a;
+      border: 1px solid rgba(15, 23, 42, 0.08);
+      box-shadow: 0 22px 48px rgba(15, 23, 42, 0.32);
+      opacity: 0;
+      transform: translateY(10px) scale(0.97);
+      transition: top 420ms cubic-bezier(0.22, 1, 0.36, 1), left 420ms cubic-bezier(0.22, 1, 0.36, 1), opacity 280ms cubic-bezier(0.22, 1, 0.36, 1), transform 280ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    #spotlight-tour-card.is-open {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+    #spotlight-tour-card.is-switching .st-body-wrap {
+      opacity: 0;
+      transform: translateY(5px);
+    }
+    #spotlight-tour-card .st-body-wrap {
+      transition: opacity 180ms ease, transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    body[data-dark="true"] #spotlight-tour-card {
+      background: #111827;
+      color: #f8fafc;
+      border-color: rgba(148, 163, 184, 0.22);
+      box-shadow: 0 22px 48px rgba(0, 0, 0, 0.6);
+    }
+    body[data-dark="true"] #spotlight-tour-card .st-desc { color: #cbd5e1; }
+    body[data-dark="true"] #spotlight-tour-card .st-btn-ghost { background: rgba(255, 255, 255, 0.08); color: #e2e8f0; }
+    #spotlight-tour-card .st-dots { display: flex; align-items: center; gap: 5px; }
+    #spotlight-tour-card .st-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: rgba(148, 163, 184, 0.45);
+      transition: width 280ms cubic-bezier(0.22, 1, 0.36, 1), background-color 240ms ease;
+    }
+    #spotlight-tour-card .st-dot.is-active {
+      width: 18px;
+      background: #4f46e5;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      #spotlight-tour-backdrop, #spotlight-tour-ring, #spotlight-tour-card, #spotlight-tour-card .st-body-wrap, #spotlight-tour-card .st-dot {
+        transition: none !important;
+      }
+    }
   </style>
 </head>
 <body data-theme="white" class="bg-white text-slate-950 min-h-screen antialiased">
@@ -3035,7 +3105,6 @@
               <button id="btn-open-focus" type="button" class="ed-btn-accent rounded-xl font-black" aria-haspopup="dialog">
                 <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="14" r="7.5"/><path d="M12 10v4l2.5 1.5M9 2h6m4 4-1.6 1.6"/></svg><span>집중 시작하기</span>
               </button>
-              <button id="btn-checkin" type="button" class="ed-btn-accent rounded-xl font-bold">출석 체크하기</button>
             </div>
             <div class="study-today-stat">
               <span class="font-semibold text-slate-600">공부일 누적 공부</span>
@@ -3565,7 +3634,7 @@
                 <h5 class="guide-item-title">자율모드 <span class="guide-pill">기본 모드</span></h5>
                 <ul class="guide-bullets">
                   <li>교시 제한 없이 원하는 시간에 스톱워치로 자유롭게 공부해요.</li>
-                  <li>홈에서 <strong>오늘 출석 체크 (+5 LP)</strong>와 홈 배너 명언·배경 꾸미기를 이용할 수 있어요.</li>
+                  <li>홈에서 <strong>집중 시작하기</strong>로 공부 시간을 기록하고, 홈 배너 명언·배경 꾸미기를 이용할 수 있어요.</li>
                 </ul>
               </div>
               <div class="guide-item">
@@ -4782,7 +4851,7 @@
         const bar = document.getElementById('approved-progress-bar');
         if (!ov) {
           welcomePlayedForSession = false;
-          playFirstJoinWelcome(nickname);
+          startFirstJoinTour(nickname);
           return;
         }
         if (sub) sub.textContent = `${nickname ? nickname + '님, ' : ''}관리자가 가입 요청을 수락했습니다. 곧 시작 화면으로 이동합니다.`;
@@ -4795,7 +4864,7 @@
         setTimeout(() => {
           ov.classList.remove('is-active');
           welcomePlayedForSession = false;
-          playFirstJoinWelcome(nickname);
+          startFirstJoinTour(nickname);
         }, 3000);
       }
 
@@ -4811,7 +4880,7 @@
         const sub = document.getElementById('welcome-cheer-sub');
         const targetLogo = document.querySelector('#study-header .study-logo');
         if (!ov || !fly || !targetLogo) return;
-        if (titleEl) titleEl.textContent = '모든 설정이 완료되었습니다.';
+        if (titleEl) titleEl.textContent = '자, 이제 시작해볼까요?';
         if (sub) sub.textContent = `${nickname ? nickname + '님, ' : ''}환영합니다!`;
         targetLogo.style.opacity = '0';
         fly.style.transform = '';
@@ -4907,12 +4976,13 @@
             prefs.guideHintUnread = true;
             savePrefs();
             saveSharedData();
-            switchTab('profile');
+            switchTab('dashboard');
             playApprovedThenFirstJoin(found.name);
           } else if (pendingFirstJoinWelcome) {
             const info = pendingFirstJoinWelcome;
             pendingFirstJoinWelcome = null;
-            playFirstJoinWelcome(info.nickname || found.name);
+            switchTab('dashboard');
+            startFirstJoinTour(info.nickname || found.name);
           } else {
             playLoginWelcome(found.name);
           }
@@ -6222,35 +6292,8 @@
 
 
 
-        const btn = document.getElementById('btn-checkin');
         const focusBtn = document.getElementById('btn-open-focus');
-        if (prefs.adminMode) {
-          btn.classList.add('hidden');
-          if (focusBtn) focusBtn.classList.add('hidden');
-        } else {
-          if (focusBtn) focusBtn.classList.remove('hidden');
-        }
-        if (prefs.adminMode) {
-          // Admin mode: timer/checkin hidden to prevent colliding with member's active timer
-        } else if (isFreeDashMode) {
-          const freeDone = getMemberDayStatus(me.id, t, 'p1') === 'present';
-          btn.classList.toggle('hidden', freeDone);
-          btn.disabled = freeDone;
-          btn.textContent = '오늘 출석 체크하기';
-        } else {
-          btn.classList.remove('hidden');
-        }
-        if (prefs.adminMode || isFreeDashMode) {
-          // handled above
-        } else if (!phase || phase.type !== 'study') {
-          if (now.totalMins >= 360 && now.totalMins < 480) {
-            btn.disabled = getMemberDayStatus(me.id, t, 'p1') === 'present';
-            btn.textContent = btn.disabled ? '0교시 등원 출석 완료 ✓' : '0교시 등원 출석';
-          }
-          else { btn.disabled = true; btn.textContent = phase ? `${phase.label} (공부시간에 출석)` : '출석 가능 시간 아님'; }
-        } else if (curSt === 'exempt') { btn.disabled = true; btn.textContent = `${phase.label} 수업 면제`; }
-        else if (curSt === 'present' || curSt === 'late') { btn.disabled = true; btn.textContent = `${phase.label} ${meta.text} 완료 ✓`; }
-        else { btn.disabled = false; btn.textContent = `${phase.label} 출석하기 (75%↑)`; }
+        if (focusBtn) focusBtn.classList.toggle('hidden', !!prefs.adminMode);
 
         const isFreeDash = getMemberMode(me) === 'free';
         document.getElementById('home-card-grid').classList.toggle('is-free', isFreeDash);
@@ -6319,7 +6362,7 @@
               guideHtml += `<div class="rounded-2xl border-2 border-indigo-500 bg-indigo-50/90 p-3.5 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
                 <div class="space-y-0.5">
                   <div class="text-xs sm:text-sm font-black text-indigo-950">👋 아직 스터디에 참가하지 않았어요!</div>
-                  <p class="text-[11px] text-indigo-900">스터디에 참가하면 랭킹·STUDYGRAM·실시간 공부 현황과 <strong>신입 받아라(+7 LP)</strong> 챌린지를 바로 시작할 수 있어요.</p>
+                  <p class="text-[11px] text-indigo-900">스터디에 참가하면 부원들과 경쟁하며 공부할 수 있어요! 원하면 언제든지 탈퇴 가능합니다!</p>
                 </div>
                 <button type="button" data-guide-action="join" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-black whitespace-nowrap shrink-0">🙋 스터디 참가하기</button>
               </div>`;
@@ -8304,39 +8347,7 @@
         });
       });
 
-      document.getElementById('btn-checkin').addEventListener('click', () => {
-        if (prefs.adminMode && prefs.inspectingMember) {
-          showToast('멤버 열람 중에는 출석 버튼을 누를 수 없습니다. (관리자 표에서 수정하세요)', 'warn');
-          return;
-        }
-        const now = getNowParts(), t = studyDayKey(), me = shared.members.find(m => m.id === prefs.currentUserId) || shared.members[0], phase = getCurrentPhase(now.totalMins);
-        if (!me || prefs.adminMode) return;
-        if (getMemberMode(me) === 'free') {
-          const alreadyChecked = getMemberDayStatus(me.id, t, 'p1') === 'present';
-          setMemberDayStatus(me.id, t, 'p1', 'present');
-          if (!alreadyChecked) addMemberLp(me.id, 5, '자율모드 일일 출석');
-          saveSharedData();
-          showToast(alreadyChecked ? '오늘 출석이 이미 완료되었습니다.' : '오늘 출석 완료 (+5 LP)! 집중 시작하기를 눌러 공부를 시작하세요.', 'success');
-          renderAll();
-          return;
-        }
-        if (!phase && now.totalMins >= 360 && now.totalMins < 480) {
-          if (getMemberDayStatus(me.id, t, 'p1') === 'present') return;
-          const checkinPhoto = makeSampleDeskImage(me.name, `${now.hhmm} 1교시`);
-          if (me.firstTimeDate !== t || !me.firstTime || toMins(now.hhmm) < toMins(me.firstTime)) { me.firstTime = now.hhmm; me.firstTimeDate = t; } recordEarlyMorningCheck(me, t, now.hhmm); if (now.totalMins >= 360 && now.totalMins < 420) unlockChallengeFor(me.id, 'ch_6am', false);
-          if (!shared.photos) shared.photos = [];
-          shared.photos.push({ id: 'ph_' + Date.now(), memberId: me.id, memberName: me.name, periodId: 'p1', periodLabel: '1교시 등원', time: now.hhmm, date: t, dataUrl: checkinPhoto });
-          setMemberDayStatus(me.id, t, 'p1', 'present'); showToast('이른 등원 완료!', 'success'); renderAll(); return;
-        }
-        if (!phase || phase.type !== 'study') return;
-        if (phase.id === 'p1' && (me.firstTimeDate !== t || !me.firstTime || toMins(now.hhmm) < toMins(me.firstTime))) {
-          me.firstTime = now.hhmm;
-          me.firstTimeDate = t;
-          saveSharedData();
-        }
-        showToast(`${phase.label} 타이머 누적 ${attendanceDuration(phase)}(75%) 이상이면 출석이 인정돼요.`, 'info');
-        openFocusOverlay();
-      });
+
 
 
 
@@ -11915,6 +11926,257 @@
       document.getElementById('pwa-install-close')?.addEventListener('click', () => {
         if (pwaBanner) pwaBanner.classList.add('hidden');
         try { localStorage.setItem(DISMISS_KEY, '1'); } catch (e) {}
+      });
+      // Smooth 5-Step First-Join Spotlight Tour (switches real tabs, finishes on Home + existing welcome animation)
+      const SPOTLIGHT_TOUR_STEPS = [
+        {
+          tab: 'dashboard',
+          selector: '#btn-open-focus',
+          fallback: '#main-live-banner',
+          badge: '1 / 5 · 집중 타이머',
+          title: '공부 시작은 이 버튼 하나로!',
+          desc: "'집중 시작하기'를 누르면 스톱워치가 켜지고 공부 시간과 출석이 자동으로 기록돼요. 더 몰입하고 싶을 땐 울트라집중모드도 켜보세요."
+        },
+        {
+          tab: 'planner',
+          selector: '.planner-sheet-header',
+          fallback: '#tab-planner',
+          badge: '2 / 5 · 스터디 플래너',
+          title: '오늘 할 일과 공부 목표를 정리해요',
+          desc: "날짜별로 과목과 할 일을 적고, '편집' 버튼을 눌러 나만의 공부 계획표를 자유롭게 채워나갈 수 있어요."
+        },
+        {
+          tab: 'timetable',
+          selector: '#btn-load-cnu-ee',
+          fallback: '#tab-timetable .tt-card',
+          badge: '3 / 5 · 수업 시간표',
+          title: '충남대 시간표도 한 번에 불러와요',
+          desc: '내 수업 시간을 등록해두면 일정을 한눈에 볼 수 있고, 울트라집중모드에서 수업 시간은 자동으로 면제 처리돼요.'
+        },
+        {
+          tab: 'members',
+          selector: '#members-sub-bar',
+          fallback: '#tab-members',
+          badge: '4 / 5 · 스터디 · 랭킹',
+          title: '원할 때 스터디에 참가해 함께 달려요',
+          desc: '스터디에 참가하면 부원들과 실시간 공부 현황·랭킹·STUDYGRAM을 즐길 수 있어요. 원하면 언제든지 탈퇴할 수 있어요!'
+        },
+        {
+          tab: 'dashboard',
+          selector: '#nav-tab-guide',
+          fallback: '#study-nav',
+          badge: '5 / 5 · 사용법 안내',
+          title: "모르는 게 있으면 '설명서'를 눌러보세요!",
+          desc: "기능이 헷갈리거나 사용법이 궁금할 땐 언제든지 상단 '설명서' 탭에서 확인할 수 있어요. 자, 이제 시작해볼까요?",
+          cta: '자, 이제 시작해볼까요?'
+        }
+      ];
+
+      let spotlightTourState = { active: false, step: 0, nickname: '' };
+      let spotlightRepositionTimer = 0;
+
+      function ensureSpotlightTourEls() {
+        let backdrop = document.getElementById('spotlight-tour-backdrop');
+        let ring = document.getElementById('spotlight-tour-ring');
+        let card = document.getElementById('spotlight-tour-card');
+        if (!backdrop) {
+          backdrop = document.createElement('div');
+          backdrop.id = 'spotlight-tour-backdrop';
+          backdrop.className = 'hidden';
+          document.body.appendChild(backdrop);
+        }
+        if (!ring) {
+          ring = document.createElement('div');
+          ring.id = 'spotlight-tour-ring';
+          ring.className = 'hidden';
+          ring.setAttribute('aria-hidden', 'true');
+          document.body.appendChild(ring);
+        }
+        if (!card) {
+          card = document.createElement('div');
+          card.id = 'spotlight-tour-card';
+          card.className = 'hidden';
+          card.setAttribute('role', 'dialog');
+          card.setAttribute('aria-modal', 'true');
+          card.setAttribute('aria-label', '처음 오신 분을 위한 앱 안내');
+          card.innerHTML = `
+            <div class="flex items-center justify-between gap-2 mb-2">
+              <span class="st-badge text-[11px] font-black text-indigo-600"></span>
+              <button type="button" class="st-skip text-[11px] font-bold text-slate-400 hover:text-slate-600">건너뛰기</button>
+            </div>
+            <div class="st-body-wrap space-y-1.5">
+              <h4 class="st-title text-sm sm:text-base font-black leading-snug"></h4>
+              <p class="st-desc text-xs text-slate-600 leading-relaxed"></p>
+            </div>
+            <div class="flex items-center justify-between gap-2 mt-4 pt-2 border-t border-slate-100/80">
+              <div class="st-dots" aria-hidden="true"></div>
+              <div class="flex items-center gap-1.5">
+                <button type="button" class="st-prev st-btn-ghost px-3 py-1.5 rounded-xl bg-slate-100 text-xs font-bold text-slate-700">이전</button>
+                <button type="button" class="st-next px-3.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-black whitespace-nowrap">다음 →</button>
+              </div>
+            </div>
+          `;
+          card.querySelector('.st-skip').addEventListener('click', () => finishFirstJoinTour(false));
+          card.querySelector('.st-prev').addEventListener('click', () => {
+            if (spotlightTourState.step > 0) goSpotlightStep(spotlightTourState.step - 1);
+          });
+          card.querySelector('.st-next').addEventListener('click', () => {
+            if (spotlightTourState.step < SPOTLIGHT_TOUR_STEPS.length - 1) {
+              goSpotlightStep(spotlightTourState.step + 1);
+            } else {
+              finishFirstJoinTour(true);
+            }
+          });
+          document.body.appendChild(card);
+        }
+        return { backdrop, ring, card };
+      }
+
+      function positionSpotlightTour(stepObj) {
+        if (!spotlightTourState.active || !stepObj) return;
+        const { ring, card } = ensureSpotlightTourEls();
+        let target = document.querySelector(stepObj.selector);
+        if (!target || target.getBoundingClientRect().width === 0) {
+          target = document.querySelector(stepObj.fallback);
+        }
+        if (!target) return;
+
+        const rect = target.getBoundingClientRect();
+        const pad = 8;
+        const rTop = Math.max(6, rect.top - pad);
+        const rLeft = Math.max(6, rect.left - pad);
+        const rWidth = Math.min(window.innerWidth - 12, rect.width + pad * 2);
+        const rHeight = Math.min(window.innerHeight - 12, rect.height + pad * 2);
+
+        ring.style.top = `${Math.round(rTop)}px`;
+        ring.style.left = `${Math.round(rLeft)}px`;
+        ring.style.width = `${Math.round(rWidth)}px`;
+        ring.style.height = `${Math.round(rHeight)}px`;
+
+        const cardRect = card.getBoundingClientRect();
+        const margin = 12;
+        const cardH = cardRect.height || 180;
+        const cardW = cardRect.width || Math.min(352, window.innerWidth - 24);
+        const spaceBelow = window.innerHeight - (rTop + rHeight);
+        const spaceAbove = rTop;
+        let cTop;
+        if (spaceBelow >= cardH + 18) {
+          cTop = rTop + rHeight + 14;
+        } else if (spaceAbove >= cardH + 18) {
+          cTop = rTop - cardH - 14;
+        } else {
+          cTop = Math.max(margin, window.innerHeight - cardH - margin);
+        }
+        const centerX = rLeft + rWidth / 2;
+        const cLeft = Math.max(margin, Math.min(window.innerWidth - cardW - margin, centerX - cardW / 2));
+
+        card.style.top = `${Math.round(cTop)}px`;
+        card.style.left = `${Math.round(cLeft)}px`;
+      }
+
+      function goSpotlightStep(stepIdx) {
+        const stepObj = SPOTLIGHT_TOUR_STEPS[stepIdx];
+        if (!stepObj) return;
+        spotlightTourState.step = stepIdx;
+        const { backdrop, ring, card } = ensureSpotlightTourEls();
+
+        if (prefs.activeTab !== stepObj.tab) {
+          switchTab(stepObj.tab);
+        }
+
+        card.classList.add('is-switching');
+        setTimeout(() => {
+          card.querySelector('.st-badge').textContent = stepObj.badge;
+          card.querySelector('.st-title').textContent = stepObj.title;
+          card.querySelector('.st-desc').textContent = stepObj.desc;
+          card.querySelector('.st-prev').classList.toggle('hidden', stepIdx === 0);
+          card.querySelector('.st-next').textContent = stepObj.cta || '다음 →';
+          card.querySelector('.st-dots').innerHTML = SPOTLIGHT_TOUR_STEPS.map((_, i) =>
+            `<span class="st-dot ${i === stepIdx ? 'is-active' : ''}"></span>`
+          ).join('');
+          card.classList.remove('is-switching');
+        }, 120);
+
+        const alignTarget = () => {
+          let target = document.querySelector(stepObj.selector);
+          if (!target || target.getBoundingClientRect().width === 0) {
+            target = document.querySelector(stepObj.fallback);
+          }
+          if (target) {
+            try {
+              target.scrollIntoView({ behavior: reduceMotion.matches ? 'auto' : 'smooth', block: 'center', inline: 'center' });
+            } catch (e) {}
+          }
+          requestAnimationFrame(() => positionSpotlightTour(stepObj));
+          clearTimeout(spotlightRepositionTimer);
+          spotlightRepositionTimer = setTimeout(() => positionSpotlightTour(stepObj), 320);
+        };
+
+        backdrop.classList.remove('hidden');
+        ring.classList.remove('hidden');
+        card.classList.remove('hidden');
+        requestAnimationFrame(() => {
+          alignTarget();
+          requestAnimationFrame(() => {
+            backdrop.classList.add('is-open');
+            ring.classList.add('is-open');
+            card.classList.add('is-open');
+          });
+        });
+      }
+
+      function startFirstJoinTour(nickname) {
+        if (prefs.adminMode) {
+          switchTab('dashboard');
+          playFirstJoinWelcome(nickname);
+          return;
+        }
+        spotlightTourState = { active: true, step: 0, nickname: nickname || '' };
+        welcomePlayedForSession = true;
+        goSpotlightStep(0);
+      }
+
+      function finishFirstJoinTour(playWelcomeCinematic) {
+        if (!spotlightTourState.active) return;
+        const nick = spotlightTourState.nickname;
+        spotlightTourState.active = false;
+        prefs.firstJoinTourDone = true;
+        savePrefs();
+
+        const { backdrop, ring, card } = ensureSpotlightTourEls();
+        backdrop.classList.remove('is-open');
+        ring.classList.remove('is-open');
+        card.classList.remove('is-open');
+
+        setTimeout(() => {
+          backdrop.classList.add('hidden');
+          ring.classList.add('hidden');
+          card.classList.add('hidden');
+          switchTab('dashboard');
+          window.scrollTo({ top: 0, behavior: 'auto' });
+          if (playWelcomeCinematic) {
+            playFirstJoinWelcome(nick);
+          } else {
+            showToast(`${nick ? nick + '님, ' : ''}환영해요! 홈에서 바로 시작해 보세요.`, 'success');
+          }
+        }, 300);
+      }
+
+      window.addEventListener('resize', () => {
+        if (spotlightTourState.active) positionSpotlightTour(SPOTLIGHT_TOUR_STEPS[spotlightTourState.step]);
+      }, { passive: true });
+      window.addEventListener('scroll', () => {
+        if (spotlightTourState.active) positionSpotlightTour(SPOTLIGHT_TOUR_STEPS[spotlightTourState.step]);
+      }, { passive: true });
+      document.addEventListener('keydown', ev => {
+        if (!spotlightTourState.active) return;
+        if (ev.key === 'Escape') { finishFirstJoinTour(false); }
+        else if (ev.key === 'ArrowRight') {
+          if (spotlightTourState.step < SPOTLIGHT_TOUR_STEPS.length - 1) goSpotlightStep(spotlightTourState.step + 1);
+          else finishFirstJoinTour(true);
+        } else if (ev.key === 'ArrowLeft' && spotlightTourState.step > 0) {
+          goSpotlightStep(spotlightTourState.step - 1);
+        }
       });
     })();
   </script>
