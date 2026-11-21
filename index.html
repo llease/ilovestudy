@@ -1538,8 +1538,8 @@
     }
     /* Smooth Page Refresh / Entrance Reveal */
     @keyframes studyCardReveal {
-      0% { opacity:0; transform:translateY(14px) scale(.99); }
-      100% { opacity:1; transform:translateY(0) scale(1); }
+      0% { opacity:0; transform:translateY(10px); }
+      100% { opacity:1; transform:translateY(0); }
     }
     body.is-entering #main-live-banner { animation:studyCardReveal 560ms cubic-bezier(.22,1,.36,1) 80ms both; }
     body.is-entering #home-card-grid > :nth-child(1) { animation:studyCardReveal 580ms cubic-bezier(.22,1,.36,1) 160ms both; }
@@ -2572,26 +2572,34 @@
       font-size: .8rem; line-height: 1.6; color: var(--ink);
     }
     .guide-note-bar strong { color: var(--link); }
-    /* Smooth First-Join Spotlight Tour */
-    #spotlight-tour-backdrop {
+    /* Smooth 60fps First-Join Spotlight Tour (GPU-composited opacity/transform only) */
+    #spotlight-tour-scrim {
       position: fixed;
       inset: 0;
+      width: 100vw;
+      height: 100vh;
       z-index: 119;
-      background: transparent;
       opacity: 0;
-      transition: opacity 320ms ease;
+      transition: opacity 220ms ease;
+      will-change: opacity;
     }
-    #spotlight-tour-backdrop.is-open { opacity: 1; }
+    #spotlight-tour-scrim.is-open { opacity: 1; }
     #spotlight-tour-ring {
       position: fixed;
       z-index: 120;
       pointer-events: none;
       border-radius: 16px;
-      box-shadow: 0 0 0 9999px rgba(15, 23, 42, 0.62), 0 0 0 3px rgba(99, 102, 241, 0.92), 0 0 32px rgba(99, 102, 241, 0.36);
+      border: 2.5px solid rgba(99, 102, 241, 0.95);
+      box-shadow: 0 0 18px rgba(99, 102, 241, 0.34);
       opacity: 0;
-      transition: top 420ms cubic-bezier(0.22, 1, 0.36, 1), left 420ms cubic-bezier(0.22, 1, 0.36, 1), width 420ms cubic-bezier(0.22, 1, 0.36, 1), height 420ms cubic-bezier(0.22, 1, 0.36, 1), border-radius 320ms ease, opacity 320ms ease;
+      transform: scale(0.97);
+      transition: opacity 220ms cubic-bezier(0.22, 1, 0.36, 1), transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+      will-change: opacity, transform;
     }
-    #spotlight-tour-ring.is-open { opacity: 1; }
+    #spotlight-tour-ring.is-open {
+      opacity: 1;
+      transform: scale(1);
+    }
     #spotlight-tour-card {
       position: fixed;
       z-index: 122;
@@ -2601,27 +2609,21 @@
       background: #ffffff;
       color: #0f172a;
       border: 1px solid rgba(15, 23, 42, 0.08);
-      box-shadow: 0 22px 48px rgba(15, 23, 42, 0.32);
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.28);
       opacity: 0;
-      transform: translateY(10px) scale(0.97);
-      transition: top 420ms cubic-bezier(0.22, 1, 0.36, 1), left 420ms cubic-bezier(0.22, 1, 0.36, 1), opacity 280ms cubic-bezier(0.22, 1, 0.36, 1), transform 280ms cubic-bezier(0.22, 1, 0.36, 1);
+      transform: translate3d(0, 8px, 0) scale(0.985);
+      transition: opacity 220ms cubic-bezier(0.22, 1, 0.36, 1), transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+      will-change: opacity, transform;
     }
     #spotlight-tour-card.is-open {
       opacity: 1;
-      transform: translateY(0) scale(1);
-    }
-    #spotlight-tour-card.is-switching .st-body-wrap {
-      opacity: 0;
-      transform: translateY(5px);
-    }
-    #spotlight-tour-card .st-body-wrap {
-      transition: opacity 180ms ease, transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+      transform: translate3d(0, 0, 0) scale(1);
     }
     body[data-dark="true"] #spotlight-tour-card {
       background: #111827;
       color: #f8fafc;
       border-color: rgba(148, 163, 184, 0.22);
-      box-shadow: 0 22px 48px rgba(0, 0, 0, 0.6);
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.58);
     }
     body[data-dark="true"] #spotlight-tour-card .st-desc { color: #cbd5e1; }
     body[data-dark="true"] #spotlight-tour-card .st-btn-ghost { background: rgba(255, 255, 255, 0.08); color: #e2e8f0; }
@@ -2631,16 +2633,62 @@
       height: 6px;
       border-radius: 999px;
       background: rgba(148, 163, 184, 0.45);
-      transition: width 280ms cubic-bezier(0.22, 1, 0.36, 1), background-color 240ms ease;
+      transition: width 220ms ease, background-color 200ms ease;
     }
     #spotlight-tour-card .st-dot.is-active {
       width: 18px;
       background: #4f46e5;
     }
     @media (prefers-reduced-motion: reduce) {
-      #spotlight-tour-backdrop, #spotlight-tour-ring, #spotlight-tour-card, #spotlight-tour-card .st-body-wrap, #spotlight-tour-card .st-dot {
+      #spotlight-tour-scrim, #spotlight-tour-ring, #spotlight-tour-card, #spotlight-tour-card .st-dot {
         transition: none !important;
       }
+    }
+    /* In-Timer Promotion Slot */
+    .focus-promo-slot {
+      display: flex;
+      justify-content: center;
+      margin-top: 10px;
+    }
+    .focus-promo-slot.hidden { display: none !important; }
+    .focus-promo-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 15px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      color: var(--focus-fg);
+      background: color-mix(in srgb, var(--focus-fg) 8%, transparent);
+      border: 1px solid color-mix(in srgb, var(--focus-fg) 22%, transparent);
+      cursor: pointer;
+      transition: background-color 160ms ease, transform 160ms ease, border-color 160ms ease;
+    }
+    .focus-promo-btn:hover {
+      background: color-mix(in srgb, var(--focus-fg) 14%, transparent);
+      border-color: color-mix(in srgb, var(--focus-fg) 38%, transparent);
+    }
+    .focus-promo-btn:active { transform: scale(0.97); }
+    .focus-promo-done {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--focus-subtle);
+      background: color-mix(in srgb, var(--focus-fg) 6%, transparent);
+      border: 1px solid color-mix(in srgb, var(--focus-fg) 14%, transparent);
+    }
+    .focus-promo-done .focus-promo-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: #10b981;
+      flex-shrink: 0;
     }
   </style>
 </head>
@@ -2770,6 +2818,7 @@
           <button id="focus-pause-btn" type="button">잠시 쉬기</button>
           <button id="focus-end-btn" type="button">집중 끝내기</button>
         </div>
+        <div id="focus-promo-slot" class="focus-promo-slot hidden" aria-live="polite"></div>
         <button id="focus-min-btn" type="button" class="hidden">미니 타이머</button>
       </section>
       <section class="focus-screen hidden" id="focus-panel-study" aria-labelledby="focus-view-study">
@@ -4839,7 +4888,10 @@
             targetLogo.style.opacity = '';
             ov.classList.remove('is-active', 'is-entered', 'is-flying', 'is-fading', 'is-reconstruct');
             fly.style.transform = '';
-            setTimeout(() => document.body.classList.remove('is-entering'), 700);
+            setTimeout(() => {
+              document.body.classList.remove('is-entering');
+              if (typeof renderLiveBanner === 'function') renderLiveBanner();
+            }, 700);
           }, 680);
         }, 980);
       }
@@ -4912,7 +4964,10 @@
             targetLogo.style.opacity = '';
             ov.classList.remove('is-active', 'is-entered', 'is-flying', 'is-fading', 'is-reconstruct');
             fly.style.transform = '';
-            setTimeout(() => document.body.classList.remove('is-entering'), 700);
+            setTimeout(() => {
+              document.body.classList.remove('is-entering');
+              if (typeof renderLiveBanner === 'function') renderLiveBanner();
+            }, 700);
           }, 1700);
         }, 6500);
       }
@@ -6023,8 +6078,8 @@
             promoBadge.textContent = '승급전 진행 중';
             promoBadge.className = 'px-2 py-0.5 rounded-md text-[11px] font-black bg-slate-950 text-amber-300';
             promoTitle.textContent = `${tierInfo.nextName} 승급전 도전 중!`;
-            promoDesc.textContent = `미션: ${mission.desc}${tierInfo.banked > 0 ? ` · 승급 시 보관된 +${tierInfo.banked} LP 합산` : ''}`;
-            promoActs.innerHTML = `<button type="button" id="btn-fail-promo" class="px-2.5 py-1.5 rounded-xl bg-white border border-rose-200 text-rose-600 text-xs font-bold">포기</button><button type="button" id="btn-complete-promo" class="px-3.5 py-2 rounded-xl bg-slate-950 hover:bg-slate-800 text-amber-300 text-xs font-black">승급전 완료하기</button>`;
+            promoDesc.textContent = `미션: ${mission.desc} · 달성 시 자동 승급${tierInfo.banked > 0 ? ` (보관 +${tierInfo.banked} LP 합산)` : ''}`;
+            promoActs.innerHTML = `<button type="button" id="btn-fail-promo" class="px-2.5 py-1.5 rounded-xl bg-white border border-rose-200 text-rose-600 text-xs font-bold">포기</button>`;
           }
         } else if (meHdr && meHdr.promoPendingDate) {
           document.body.setAttribute('data-promo', 'ready');
@@ -7772,6 +7827,7 @@
         if (prefs.activeTab === 'timetable') renderTimetableTab();
         if (prefs.activeTab === 'rankings') { prefs.activeTab = 'members'; }
         if (prefs.activeTab === 'admin') { renderAdminTab(); requestAnimationFrame(() => updateSubTabSlider('admin-sub-bar', 'admin-sub-slider', '[data-admin-sub]', 'adminSub', document.querySelector('[data-admin-sub][aria-pressed="true"]')?.dataset.adminSub || 'attendance')); }
+        if (typeof tryAutoCompletePromotion === 'function') tryAutoCompletePromotion();
       }
 
       function updateSubTabSlider(barId, sliderId, btnSelector, activeAttr, activeVal) {
@@ -7791,7 +7847,7 @@
         updateSubTabSlider('members-sub-bar', 'members-sub-slider', '[data-members-sub]', 'membersSub', mAct);
         updateSubTabSlider('admin-sub-bar', 'admin-sub-slider', '[data-admin-sub]', 'adminSub', aAct);
       });
-      function switchTab(tab) {
+      function switchTab(tab, skipNavScroll = false) {
         if (['rankings','brag'].includes(tab)) tab = 'members';
         if (!document.getElementById(`tab-${tab}`)) tab = 'dashboard';
         if (prefs.activeTab === 'planner' && tab !== 'planner') {
@@ -7811,7 +7867,9 @@
           b.classList.toggle('tab-idle', !isCurTab);
           if (isCurTab) {
             b.setAttribute('aria-current', 'page');
-            try { b.scrollIntoView({ behavior: reduceMotion.matches ? 'auto' : 'smooth', inline: 'center', block: 'nearest' }); } catch (e) {}
+            if (!skipNavScroll) {
+              try { b.scrollIntoView({ behavior: reduceMotion.matches ? 'auto' : 'smooth', inline: 'center', block: 'nearest' }); } catch (e) {}
+            }
           } else {
             b.removeAttribute('aria-current');
           }
@@ -7954,62 +8012,87 @@
           document.getElementById('confirm-free-tmr').addEventListener('click', reserveMode);
         }
       });
+      function checkPromotionMissionMet(me, tierInfo) {
+        if (!me || !promotionIsActive(me) || !tierInfo?.nextName) return false;
+        const mission = getPromoMission(tierInfo.nextName);
+        const started = promotionStudyDay(me);
+        if (mission.type === 'ultra' && new Date(started).getUTCDay() === 0) return false;
+        const days = promotionMissionDays(me);
+        const todayMins = days.reduce((sum, day) => sum + Math.floor(studySeconds(me.id, day) / 60), 0);
+        const todayMaxCont = Math.max(...days.map(day => Number(shared.maxFocusLogs?.[day]?.[me.id]) || 0), Math.floor(focusElapsedSecs / 60));
+        if (mission.type === 'continuous') return todayMaxCont >= mission.mins;
+        if (mission.type === 'total') return todayMins >= mission.mins;
+        if (mission.type === 'ultra') {
+          return STUDY_PERIODS.slice(0, 8).every(p => {
+            const st = getMemberDayStatus(me.id, started, p.id);
+            return st === 'present' || st === 'exempt';
+          });
+        }
+        return false;
+      }
+
+      function startPromotionFlow(me) {
+        if (!me) return;
+        const tierInfo = getMemberTier(me);
+        const requestDay = studyDayKey();
+        const tmr = nextStudyDay(requestDay);
+        if (!tierInfo.inPromo || !tierInfo.nextName || me.promoActiveDate || me.promoPendingDate || promotionAttemptUsed(me, requestDay)) {
+          showToast('승급전 도전 횟수는 오전 5시에 초기화돼요.', 'warn');
+          return;
+        }
+        const mission = getPromoMission(tierInfo.nextName);
+        const needsTomorrow = mission.type === 'ultra' && getMemberMode(me) !== 'strict';
+        const targetDay = needsTomorrow ? tmr : requestDay;
+        const missionDay = targetDay;
+        if (mission.type === 'ultra' && new Date(missionDay).getUTCDay() === 0) {
+          showToast('울트라집중모드가 필요한 승급전은 일요일에 진행할 수 없습니다. 월~토요일에 도전해 주세요!', 'warn');
+          return;
+        }
+        const targetTier = LOL_TIERS[tierInfo.idx + 1];
+        if (!targetTier) return;
+        const details = {
+          fromTier: tierInfo,
+          toTier: targetTier,
+          mission: mission.desc,
+          targetDay: needsTomorrow ? targetDay : null
+        };
+        showPromotion({
+          ...details,
+          phase: 'preview',
+          confirm: () => {
+            syncMemberPendingModes();
+            const member = shared.members.find(m => m.id === me.id);
+            if (!member || member.promoActiveDate || member.promoPendingDate || promotionAttemptUsed(member) ||
+                !getMemberTier(member).inPromo || getMemberTier(member).nextName !== targetTier.name || studyDayKey() !== requestDay) {
+              closePromotion();
+              renderAll();
+              showToast('승급전 상태가 바뀌었어요. 다시 확인해 주세요.', 'warn');
+              return;
+            }
+            if (needsTomorrow) {
+              member.promoPendingDate = tmr;
+              member.promoReservedMode = !(member.pendingMode === 'strict' && member.pendingDate === tmr);
+              member.pendingMode = 'strict';
+              member.pendingDate = tmr;
+            } else {
+              markPromotionAttempt(member, requestDay);
+              member.promoActiveDate = koreaDateKey();
+              member.promoActiveStudyDay = requestDay;
+            }
+            member.promoTargetTier = targetTier.name;
+            saveSharedData();
+            renderAll();
+            showPromotion({ ...details, phase: needsTomorrow ? 'scheduled' : 'started' });
+          }
+        });
+      }
+
       document.getElementById('promo-action-bar').addEventListener('click', e => {
         const me = shared.members.find(m => m.id === prefs.currentUserId);
         if (!me) return;
         const tierInfo = getMemberTier(me);
         if (e.target.id === 'btn-join-promo') {
-          const requestDay = studyDayKey();
-          const tmr = nextStudyDay(requestDay);
-          if (!tierInfo.inPromo || !tierInfo.nextName || me.promoActiveDate || me.promoPendingDate || promotionAttemptUsed(me, requestDay)) {
-            showToast('승급전 도전 횟수는 오전 5시에 초기화돼요.', 'warn');
-            return;
-          }
-          const mission = getPromoMission(tierInfo.nextName);
-          const needsTomorrow = mission.type === 'ultra' && getMemberMode(me) !== 'strict';
-          const targetDay = needsTomorrow ? tmr : requestDay;
-          const missionDay = targetDay;
-          if (mission.type === 'ultra' && new Date(missionDay).getUTCDay() === 0) {
-            showToast('울트라집중모드가 필요한 승급전은 일요일에 진행할 수 없습니다. 월~토요일에 도전해 주세요!', 'warn');
-            return;
-          }
-          const targetTier = LOL_TIERS[tierInfo.idx + 1];
-          if (!targetTier) return;
-          const details = {
-            fromTier: tierInfo,
-            toTier: targetTier,
-            mission: mission.desc,
-            targetDay: needsTomorrow ? targetDay : null
-          };
-          showPromotion({
-            ...details,
-            phase: 'preview',
-            confirm: () => {
-              syncMemberPendingModes();
-              const member = shared.members.find(m => m.id === me.id);
-              if (!member || member.promoActiveDate || member.promoPendingDate || promotionAttemptUsed(member) ||
-                  !getMemberTier(member).inPromo || getMemberTier(member).nextName !== targetTier.name || studyDayKey() !== requestDay) {
-                closePromotion();
-                renderAll();
-                showToast('승급전 상태가 바뀌었어요. 다시 확인해 주세요.', 'warn');
-                return;
-              }
-              if (needsTomorrow) {
-                member.promoPendingDate = tmr;
-                member.promoReservedMode = !(member.pendingMode === 'strict' && member.pendingDate === tmr);
-                member.pendingMode = 'strict';
-                member.pendingDate = tmr;
-              } else {
-                markPromotionAttempt(member, requestDay);
-                member.promoActiveDate = koreaDateKey();
-                member.promoActiveStudyDay = requestDay;
-              }
-              member.promoTargetTier = targetTier.name;
-              saveSharedData();
-              renderAll();
-              showPromotion({ ...details, phase: needsTomorrow ? 'scheduled' : 'started' });
-            }
-          });
+          startPromotionFlow(me);
         } else if (e.target.id === 'btn-cancel-promo') {
           cancelPromotionReservation(me);
           saveSharedData();
@@ -8026,54 +8109,45 @@
           saveSharedData();
           showToast(promotionAttemptUsed(me) ? '승급전을 포기했어요. 오전 5시부터 다시 도전할 수 있어요.' : '승급전을 포기했어요. 다시 도전할 수 있어요.', 'warn');
           renderAll();
-        } else if (e.target.id === 'btn-complete-promo') {
-          if (!promotionIsActive(me)) return;
-          const tNow = koreaDateKey();
-          const mission = getPromoMission(tierInfo.nextName);
-          if (mission.type === 'ultra' && new Date(promotionStudyDay(me)).getUTCDay() === 0) {
-            showToast('울트라집중모드가 필요한 승급전은 일요일에 완료할 수 없습니다.', 'warn');
-            return;
-          }
-          if (focusInterval && !focusPaused) syncFocusClock(true);
-          const started = promotionStudyDay(me);
-          const days = promotionMissionDays(me);
-          const todayMins = days.reduce((sum, day) => sum + studyMinutes(me.id, day), 0);
-          const todayMaxCont = Math.max(...days.map(day => Number(shared.maxFocusLogs?.[day]?.[me.id]) || 0), Math.floor(focusElapsedSecs / 60));
-          let missionOk = false;
-          if (mission.type === 'continuous') missionOk = todayMaxCont >= mission.mins;
-          else if (mission.type === 'total') missionOk = todayMins >= mission.mins;
-          else if (mission.type === 'ultra') {
-            missionOk = STUDY_PERIODS.slice(0, 8).every(p => {
-              const st = getMemberDayStatus(me.id, started, p.id);
-              return st === 'present' || st === 'exempt';
-            });
-          }
-          if (!missionOk) {
-            showToast(`아직 미션을 달성하지 못했습니다! (${mission.desc})`, 'warn');
-            return;
-          }
-          const nextObj = LOL_TIERS[tierInfo.idx + 1];
-          if (!nextObj) return;
-          const releasedBank = Number(me.bankedLp) || 0;
-          me.tierIdx = tierInfo.idx + 1;
-          me.lp = Math.max(me.lp || 0, nextObj.min) + releasedBank;
-          me.bankedLp = 0;
-          if (!shared.promoHistory) shared.promoHistory = {};
-          if (!shared.promoHistory[me.id]) shared.promoHistory[me.id] = {};
-          const priorResult = shared.promoHistory[me.id][tNow];
-          shared.promoHistory[me.id][tNow] = [priorResult, `${tierInfo.nextName} 승급`].filter(Boolean).join(' · ');
-          me.promoAttemptDay ||= started;
-          me.promoWinStreak = (me.promoWinStreak || 0) + 1;
-          if (me.promoWinStreak >= 2) unlockChallengeFor(me.id, 'ch_promo_streak', false);
-          me.promoActiveDate = null;
-          me.promoActiveStudyDay = null;
-          me.promoLegacyCarryDate = null;
-          me.promoTargetTier = null;
-          saveSharedData();
-          renderAll();
-          showPromotion({ phase: 'success', fromTier: tierInfo, toTier: nextObj, releasedBank });
         }
       });
+
+      function tryAutoCompletePromotion() {
+        if (prefs.adminMode) return false;
+        const focusOv = document.getElementById('focus-overlay');
+        const authOv = document.getElementById('auth-overlay');
+        const promoOv = document.getElementById('promotion-overlay');
+        if (focusInterval || (focusOv && !focusOv.classList.contains('hidden'))) return false;
+        if ((authOv && !authOv.classList.contains('hidden')) || (promoOv && !promoOv.classList.contains('hidden'))) return false;
+        if (typeof spotlightTourState !== 'undefined' && spotlightTourState.active) return false;
+        const me = shared.members.find(m => m.id === prefs.currentUserId);
+        if (!me || !promotionIsActive(me)) return false;
+        const tierInfo = getMemberTier(me);
+        if (!tierInfo.nextName || !checkPromotionMissionMet(me, tierInfo)) return false;
+        const nextObj = LOL_TIERS[tierInfo.idx + 1];
+        if (!nextObj) return false;
+        const tNow = koreaDateKey();
+        const started = promotionStudyDay(me);
+        const releasedBank = Number(me.bankedLp) || 0;
+        me.tierIdx = tierInfo.idx + 1;
+        me.lp = Math.max(me.lp || 0, nextObj.min) + releasedBank;
+        me.bankedLp = 0;
+        if (!shared.promoHistory) shared.promoHistory = {};
+        if (!shared.promoHistory[me.id]) shared.promoHistory[me.id] = {};
+        const priorResult = shared.promoHistory[me.id][tNow];
+        shared.promoHistory[me.id][tNow] = [priorResult, `${tierInfo.nextName} 승급`].filter(Boolean).join(' · ');
+        me.promoAttemptDay ||= started;
+        me.promoWinStreak = (me.promoWinStreak || 0) + 1;
+        if (me.promoWinStreak >= 2) unlockChallengeFor(me.id, 'ch_promo_streak', false);
+        me.promoActiveDate = null;
+        me.promoActiveStudyDay = null;
+        me.promoLegacyCarryDate = null;
+        me.promoTargetTier = null;
+        saveSharedData();
+        renderAll();
+        showPromotion({ phase: 'success', fromTier: tierInfo, toTier: nextObj, releasedBank });
+        return true;
+      }
 
       document.getElementById('alert-toggle-btn').addEventListener('click', () => { prefs.alertEnabled = !prefs.alertEnabled; savePrefs(); renderHeaderControls(); });
       document.getElementById('modal-close').addEventListener('click', closeModal);
@@ -10681,6 +10755,62 @@
         document.getElementById('focus-min-btn').classList.toggle('hidden', !focusPaused);
         document.getElementById('focus-pause-btn').textContent = focusPaused ? '공부 다시 시작하기' : '잠시 쉬기';
         document.getElementById('focus-today-total').textContent = `공부일 누적 ${formatStopwatch(studySeconds(prefs.currentUserId))}`;
+        updateFocusPromoSlot();
+      }
+
+      let lastFocusPromoSlotKey = '';
+      function updateFocusPromoSlot() {
+        const slot = document.getElementById('focus-promo-slot');
+        if (!slot) return;
+        if (prefs.adminMode) {
+          if (lastFocusPromoSlotKey !== 'hidden') {
+            lastFocusPromoSlotKey = 'hidden';
+            slot.innerHTML = '';
+            slot.classList.add('hidden');
+          }
+          return;
+        }
+        const me = shared.members.find(m => m.id === prefs.currentUserId);
+        if (!me || me.inStudy === false) {
+          if (lastFocusPromoSlotKey !== 'hidden') {
+            lastFocusPromoSlotKey = 'hidden';
+            slot.innerHTML = '';
+            slot.classList.add('hidden');
+          }
+          return;
+        }
+        const tierInfo = getMemberTier(me);
+        const day = studyDayKey();
+        const canStart = !!(tierInfo.inPromo && tierInfo.nextName && !me.promoActiveDate && !me.promoPendingDate && !promotionAttemptUsed(me, day));
+        const activeCleared = !!(promotionIsActive(me, day) && tierInfo.nextName && checkPromotionMissionMet(me, tierInfo));
+
+        if (canStart) {
+          const mission = getPromoMission(tierInfo.nextName);
+          const needsTomorrow = mission.type === 'ultra' && getMemberMode(me) !== 'strict';
+          const key = `start:${tierInfo.nextName}:${needsTomorrow ? 'tmr' : 'now'}`;
+          if (lastFocusPromoSlotKey !== key) {
+            lastFocusPromoSlotKey = key;
+            slot.innerHTML = `<button type="button" id="focus-promo-start-btn" class="focus-promo-btn">⚔️ ${escapeHtml(tierInfo.nextName)} 승급전 ${needsTomorrow ? '예약하기' : '시작하기'}</button>`;
+            slot.classList.remove('hidden');
+            slot.querySelector('#focus-promo-start-btn')?.addEventListener('click', () => {
+              const cur = shared.members.find(m => m.id === prefs.currentUserId);
+              if (cur) startPromotionFlow(cur);
+            });
+          }
+        } else if (activeCleared) {
+          const key = `done:${tierInfo.nextName}`;
+          if (lastFocusPromoSlotKey !== key) {
+            lastFocusPromoSlotKey = key;
+            slot.innerHTML = `<span class="focus-promo-done"><span class="focus-promo-dot" aria-hidden="true"></span>${escapeHtml(tierInfo.nextName)} 승급전 달성 · 타이머 종료 시 자동 승급</span>`;
+            slot.classList.remove('hidden');
+          }
+        } else {
+          if (lastFocusPromoSlotKey !== 'hidden') {
+            lastFocusPromoSlotKey = 'hidden';
+            slot.innerHTML = '';
+            slot.classList.add('hidden');
+          }
+        }
       }
 
       // Split real elapsed time at local minute boundaries. Endpoints are half-open [start, end).
@@ -10987,6 +11117,10 @@
         refreshStudyDialogs();
         if (wasOpen && !discard) {
           renderAll();
+          if (shown(document.getElementById('promotion-overlay'))) {
+            if (restExpired) showToast('휴식이 끝나 타이머를 종료했어요. 공부 시간은 누적에 저장했어요.', 'info');
+            return;
+          }
           const homeButton = document.getElementById('btn-open-focus');
           if ((!restExpired || wasFullScreen) && !activeStudyDialog() && prefs.activeTab === 'dashboard' && homeButton?.getClientRects().length) {
             homeButton.focus({ preventScroll: true });
@@ -11109,8 +11243,8 @@
         document.getElementById('promotion-note').textContent = {
           preview: willSchedule
             ? '예정일 오전 5시부터 승급전을 진행할 수 있어요. 도전 횟수는 매일 오전 5시에 초기화돼요.'
-            : '미션을 달성한 뒤 승급전 완료 버튼을 눌러주세요. 도전 횟수는 매일 오전 5시에 초기화돼요.',
-          started: '미션을 달성한 뒤 승급전 완료 버튼을 눌러주세요.',
+            : '미션을 달성하면 자동으로 승급돼요. 타이머 중 달성 시 타이머 종료 후 승급 연출이 표시돼요.',
+          started: '미션을 달성하면 자동으로 승급돼요. 타이머 중 달성 시 타이머 종료 후 승급 연출이 표시돼요.',
           scheduled: '예정일 오전 5시부터 승급전을 진행할 수 있어요.',
           success: `${toTier.name} 테마가 열렸어요.`
         }[phase];
@@ -11125,15 +11259,24 @@
       }
 
       function closePromotion() {
+        const closedPhase = promotionOverlay.dataset.phase;
         const returnId = {
           preview: 'btn-join-promo',
-          started: 'btn-complete-promo',
+          started: 'study-main',
           scheduled: 'btn-cancel-promo',
           success: 'study-main'
-        }[promotionOverlay.dataset.phase];
+        }[closedPhase];
         promotionOverlay.classList.add('hidden');
         promotionPrimary.onclick = null;
         refreshStudyDialogs();
+        const focusOv = document.getElementById('focus-overlay');
+        if (focusOv && !focusOv.classList.contains('hidden')) {
+          focusOv.focus({ preventScroll: true });
+          return;
+        }
+        if (closedPhase === 'started' && typeof tryAutoCompletePromotion === 'function') {
+          setTimeout(() => tryAutoCompletePromotion(), 120);
+        }
         const returnTarget = document.getElementById(returnId);
         const nextFocus = returnTarget?.getClientRects().length ? returnTarget : document.getElementById('study-main');
         if (!nextFocus.closest('[inert]')) nextFocus.focus({ preventScroll: true });
@@ -11927,7 +12070,7 @@
         if (pwaBanner) pwaBanner.classList.add('hidden');
         try { localStorage.setItem(DISMISS_KEY, '1'); } catch (e) {}
       });
-      // Smooth 5-Step First-Join Spotlight Tour (switches real tabs, finishes on Home + existing welcome animation)
+      // Smooth 60fps 5-Step First-Join Spotlight Tour (SVG cutout + GPU opacity/transform only)
       const SPOTLIGHT_TOUR_STEPS = [
         {
           tab: 'dashboard',
@@ -11962,28 +12105,40 @@
           desc: '스터디에 참가하면 부원들과 실시간 공부 현황·랭킹·STUDYGRAM을 즐길 수 있어요. 원하면 언제든지 탈퇴할 수 있어요!'
         },
         {
-          tab: 'dashboard',
+          tab: 'guide',
           selector: '#nav-tab-guide',
           fallback: '#study-nav',
+          isNavTarget: true,
           badge: '5 / 5 · 사용법 안내',
           title: "모르는 게 있으면 '설명서'를 눌러보세요!",
-          desc: "기능이 헷갈리거나 사용법이 궁금할 땐 언제든지 상단 '설명서' 탭에서 확인할 수 있어요. 자, 이제 시작해볼까요?",
-          cta: '자, 이제 시작해볼까요?'
+          desc: "기능이 헷갈리거나 사용법이 궁금할 땐 언제든지 상단 '설명서' 탭에서 한눈에 확인할 수 있어요.",
+          cta: '완료'
         }
       ];
 
-      let spotlightTourState = { active: false, step: 0, nickname: '' };
-      let spotlightRepositionTimer = 0;
+      let spotlightTourState = { active: false, step: 0, nickname: '', transitioning: false };
+      let spotlightStepTimer = 0;
+      let spotlightRaf = 0;
 
       function ensureSpotlightTourEls() {
-        let backdrop = document.getElementById('spotlight-tour-backdrop');
+        let scrim = document.getElementById('spotlight-tour-scrim');
         let ring = document.getElementById('spotlight-tour-ring');
         let card = document.getElementById('spotlight-tour-card');
-        if (!backdrop) {
-          backdrop = document.createElement('div');
-          backdrop.id = 'spotlight-tour-backdrop';
-          backdrop.className = 'hidden';
-          document.body.appendChild(backdrop);
+        if (!scrim) {
+          scrim = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+          scrim.setAttribute('id', 'spotlight-tour-scrim');
+          scrim.setAttribute('class', 'hidden');
+          scrim.setAttribute('aria-hidden', 'true');
+          scrim.innerHTML = `
+            <defs>
+              <mask id="spotlight-tour-mask">
+                <rect x="0" y="0" width="100%" height="100%" fill="white"></rect>
+                <rect id="spotlight-cutout" x="0" y="0" width="0" height="0" rx="16" ry="16" fill="black"></rect>
+              </mask>
+            </defs>
+            <rect x="0" y="0" width="100%" height="100%" fill="rgba(15, 23, 42, 0.58)" mask="url(#spotlight-tour-mask)"></rect>
+          `;
+          document.body.appendChild(scrim);
         }
         if (!ring) {
           ring = document.createElement('div');
@@ -12004,7 +12159,7 @@
               <span class="st-badge text-[11px] font-black text-indigo-600"></span>
               <button type="button" class="st-skip text-[11px] font-bold text-slate-400 hover:text-slate-600">건너뛰기</button>
             </div>
-            <div class="st-body-wrap space-y-1.5">
+            <div class="space-y-1.5">
               <h4 class="st-title text-sm sm:text-base font-black leading-snug"></h4>
               <p class="st-desc text-xs text-slate-600 leading-relaxed"></p>
             </div>
@@ -12018,9 +12173,10 @@
           `;
           card.querySelector('.st-skip').addEventListener('click', () => finishFirstJoinTour(false));
           card.querySelector('.st-prev').addEventListener('click', () => {
-            if (spotlightTourState.step > 0) goSpotlightStep(spotlightTourState.step - 1);
+            if (!spotlightTourState.transitioning && spotlightTourState.step > 0) goSpotlightStep(spotlightTourState.step - 1);
           });
           card.querySelector('.st-next').addEventListener('click', () => {
+            if (spotlightTourState.transitioning) return;
             if (spotlightTourState.step < SPOTLIGHT_TOUR_STEPS.length - 1) {
               goSpotlightStep(spotlightTourState.step + 1);
             } else {
@@ -12029,35 +12185,49 @@
           });
           document.body.appendChild(card);
         }
-        return { backdrop, ring, card };
+        return { scrim, ring, card };
+      }
+
+      function resolveSpotlightTarget(stepObj) {
+        let target = document.querySelector(stepObj.selector);
+        if (!target || target.getBoundingClientRect().width === 0 || target.getBoundingClientRect().height === 0) {
+          target = document.querySelector(stepObj.fallback);
+        }
+        return target;
       }
 
       function positionSpotlightTour(stepObj) {
         if (!spotlightTourState.active || !stepObj) return;
-        const { ring, card } = ensureSpotlightTourEls();
-        let target = document.querySelector(stepObj.selector);
-        if (!target || target.getBoundingClientRect().width === 0) {
-          target = document.querySelector(stepObj.fallback);
-        }
+        const { scrim, ring, card } = ensureSpotlightTourEls();
+        const target = resolveSpotlightTarget(stepObj);
         if (!target) return;
 
         const rect = target.getBoundingClientRect();
+        const vw = window.innerWidth;
+        const vh = window.innerHeight;
         const pad = 8;
-        const rTop = Math.max(6, rect.top - pad);
-        const rLeft = Math.max(6, rect.left - pad);
-        const rWidth = Math.min(window.innerWidth - 12, rect.width + pad * 2);
-        const rHeight = Math.min(window.innerHeight - 12, rect.height + pad * 2);
+        const rLeft = Math.max(6, Math.round(rect.left - pad));
+        const rTop = Math.max(6, Math.round(rect.top - pad));
+        const rWidth = Math.max(24, Math.min(vw - 12, Math.round(rect.width + pad * 2)));
+        const rHeight = Math.max(24, Math.min(vh - 12, Math.round(rect.height + pad * 2)));
 
-        ring.style.top = `${Math.round(rTop)}px`;
-        ring.style.left = `${Math.round(rLeft)}px`;
-        ring.style.width = `${Math.round(rWidth)}px`;
-        ring.style.height = `${Math.round(rHeight)}px`;
+        const cutout = scrim.querySelector('#spotlight-cutout');
+        if (cutout) {
+          cutout.setAttribute('x', String(rLeft));
+          cutout.setAttribute('y', String(rTop));
+          cutout.setAttribute('width', String(rWidth));
+          cutout.setAttribute('height', String(rHeight));
+        }
 
-        const cardRect = card.getBoundingClientRect();
+        ring.style.left = `${rLeft}px`;
+        ring.style.top = `${rTop}px`;
+        ring.style.width = `${rWidth}px`;
+        ring.style.height = `${rHeight}px`;
+
         const margin = 12;
-        const cardH = cardRect.height || 180;
-        const cardW = cardRect.width || Math.min(352, window.innerWidth - 24);
-        const spaceBelow = window.innerHeight - (rTop + rHeight);
+        const cardW = card.offsetWidth || Math.min(352, vw - 24);
+        const cardH = card.offsetHeight || 176;
+        const spaceBelow = vh - (rTop + rHeight);
         const spaceAbove = rTop;
         let cTop;
         if (spaceBelow >= cardH + 18) {
@@ -12065,27 +12235,29 @@
         } else if (spaceAbove >= cardH + 18) {
           cTop = rTop - cardH - 14;
         } else {
-          cTop = Math.max(margin, window.innerHeight - cardH - margin);
+          cTop = Math.max(margin, vh - cardH - margin);
         }
         const centerX = rLeft + rWidth / 2;
-        const cLeft = Math.max(margin, Math.min(window.innerWidth - cardW - margin, centerX - cardW / 2));
+        const cLeft = Math.max(margin, Math.min(vw - cardW - margin, Math.round(centerX - cardW / 2)));
 
         card.style.top = `${Math.round(cTop)}px`;
-        card.style.left = `${Math.round(cLeft)}px`;
+        card.style.left = `${cLeft}px`;
       }
 
-      function goSpotlightStep(stepIdx) {
+      function goSpotlightStep(stepIdx, isInitial = false) {
         const stepObj = SPOTLIGHT_TOUR_STEPS[stepIdx];
         if (!stepObj) return;
+        clearTimeout(spotlightStepTimer);
         spotlightTourState.step = stepIdx;
-        const { backdrop, ring, card } = ensureSpotlightTourEls();
+        const { scrim, ring, card } = ensureSpotlightTourEls();
 
-        if (prefs.activeTab !== stepObj.tab) {
-          switchTab(stepObj.tab);
-        }
+        const revealStep = () => {
+          if (!spotlightTourState.active) return;
+          if (prefs.activeTab !== stepObj.tab) {
+            switchTab(stepObj.tab, true);
+          }
 
-        card.classList.add('is-switching');
-        setTimeout(() => {
+          // Populate card content synchronously BEFORE measuring card height
           card.querySelector('.st-badge').textContent = stepObj.badge;
           card.querySelector('.st-title').textContent = stepObj.title;
           card.querySelector('.st-desc').textContent = stepObj.desc;
@@ -12094,35 +12266,49 @@
           card.querySelector('.st-dots').innerHTML = SPOTLIGHT_TOUR_STEPS.map((_, i) =>
             `<span class="st-dot ${i === stepIdx ? 'is-active' : ''}"></span>`
           ).join('');
-          card.classList.remove('is-switching');
-        }, 120);
 
-        const alignTarget = () => {
-          let target = document.querySelector(stepObj.selector);
-          if (!target || target.getBoundingClientRect().width === 0) {
-            target = document.querySelector(stepObj.fallback);
-          }
-          if (target) {
-            try {
-              target.scrollIntoView({ behavior: reduceMotion.matches ? 'auto' : 'smooth', block: 'center', inline: 'center' });
-            } catch (e) {}
-          }
-          requestAnimationFrame(() => positionSpotlightTour(stepObj));
-          clearTimeout(spotlightRepositionTimer);
-          spotlightRepositionTimer = setTimeout(() => positionSpotlightTour(stepObj), 320);
+          scrim.classList.remove('hidden');
+          ring.classList.remove('hidden');
+          card.classList.remove('hidden');
+
+          // Wait for tab layout, position scroll cleanly (nav vs page), then measure & fade in smoothly
+          requestAnimationFrame(() => {
+            const target = resolveSpotlightTarget(stepObj);
+            if (stepObj.isNavTarget && target) {
+              window.scrollTo({ top: 0, behavior: 'auto' });
+              const nav = document.getElementById('study-nav');
+              if (nav) {
+                nav.scrollLeft = Math.max(0, target.offsetLeft - Math.round((nav.clientWidth - target.offsetWidth) / 2));
+              }
+            } else if (target) {
+              try { target.scrollIntoView({ behavior: 'auto', block: 'center', inline: 'center' }); } catch (e) {}
+            }
+            requestAnimationFrame(() => {
+              if (!spotlightTourState.active) return;
+              if (stepObj.isNavTarget && target) {
+                const nav = document.getElementById('study-nav');
+                if (nav) {
+                  nav.scrollLeft = Math.max(0, target.offsetLeft - Math.round((nav.clientWidth - target.offsetWidth) / 2));
+                }
+              }
+              positionSpotlightTour(stepObj);
+              scrim.classList.add('is-open');
+              ring.classList.add('is-open');
+              card.classList.add('is-open');
+              spotlightTourState.transitioning = false;
+            });
+          });
         };
 
-        backdrop.classList.remove('hidden');
-        ring.classList.remove('hidden');
-        card.classList.remove('hidden');
-        requestAnimationFrame(() => {
-          alignTarget();
-          requestAnimationFrame(() => {
-            backdrop.classList.add('is-open');
-            ring.classList.add('is-open');
-            card.classList.add('is-open');
-          });
-        });
+        if (isInitial) {
+          spotlightTourState.transitioning = true;
+          revealStep();
+        } else {
+          spotlightTourState.transitioning = true;
+          ring.classList.remove('is-open');
+          card.classList.remove('is-open');
+          spotlightStepTimer = setTimeout(revealStep, 130);
+        }
       }
 
       function startFirstJoinTour(nickname) {
@@ -12131,45 +12317,61 @@
           playFirstJoinWelcome(nickname);
           return;
         }
-        spotlightTourState = { active: true, step: 0, nickname: nickname || '' };
+        spotlightTourState = { active: true, step: 0, nickname: nickname || '', transitioning: false };
         welcomePlayedForSession = true;
-        goSpotlightStep(0);
+        // Brief settle after auth overlay closes so dashboard & #btn-open-focus layout is 100% ready
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            if (spotlightTourState.active) goSpotlightStep(0, true);
+          });
+        });
       }
 
       function finishFirstJoinTour(playWelcomeCinematic) {
         if (!spotlightTourState.active) return;
+        clearTimeout(spotlightStepTimer);
         const nick = spotlightTourState.nickname;
         spotlightTourState.active = false;
+        spotlightTourState.transitioning = false;
         prefs.firstJoinTourDone = true;
         savePrefs();
 
-        const { backdrop, ring, card } = ensureSpotlightTourEls();
-        backdrop.classList.remove('is-open');
+        const { scrim, ring, card } = ensureSpotlightTourEls();
+        scrim.classList.remove('is-open');
         ring.classList.remove('is-open');
         card.classList.remove('is-open');
 
         setTimeout(() => {
-          backdrop.classList.add('hidden');
+          scrim.classList.add('hidden');
           ring.classList.add('hidden');
           card.classList.add('hidden');
-          switchTab('dashboard');
+          const nav = document.getElementById('study-nav');
+          if (nav) nav.scrollLeft = 0;
+          switchTab('dashboard', true);
+          applyThemeLayout(prefs.theme || 'white');
+          renderLiveBanner();
           window.scrollTo({ top: 0, behavior: 'auto' });
           if (playWelcomeCinematic) {
             playFirstJoinWelcome(nick);
           } else {
             showToast(`${nick ? nick + '님, ' : ''}환영해요! 홈에서 바로 시작해 보세요.`, 'success');
           }
-        }, 300);
+        }, 230);
       }
 
-      window.addEventListener('resize', () => {
-        if (spotlightTourState.active) positionSpotlightTour(SPOTLIGHT_TOUR_STEPS[spotlightTourState.step]);
-      }, { passive: true });
-      window.addEventListener('scroll', () => {
-        if (spotlightTourState.active) positionSpotlightTour(SPOTLIGHT_TOUR_STEPS[spotlightTourState.step]);
-      }, { passive: true });
+      function scheduleSpotlightReposition() {
+        if (!spotlightTourState.active || spotlightTourState.transitioning) return;
+        if (spotlightRaf) cancelAnimationFrame(spotlightRaf);
+        spotlightRaf = requestAnimationFrame(() => {
+          spotlightRaf = 0;
+          positionSpotlightTour(SPOTLIGHT_TOUR_STEPS[spotlightTourState.step]);
+        });
+      }
+
+      window.addEventListener('resize', scheduleSpotlightReposition, { passive: true });
+      window.addEventListener('scroll', scheduleSpotlightReposition, { passive: true });
       document.addEventListener('keydown', ev => {
-        if (!spotlightTourState.active) return;
+        if (!spotlightTourState.active || spotlightTourState.transitioning) return;
         if (ev.key === 'Escape') { finishFirstJoinTour(false); }
         else if (ev.key === 'ArrowRight') {
           if (spotlightTourState.step < SPOTLIGHT_TOUR_STEPS.length - 1) goSpotlightStep(spotlightTourState.step + 1);
