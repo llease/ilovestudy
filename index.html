@@ -1643,127 +1643,117 @@
       box-shadow:0 4px 12px rgba(36,83,204,.12);
     }
     #tab-planner {
-      --planner-padding:clamp(.85rem,2.1vw,1.4rem);
-      --actual-ink:#087650;
-      --actual-bar:#16845d;
-      --actual-track:#e5f4ed;
+      --planner-inset:clamp(.72rem,2.2vw,1.35rem);
+      --planner-actual:#28795d;
+      --planner-plan:#375ec1;
+      --planner-row:1.31rem;
       color:var(--ink);
       font-variant-numeric:tabular-nums;
     }
-    body[data-dark="true"] #tab-planner {
-      --actual-ink:#8cedbf;
-      --actual-bar:#5ad9a4;
-      --actual-track:#1d3835;
+    body[data-dark="true"] #tab-planner {--planner-actual:#63be9f;--planner-plan:#a2baff}
+    .planner-sheet {max-width:57rem;margin-inline:auto}
+    .planner-sheet-header,.planner-sheet-body,.planner-editor,.planner-sheet-footer {padding-inline:var(--planner-inset)}
+    .planner-sheet-header {padding-block:.52rem .55rem;border-bottom:1px solid var(--line)}
+    .planner-heading,.planner-date-nav,.planner-section-heading,.planner-stats,.planner-legend,.planner-toolbar {
+      display:flex;align-items:center;gap:.45rem
     }
-    .planner-overview,.planner-card {padding:var(--planner-padding)}
-    .planner-overview {display:grid;gap:1rem}
-    .planner-heading,.planner-card-heading,.planner-toolbar,.planner-legend,.planner-date-nav {
-      display:flex;align-items:center;gap:.5rem;flex-wrap:wrap
-    }
-    .planner-heading,.planner-card-heading {justify-content:space-between;gap:.6rem .9rem}
-    .planner-heading h3 {margin:0;font-size:clamp(1.55rem,3vw,2rem);font-weight:900;letter-spacing:-.05em}
-    .planner-card-heading h4 {margin:0;font-size:1.08rem;font-weight:850;letter-spacing:-.025em}
-    .planner-card-heading p,.planner-instructions,.planner-empty {margin:0;color:var(--muted);font-size:.8rem;line-height:1.55}
-    .planner-stats {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.55rem;margin:0}
-    .planner-stats > div {min-width:0;border:1px solid var(--line);border-radius:13px;background:var(--soft);padding:.66rem clamp(.5rem,1.5vw,.9rem)}
-    .planner-stats dt {font-size:.75rem;font-weight:750;color:var(--muted)}
-    .planner-stats dd {margin:.18rem 0 0;font-size:clamp(.92rem,2.3vw,1.42rem);font-weight:900;line-height:1.28;letter-spacing:-.035em;overflow-wrap:anywhere}
-    .planner-stats .planner-stat-actual {background:var(--actual-track);border-color:color-mix(in srgb,var(--actual-bar) 20%,var(--line))}
-    .planner-stat-actual :is(dt,dd) {color:var(--actual-ink)}
-    .planner-layout {display:grid;grid-template-columns:minmax(0,1.65fr) minmax(0,1fr);gap:1rem;align-items:start}
-    .planner-sidebar,.planner-timeline,.planner-card-list {display:grid;gap:.8rem;min-width:0}
-    .planner-sidebar {gap:1rem}
-    .planner-stack {display:grid;gap:.85rem}
+    .planner-heading,.planner-section-heading {justify-content:space-between;flex-wrap:wrap}
+    .planner-heading h3 {margin:0;font-size:1.22rem;font-weight:900;letter-spacing:-.045em}
+    .planner-date-nav {gap:.2rem;flex-wrap:wrap}
+    .planner-stats {justify-content:space-between;gap:.35rem .75rem;flex-wrap:wrap;margin:.38rem 0 0;padding:.34rem .65rem;border-radius:8px;background:var(--soft)}
+    .planner-stats > div {display:flex;align-items:baseline;gap:.24rem;white-space:nowrap}
+    .planner-stats dt {font-size:.69rem;font-weight:750;color:var(--muted)}
+    .planner-stats dd {margin:0;font-size:.83rem;font-weight:850}
+    .planner-stat-actual dd {color:var(--planner-actual);font-size:1.08rem}
     .planner-button,.planner-field {
-      box-sizing:border-box;min-height:2.5rem;max-width:100%;border:1px solid var(--line);
-      border-radius:9px;background:var(--surface);color:var(--ink);
-      padding:.38rem .63rem;font:inherit;font-size:.79rem;font-weight:750;line-height:1.3
+      box-sizing:border-box;min-height:2rem;max-width:100%;border:1px solid var(--line);
+      border-radius:7px;background:var(--surface);color:var(--ink);padding:.25rem .5rem;
+      font:inherit;font-size:.76rem;font-weight:750;line-height:1.2
     }
     .planner-button {display:inline-flex;align-items:center;justify-content:center;gap:.3rem;white-space:nowrap;cursor:pointer}
     .planner-button:hover:not(:disabled),.planner-button[aria-pressed="true"] {background:var(--tint);color:var(--link);border-color:var(--primary)}
-    .planner-button:disabled {opacity:.53;cursor:default}
+    .planner-button:disabled {opacity:.55;cursor:default}
     .planner-button.planner-primary {background:var(--primary);border-color:var(--primary);color:var(--on-primary)}
     .planner-button.planner-primary:hover:not(:disabled) {background:var(--primary-hover);color:var(--on-primary)}
     .planner-button.planner-danger {color:#b42338}
     body[data-dark="true"] .planner-button.planner-danger {color:#fda4af}
-    .planner-icon {min-width:2.5rem;padding:.38rem}
-    .planner-button svg {width:1rem;height:1rem;flex:none}
+    .planner-icon {min-width:2rem;padding:.18rem;font-size:1rem}
+    .planner-button svg {width:.9rem;height:.9rem;flex:none}
     .planner-field {width:100%;font-weight:600}
-    .planner-date-nav .planner-field {width:auto;min-width:8.5rem}
-    .planner-toolbar {
-      border:1px solid var(--line);background:var(--soft);border-radius:13px;padding:.55rem
+    .planner-date-nav .planner-field {width:auto;min-width:7.3rem}
+    .planner-sheet-body {
+      display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,1fr);align-items:stretch;
+      gap:clamp(.5rem,2vw,1.2rem);padding-block:.48rem .5rem
     }
-    .planner-brush-label {font-size:.75rem;font-weight:800;color:var(--muted)}
-    #planner-brush {width:auto;min-width:7.2rem;flex:1 1 8rem}
-    .planner-instructions {min-width:0}
-    .planner-feedback {display:flex;justify-content:space-between;align-items:baseline;gap:.25rem .65rem;flex-wrap:wrap}
-    #planner-save-status {color:var(--actual-ink);font-size:.74rem;font-weight:800}
-    .planner-legend {gap:.35rem .9rem;color:var(--muted);font-size:.73rem;font-weight:700}
-    .planner-legend span {display:inline-flex;align-items:center;gap:.3rem}
-    .planner-dot {display:inline-block;width:.67rem;height:.67rem;border-radius:3px;flex:none;background:var(--task-color,var(--primary));border:1px solid #1b294528}
-    .planner-dot.actual {background:var(--actual-bar)}
+    .planner-subjects,.planner-timeline {min-width:0}
+    .planner-timeline {border-inline-start:1px solid var(--line);padding-inline-start:clamp(.55rem,2vw,1.15rem)}
+    .planner-section-heading {min-height:2rem;margin-bottom:.32rem}
+    .planner-section-heading h4 {margin:0;font-size:.88rem;font-weight:850;letter-spacing:-.025em}
+    .planner-section-heading .planner-button {min-height:1.85rem;color:var(--link)}
+    .planner-section-heading #planner-add-task {background:var(--tint)}
+    .planner-card-list {display:grid;align-content:start;gap:.5rem;max-height:calc(24 * var(--planner-row) + 1.2rem);overflow:auto;scrollbar-color:var(--line) transparent;padding:1px}
+    .planner-subject-group {min-width:0;border:1px solid var(--line);border-radius:9px;overflow:hidden}
+    .planner-subject-head {
+      display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:.3rem;align-items:center;
+      min-height:2rem;padding:.22rem .38rem;background:var(--soft)
+    }
+    .planner-subject-name {display:flex;align-items:center;gap:.28rem;min-width:0;font-size:.8rem;font-weight:850;overflow-wrap:anywhere}
+    .planner-subject-time {font-size:.72rem;font-weight:850;color:var(--muted);white-space:nowrap}
+    .planner-subject-head .planner-icon {min-width:1.65rem;min-height:1.6rem;padding:.13rem;color:var(--link);font-size:.68rem}
+    .planner-play-icon {width:0;height:0;border-block:4px solid transparent;border-inline-start:6px solid currentColor}
+    .planner-task {display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:.35rem;padding:.22rem .35rem;min-height:1.85rem}
+    .planner-task + .planner-task {border-top:1px solid var(--line)}
+    .planner-task[aria-current="true"] {background:var(--tint)}
+    .planner-task-title {font-size:.75rem;text-align:left;line-height:1.3;overflow-wrap:anywhere}
+    button.planner-task-title:hover {color:var(--link);text-decoration:underline}
+    .planner-task-title.is-done {text-decoration:line-through;color:var(--muted)}
+    .planner-task-status {
+      display:grid;place-items:center;position:relative;width:1.4rem;height:1.4rem;border-radius:5px;
+      border:1px solid var(--line);font-size:.77rem;font-weight:850;color:var(--muted)
+    }
+    .planner-task-status.is-done {background:color-mix(in srgb,var(--planner-actual) 16%,var(--surface));color:var(--planner-actual)}
+    .planner-task-status select {position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
+    .planner-task-status:focus-within {outline:2px solid var(--focus-ring)}
+    .planner-empty {margin:0;color:var(--muted);font-size:.73rem;line-height:1.45}
+    .planner-sheet-footer {display:flex;justify-content:space-between;align-items:center;gap:.4rem;flex-wrap:wrap;border-top:1px solid var(--line);padding-block:.48rem}
+    .planner-legend {gap:.45rem .65rem;color:var(--muted);font-size:.69rem;font-weight:750}
+    .planner-legend span {display:inline-flex;gap:.25rem;align-items:center}
+    .planner-day-note {color:var(--muted);font-size:.66rem}
+    .planner-dot {display:inline-block;width:.65rem;height:.65rem;border-radius:3px;flex:none;background:var(--task-color,var(--planner-plan))}
+    .planner-dot.actual {background:linear-gradient(90deg,#527bd4 50%,var(--planner-actual) 50%)}
+    .planner-dot.planned {border:1px dashed var(--planner-plan);background:var(--tint)}
     .planner-dot.class {background:var(--line)}
-    .planner-clock-head,.planner-hour {
-      display:grid;grid-template-columns:3.25rem minmax(0,1fr) 3.6rem;gap:.38rem;align-items:center
-    }
-    .planner-clock-head {font-size:.68rem;font-weight:750;color:var(--muted);padding-bottom:.2rem}
-    .planner-clock-head > :last-child,.planner-hour-total {text-align:right}
-    .planner-slots {display:grid;grid-template-columns:repeat(6,minmax(0,1fr));text-align:center}
-    .planner-hour {padding:.26rem 0;border-top:1px solid var(--line)}
-    .planner-hour time {align-self:start;padding-top:.38rem;color:var(--ink);font-size:.8rem;font-weight:850;text-align:center}
-    .planner-hour-total {color:var(--actual-ink);font-size:.7rem;font-weight:850;line-height:1.2}
-    .planner-hour-tracks {min-width:0;display:grid;gap:3px}
-    .planner-plan-track {
-      isolation:isolate;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));
-      border-radius:6px;background:var(--soft);box-shadow:0 0 0 1px var(--line)
-    }
+    .planner-clock-head,.planner-hour {display:grid;grid-template-columns:2.3rem minmax(0,1fr);align-items:center}
+    .planner-clock-head {font-size:.66rem;font-weight:750;color:var(--muted);padding-bottom:.17rem}
+    .planner-slots,.planner-plan-track {display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:2px}
+    .planner-slots {text-align:center}
+    .planner-hour {min-height:var(--planner-row)}
+    .planner-hour time {white-space:nowrap;color:var(--muted);font-size:.74rem;font-weight:800}
+    .planner-hour.is-divider time {color:var(--ink)}
+    .planner-hour.is-night time {opacity:.8}
+    .planner-hour.is-divider .planner-plan-track {border-top:1px solid var(--line);padding-top:1px}
     .planner-plan-cell {
-      grid-row:1;z-index:1;min-width:0;height:1.75rem;position:relative;
-      border:0;border-inline-end:1px solid color-mix(in srgb,var(--line) 75%,transparent);
-      background:transparent;cursor:pointer;touch-action:pan-y
+      position:relative;isolation:isolate;overflow:hidden;display:block;min-width:0;
+      height:calc(var(--planner-row) - 2px);border:1px solid var(--line);border-radius:2px;background:var(--soft);
+      cursor:pointer;touch-action:pan-y
     }
-    .planner-plan-cell[data-last-slot] {border-inline-end:0}
-    .planner-plan-cell:hover:not(:disabled) {box-shadow:inset 0 0 0 1px var(--primary)}
-    .planner-plan-cell:focus-visible {z-index:2;outline-offset:-2px}
+    .planner-plan-cell.has-plan {background:color-mix(in srgb,var(--task-color) 20%,var(--surface));border:1px dashed var(--task-color)}
+    .planner-plan-cell.has-class {background:var(--line)}
+    .planner-plan-cell:hover:not(:disabled),.planner-plan-cell:focus-visible {outline:2px solid var(--focus-ring);outline-offset:-2px;z-index:1}
     .planner-plan-cell:disabled {cursor:default}
-    #planner-grid.can-paint .planner-plan-cell {touch-action:none;cursor:crosshair;user-select:none;-webkit-user-select:none}
-    .planner-plan-cell.is-drag-preview {box-shadow:inset 0 0 0 2px var(--primary)!important;background:color-mix(in srgb,var(--primary) 25%,transparent)}
-    #planner-grid[data-erasing="true"] .planner-plan-cell.is-drag-preview {background:repeating-linear-gradient(135deg,transparent 0 4px,#e44c634c 4px 7px)}
-    .planner-block-label {
-      grid-row:1;pointer-events:none;min-width:0;align-self:stretch;margin:1px;display:block;
-      align-content:center;line-height:1.2;border-radius:5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
-      text-align:left;padding:0 .35rem;font-size:.72rem;font-weight:900;
-      color:#162137;background:color-mix(in srgb,var(--task-color) 66%,#f7f9ff);
-      box-shadow:inset 3px 0 var(--task-color)
-    }
-    .planner-block-label.is-class {color:var(--muted);background:var(--line);box-shadow:none}
-    .planner-actual-track {display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:2px;border-radius:3px}
-    .planner-actual-slot {height:.5rem;border-radius:2px;background:var(--actual-track);overflow:hidden}
-    .planner-actual-slot > span {display:block;height:100%;background:var(--actual-bar);border-radius:2px}
-    .planner-actual-slot.is-legacy > span {background:repeating-linear-gradient(135deg,var(--actual-bar) 0 2px,var(--actual-track) 2px 4px)}
-    .planner-card-list {gap:.48rem;max-height:22rem;overflow:auto;scrollbar-color:var(--line) transparent;padding:2px}
-    .planner-task,.planner-range {
-      box-sizing:border-box;width:100%;min-width:0;display:grid;gap:.4rem .55rem;text-align:left;align-items:center;
-      border:1px solid var(--line);border-radius:11px;background:var(--soft);padding:.58rem .65rem;color:var(--ink)
-    }
-    .planner-task {grid-template-columns:minmax(0,1fr) auto}
-    .planner-task[aria-current="true"] {border-color:var(--primary)}
-    .planner-task-main,.planner-range-main {display:grid;min-width:0;gap:.15rem}
-    .planner-task-main strong,.planner-range-main strong {font-size:.8rem;font-weight:850;overflow-wrap:anywhere}
-    .planner-task-main strong {display:flex;align-items:center;gap:.32rem;color:var(--link)}
-    .planner-task-main span:not(.planner-dot),.planner-range-main span {font-size:.78rem;line-height:1.32;overflow-wrap:anywhere}
-    .planner-task-actions {display:flex;align-items:center;gap:.28rem}
-    .planner-task-actions .planner-field {width:auto;max-width:7.4rem}
-    .planner-task-actions .planner-icon {min-width:2.35rem}
-    .planner-range {grid-template-columns:.55rem max-content minmax(0,1fr) auto}
-    button.planner-range {cursor:pointer}
-    button.planner-range:hover {border-color:var(--primary)}
-    .planner-range time {font-size:.76rem;font-weight:850;line-height:1.24}
-    .planner-range > .planner-range-arrow {color:var(--muted);font-size:1rem}
-    .planner-class-list {display:flex;flex-wrap:wrap;gap:.3rem;margin:0;padding:0;list-style:none}
-    .planner-class-list li {border:1px solid var(--line);border-radius:8px;padding:.25rem .55rem;font-size:.74rem;color:var(--muted);overflow-wrap:anywhere}
-    .planner-night {margin-top:.2rem;color:var(--muted);font-size:.79rem}
-    .planner-night summary {cursor:pointer;padding:.6rem 0;font-weight:800}
+    .planner-cell-fill {position:absolute;inset:0;display:flex;overflow:hidden;pointer-events:none}
+    .planner-cell-fill > i {flex:0 0 var(--study-width);min-width:2px;background:var(--study-color,var(--planner-actual))}
+    .planner-plan-cell.is-legacy .planner-cell-fill {background:repeating-linear-gradient(135deg,transparent 0 3px,color-mix(in srgb,var(--planner-actual) 55%,transparent) 3px 5px)}
+    #planner-grid.can-paint .planner-plan-cell {touch-action:none;cursor:crosshair}
+    .planner-plan-cell.is-drag-preview {outline:2px solid var(--primary)!important;outline-offset:-2px;z-index:2}
+    #planner-grid[data-erasing="true"] .planner-plan-cell.is-drag-preview {outline-color:#db4961!important}
+    .planner-editor {padding-block:.44rem;border-bottom:1px solid var(--line);background:var(--soft)}
+    .planner-toolbar {flex-wrap:wrap}
+    #planner-brush {width:auto;min-width:5.5rem;flex:1 1 7rem}
+    .planner-feedback {display:flex;justify-content:space-between;align-items:baseline;gap:.2rem .6rem;flex-wrap:wrap;margin-top:.3rem}
+    #planner-save-status {color:var(--planner-actual);font-size:.72rem;font-weight:850}
+    .planner-class-list {display:flex;flex-wrap:wrap;gap:.3rem;width:100%;margin:0;padding:0;list-style:none}
+    .planner-class-list li {border:1px solid var(--line);border-radius:7px;padding:.18rem .45rem;font-size:.68rem;color:var(--muted);overflow-wrap:anywhere}
     .planner-form {display:grid;gap:.8rem;color:var(--ink)}
     .planner-form label,.planner-form legend {font-size:.81rem;font-weight:800}
     .planner-form label > :is(input,select,textarea) {display:block;margin-top:.25rem}
@@ -1778,20 +1768,23 @@
     .planner-form-actions .planner-primary {margin-inline-start:auto}
     .planner-form-error {margin:0;color:#b42338;font-size:.8rem;font-weight:750}
     body[data-dark="true"] .planner-form-error {color:#fda4af}
-    @media(max-width:840px) {
-      .planner-layout {grid-template-columns:minmax(0,1fr)}
-      .planner-sidebar {display:contents}
-      .planner-timeline {order:1}
-      .planner-ranges-card {order:2}
-    }
-    @media(max-width:480px) {
-      .planner-date-nav {gap:.27rem}
-      .planner-date-nav .planner-field {min-width:7.75rem}
-      .planner-date-nav .planner-icon {min-width:2.3rem}
-      .planner-clock-head,.planner-hour {grid-template-columns:2.55rem minmax(0,1fr) 2.65rem;gap:.27rem}
-      .planner-hour time,.planner-hour-total {font-size:.69rem}
-      .planner-clock-head {font-size:.62rem}
-      .planner-toolbar .planner-button {padding-inline:.46rem}
+    #focus-planner-subject {margin:0;color:var(--focus-subtle);font-size:.83rem;font-weight:750;text-align:center;overflow-wrap:anywhere}
+    @media(max-width:600px) {
+      #tab-planner {--planner-row:1.01rem;--planner-inset:clamp(.48rem,2.5vw,.68rem)}
+      .planner-heading h3 {font-size:1.09rem}
+      .planner-date-nav .planner-field {min-width:0;padding-inline:.25rem}
+      .planner-date-nav .planner-button {min-width:1.65rem;min-height:1.85rem;padding-inline:.25rem}
+      .planner-sheet-body {grid-template-columns:minmax(0,1fr) minmax(0,1.12fr)}
+      .planner-clock-head,.planner-hour {grid-template-columns:1.8rem minmax(0,1fr)}
+      .planner-hour time {font-size:.62rem}
+      .planner-clock-head {font-size:.58rem}
+      .planner-subject-name,.planner-task-title {font-size:.72rem}
+      .planner-subject-head {gap:.19rem}
+      .planner-subject-time {font-size:.65rem}
+      .planner-stats {padding-inline:.36rem;gap:.22rem .36rem}
+      .planner-stats dt {font-size:.62rem}
+      .planner-stats dd {font-size:.74rem}
+      .planner-stat-actual dd {font-size:.9rem}
     }
   </style>
 </head>
@@ -1914,6 +1907,7 @@
         <div class="focus-time-stage">
           <p id="focus-rest-label" class="hidden">남은 휴식</p>
           <div id="focus-timer-display">00:00:00</div>
+          <p id="focus-planner-subject" class="hidden"></p>
           <p id="focus-today-total">공부일 누적 00:00:00</p>
           <p id="focus-rest-note"></p>
         </div>
@@ -2443,79 +2437,73 @@
     </div>
 
     <!-- TAB 3: STUDY PLANNER -->
-    <div id="tab-planner" class="tab-panel hidden space-y-4">
-      <section class="ed-card planner-overview" aria-labelledby="planner-title">
-        <div class="planner-heading">
-          <h3 id="planner-title">스터디 플래너</h3>
-          <div class="planner-date-nav" aria-label="플래너 날짜 이동">
-            <button type="button" id="planner-prev-day" class="planner-button planner-icon" aria-label="이전 날">
-              <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 6-6 6 6 6"/></svg>
-            </button>
-            <input id="planner-date-input" type="date" class="planner-field" aria-label="플래너 날짜" />
-            <button type="button" id="planner-next-day" class="planner-button planner-icon" aria-label="다음 날">
-              <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 6 6 6-6 6"/></svg>
-            </button>
-            <button type="button" id="planner-today" class="planner-button">오늘</button>
-          </div>
-        </div>
-        <dl class="planner-stats">
-          <div><dt>계획 시간</dt><dd id="planner-planned-total">0분</dd></div>
-          <div class="planner-stat-actual"><dt>실제 공부</dt><dd id="planner-study-mins-pill">0분</dd></div>
-          <div><dt>할 일 완료</dt><dd id="planner-task-total">0 / 0</dd></div>
-        </dl>
-      </section>
-      <div class="planner-layout">
-        <section class="ed-card planner-card planner-timeline" aria-labelledby="planner-clock-title">
-          <div class="planner-card-heading">
-            <div>
-              <h4 id="planner-clock-title">시간표</h4>
-              <p>10분 단위 · 오전 5시부터 다음 날 오전 5시까지</p>
+    <div id="tab-planner" class="tab-panel hidden">
+      <section class="ed-card planner-sheet" aria-labelledby="planner-title">
+        <div class="planner-sheet-header">
+          <div class="planner-heading">
+            <h3 id="planner-title">스터디 플래너</h3>
+            <div class="planner-date-nav" aria-label="플래너 날짜 이동">
+              <button type="button" id="planner-prev-day" class="planner-button planner-icon" aria-label="이전 날">‹</button>
+              <input id="planner-date-input" type="date" class="planner-field" aria-label="플래너 날짜" />
+              <button type="button" id="planner-next-day" class="planner-button planner-icon" aria-label="다음 날">›</button>
+              <button type="button" id="planner-today" class="planner-button">오늘</button>
             </div>
           </div>
+          <dl class="planner-stats">
+            <div class="planner-stat-actual"><dt>실제 공부</dt><dd id="planner-study-mins-pill">0분</dd></div>
+            <div><dt>계획</dt><dd id="planner-planned-total">0분</dd></div>
+            <div><dt>완료</dt><dd id="planner-task-total">0 / 0</dd></div>
+          </dl>
+        </div>
+
+        <div id="planner-editor" class="planner-editor hidden">
           <div id="planner-toolbar" class="planner-toolbar">
-            <label class="planner-brush-label" for="planner-brush">칠할 할 일</label>
+            <label class="sr-only" for="planner-brush">칠할 할 일</label>
             <select id="planner-brush" class="planner-field"></select>
             <button type="button" id="planner-eraser" class="planner-button" aria-pressed="false">지우개</button>
             <button type="button" id="planner-enter-time" class="planner-button">시간 입력</button>
             <button type="button" id="planner-undo" class="planner-button" disabled>되돌리기</button>
           </div>
-          <div id="planner-feedback" class="planner-feedback">
-            <p id="planner-drag-hint" class="planner-instructions"></p>
+          <div class="planner-feedback">
+            <p id="planner-drag-hint" class="planner-empty"></p>
             <span id="planner-save-status" role="status"></span>
           </div>
-          <div class="planner-legend">
-            <span><i class="planner-dot"></i> 계획</span>
-            <span><i class="planner-dot actual"></i> 실제 공부</span>
-            <span id="planner-class-legend" class="hidden"><i class="planner-dot class"></i> 등록 수업</span>
-          </div>
-          <ul id="planner-today-classes" class="planner-class-list hidden" aria-label="등록 수업"></ul>
-          <div id="planner-grid" aria-labelledby="planner-clock-title">
-            <div class="planner-clock-head" aria-hidden="true">
-              <span></span>
-              <div class="planner-slots"><span>00</span><span>10</span><span>20</span><span>30</span><span>40</span><span>50</span></div>
-              <span>공부 시간</span>
-            </div>
-            <div id="planner-hours"></div>
-            <details id="planner-night" class="planner-night">
-              <summary>다음 날 00:00 ~ 05:00</summary>
-              <div id="planner-night-hours"></div>
-            </details>
-          </div>
-        </section>
-        <div class="planner-sidebar">
-          <section class="ed-card planner-card planner-stack" aria-labelledby="planner-tasks-heading">
-            <div class="planner-card-heading">
-              <h4 id="planner-tasks-heading">할 일</h4>
-              <button type="button" id="planner-add-task" class="planner-button planner-primary">＋ 할 일 추가</button>
+        </div>
+
+        <div class="planner-sheet-body">
+          <section class="planner-subjects" aria-labelledby="planner-tasks-heading">
+            <div class="planner-section-heading">
+              <h4 id="planner-tasks-heading">과목 · 할 일</h4>
+              <button type="button" id="planner-add-task" class="planner-button planner-icon" title="할 일 추가" aria-label="할 일 추가">＋</button>
             </div>
             <div id="planner-tasks-list" class="planner-card-list"></div>
           </section>
-          <section class="ed-card planner-card planner-stack planner-ranges-card" aria-labelledby="planner-ranges-heading">
-            <div class="planner-card-heading"><h4 id="planner-ranges-heading">시간대별 계획</h4></div>
-            <div id="planner-schedule-summary" class="planner-card-list"></div>
+
+          <section class="planner-timeline" aria-labelledby="planner-clock-title">
+            <div class="planner-section-heading">
+              <h4 id="planner-clock-title">시간표</h4>
+              <button type="button" id="planner-edit-toggle" class="planner-button" aria-pressed="false" aria-controls="planner-editor">편집</button>
+            </div>
+            <div id="planner-grid" aria-labelledby="planner-clock-title">
+              <div class="planner-clock-head" aria-hidden="true">
+                <span></span>
+                <div class="planner-slots"><span>00</span><span>10</span><span>20</span><span>30</span><span>40</span><span>50</span></div>
+              </div>
+              <div id="planner-hours"></div>
+            </div>
           </section>
         </div>
-      </div>
+
+        <footer class="planner-sheet-footer">
+          <div class="planner-legend" aria-label="시간표 표시">
+            <span><i class="planner-dot actual"></i> 실제 공부</span>
+            <span><i class="planner-dot planned"></i> 계획</span>
+            <span id="planner-class-legend" class="hidden"><i class="planner-dot class"></i> 등록 수업</span>
+          </div>
+          <span class="planner-day-note">00~04시는 다음 날 새벽</span>
+          <ul id="planner-today-classes" class="planner-class-list hidden" aria-label="등록 수업"></ul>
+        </footer>
+      </section>
     </div>
 
     <!-- TAB: MY PROFILE -->
@@ -2725,7 +2713,7 @@
               </li>
               <li class="space-y-0.5">
                 <div class="font-black text-slate-900">📝 스터디 플래너</div>
-                <p>할 일을 추가하고 선택한 뒤 시간표에서 10분 칸을 쓸면 자동 저장됩니다. 시간대별 계획을 눌러 시작·끝 시간을 수정할 수 있습니다. 실제 공부는 시간표의 초록색 줄과 상단 누적 시간으로 확인합니다.</p>
+                <p>시간표의 편집을 열고 할 일을 고른 뒤 10분 칸을 쓸면 계획이 자동 저장됩니다. 저장한 칸을 눌러 시간을 수정할 수 있습니다. 과목 옆의 ▶로 타이머를 켜면 실제 공부 시간이 시간표에 과목 색으로 기록됩니다.</p>
               </li>
               <li class="space-y-0.5">
                 <div class="font-black text-slate-900">📅 캘린더 &amp; ✨ STUDYGRAM</div>
@@ -3533,6 +3521,7 @@
       let activeChallengeCat = null;
       let plannerBrushId = '';
       let plannerErase = false;
+      let plannerEditing = false;
       let plannerDrag = null;
       let plannerUndo = null;
       let plannerMemberId = null;
@@ -5874,6 +5863,35 @@
         if (focusId) document.getElementById(focusId)?.focus({ preventScroll: true });
       }
 
+      function plannerSubjectName(value) {
+        return String(value || '').trim() || '기타';
+      }
+
+      function plannerDayStudy(mm) {
+        const subjects = new Map();
+        const slots = new Map();
+        for (const session of Object.values(mm.timerSubjects || {})) {
+          if (!session?.subject) continue;
+          const name = plannerSubjectName(session.subject);
+          if (!subjects.has(name)) subjects.set(name, { color: plannerColor(session.color), ms: 0, tasks: [] });
+          const subject = subjects.get(name);
+          for (const [slot, elapsed] of Object.entries(session.slots || {})) {
+            const ms = Math.max(0, Number(elapsed) || 0);
+            if (!slots.has(slot)) slots.set(slot, new Map());
+            const amounts = slots.get(slot);
+            amounts.set(name, (amounts.get(name) || 0) + ms);
+            subject.ms += ms;
+          }
+        }
+        return { subjects, slots };
+      }
+
+      function plannerShortDuration(seconds) {
+        if (seconds < 60) return seconds ? `${Math.floor(seconds)}초` : '—';
+        const mins = Math.floor(seconds / 60);
+        return mins >= 60 ? `${Math.floor(mins / 60)}:${String(mins % 60).padStart(2, '0')}` : `${mins}분`;
+      }
+
       function renderPlannerTab() {
         if (plannerDrag) return;
         const input = document.getElementById('planner-date-input');
@@ -5882,6 +5900,7 @@
           plannerMemberId = prefs.currentUserId;
           plannerBrushId = '';
           plannerErase = false;
+          plannerEditing = false;
           plannerUndo = null;
           document.getElementById('planner-save-status').textContent = '';
         }
@@ -5889,28 +5908,40 @@
         const context = plannerContext();
         const { day, memberId, mm } = context;
         const editable = canEditPlanner(context);
+        const today = day === studyDayKey();
         const tasks = mm.tasks || [];
         const ranges = plannerRanges(mm);
+        const actual = plannerDayStudy(mm);
+        const subjects = new Map();
+        for (const task of tasks) {
+          const name = plannerSubjectName(task.subject);
+          if (!subjects.has(name)) subjects.set(name, { color: plannerColor(task.color), ms: actual.subjects.get(name)?.ms || 0, tasks: [] });
+          subjects.get(name).tasks.push(task);
+        }
+        for (const [name, subject] of actual.subjects) {
+          if (!subjects.has(name)) subjects.set(name, subject);
+        }
         if (!tasks.some(task => task.id === plannerBrushId)) plannerBrushId = '';
 
-        document.getElementById('planner-planned-total').textContent = plannerDuration(
-          ranges.reduce((total, range) => total + (range.end - range.start) * 600, 0)
-        );
-        document.getElementById('planner-study-mins-pill').textContent = plannerDuration(studySeconds(memberId, day));
+        const plannedSecs = ranges.reduce((total, range) => total + (range.end - range.start) * 600, 0);
+        const actualSecs = studySeconds(memberId, day);
+        document.getElementById('planner-planned-total').textContent = plannerDuration(plannedSecs);
+        document.getElementById('planner-study-mins-pill').textContent = plannerDuration(actualSecs);
         document.getElementById('planner-task-total').textContent = `${tasks.filter(task => task.status === 'V').length} / ${tasks.length}`;
-        document.getElementById('planner-today').disabled = day === studyDayKey();
+        document.getElementById('planner-today').disabled = today;
         document.getElementById('planner-add-task').classList.toggle('hidden', !editable);
-        document.getElementById('planner-toolbar').classList.toggle('hidden', !editable);
-        const hint = document.getElementById('planner-drag-hint');
-        document.getElementById('planner-feedback').classList.toggle('hidden', !editable);
-        hint.textContent = plannerErase
-          ? '지울 구간을 쓸면 자동으로 저장돼요. 화면을 스크롤하려면 지우개를 끄세요.'
-          : plannerBrushId
-            ? '시간 칸을 쓸면 자동 저장돼요. 색이 있는 칸을 누르면 수정할 수 있어요.'
-            : tasks.length
-              ? '할 일을 선택해서 시간 칸을 쓸거나, 색이 있는 칸을 눌러 계획을 수정하세요.'
-              : '할 일을 추가하면 시간표에 계획을 넣을 수 있어요.';
-        setPlannerMarkup('planner-brush', '<option value="">할 일 선택</option>' + plannerTaskOptions(tasks));
+
+        const editToggle = document.getElementById('planner-edit-toggle');
+        editToggle.classList.toggle('hidden', !editable);
+        editToggle.setAttribute('aria-pressed', String(editable && plannerEditing));
+        editToggle.textContent = plannerEditing ? '닫기' : '편집';
+        document.getElementById('planner-editor').classList.toggle('hidden', !editable || !plannerEditing);
+        document.getElementById('planner-drag-hint').textContent = plannerErase
+          ? '시간표에서 쓸어 지우세요.'
+          : tasks.length
+            ? '할 일을 골라 시간표를 쓸면 자동 저장돼요.'
+            : '할 일을 추가한 뒤 시간표에 넣어 보세요.';
+        setPlannerMarkup('planner-brush', '<option value="">칠할 할 일 선택</option>' + plannerTaskOptions(tasks));
         const brush = document.getElementById('planner-brush');
         brush.value = plannerErase ? '' : plannerBrushId;
         brush.disabled = !tasks.length;
@@ -5919,34 +5950,43 @@
         document.getElementById('planner-enter-time').disabled = !tasks.length;
         document.getElementById('planner-undo').disabled = !plannerUndo || plannerUndo.day !== day || plannerUndo.memberId !== memberId;
 
-        setPlannerMarkup('planner-tasks-list', tasks.map(task => {
-          const tid = escapeHtml(task.id);
-          const taskLabel = `${escapeHtml(task.subject)} ${escapeHtml(task.title)}`;
-          const status = editable
-            ? `<select id="planner-status-${tid}" class="planner-field" data-planner-status="${tid}" aria-label="${taskLabel} 상태">${PLANNER_STATUS.map(([value, label]) => `<option value="${value}" ${(task.status || '') === value ? 'selected' : ''}>${label}</option>`).join('')}</select>`
-            : escapeHtml(PLANNER_STATUS.find(([value]) => value === task.status)?.[1] || '미체크');
-          return `<div class="planner-task" ${!plannerErase && plannerBrushId === task.id ? 'aria-current="true"' : ''}>
-            <div class="planner-task-main">
-              <strong><i class="planner-dot" style="--task-color:${plannerColor(task.color)}"></i>${escapeHtml(task.subject)}</strong>
-              <span class="todo-strike ${task.status === 'V' ? 'is-done' : ''}">${escapeHtml(task.title)}</span>
-            </div>
-            <div class="planner-task-actions">
-              ${status}${editable ? `<button type="button" id="planner-edit-${tid}" class="planner-button planner-icon" data-planner-edit-task="${tid}" aria-label="${taskLabel} 수정">${PLANNER_EDIT_ICON}</button>` : ''}
-            </div>
+        function subjectHeading(name, color, ms, startButton = '') {
+          const seconds = Math.floor(ms / 1000);
+          return `<div class="planner-subject-head">
+            <strong class="planner-subject-name"><i class="planner-dot" style="--task-color:${color}"></i><span>${escapeHtml(name)}</span></strong>
+            <span class="planner-subject-time" title="${plannerDuration(seconds)}" aria-label="${plannerDuration(seconds)}">${plannerShortDuration(seconds)}</span>
+            ${startButton}
           </div>`;
-        }).join('') || '<p class="planner-empty">등록한 할 일이 없어요.</p>');
+        }
 
-        setPlannerMarkup('planner-schedule-summary', ranges.map(range => {
-          const { start, end, task } = range;
-          const tag = editable ? 'button' : 'div';
-          const time = `${plannerTimeLabel(start)} ~ ${plannerTimeLabel(end)}`;
-          return `<${tag} class="planner-range" ${editable ? `type="button" id="planner-range-${start}" data-planner-range="${start}" aria-label="${time} ${escapeHtml(task.subject)} 계획 수정"` : ''}>
-            <i class="planner-dot" style="--task-color:${plannerColor(task.color)}"></i>
-            <time>${time.replace(' ~ ', ' ~<br>')}</time>
-            <span class="planner-range-main"><strong>${escapeHtml(task.subject)}</strong><span>${escapeHtml(task.title)}</span></span>
-            ${editable ? '<span class="planner-range-arrow" aria-hidden="true">›</span>' : ''}
-          </${tag}>`;
-        }).join('') || '<p class="planner-empty">저장한 시간 계획이 없어요.</p>');
+        let listHtml = '';
+        for (const [name, subject] of subjects) {
+          const timer = today && editable && subject.tasks.length
+            ? `<button type="button" class="planner-button planner-icon" data-planner-start="${escapeHtml(name)}" aria-label="${escapeHtml(name)} 타이머 시작" title="${escapeHtml(name)} 타이머 시작"><i class="planner-play-icon" aria-hidden="true"></i></button>`
+            : '';
+          const taskRows = subject.tasks.map(task => {
+            const id = escapeHtml(task.id);
+            const status = PLANNER_STATUS.find(([value]) => value === task.status)?.[1] || '미체크';
+            const marker = { V: '✓', '△': '△', X: '×' }[task.status] || '○';
+            const taskLabel = `${escapeHtml(name)} ${escapeHtml(task.title)}`;
+            const statusPicker = editable
+              ? `<select id="planner-status-${id}" data-planner-status="${id}" aria-label="${taskLabel} 상태">${PLANNER_STATUS.map(([value, label]) => `<option value="${value}" ${(task.status || '') === value ? 'selected' : ''}>${label}</option>`).join('')}</select>`
+              : '';
+            const titleClass = `planner-task-title ${task.status === 'V' ? 'is-done' : ''}`;
+            const title = editable
+              ? `<button type="button" id="planner-edit-${id}" class="${titleClass}" data-planner-edit-task="${id}" aria-label="${taskLabel} 수정">${escapeHtml(task.title)}</button>`
+              : `<span class="${titleClass}">${escapeHtml(task.title)}</span>`;
+            return `<div class="planner-task" ${plannerEditing && !plannerErase && plannerBrushId === task.id ? 'aria-current="true"' : ''}>
+              <span class="planner-task-status ${task.status === 'V' ? 'is-done' : ''}" title="${escapeHtml(status)}"><span aria-hidden="true">${marker}</span>${statusPicker}</span>
+              ${title}
+            </div>`;
+          }).join('');
+          listHtml += `<section class="planner-subject-group">${subjectHeading(name, subject.color, subject.ms, timer)}${taskRows}</section>`;
+        }
+        const taggedSecs = [...subjects.values()].reduce((sum, subject) => sum + subject.ms, 0) / 1000;
+        const unknownSecs = Math.max(0, actualSecs - taggedSecs);
+        if (unknownSecs >= 1) listHtml += `<div class="planner-subject-group">${subjectHeading('과목 미지정', 'var(--planner-actual)', unknownSecs * 1000)}</div>`;
+        setPlannerMarkup('planner-tasks-list', listHtml || '<p class="planner-empty">＋ 버튼으로 과목과 할 일을 추가하세요.</p>');
 
         const nextDate = addDaysStr(day, 1);
         const dateClasses = date => {
@@ -5963,67 +6003,49 @@
         ).join(''));
 
         const grid = document.getElementById('planner-grid');
-        grid.classList.toggle('can-paint', editable && Boolean(plannerBrushId || plannerErase));
+        grid.classList.toggle('can-paint', editable && plannerEditing && Boolean(plannerBrushId || plannerErase));
         grid.dataset.erasing = String(plannerErase);
         const byId = new Map(tasks.map(task => [task.id, task]));
-        const renderHours = (start, finish, date, courses) => {
+        let gridHtml = '';
+        for (let hour = 5; hour < 29; hour++) {
+          const date = hour < 24 ? day : nextDate;
+          const courses = hour < 24 ? dayClasses : nightClasses;
           const minutesBySlot = shared.studySlotMins?.[date]?.[memberId] || {};
           const legacyBlocks = shared.studyBlocks?.[date]?.[memberId] || {};
-          let html = '';
-          let hasRecords = false;
-          for (let hour = start; hour < finish; hour++) {
-            const cells = Array.from({ length: 6 }, (_, slot) => {
-              const index = hour * 6 + slot;
-              const key = plannerSlotKey(index);
-              const task = byId.get(mm.blocks?.[key]);
-              const time = hour % 24 * 60 + slot * 10;
-              const course = courses.find(item => toMins(item.start) < time + 10 && toMins(item.end) > time);
-              const seconds = Math.min(600, Math.max(0, Number(minutesBySlot[key]) || 0) * 60);
-              return { index, task, course, seconds, legacy: !seconds && Boolean(legacyBlocks[key]) };
-            });
-            const hourSeconds = cells.reduce((sum, cell) => sum + cell.seconds, 0);
-            const hasLegacy = cells.some(cell => cell.legacy);
-            hasRecords ||= Boolean(hourSeconds || hasLegacy || cells.some(cell => cell.task || cell.course));
-            let labels = '';
-            for (let i = 0; i < cells.length;) {
-              const task = cells[i].task;
-              const course = cells[i].course;
-              let end = i + 1;
-              if (task || course) {
-                while (end < cells.length && (task ? cells[end].task === task : !cells[end].task && cells[end].course === course)) end++;
-                labels += `<span class="planner-block-label ${task ? '' : 'is-class'}" aria-hidden="true" style="grid-column:${i + 1}/${end + 1};--task-color:${plannerColor(task?.color)}">${escapeHtml(task?.subject || course?.name)}</span>`;
-              }
-              i = end;
+          let cells = '';
+          for (let index = hour * 6; index < (hour + 1) * 6; index++) {
+            const key = plannerSlotKey(index);
+            const task = byId.get(mm.blocks?.[key]);
+            const courseTime = (index % 144) * 10;
+            const course = courses.find(item => toMins(item.start) < courseTime + 10 && toMins(item.end) > courseTime);
+            const amounts = actual.slots.get(key) || new Map();
+            const timedMs = Math.min(600000, Math.max(0, Number(minutesBySlot[key]) || 0) * 60000);
+            const recordedMs = [...amounts.values()].reduce((sum, ms) => sum + ms, 0);
+            const unassignedMs = Math.max(0, timedMs - recordedMs);
+            const totalMs = Math.max(timedMs, recordedMs);
+            const legacy = !totalMs && Boolean(legacyBlocks[key]);
+            let fill = '';
+            let freePercent = 100;
+            for (const [name, ms] of [...amounts, ['', unassignedMs]]) {
+              if (ms < 1 || freePercent <= 0) continue;
+              const width = Math.min(freePercent, Math.max(4, ms / 6000));
+              const color = name ? `color-mix(in srgb,${subjects.get(name).color} 86%,#233856)` : 'var(--planner-actual)';
+              fill += `<i style="--study-width:${width}%;--study-color:${color}"></i>`;
+              freePercent -= width;
             }
-            const plan = cells.map(({ index, task, course, seconds, legacy }, slot) => {
-              const actualLabel = legacy ? '실제 공부 기록 있음' : seconds ? `실제 공부 ${plannerDuration(seconds)}` : '';
-              const label = [plannerTimeLabel(index), task ? `계획 ${task.subject} ${task.title}` : '빈 계획 칸', course?.name, actualLabel].filter(Boolean).join(' · ');
-              return `<button type="button" id="planner-slot-${index}" data-planner-slot="${index}" class="planner-plan-cell" style="grid-column:${slot + 1}" ${slot === 5 ? 'data-last-slot' : ''} ${editable ? `tabindex="${index === PLANNER_DAY_START || index === 144 ? '0' : '-1'}"` : 'disabled'} aria-label="${escapeHtml(label)}" title="${escapeHtml(label)}"></button>`;
-            }).join('');
-            const actual = cells.map(({ index, seconds, legacy }) => {
-              const label = `${plannerTimeLabel(index)} · 실제 공부 ${legacy ? '기록 있음' : plannerDuration(seconds)}`;
-              return `<div class="planner-actual-slot ${legacy ? 'is-legacy' : ''}" title="${label}">${seconds || legacy ? `<span style="width:${legacy ? 100 : Math.max(3, seconds / 6)}%"></span>` : ''}</div>`;
-            }).join('');
-            html += `<div class="planner-hour">
-              <time>${String(hour % 24).padStart(2, '0')}:00</time>
-              <div class="planner-hour-tracks">
-                <div class="planner-plan-track">${labels}${plan}</div>
-                <div class="planner-actual-track" aria-hidden="true">${actual}</div>
-              </div>
-              <span class="planner-hour-total" aria-label="실제 공부 ${plannerDuration(hourSeconds)}${hasLegacy ? ', 기존 기록 포함' : ''}">${hourSeconds ? plannerDuration(hourSeconds) : hasLegacy ? '기록 있음' : ''}</span>
-            </div>`;
+            const names = [...amounts.keys()].join(', ');
+            const actualLabel = legacy ? '실제 공부 기록 있음' : totalMs ? `실제 공부 ${plannerDuration(totalMs / 1000)}${names ? ` (${names})` : ''}` : '';
+            const label = [plannerTimeLabel(index), task ? `계획 ${task.subject} ${task.title}` : '빈 계획 칸', course?.name, actualLabel].filter(Boolean).join(' · ');
+            const planColor = task ? subjects.get(plannerSubjectName(task.subject)).color : '';
+            cells += `<button type="button" id="planner-slot-${index}" data-planner-slot="${index}" class="planner-plan-cell ${task ? 'has-plan' : course ? 'has-class' : ''} ${legacy ? 'is-legacy' : ''}"
+              ${task ? `style="--task-color:${planColor}"` : ''} ${editable ? `tabindex="${index === PLANNER_DAY_START ? '0' : '-1'}"` : 'disabled'} aria-label="${escapeHtml(label)}" title="${escapeHtml(label)}">${fill || legacy ? `<span class="planner-cell-fill" aria-hidden="true">${fill}</span>` : ''}</button>`;
           }
-          return { html, hasRecords };
-        };
-        setPlannerMarkup('planner-hours', renderHours(5, 24, day, dayClasses).html);
-        const night = renderHours(24, 29, nextDate, nightClasses);
-        setPlannerMarkup('planner-night-hours', night.html);
-        const nightSection = document.getElementById('planner-night');
-        if (nightSection.dataset.day !== day || nightSection.dataset.records !== String(night.hasRecords)) {
-          nightSection.open = night.hasRecords;
-          nightSection.dataset.day = day;
-          nightSection.dataset.records = String(night.hasRecords);
+          const text = `${String(hour % 24).padStart(2, '0')}시`;
+          gridHtml += `<div class="planner-hour ${hour >= 24 ? 'is-night' : ''} ${hour % 6 === 0 ? 'is-divider' : ''}">
+            <time aria-label="${escapeHtml(plannerTimeLabel(hour * 6))}">${text}</time><div class="planner-plan-track">${cells}</div>
+          </div>`;
         }
+        setPlannerMarkup('planner-hours', gridHtml);
       }
 
       function renderProfileTab() {
@@ -6696,7 +6718,11 @@
       function switchTab(tab) {
         if (['rankings','brag'].includes(tab)) tab = 'members';
         if (!document.getElementById(`tab-${tab}`)) tab = 'dashboard';
-        if (prefs.activeTab === 'planner' && tab !== 'planner') cancelPlannerDrag();
+        if (prefs.activeTab === 'planner' && tab !== 'planner') {
+          cancelPlannerDrag();
+          plannerEditing = false;
+          plannerErase = false;
+        }
         if (tab === 'guide') {
           if (prefs.guideHintUnread) prefs.guideHintUnread = false;
           if (!prefs.adminMode) { unlockChallengeFor(prefs.currentUserId, 'ch_guide', false); saveSharedData(); }
@@ -7831,6 +7857,11 @@
       document.getElementById('planner-prev-day').addEventListener('click', () => selectPlannerDay(addDaysStr(plannerContext().day, -1)));
       document.getElementById('planner-next-day').addEventListener('click', () => selectPlannerDay(addDaysStr(plannerContext().day, 1)));
       document.getElementById('planner-today').addEventListener('click', () => selectPlannerDay(studyDayKey()));
+      document.getElementById('planner-edit-toggle').addEventListener('click', () => {
+        plannerEditing = !plannerEditing;
+        plannerErase = false;
+        renderPlannerTab();
+      });
       document.getElementById('planner-brush').addEventListener('change', event => {
         plannerBrushId = event.target.value;
         plannerErase = false;
@@ -7887,6 +7918,7 @@
         const task = (context.mm.tasks || []).find(item => item.id === taskId);
         if (taskId && !task) return;
         let color = plannerColor(task?.color || PLANNER_COLORS[(context.mm.tasks || []).length % PLANNER_COLORS.length]);
+        let pickedColor = false;
         const colors = [...new Set([...PLANNER_COLORS, color])];
         const colorNames = ['하늘색', '연한 남색', '연보라', '분홍색', '연한 빨강', '주황색', '노란색', '연두색', '민트색', '청록색', '보라색', '회색'];
         openModal(task ? '할 일 수정' : '할 일 추가', `
@@ -7912,6 +7944,7 @@
           const swatch = event.target.closest('[data-planner-color]');
           if (!swatch) return;
           color = swatch.dataset.plannerColor;
+          pickedColor = true;
           form.querySelectorAll('[data-planner-color]').forEach(button => {
             button.setAttribute('aria-pressed', String(button === swatch));
           });
@@ -7926,15 +7959,19 @@
             return;
           }
           const mm = plannerContext().mm;
+          const group = (mm.tasks || []).filter(item => plannerSubjectName(item.subject) === subject);
+          const subjectColor = !pickedColor && group.length ? plannerColor(group[0].color) : color;
+          if (pickedColor) group.forEach(item => { item.color = subjectColor; });
           if (taskId) {
             const existing = (mm.tasks || []).find(item => item.id === taskId);
             if (!existing) { closeModal(); renderPlannerTab(); return; }
-            Object.assign(existing, { subject, title, color });
+            Object.assign(existing, { subject, title, color: subjectColor });
           } else {
             const id = 't_' + (globalThis.crypto?.randomUUID?.() || `${Date.now()}_${Math.random().toString(36).slice(2)}`);
-            (mm.tasks ||= []).push({ id, subject, title, color, status: '' });
+            (mm.tasks ||= []).push({ id, subject, title, color: subjectColor, status: '' });
             plannerBrushId = id;
             plannerErase = false;
+            plannerEditing = true;
             checkStarterChallenge(context.memberId);
           }
           saveSharedData();
@@ -8032,13 +8069,25 @@
         const slot = now.getUTCHours() * 6 + Math.floor(now.getUTCMinutes() / 10);
         openPlannerTime(plannerContext().day === studyDayKey() ? slot + (slot < PLANNER_DAY_START ? 144 : 0) : 54);
       });
-      document.getElementById('planner-schedule-summary').addEventListener('click', event => {
-        const button = event.target.closest('[data-planner-range]');
-        if (button) openPlannerTime(Number(button.dataset.plannerRange), true);
-      });
       document.getElementById('planner-tasks-list').addEventListener('click', event => {
         const button = event.target.closest('[data-planner-edit-task]');
-        if (button) openPlannerTask(button.dataset.plannerEditTask);
+        if (button) { openPlannerTask(button.dataset.plannerEditTask); return; }
+        const start = event.target.closest('[data-planner-start]');
+        if (!start) return;
+        const context = plannerContext();
+        if (!canEditPlanner(context) || context.day !== studyDayKey()) return;
+        if (focusInterval) {
+          openFocusOverlay();
+          return;
+        }
+        const task = (context.mm.tasks || []).find(item => plannerSubjectName(item.subject) === start.dataset.plannerStart);
+        if (!task) return;
+        openFocusOverlay(false, {
+          id: 's_' + (globalThis.crypto?.randomUUID?.() || `${Date.now()}_${Math.random().toString(36).slice(2)}`),
+          memberId: context.memberId,
+          subject: plannerSubjectName(task.subject),
+          color: plannerColor(task.color)
+        });
       });
       document.getElementById('planner-tasks-list').addEventListener('change', event => {
         const control = event.target.closest('[data-planner-status]');
@@ -8071,7 +8120,7 @@
 
       plannerGrid.addEventListener('pointerdown', event => {
         const cell = event.target.closest('[data-planner-slot]');
-        if (!cell || event.button !== 0 || !event.isPrimary || plannerDrag || !(plannerErase || plannerBrushId)) return;
+        if (!cell || event.button !== 0 || !event.isPrimary || plannerDrag || !plannerEditing || !(plannerErase || plannerBrushId)) return;
         const context = plannerContext();
         if (!canEditPlanner(context) || (!plannerErase && !(context.mm.tasks || []).some(task => task.id === plannerBrushId))) return;
         event.preventDefault();
@@ -8120,7 +8169,7 @@
         const context = plannerContext();
         if (!cell || !canEditPlanner(context)) return;
         const index = Number(cell.dataset.plannerSlot);
-        if (plannerErase || plannerBrushId) {
+        if (plannerEditing && (plannerErase || plannerBrushId)) {
           if (event.detail) return;
           if (!plannerErase && context.mm.blocks?.[plannerSlotKey(index)]) {
             openPlannerTime(index, true);
@@ -8944,6 +8993,7 @@
       let focusStartedAt = null;
       let focusInterval = null;
       let focusModeBeforeChange = null;
+      let focusPlannerSubject = null;
       let focusOsNotifShown = false;
       let focusOsNotifRef = null;
 
@@ -9030,7 +9080,8 @@
             hasRested: focusHasRested,
             sessionLp: focusSessionLp,
             syncedSecs: focusElapsedSecs,
-            modeBeforeChange: focusModeBeforeChange
+            modeBeforeChange: focusModeBeforeChange,
+            plannerSubject: focusPlannerSubject
           }));
         } catch (e) {}
       }
@@ -9060,6 +9111,7 @@
             return;
           }
           focusModeBeforeChange = st.modeBeforeChange || null;
+          focusPlannerSubject = st.plannerSubject || null;
           focusAccumulatedSecs = Number(st.accumulatedSecs) || 0;
           focusElapsedSecs = Number(st.syncedSecs) || 0;
           focusPaused = !!st.paused;
@@ -9240,6 +9292,9 @@
         const restLabel = document.getElementById('focus-rest-label');
         restLabel.classList.toggle('hidden', !focusPaused);
         document.getElementById('focus-timer-display').textContent = focusPaused ? rest : formatted;
+        const subjectLabel = document.getElementById('focus-planner-subject');
+        subjectLabel.textContent = focusPlannerSubject?.subject || '';
+        subjectLabel.classList.toggle('hidden', !focusPlannerSubject);
         document.getElementById('focus-mini-time').textContent = focusPaused ? `휴식 ${rest}` : formatted;
         const restNote = document.getElementById('focus-rest-note');
         if (focusPaused) {
@@ -9313,6 +9368,16 @@
         const localDay = koreaDateKey(date);
         const clock = new Date(+date + 9 * 3600000);
         const slot = plannerSlotKey(clock.getUTCHours() * 6 + Math.floor(clock.getUTCMinutes() / 10));
+        const member = shared.members.find(item => item.id === memberId);
+        const tag = focusPlannerSubject;
+        const ownPrivate = currentAuthUser && privateRef && member?.uid === currentAuthUser.uid;
+        if (tag?.memberId === memberId && !prefs.adminMode && (filePreview || ownPrivate)) {
+          const mm = getMemberMotemote(studyDayKey(date), memberId);
+          const records = mm.timerSubjects ||= {};
+          const session = records[tag.id] ||= { subject: tag.subject, color: tag.color, slots: {} };
+          session.slots ||= {};
+          session.slots[slot] = Math.min(600000, (Number(session.slots[slot]) || 0) + elapsedMs);
+        }
         const blocks = ((shared.studyBlocks[localDay] ||= {})[memberId] ||= {});
         const minutes = ((shared.studySlotMins[localDay] ||= {})[memberId] ||= {});
         // Older records may have only a marker, so their elapsed time cannot be reconstructed.
@@ -9428,7 +9493,7 @@
         }
       }
 
-      function openFocusOverlay(isRestoring = false) {
+      function openFocusOverlay(isRestoring = false, subject = null) {
         if (prefs.adminMode) {
           showToast('관리자 모드에서는 멤버 타이머 충돌 방지를 위해 스톱워치를 켤 수 없습니다.', 'warn');
           return;
@@ -9454,6 +9519,7 @@
 
         if (!focusInterval) {
           if (isRestoring !== true) {
+            focusPlannerSubject = subject;
             focusElapsedSecs = 0;
             focusAccumulatedSecs = 0;
             focusSessionLp = 0;
@@ -9532,6 +9598,7 @@
         focusRestDurationMs = FOCUS_REST_LIMIT_MS;
         focusHasRested = false;
         focusModeBeforeChange = null;
+        focusPlannerSubject = null;
         focusPaused = false;
         clearFocusState();
         closeFocusOsNotification();
