@@ -1,24 +1,21 @@
 {
-  "name": "I LOVE STUDY",
+  "name": "I LOVE STUDY (충남대 전자공학과)",
   "short_name": "I LOVE STUDY",
-  "description": "공부시간을 기록하는 나만의 공간 (충남대 전자공학과)",
   "start_url": "./",
   "scope": "./",
-  "display": "standalone",
-  "background_color": "#f1f5fb",
-  "theme_color": "#142c54",
+  "display": "fullscreen",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
   "icons": [
     {
       "src": "./icon-192.png",
       "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "type": "image/png"
     },
     {
       "src": "./icon-512.png",
       "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "type": "image/png"
     }
   ]
 }

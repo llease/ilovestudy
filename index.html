@@ -1607,7 +1607,10 @@
       display:flex;align-items:center;gap:.45rem
     }
     .planner-heading,.planner-section-heading {justify-content:space-between;flex-wrap:wrap}
+    .planner-title-row {display:flex;align-items:center;gap:.5rem}
     .planner-heading h3 {margin:0;font-size:1.22rem;font-weight:900;letter-spacing:-.045em}
+    #planner-edit-toggle {color:var(--link);background:var(--tint)}
+    #planner-edit-toggle[aria-pressed="true"] {background:var(--primary);border-color:var(--primary);color:var(--on-primary)}
     .planner-date-nav {gap:.2rem;flex-wrap:wrap}
     .planner-stats {justify-content:space-between;gap:.35rem .75rem;flex-wrap:wrap;margin:.38rem 0 0;padding:.34rem .65rem;border-radius:8px;background:var(--soft)}
     .planner-stats > div {display:flex;align-items:baseline;gap:.24rem;white-space:nowrap}
@@ -3254,7 +3257,10 @@
       <section class="ed-card planner-sheet" aria-labelledby="planner-title">
         <div class="planner-sheet-header">
           <div class="planner-heading">
-            <h3 id="planner-title">스터디 플래너</h3>
+            <div class="planner-title-row">
+              <h3 id="planner-title">스터디 플래너</h3>
+              <button type="button" id="planner-edit-toggle" class="planner-button" aria-pressed="false" aria-controls="planner-editor">편집</button>
+            </div>
             <div class="planner-date-nav" aria-label="플래너 날짜 이동">
               <button type="button" id="planner-prev-day" class="planner-button planner-icon" aria-label="이전 날">‹</button>
               <input id="planner-date-input" type="date" class="planner-field" aria-label="플래너 날짜" />
@@ -3290,7 +3296,6 @@
           <section class="planner-timeline" aria-labelledby="planner-clock-title">
             <div class="planner-section-heading">
               <h4 id="planner-clock-title">시간표</h4>
-              <button type="button" id="planner-edit-toggle" class="planner-button" aria-pressed="false" aria-controls="planner-editor">편집</button>
             </div>
             <div id="planner-grid" aria-labelledby="planner-clock-title">
               <div class="planner-clock-head" aria-hidden="true">
@@ -3415,7 +3420,7 @@
             <!-- Quick Preset Bar -->
             <div class="tt-preset-bar rounded-xl p-2">
               <button id="btn-load-cnu-ee" type="button" class="w-full py-2 px-3 rounded-lg text-xs font-bold transition whitespace-nowrap">
-                ⚡ 충남대 전자과 시간표 불러오기
+                충남대 전자과 시간표 불러오기
               </button>
             </div>
             <form id="class-form" class="space-y-2.5">
@@ -11201,7 +11206,7 @@
       });
 
       document.getElementById('btn-edit-quote').addEventListener('click', () => {
-        openModal('✏️ 오늘의 명언 설정', `
+        openPlannerForm('✏️ 오늘의 명언 설정', `
           <form id="quote-edit-form" class="space-y-3">
             <input id="quote-edit-input" type="text" value="${escapeHtml(prefs.customQuote || '')}" placeholder="나만의 명언 입력 (비우면 매일 자동 변경)" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm" />
             <div class="flex gap-2">
@@ -11224,7 +11229,7 @@
       });
 
       document.getElementById('btn-edit-bg').addEventListener('click', () => {
-        openModal('🖼️ 홈 배너 배경 설정', `
+        openPlannerForm('🖼️ 홈 배너 배경 설정', `
           <div class="space-y-3 text-xs">
             <p class="text-slate-600">원하는 사진을 골라 홈 배너 배경으로 쓰거나, 기본 배경으로 되돌릴 수 있습니다.</p>
             <div class="flex flex-wrap items-center gap-2">
