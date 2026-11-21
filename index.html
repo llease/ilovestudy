@@ -11511,10 +11511,12 @@
         const agreed = document.getElementById('onboard-privacy-agree').checked;
         if (!nickname) { showToast('사용할 별명을 입력해 주세요.', 'warn'); return; }
         if (!source || !feature || !goalHours) { showToast('간단한 가입 설문을 모두 작성해 주세요.', 'warn'); return; }
+        const parsedGoalHours = Number(goalHours);
+        if (!Number.isFinite(parsedGoalHours) || parsedGoalHours <= 0) { showToast('하루 목표 공부시간을 숫자로 입력해 주세요.', 'warn'); return; }
         if (!agreed) { showToast('이용 안내 동의에 체크해 주세요.', 'warn'); return; }
         if (!dbRef || !cloudConnected || cloudLinkLive === false) { showToast('연결된 뒤에 다시 시작하기를 눌러 주세요.', 'warn'); return; }
         const button = e.currentTarget.querySelector('button[type="submit"]');
-        const onboardingSurvey = { source, feature, goalHours: Number(goalHours), submittedAt: Date.now(), agreedAt: `${todayStr()} ${getNowParts().hhmm}` };
+        const onboardingSurvey = { source, feature, goalHours: parsedGoalHours, submittedAt: Date.now(), agreedAt: `${todayStr()} ${getNowParts().hhmm}` };
         const sMode = shared.signupMode === 'approval' ? 'approval' : 'open';
         const newMember = {
           id:'m_' + user.uid.slice(0,8) + '_' + Date.now(), uid:user.uid, activeSessionId:SESSION_ID,
@@ -11540,7 +11542,7 @@
               avatarUrl: user.photoURL || '',
               source,
               feature,
-              goalHours: Number(goalHours),
+              goalHours: parsedGoalHours,
               requestedAt: `${todayStr()} ${getNowParts().hhmm}`,
               status: 'pending'
             };
@@ -11572,10 +11574,8 @@
             Object.assign(lastSyncedJson, memberSnap);
           }
           prefs.guideHintUnread = true;
-          syncAuthUserMember(user);
           savePrefs();
-          showToast(`${nickname}님, 환영합니다! 상단의 설명서도 확인해 보세요.`, 'success');
-          switchTab('profile');
+          syncAuthUserMember(user);
         } catch (err) {
           pendingFirstJoinWelcome = null;
           if (currentAuthUser?.uid === user.uid) showToast(`가입 정보를 저장하지 못했습니다. ${err?.message || '다시 시도해 주세요.'}`, 'error');
