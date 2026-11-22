@@ -10054,7 +10054,8 @@
         if (!alreadyCredited) applyMemberLp(state, to, 2, '리스펙 받음', sentAt);
 
         to.respectCount = (Number(to.respectCount) || 0) + 1;
-        (state.praises ||= {})[toId] = [...received, praise];
+        const cleanPraise = { ...praise, msg: `${from.name}님이 리스펙을 보냈어요.` };
+        (state.praises ||= {})[toId] = [...received, cleanPraise];
         const sent = (((state.respectSentByDate ||= {})[praise.date] ||= {})[fromId] ||= {});
         sent[toId] = true;
         const others = members.filter(member => member !== from && member.inStudy !== false);
@@ -10069,10 +10070,11 @@
       async function sendRespect(toId) {
         if (prefs.adminMode || respectWriteInProgress) return;
         const fromId = prefs.currentUserId;
+        const fromMem = (shared.members || []).find(m => m.id === fromId);
         const sentAt = new Date();
         const praise = {
           id: 'pr_' + (globalThis.crypto?.randomUUID?.() || `${+sentAt}_${Math.random().toString(36).slice(2)}`),
-          msg: PRAISE_MESSAGES[Math.floor(Math.random() * PRAISE_MESSAGES.length)],
+          msg: `${fromMem?.name || '스터디원'}님이 리스펙을 보냈어요.`,
           time: new Date(+sentAt + 9 * 3600000).toISOString().slice(11, 16),
           date: studyDayKey(sentAt), read: false
         };
@@ -10207,7 +10209,11 @@
           modalCleanupFn = stopSongPreview;
           document.getElementById('modal-song-preview-btn')?.addEventListener('click', ev => {
             const btn = ev.currentTarget;
-            toggleSongPreview(btn.dataset.previewUrl, btn);
+            if (btn.dataset.ytPreview) toggleYoutubePreview(btn.dataset.ytPreview, btn, document.getElementById('modal-song-yt-wrap'));
+            else toggleSongPreview(btn.dataset.previewUrl, btn);
+          });
+          document.querySelectorAll('#modal-body [data-music-app]').forEach(a => {
+            a.addEventListener('click', ev => handleMusicAppLinkClick(ev, a.dataset.musicApp, m.recommendedSong));
           });
           document.getElementById('modal-force-stop-btn')?.addEventListener('click', () => {
             closeModal();
@@ -16881,21 +16887,133 @@
         return /^https:\/\//i.test(trimmed) ? trimmed : '';
       }
 
+      let ytPreviewTimer = null;
+      let ytPreviewActiveWrap = null;
+      let ytPreviewActiveBtn = null;
+      let ytPreviewActiveId = '';
+
+      function extractYouTubeId(url) {
+        if (!url || typeof url !== 'string') return '';
+        const m = url.match(/(?:[?&]v=|youtu\.be\/|\/embed\/)([A-Za-z0-9_-]{11})/);
+        return m ? m[1] : '';
+      }
+
       function buildMusicServiceLinks(song) {
         const q = encodeURIComponent(`${song?.artist || ''} ${song?.title || ''}`.trim());
+        const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent || '');
         return {
-          melon: `https://www.melon.com/search/total/index.htm?q=${q}`,
+          melon: isMobile
+            ? `https://m2.melon.com/search/total/index.htm?q=${q}`
+            : `https://www.melon.com/search/total/index.htm?q=${q}`,
           spotify: safeSongUrl(song?.spotifyUrl) || `https://open.spotify.com/search/${q}`,
           ytMusic: safeSongUrl(song?.ytMusicUrl) || `https://music.youtube.com/search?q=${q}`,
           apple: safeSongUrl(song?.appleUrl) || `https://music.apple.com/kr/search?term=${q}`
         };
       }
 
+      function openUrlWithAppFallback(appSchemeUrl, fallbackWebUrl) {
+        let appOpened = false;
+        const onHide = () => { appOpened = true; cleanup(); };
+        const cleanup = () => {
+          document.removeEventListener('visibilitychange', onHide);
+          window.removeEventListener('pagehide', onHide);
+        };
+        document.addEventListener('visibilitychange', onHide);
+        window.addEventListener('pagehide', onHide);
+        window.location.href = appSchemeUrl;
+        setTimeout(() => {
+          cleanup();
+          if (!appOpened && !document.hidden) window.location.href = fallbackWebUrl;
+        }, 900);
+      }
+
+      function handleMusicAppLinkClick(ev, service, song) {
+        if (!song || !song.title) return;
+        const ua = navigator.userAgent || '';
+        const isAndroid = /Android/i.test(ua);
+        const isIOS = /iPhone|iPad|iPod/i.test(ua);
+        if (!isAndroid && !isIOS) return; // PC: default <a target="_blank">
+
+        const links = buildMusicServiceLinks(song);
+        const webUrl = links[service];
+        if (!webUrl) return;
+        const q = encodeURIComponent(`${song.artist || ''} ${song.title || ''}`.trim());
+
+        if (isAndroid) {
+          ev.preventDefault();
+          const fb = encodeURIComponent(webUrl);
+          let intentUrl = '';
+          if (service === 'melon') {
+            intentUrl = `intent://search?q=${q}#Intent;scheme=melonapp;package=com.iloen.melon;S.browser_fallback_url=${fb};end`;
+          } else if (service === 'spotify') {
+            const pathPart = webUrl.replace(/^https?:\/\//i, '');
+            intentUrl = `intent://${pathPart}#Intent;scheme=https;package=com.spotify.music;S.browser_fallback_url=${fb};end`;
+          } else if (service === 'ytMusic') {
+            const pathPart = webUrl.replace(/^https?:\/\//i, '');
+            intentUrl = `intent://${pathPart}#Intent;scheme=https;package=com.google.android.apps.youtube.music;S.browser_fallback_url=${fb};end`;
+          } else if (service === 'apple') {
+            const pathPart = webUrl.replace(/^https?:\/\//i, '');
+            intentUrl = `intent://${pathPart}#Intent;scheme=https;package=com.apple.android.music;S.browser_fallback_url=${fb};end`;
+          }
+          if (intentUrl) window.location.href = intentUrl;
+          return;
+        }
+
+        if (isIOS) {
+          if (service === 'melon') {
+            ev.preventDefault();
+            openUrlWithAppFallback(`meloniphone://search?q=${q}`, webUrl);
+          } else if (service === 'spotify') {
+            ev.preventDefault();
+            const trackMatch = webUrl.match(/open\.spotify\.com\/track\/([A-Za-z0-9]+)/);
+            const scheme = trackMatch ? `spotify:track:${trackMatch[1]}` : `spotify:search:${q}`;
+            openUrlWithAppFallback(scheme, webUrl);
+          } else if (service === 'ytMusic' || service === 'apple') {
+            // iOS Universal Links work best when navigated directly in the same tab (without target="_blank")
+            ev.preventDefault();
+            window.location.href = webUrl;
+          }
+        }
+      }
+
       function setPreviewBtnState(btn, playing) {
         if (!btn) return;
         const compact = btn.dataset.previewCompact === '1';
-        btn.textContent = playing ? (compact ? '⏸' : '⏸ 일시정지') : (compact ? '▶' : '▶ 30초 미리듣기');
+        btn.textContent = playing ? (compact ? '⏹' : '⏹ 정지') : (compact ? '▶' : '▶ 30초 미리듣기');
         btn.setAttribute('aria-pressed', String(playing));
+      }
+
+      function stopYoutubePreview() {
+        if (ytPreviewTimer) { clearTimeout(ytPreviewTimer); ytPreviewTimer = null; }
+        if (ytPreviewActiveWrap) {
+          ytPreviewActiveWrap.innerHTML = '';
+          ytPreviewActiveWrap.classList.add('hidden');
+        }
+        if (ytPreviewActiveBtn) setPreviewBtnState(ytPreviewActiveBtn, false);
+        ytPreviewActiveWrap = null;
+        ytPreviewActiveBtn = null;
+        ytPreviewActiveId = '';
+      }
+
+      function toggleYoutubePreview(ytId, btn, wrapEl) {
+        if (!ytId || !wrapEl) return;
+        if (ytPreviewActiveId === ytId && ytPreviewActiveWrap === wrapEl) {
+          stopYoutubePreview();
+          return;
+        }
+        stopSongPreview();
+        ytPreviewActiveId = ytId;
+        ytPreviewActiveBtn = btn || null;
+        ytPreviewActiveWrap = wrapEl;
+        setPreviewBtnState(btn, true);
+        wrapEl.classList.remove('hidden');
+        wrapEl.innerHTML = `<div class="space-y-1">
+          <iframe src="https://www.youtube.com/embed/${encodeURIComponent(ytId)}?autoplay=1&start=0&end=30&rel=0&modestbranding=1&playsinline=1" title="30초 미리듣기" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen class="w-full h-36 rounded-xl border border-slate-200 bg-black"></iframe>
+          <p class="text-[10px] text-slate-400 text-right">30초 후 자동 정지됩니다</p>
+        </div>`;
+        ytPreviewTimer = setTimeout(() => {
+          stopYoutubePreview();
+        }, 32000);
       }
 
       function stopSongPreview() {
@@ -16905,6 +17023,7 @@
         if (songPreviewActiveBtn) setPreviewBtnState(songPreviewActiveBtn, false);
         songPreviewActiveBtn = null;
         songPreviewActiveUrl = '';
+        stopYoutubePreview();
       }
 
       function toggleSongPreview(url, btn) {
@@ -16943,11 +17062,13 @@
         if (!song || !song.title) return '';
         const art = safeSongUrl(song.artworkUrl);
         const prev = safeSongUrl(song.previewUrl);
+        const ytId = extractYouTubeId(song.ytMusicUrl);
         const links = buildMusicServiceLinks(song);
+        const canPreview = !!(prev || ytId);
         return `<div class="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-2.5">
           <div class="flex items-center justify-between gap-2">
             <span class="font-bold text-slate-700">🎵 추천 노래</span>
-            ${prev ? `<button type="button" id="modal-song-preview-btn" data-preview-url="${escapeHtml(prev)}" aria-pressed="false" class="px-2.5 py-1 rounded-lg bg-slate-950 hover:bg-slate-800 text-white text-[11px] font-bold whitespace-nowrap transition">▶ 30초 미리듣기</button>` : ''}
+            ${canPreview ? `<button type="button" id="modal-song-preview-btn" ${ytId ? `data-yt-preview="${escapeHtml(ytId)}"` : `data-preview-url="${escapeHtml(prev)}"`} aria-pressed="false" class="px-2.5 py-1 rounded-lg bg-slate-950 hover:bg-slate-800 text-white text-[11px] font-bold whitespace-nowrap transition">▶ 30초 미리듣기</button>` : ''}
           </div>
           <div class="flex items-center gap-3 min-w-0">
             <div class="w-12 h-12 rounded-xl bg-slate-200 border border-slate-200 overflow-hidden flex items-center justify-center text-lg shrink-0">
@@ -16958,11 +17079,12 @@
               <p class="text-[11px] font-semibold text-slate-500 truncate">${escapeHtml(song.artist || '')}</p>
             </div>
           </div>
+          <div id="modal-song-yt-wrap" class="hidden"></div>
           <div class="flex flex-wrap gap-1.5 pt-0.5">
-            <a href="${escapeHtml(links.melon)}" target="_blank" rel="noopener noreferrer" class="px-2.5 py-1 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-800 hover:bg-emerald-100 text-[11px] font-bold transition">멜론 ↗</a>
-            <a href="${escapeHtml(links.spotify)}" target="_blank" rel="noopener noreferrer" class="px-2.5 py-1 rounded-lg bg-green-50 border border-green-200 text-green-800 hover:bg-green-100 text-[11px] font-bold transition">스포티파이 ↗</a>
-            <a href="${escapeHtml(links.ytMusic)}" target="_blank" rel="noopener noreferrer" class="px-2.5 py-1 rounded-lg bg-rose-50 border border-rose-200 text-rose-700 hover:bg-rose-100 text-[11px] font-bold transition">유튜브 뮤직 ↗</a>
-            <a href="${escapeHtml(links.apple)}" target="_blank" rel="noopener noreferrer" class="px-2.5 py-1 rounded-lg bg-slate-100 border border-slate-200 text-slate-700 hover:bg-slate-200 text-[11px] font-bold transition">애플뮤직 ↗</a>
+            <a href="${escapeHtml(links.melon)}" data-music-app="melon" target="_blank" rel="noopener noreferrer" class="px-2.5 py-1 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-800 hover:bg-emerald-100 text-[11px] font-bold transition">멜론 ↗</a>
+            <a href="${escapeHtml(links.spotify)}" data-music-app="spotify" target="_blank" rel="noopener noreferrer" class="px-2.5 py-1 rounded-lg bg-green-50 border border-green-200 text-green-800 hover:bg-green-100 text-[11px] font-bold transition">스포티파이 ↗</a>
+            <a href="${escapeHtml(links.ytMusic)}" data-music-app="ytMusic" target="_blank" rel="noopener noreferrer" class="px-2.5 py-1 rounded-lg bg-rose-50 border border-rose-200 text-rose-700 hover:bg-rose-100 text-[11px] font-bold transition">유튜브 뮤직 ↗</a>
+            <a href="${escapeHtml(links.apple)}" data-music-app="apple" target="_blank" rel="noopener noreferrer" class="px-2.5 py-1 rounded-lg bg-slate-100 border border-slate-200 text-slate-700 hover:bg-slate-200 text-[11px] font-bold transition">애플뮤직 ↗</a>
           </div>
         </div>`;
       }
@@ -16980,6 +17102,7 @@
         if (song && song.title) {
           const art = safeSongUrl(song.artworkUrl);
           const prev = safeSongUrl(song.previewUrl);
+          const ytId = extractYouTubeId(song.ytMusicUrl);
           const links = buildMusicServiceLinks(song);
           curEl.innerHTML = `<div class="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
             <div class="flex items-center gap-3 min-w-0">
@@ -16991,15 +17114,16 @@
                 <p class="text-[11px] font-semibold text-slate-500 truncate">${escapeHtml(song.artist || '')}</p>
               </div>
               <div class="flex items-center gap-1 shrink-0">
-                ${prev ? `<button type="button" data-song-preview="${escapeHtml(prev)}" data-preview-compact="1" aria-label="30초 미리듣기" aria-pressed="false" class="w-8 h-8 rounded-lg bg-slate-950 hover:bg-slate-800 text-white text-xs font-black flex items-center justify-center">▶</button>` : ''}
+                ${(ytId || prev) ? `<button type="button" ${ytId ? `data-yt-preview="${escapeHtml(ytId)}"` : `data-song-preview="${escapeHtml(prev)}"`} data-preview-compact="1" aria-label="30초 미리듣기" aria-pressed="false" class="w-8 h-8 rounded-lg bg-slate-950 hover:bg-slate-800 text-white text-xs font-black flex items-center justify-center">▶</button>` : ''}
                 <button type="button" id="btn-profile-song-clear" class="px-2 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 text-[11px] font-bold">삭제</button>
               </div>
             </div>
+            <div id="profile-song-yt-wrap" class="hidden"></div>
             <div class="flex flex-wrap gap-1.5">
-              <a href="${escapeHtml(links.melon)}" target="_blank" rel="noopener noreferrer" class="px-2 py-0.5 rounded-md bg-white border border-slate-200 text-[10px] font-bold text-emerald-700 hover:bg-emerald-50">멜론 ↗</a>
-              <a href="${escapeHtml(links.spotify)}" target="_blank" rel="noopener noreferrer" class="px-2 py-0.5 rounded-md bg-white border border-slate-200 text-[10px] font-bold text-green-700 hover:bg-green-50">스포티파이 ↗</a>
-              <a href="${escapeHtml(links.ytMusic)}" target="_blank" rel="noopener noreferrer" class="px-2 py-0.5 rounded-md bg-white border border-slate-200 text-[10px] font-bold text-rose-600 hover:bg-rose-50">유튜브 뮤직 ↗</a>
-              <a href="${escapeHtml(links.apple)}" target="_blank" rel="noopener noreferrer" class="px-2 py-0.5 rounded-md bg-white border border-slate-200 text-[10px] font-bold text-slate-600 hover:bg-slate-100">애플뮤직 ↗</a>
+              <a href="${escapeHtml(links.melon)}" data-music-app="melon" target="_blank" rel="noopener noreferrer" class="px-2 py-0.5 rounded-md bg-white border border-slate-200 text-[10px] font-bold text-emerald-700 hover:bg-emerald-50">멜론 ↗</a>
+              <a href="${escapeHtml(links.spotify)}" data-music-app="spotify" target="_blank" rel="noopener noreferrer" class="px-2 py-0.5 rounded-md bg-white border border-slate-200 text-[10px] font-bold text-green-700 hover:bg-green-50">스포티파이 ↗</a>
+              <a href="${escapeHtml(links.ytMusic)}" data-music-app="ytMusic" target="_blank" rel="noopener noreferrer" class="px-2 py-0.5 rounded-md bg-white border border-slate-200 text-[10px] font-bold text-rose-600 hover:bg-rose-50">유튜브 뮤직 ↗</a>
+              <a href="${escapeHtml(links.apple)}" data-music-app="apple" target="_blank" rel="noopener noreferrer" class="px-2 py-0.5 rounded-md bg-white border border-slate-200 text-[10px] font-bold text-slate-600 hover:bg-slate-100">애플뮤직 ↗</a>
             </div>
           </div>`;
         } else {
@@ -17364,6 +17488,17 @@
         showToast(`🎵 "${title}"을(를) 추천 노래로 저장했어요!`, 'success');
       });
       document.getElementById('profile-song-box')?.addEventListener('click', e => {
+        const appLink = e.target.closest('[data-music-app]');
+        if (appLink) {
+          const tm = getTargetProfileMember();
+          handleMusicAppLinkClick(e, appLink.dataset.musicApp, tm?.recommendedSong);
+          return;
+        }
+        const ytBtn = e.target.closest('[data-yt-preview]');
+        if (ytBtn) {
+          toggleYoutubePreview(ytBtn.dataset.ytPreview, ytBtn, document.getElementById('profile-song-yt-wrap'));
+          return;
+        }
         const prevBtn = e.target.closest('[data-song-preview]');
         if (prevBtn) {
           toggleSongPreview(prevBtn.dataset.songPreview, prevBtn);
