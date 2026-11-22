@@ -3100,7 +3100,7 @@
       <div id="auth-login-step" class="space-y-4">
         <div class="grid grid-cols-2 gap-1 p-1 rounded-xl bg-slate-100 border border-slate-200">
           <button id="auth-mode-login-btn" type="button" class="py-2 rounded-lg text-xs font-black bg-slate-950 text-white transition">로그인</button>
-          <button id="auth-mode-signup-btn" type="button" class="py-2 rounded-lg text-xs font-bold text-slate-600 hover:text-slate-950 transition">새 아이디 만들기</button>
+          <button id="auth-mode-signup-btn" type="button" class="py-2 rounded-lg text-xs font-bold text-slate-600 hover:text-slate-950 transition">가입 · 전환</button>
         </div>
 
         <p id="auth-error-msg" class="hidden text-xs font-bold text-rose-600 bg-rose-50 border border-rose-200 rounded-xl p-2.5"></p>
@@ -3118,74 +3118,96 @@
           <button id="btn-id-login" type="submit" class="w-full py-3 px-4 rounded-xl ed-btn-accent font-black text-sm">아이디로 로그인</button>
         </form>
 
-        <!-- ID/PW Signup Form -->
-        <form id="auth-id-signup-form" class="hidden space-y-2.5" autocomplete="off" novalidate>
-          <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-[11px] text-slate-600 leading-relaxed">
-            로그인용 아이디를 만들어요. <strong class="text-slate-900">아이디는 앱에서 보이는 별명과 별개</strong>이며, 가입 후 바로 별명을 정할 수 있어요.
+        <!-- Signup / Migration Wrapper -->
+        <div id="auth-signup-wrapper" class="hidden space-y-3">
+          <div class="grid grid-cols-2 gap-1.5">
+            <button id="auth-kind-new-btn" type="button" class="py-2 px-2.5 rounded-xl text-[11px] font-black border border-slate-950 bg-slate-950 text-white transition">🌱 처음 가입 (신규)</button>
+            <button id="auth-kind-google-btn" type="button" class="py-2 px-2.5 rounded-xl text-[11px] font-bold border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100 transition">🔄 기존 Google 회원 전환</button>
           </div>
-          <div>
-            <label for="auth-signup-id" class="block text-[11px] font-bold text-slate-600 mb-1">새 아이디 <span class="text-slate-400 font-normal">(영문/숫자/_, 3~20자)</span></label>
-            <input id="auth-signup-id" type="text" autocapitalize="none" autocomplete="off" maxlength="20" placeholder="예: ee_study26" class="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm font-bold text-slate-900 focus:outline-none focus:border-slate-900" />
-          </div>
-          <div>
-            <label for="auth-signup-pw" class="block text-[11px] font-bold text-slate-600 mb-1">비밀번호 <span class="text-slate-400 font-normal">(4자 이상)</span></label>
-            <input id="auth-signup-pw" type="password" autocomplete="new-password" maxlength="40" placeholder="비밀번호 입력" class="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm font-bold text-slate-900 focus:outline-none focus:border-slate-900" />
-          </div>
-          <div>
-            <label for="auth-signup-pw2" class="block text-[11px] font-bold text-slate-600 mb-1">비밀번호 확인</label>
-            <input id="auth-signup-pw2" type="password" autocomplete="new-password" maxlength="40" placeholder="비밀번호 한 번 더 입력" class="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm font-bold text-slate-900 focus:outline-none focus:border-slate-900" />
-          </div>
-          <div class="p-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-[11px] text-emerald-900 leading-relaxed space-y-0.5">
-            <p class="font-black">🔒 100% 익명 · 서버 측 보안 아키텍처</p>
-            <p class="text-[10.5px] text-emerald-800"><strong>Web Crypto 128-bit 난수 익명 토큰</strong> 분리, <strong>SHA-256 해시 검증</strong>, <strong>Firebase 서버 보안 규칙(Security Rules)</strong> 경로 격리를 적용해 커뮤니티·익명 톡방·1:1 귓속말은 당사자 외 다른 회원과 운영자도 열람할 수 없어요.</p>
-          </div>
-          <button id="btn-id-signup" type="submit" class="w-full py-3 px-4 rounded-xl ed-btn-accent font-black text-sm">아이디 만들고 시작하기</button>
-        </form>
 
-        <!-- Existing Google Account Migration CTA -->
-        <div class="pt-3 border-t border-slate-200 space-y-2">
-          <p class="text-[11px] font-bold text-slate-500 text-center">기존에 Google로 로그인하던 분이신가요?</p>
-          <button id="btn-google-login" type="button" class="w-full py-2.5 px-4 rounded-xl bg-white border border-slate-300 hover:bg-slate-50 text-slate-800 font-bold text-xs flex items-center justify-center gap-2 transition">
-            <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17Z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.11-6.72-4.96H1.29v3.14C3.26 21.3 7.31 24 12 24Z"/><path fill="#FBBC05" d="M5.28 14.24c-.24-.72-.38-1.49-.38-2.24s.14-1.52.38-2.24V6.62H1.29C.47 8.24 0 10.06 0 12s.47 3.76 1.29 5.38l3.99-3.14Z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.62l3.99 3.14c.95-2.85 3.6-4.96 6.72-4.96Z"/></svg>
-            <span>기존 Google 회원 · 아이디/비번 전환하기</span>
-          </button>
-          <p class="text-[10px] text-slate-400 text-center">예전에 사용한 Google 계정을 선택해 주세요. 새 아이디 만들기는 처음 가입하는 분을 위한 메뉴예요.</p>
+          <!-- New ID/PW Signup Form -->
+          <form id="auth-id-signup-form" class="space-y-2.5" autocomplete="off" novalidate>
+            <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-[11px] text-slate-600 leading-relaxed">
+              로그인용 아이디를 만들어요. <strong class="text-slate-900">아이디는 앱에서 보이는 별명과 별개</strong>이며, 가입 후 바로 별명을 정할 수 있어요.
+            </div>
+            <div>
+              <label for="auth-signup-id" class="block text-[11px] font-bold text-slate-600 mb-1">새 아이디 <span class="text-slate-400 font-normal">(영문/숫자/_, 3~20자)</span></label>
+              <input id="auth-signup-id" type="text" autocapitalize="none" autocomplete="off" maxlength="20" placeholder="예: ee_study26" class="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm font-bold text-slate-900 focus:outline-none focus:border-slate-900" />
+            </div>
+            <div>
+              <label for="auth-signup-pw" class="block text-[11px] font-bold text-slate-600 mb-1">비밀번호 <span class="text-slate-400 font-normal">(4자 이상)</span></label>
+              <input id="auth-signup-pw" type="password" autocomplete="new-password" maxlength="40" placeholder="비밀번호 입력" class="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm font-bold text-slate-900 focus:outline-none focus:border-slate-900" />
+            </div>
+            <div>
+              <label for="auth-signup-pw2" class="block text-[11px] font-bold text-slate-600 mb-1">비밀번호 확인</label>
+              <input id="auth-signup-pw2" type="password" autocomplete="new-password" maxlength="40" placeholder="비밀번호 한 번 더 입력" class="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm font-bold text-slate-900 focus:outline-none focus:border-slate-900" />
+            </div>
+            <div class="p-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-[11px] text-emerald-900 leading-relaxed space-y-0.5">
+              <p class="font-black">🔒 100% 익명 · 서버 측 보안 아키텍처</p>
+              <p class="text-[10.5px] text-emerald-800"><strong>Web Crypto 128-bit 난수 익명 토큰</strong> 분리, <strong>SHA-256 해시 검증</strong>, <strong>Firebase 서버 보안 규칙(Security Rules)</strong> 경로 격리를 적용해 커뮤니티·익명 톡방·1:1 귓속말은 당사자 외 다른 회원과 운영자도 열람할 수 없어요.</p>
+            </div>
+            <button id="btn-id-signup" type="submit" class="w-full py-3 px-4 rounded-xl ed-btn-accent font-black text-sm">아이디 만들고 시작하기</button>
+          </form>
+
+          <!-- Existing Google Account Migration Panel -->
+          <div id="auth-google-migrate-panel" class="hidden space-y-3">
+            <div class="p-3 rounded-xl bg-indigo-50 border border-indigo-200 text-[11px] text-indigo-900 leading-relaxed space-y-1">
+              <p class="font-black text-indigo-950">🔄 기존 Google 회원이신가요?</p>
+              <p>예전에 쓰던 Google 계정으로 한 번만 본인 확인하면 기존 공부 기록·티어·LP를 그대로 유지한 채 아이디·비밀번호 계정으로 전환돼요.</p>
+            </div>
+            <div class="p-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-[11px] text-emerald-900 leading-relaxed space-y-0.5">
+              <p class="font-black">🔒 더 철저한 익명성을 위한 전환</p>
+              <p class="text-[10.5px] text-emerald-800">전환이 완료되면 <strong>기존 Google 이메일 정보는 안전하게 삭제</strong>되며, Web Crypto 128-bit 난수 익명 토큰과 Firebase 서버 보안 규칙으로 익명 활동이 보호돼요.</p>
+            </div>
+            <button id="btn-google-login" type="button" class="w-full py-2.5 px-4 rounded-xl bg-white border border-slate-300 hover:bg-slate-50 text-slate-800 font-bold text-xs flex items-center justify-center gap-2 transition">
+              <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17Z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.11-6.72-4.96H1.29v3.14C3.26 21.3 7.31 24 12 24Z"/><path fill="#FBBC05" d="M5.28 14.24c-.24-.72-.38-1.49-.38-2.24s.14-1.52.38-2.24V6.62H1.29C.47 8.24 0 10.06 0 12s.47 3.76 1.29 5.38l3.99-3.14Z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.62l3.99 3.14c.95-2.85 3.6-4.96 6.72-4.96Z"/></svg>
+              <span>기존 Google 계정 확인하고 전환하기</span>
+            </button>
+          </div>
         </div>
       </div>
 
       <!-- Existing Google Member -> ID/PW Migration Form -->
       <form id="auth-migrate-step" class="hidden space-y-3.5" autocomplete="off" novalidate>
-        <div class="p-3.5 rounded-2xl bg-indigo-50 border border-indigo-200 space-y-1">
-          <p class="text-xs font-black text-indigo-950">🔄 로그인 방식이 아이디·비밀번호로 바뀌었어요!</p>
-          <p id="migrate-member-summary" class="text-[11px] font-semibold text-indigo-800 leading-relaxed">기존 공부 기록과 티어는 모두 그대로 유지됩니다. 앞으로 사용할 로그인 아이디와 비밀번호만 새로 설정해 주세요.</p>
-        </div>
-        <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-[11px] text-emerald-900 leading-relaxed space-y-1">
-          <p class="font-black">🔒 왜 아이디·비밀번호로 전환하나요?</p>
-          <p class="text-[10.5px] text-emerald-800">개인 Google 계정(이메일)과의 연결을 분리해 <strong>더 철저한 익명성</strong>을 보장하기 위한 보안 개편이에요. <strong>Web Crypto 128-bit 난수 익명 토큰</strong>, <strong>SHA-256 해시 검증</strong>, <strong>Firebase 서버 보안 규칙(Security Rules)</strong> 경로 격리가 함께 적용돼 당사자 외 다른 회원과 운영자도 귓속말·익명 활동을 열람할 수 없어요.</p>
-        </div>
-        <ol class="list-decimal pl-5 space-y-1 text-xs text-slate-600 leading-relaxed">
-          <li>위에 표시된 별명과 Google 계정이 내가 쓰던 계정인지 확인해요.</li>
-          <li>다음부터 쓸 아이디와 비밀번호를 입력하고 아래 버튼을 눌러요.</li>
-          <li>본인 확인이 뜨면 같은 Google 계정을 선택해요. 완료되면 기존 기록이 열리고, 다음부터는 새 아이디로 로그인해요.</li>
-        </ol>
-        <button type="button" id="migrate-reauth" class="hidden rounded-xl ed-btn-accent px-3 py-2">기존 Google 계정으로 본인 확인</button>
-        <p id="migrate-error-msg" class="hidden text-xs font-bold text-rose-600 bg-rose-50 border border-rose-200 rounded-xl p-2.5"></p>
-        <div class="space-y-2.5">
-          <div>
-            <label for="migrate-id-input" class="block text-[11px] font-bold text-slate-700 mb-1">새 로그인 아이디 <span class="text-slate-400 font-normal">(영문/숫자/_, 3~20자 · 별명과 다름)</span></label>
-            <input id="migrate-id-input" type="text" autocapitalize="none" autocomplete="username" maxlength="20" placeholder="예: my_study_id" class="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm font-bold text-slate-900" />
+        <!-- Stage 1: Clean Intro for Already-Signed-In Google Members -->
+        <div id="migrate-intro-pane" class="space-y-3.5">
+          <div class="p-3.5 rounded-2xl bg-indigo-50 border border-indigo-200 space-y-1">
+            <p class="text-xs font-black text-indigo-950">🔄 로그인 방식이 아이디·비밀번호로 바뀌었어요</p>
+            <p id="migrate-member-summary" class="text-[11px] font-semibold text-indigo-800 leading-relaxed">기존 공부 기록과 티어는 모두 그대로 유지되며, 전환 후 기존 Google 이메일 정보는 안전하게 삭제돼요.</p>
           </div>
-          <div>
-            <label for="migrate-pw-input" class="block text-[11px] font-bold text-slate-700 mb-1">새 비밀번호 <span class="text-slate-400 font-normal">(4자 이상)</span></label>
-            <input id="migrate-pw-input" type="password" autocomplete="new-password" maxlength="40" placeholder="새 비밀번호 입력" class="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm font-bold text-slate-900" />
+          <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-[11px] text-emerald-900 leading-relaxed space-y-1">
+            <p class="font-black">🔒 더 철저한 익명성을 위한 보안 개편</p>
+            <p class="text-[10.5px] text-emerald-800">개인 Google 계정(이메일)과의 연결을 끊어 익명성을 한층 강화했어요. 전환이 완료되면 <strong>기존 Google 이메일 정보는 안전하게 삭제</strong>되며, <strong>Web Crypto 128-bit 난수 익명 토큰</strong>·<strong>SHA-256 해시 검증</strong>·<strong>Firebase 서버 보안 규칙(Security Rules)</strong> 경로 격리가 적용돼 당사자 외 다른 회원과 운영자도 귓속말·익명 활동을 열람할 수 없어요.</p>
           </div>
-          <div>
-            <label for="migrate-pw2-input" class="block text-[11px] font-bold text-slate-700 mb-1">비밀번호 확인</label>
-            <input id="migrate-pw2-input" type="password" autocomplete="new-password" maxlength="40" placeholder="비밀번호 한 번 더 입력" class="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm font-bold text-slate-900" />
-          </div>
+          <button id="btn-migrate-start" type="button" class="w-full py-3 px-4 rounded-xl ed-btn-accent font-black text-sm">아이디·비밀번호로 전환하기 →</button>
         </div>
-        <button id="btn-migrate-submit" type="submit" class="w-full py-3 px-4 rounded-xl ed-btn-accent font-black text-sm">아이디 설정하고 기존 기록 이어서 쓰기</button>
-        <button id="btn-migrate-logout" type="button" class="w-full py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold">다른 계정으로 로그인</button>
+
+        <!-- Stage 2: ID/PW Setup Form -->
+        <div id="migrate-form-pane" class="hidden space-y-3">
+          <div class="flex items-center justify-between gap-2">
+            <p class="text-xs font-black text-slate-900">새 아이디·비밀번호 설정</p>
+            <button id="btn-migrate-back" type="button" class="text-[11px] font-bold text-slate-500 hover:text-slate-800">← 안내 보기</button>
+          </div>
+          <p class="text-[11px] text-slate-500 leading-relaxed">앞으로 사용할 아이디와 비밀번호를 입력해 주세요. 전환이 완료되면 기존 Google 이메일 정보는 안전하게 삭제돼요.</p>
+          <button type="button" id="migrate-reauth" class="hidden w-full rounded-xl ed-btn-accent px-3 py-2 text-xs font-black">기존 Google 계정으로 본인 확인</button>
+          <p id="migrate-error-msg" class="hidden text-xs font-bold text-rose-600 bg-rose-50 border border-rose-200 rounded-xl p-2.5"></p>
+          <div class="space-y-2.5">
+            <div>
+              <label for="migrate-id-input" class="block text-[11px] font-bold text-slate-700 mb-1">새 로그인 아이디 <span class="text-slate-400 font-normal">(영문/숫자/_, 3~20자 · 별명과 다름)</span></label>
+              <input id="migrate-id-input" type="text" autocapitalize="none" autocomplete="username" maxlength="20" placeholder="예: my_study_id" class="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm font-bold text-slate-900" />
+            </div>
+            <div>
+              <label for="migrate-pw-input" class="block text-[11px] font-bold text-slate-700 mb-1">새 비밀번호 <span class="text-slate-400 font-normal">(4자 이상)</span></label>
+              <input id="migrate-pw-input" type="password" autocomplete="new-password" maxlength="40" placeholder="새 비밀번호 입력" class="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm font-bold text-slate-900" />
+            </div>
+            <div>
+              <label for="migrate-pw2-input" class="block text-[11px] font-bold text-slate-700 mb-1">비밀번호 확인</label>
+              <input id="migrate-pw2-input" type="password" autocomplete="new-password" maxlength="40" placeholder="비밀번호 한 번 더 입력" class="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm font-bold text-slate-900" />
+            </div>
+          </div>
+          <button id="btn-migrate-submit" type="submit" class="w-full py-3 px-4 rounded-xl ed-btn-accent font-black text-sm">아이디 설정하고 기존 기록 이어서 쓰기</button>
+          <button id="btn-migrate-logout" type="button" class="w-full py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold">다른 계정으로 로그인</button>
+        </div>
       </form>
 
       <div id="auth-pending-step" class="hidden space-y-4">
@@ -5695,6 +5717,13 @@
           if (loadingStep) loadingStep.classList.remove('hidden');
         } else if (step === 'migrate') {
           if (migrateStep) migrateStep.classList.remove('hidden');
+          const introPane = document.getElementById('migrate-intro-pane');
+          const formPane = document.getElementById('migrate-form-pane');
+          if (introPane && formPane) {
+            const showForm = !!errText;
+            introPane.classList.toggle('hidden', showForm);
+            formPane.classList.toggle('hidden', !showForm);
+          }
           const mErr = document.getElementById('migrate-error-msg');
           if (mErr) {
             if (errText) { mErr.textContent = errText; mErr.classList.remove('hidden'); }
@@ -5703,8 +5732,8 @@
           const found = (shared.members || []).find(m => m.uid === currentAuthUser?.uid);
           const sumEl = document.getElementById('migrate-member-summary');
           if (sumEl) {
-            const who = found ? `${found.name}님 (${currentAuthUser?.email || 'Google 계정'})` : (currentAuthUser?.email || '기존 Google 계정');
-            sumEl.textContent = `${who} 계정에 로그인 방법을 추가해요. 공부 시간·티어·LP·플래너는 지금 계정에 그대로 있어요.`;
+            const who = found ? `${found.name}님` : '기존 회원님';
+            sumEl.textContent = `${who}의 기존 공부 기록·티어·LP·플래너는 모두 그대로 유지되며, 전환이 완료되면 기존 Google 이메일 정보는 안전하게 삭제돼요.`;
           }
         } else if (step === 'onboard') {
           onboardStep.classList.remove('hidden');
@@ -13263,15 +13292,33 @@
         const modeLoginBtn = document.getElementById('auth-mode-login-btn');
         const modeSignupBtn = document.getElementById('auth-mode-signup-btn');
         const loginForm = document.getElementById('auth-id-login-form');
+        const signupWrapper = document.getElementById('auth-signup-wrapper');
         const signupForm = document.getElementById('auth-id-signup-form');
+        const googleMigratePanel = document.getElementById('auth-google-migrate-panel');
+        const kindNewBtn = document.getElementById('auth-kind-new-btn');
+        const kindGoogleBtn = document.getElementById('auth-kind-google-btn');
         const migrateForm = document.getElementById('auth-migrate-step');
         const errEl = document.getElementById('auth-error-msg');
         const mErrEl = document.getElementById('migrate-error-msg');
 
+        function setSignupKind(kind) {
+          const isNew = kind !== 'google';
+          if (signupForm) signupForm.classList.toggle('hidden', !isNew);
+          if (googleMigratePanel) googleMigratePanel.classList.toggle('hidden', isNew);
+          if (errEl) errEl.classList.add('hidden');
+          if (kindNewBtn && kindGoogleBtn) {
+            kindNewBtn.className = isNew
+              ? 'py-2 px-2.5 rounded-xl text-[11px] font-black border border-slate-950 bg-slate-950 text-white transition'
+              : 'py-2 px-2.5 rounded-xl text-[11px] font-bold border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100 transition';
+            kindGoogleBtn.className = !isNew
+              ? 'py-2 px-2.5 rounded-xl text-[11px] font-black border border-slate-950 bg-slate-950 text-white transition'
+              : 'py-2 px-2.5 rounded-xl text-[11px] font-bold border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100 transition';
+          }
+        }
         function setAuthMode(mode) {
           const isLogin = mode === 'login';
           if (loginForm) loginForm.classList.toggle('hidden', !isLogin);
-          if (signupForm) signupForm.classList.toggle('hidden', isLogin);
+          if (signupWrapper) signupWrapper.classList.toggle('hidden', isLogin);
           if (errEl) errEl.classList.add('hidden');
           if (modeLoginBtn && modeSignupBtn) {
             modeLoginBtn.className = isLogin
@@ -13283,7 +13330,18 @@
           }
         }
         modeLoginBtn?.addEventListener('click', () => setAuthMode('login'));
-        modeSignupBtn?.addEventListener('click', () => setAuthMode('signup'));
+        modeSignupBtn?.addEventListener('click', () => { setAuthMode('signup'); setSignupKind('new'); });
+        kindNewBtn?.addEventListener('click', () => setSignupKind('new'));
+        kindGoogleBtn?.addEventListener('click', () => setSignupKind('google'));
+        document.getElementById('btn-migrate-start')?.addEventListener('click', () => {
+          document.getElementById('migrate-intro-pane')?.classList.add('hidden');
+          document.getElementById('migrate-form-pane')?.classList.remove('hidden');
+          document.getElementById('migrate-id-input')?.focus({preventScroll:true});
+        });
+        document.getElementById('btn-migrate-back')?.addEventListener('click', () => {
+          document.getElementById('migrate-form-pane')?.classList.add('hidden');
+          document.getElementById('migrate-intro-pane')?.classList.remove('hidden');
+        });
 
         function friendlyAuthError(err) {
           const code = err?.code || '';
@@ -13385,13 +13443,21 @@
               if (result.localId !== user.uid) throw new Error('같은 계정인지 확인할 수 없어요. 기존 Google 계정으로 다시 접속해 주세요.');
             }
             if (firebase.auth().currentUser?.uid !== user.uid) return;
+            // Ensure admin UID is persisted before removing Google provider/email.
+            if (user.email === ADMIN_EMAIL) {
+              await firebase.database().ref('adminUids/' + user.uid).set(true).catch(() => {});
+            }
             // Install fresh SDK tokens after the account's primary sign-in email changes.
             const session = await firebase.auth().signInWithEmailAndPassword(email, toAuthPassword(pw));
             if (session.user.uid !== user.uid || !matches(session.user)) throw new Error('연결된 계정을 확인해 주세요.');
+            if ((session.user.providerData || []).some(p => p.providerId === 'google.com')) {
+              await session.user.unlink('google.com').catch(() => {});
+            }
+            await firebase.database().ref('privateData/' + session.user.uid + '/email').remove().catch(() => {});
             currentAuthUser = session.user;
             migrateForm.reset();
             document.getElementById('migrate-reauth').classList.add('hidden');
-            showToast(`@${id} 설정 완료! 다음부터 이 아이디로 로그인해 주세요.`, 'success');
+            showToast(`@${id} 전환 완료! 기존 Google 이메일 정보도 안전하게 삭제되었어요.`, 'success');
             syncAuthUserMember(currentAuthUser);
           } catch (err) {
             const reason = err.authReason || err.code || '';
