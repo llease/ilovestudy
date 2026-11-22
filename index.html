@@ -1025,11 +1025,11 @@
     #header-more-menu button:not([data-set-theme]) {min-height:42px;font-size:.83rem}
     #header-more-menu [data-set-theme] {position:relative;transition:transform 140ms,box-shadow 140ms,filter 140ms}
     #header-more-menu .theme-swatch-basic {width:24px;height:24px;border-radius:9999px;box-shadow:inset 0 0 0 2px var(--surface);border:1px solid var(--line)}
-    #header-more-menu .theme-swatch-tier {width:30px;height:30px;border-radius:10px;border:1.5px solid rgba(15,23,42,.28);box-shadow:inset 0 1px 1px rgba(255,255,255,.55),0 2px 5px rgba(15,23,42,.12);overflow:hidden}
-    #header-more-menu .theme-swatch-tier::before {content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.48) 0%,rgba(255,255,255,0) 48%,rgba(0,0,0,.18) 100%);pointer-events:none}
+    #header-more-menu .theme-swatch-tier {width:30px;height:30px;border-radius:10px;border:1.5px solid rgba(15,23,42,.16);box-shadow:inset 0 1px 2px rgba(255,255,255,.75),0 2px 6px rgba(15,23,42,.12);overflow:hidden}
+    #header-more-menu .theme-swatch-tier::before {content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.52) 0%,rgba(255,255,255,0) 55%);pointer-events:none}
     #header-more-menu [data-set-theme]:hover:not([data-locked="true"]) {transform:translateY(-1.5px) scale(1.06)}
-    #header-more-menu [data-set-theme][data-locked="true"] {filter:grayscale(.5) brightness(.72);opacity:.62}
-    #header-more-menu [data-set-theme][data-locked="true"]::after {content:'🔒';position:absolute;inset:0;display:grid;place-items:center;font-size:11px;line-height:1;background:rgba(15,23,42,.38);backdrop-filter:blur(.5px)}
+    #header-more-menu [data-set-theme][data-locked="true"] {filter:grayscale(.22) brightness(.9);opacity:.78}
+    #header-more-menu [data-set-theme][data-locked="true"]::after {content:'🔒';position:absolute;inset:0;display:grid;place-items:center;font-size:11px;line-height:1;background:rgba(15,23,42,.22);backdrop-filter:blur(.5px)}
     /* Tier swatch progressive prestige */
     #header-more-menu [data-set-theme="bronze"] {border-color:#9a522a;box-shadow:inset 0 1px 2px rgba(255,236,218,.65),0 2px 6px rgba(180,83,9,.28)}
     #header-more-menu [data-set-theme="silver"] {border-color:#7b8fa8;box-shadow:inset 0 1px 2px rgba(255,255,255,.85),0 2px 6px rgba(100,116,139,.28)}
@@ -2667,11 +2667,11 @@
     }
 
     /* === THEME & DARK MODE SYNC FOR NEW SOCIAL / AUTH / GUIDE UI === */
-    :is(#tab-groups, #tab-community, #group-create-modal, #group-pw-modal, #whisper-modal, #auth-overlay) .bg-slate-950 {
+    :is(#tab-groups, #tab-community, #group-create-modal, #group-pw-modal, #whisper-modal, #unified-chat-modal, #auth-overlay) .bg-slate-950 {
       background-color: var(--primary) !important;
       color: var(--on-primary) !important;
     }
-    :is(#tab-groups, #tab-community, #group-create-modal, #group-pw-modal, #whisper-modal, #auth-overlay) .bg-slate-900 {
+    :is(#tab-groups, #tab-community, #group-create-modal, #group-pw-modal, #whisper-modal, #unified-chat-modal, #auth-overlay) .bg-slate-900 {
       background-color: var(--primary) !important;
       color: var(--on-primary) !important;
     }
@@ -2684,32 +2684,43 @@
       background: var(--tint) !important;
       border-color: var(--primary) !important;
     }
-    body[data-dark="true"] :is(#tab-groups, #tab-community, #group-create-modal, #group-pw-modal, #whisper-modal, #auth-overlay) :is(h2, h3, h4, .text-slate-950, .text-slate-900, .text-slate-800) {
+    body[data-dark="true"] :is(#tab-groups, #tab-community, #group-create-modal, #group-pw-modal, #whisper-modal, #unified-chat-modal, #auth-overlay) :is(h2, h3, h4, .text-slate-950, .text-slate-900, .text-slate-800) {
       color: var(--ink) !important;
     }
-    body[data-dark="true"] :is(#tab-groups, #tab-community, #group-create-modal, #group-pw-modal, #whisper-modal, #auth-overlay) :is(.text-slate-700, .text-slate-600, .text-slate-500) {
+    body[data-dark="true"] :is(#tab-groups, #tab-community, #group-create-modal, #group-pw-modal, #whisper-modal, #unified-chat-modal, #auth-overlay) :is(.text-slate-700, .text-slate-600, .text-slate-500) {
       color: var(--muted) !important;
     }
-    body[data-dark="true"] :is(#tab-groups, #tab-community, #group-create-modal, #group-pw-modal, #whisper-modal, #auth-overlay) :is(.bg-white, .bg-white\/80, .bg-white\/70) {
+    body[data-dark="true"] :is(#tab-groups, #tab-community, #group-create-modal, #group-pw-modal, #whisper-modal, #unified-chat-modal, #auth-overlay) :is(.bg-white, .bg-white\/80, .bg-white\/70) {
       background-color: var(--surface) !important;
     }
-    body[data-dark="true"] :is(#tab-groups, #tab-community, #group-create-modal, #group-pw-modal, #whisper-modal, #auth-overlay) :is(.bg-slate-50, .bg-slate-50\/70, .bg-slate-50\/60, .bg-slate-50\/50, .bg-slate-100) {
+    body[data-dark="true"] :is(#tab-groups, #tab-community, #group-create-modal, #group-pw-modal, #whisper-modal, #unified-chat-modal, #auth-overlay) :is(.bg-slate-50, .bg-slate-50\/80, .bg-slate-50\/70, .bg-slate-50\/60, .bg-slate-50\/50, .bg-slate-100) {
       background-color: var(--soft) !important;
     }
-    body[data-dark="true"] :is(#tab-groups, #tab-community, #group-create-modal, #group-pw-modal, #whisper-modal, #auth-overlay) :is(.border-slate-100, .border-slate-200, .border-slate-300) {
+    body[data-dark="true"] :is(#tab-groups, #tab-community, #group-create-modal, #group-pw-modal, #whisper-modal, #unified-chat-modal, #auth-overlay) :is(.border-slate-100, .border-slate-200, .border-slate-300, .divide-slate-100 > :not([hidden]) ~ :not([hidden])) {
       border-color: var(--line) !important;
     }
-    body[data-dark="true"] :is(#tab-groups, #tab-community, #group-create-modal, #group-pw-modal, #whisper-modal, #auth-overlay) :is(input, textarea) {
+    body[data-dark="true"] :is(#tab-groups, #tab-community, #group-create-modal, #group-pw-modal, #whisper-modal, #unified-chat-modal, #auth-overlay) :is(input, textarea, select) {
       background-color: var(--soft) !important;
       border-color: var(--line) !important;
       color: var(--ink) !important;
     }
-    body[data-dark="true"] :is(#tab-groups, #tab-community, #whisper-modal, #auth-overlay) :is(.bg-indigo-50, .bg-indigo-50\/70, .bg-indigo-50\/60, .bg-indigo-50\/50, .bg-indigo-50\/40) {
+    body[data-dark="true"] :is(#tab-groups, #tab-community, #whisper-modal, #unified-chat-modal, #auth-overlay) :is(.bg-indigo-50, .bg-indigo-50\/70, .bg-indigo-50\/60, .bg-indigo-50\/50, .bg-indigo-50\/40, .bg-indigo-100) {
       background-color: var(--tint) !important;
       border-color: var(--line) !important;
     }
-    body[data-dark="true"] :is(#tab-groups, #tab-community, #whisper-modal, #auth-overlay) :is(.text-indigo-950, .text-indigo-900, .text-indigo-800, .text-indigo-700) {
+    body[data-dark="true"] :is(#tab-groups, #tab-community, #whisper-modal, #unified-chat-modal, #auth-overlay) :is(.text-indigo-950, .text-indigo-900, .text-indigo-800, .text-indigo-700) {
       color: var(--link) !important;
+    }
+    body[data-dark="true"] #unified-chat-modal :is(.bg-amber-50, .bg-amber-100) {
+      background-color: color-mix(in srgb, #f59e0b 16%, var(--surface)) !important;
+      border-color: color-mix(in srgb, #f59e0b 35%, var(--line)) !important;
+    }
+    body[data-dark="true"] #unified-chat-modal :is(.bg-emerald-50, .bg-rose-50) {
+      background-color: var(--soft) !important;
+      border-color: var(--line) !important;
+    }
+    body[data-dark="true"] #unified-chat-modal button:hover {
+      background-color: var(--soft);
     }
     body[data-dark="true"] :is(#tab-community, #auth-overlay) :is(.bg-amber-50, .bg-amber-50\/80, .bg-amber-100) {
       background-color: color-mix(in srgb, #f59e0b 16%, var(--surface)) !important;
@@ -2871,9 +2882,39 @@
     :is(#group-create-modal,#group-pw-modal) > form {max-height:calc(100dvh - 2rem);overflow:auto}
     #whisper-modal > .ed-card {max-height:min(85vh, calc(100dvh - 2rem))}
     #whisper-modal #whisper-messages-list, #whisper-modal #whisper-inbox-view {min-height:min(220px, 25dvh)}
+    .room-member-card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      min-width: 0;
+      padding: 10px 11px;
+      border-radius: 14px;
+      border: 1px solid color-mix(in srgb, var(--rank-deep, #94a3b8) 30%, var(--line));
+      background: var(--surface);
+      box-shadow: 0 1px 6px #0b142908;
+    }
+    .room-member-card::before {
+      content: '';
+      position: absolute;
+      inset: -1px 10px auto;
+      height: 2px;
+      border-radius: 0 0 3px 3px;
+      background: linear-gradient(90deg, transparent, var(--rank-deep, #94a3b8) 30%, var(--rank-gem, #cbd5e1) 70%, transparent);
+      pointer-events: none;
+    }
+    .room-member-title {
+      display: block;
+      width: 100%;
+      color: var(--rank-ink, var(--muted));
+      font-size: clamp(.6rem, 2.5vw, .68rem);
+      font-weight: 700;
+      line-height: 1.25;
+      letter-spacing: -0.025em;
+      word-break: keep-all;
+      overflow-wrap: anywhere;
+    }
     @media (max-width:520px) {
-      #group-room-view > .ed-card:first-child > div:first-child {flex-wrap:wrap;row-gap:.65rem}
-      #group-room-view > .ed-card:first-child > div:first-child > div:first-child {flex:1 1 100%}
       #tab-community textarea, #tab-community input {max-width:100%}
       .room-initial {flex-basis:2.15rem;height:2.15rem}
     }
@@ -3357,7 +3398,7 @@
       </div>
 
       <div id="header-tools" class="flex items-center shrink-0 relative">
-        <button id="mailbox-btn" type="button" aria-label="우편함" class="relative w-7 h-7 rounded-lg text-xs font-bold text-slate-700 hover:bg-slate-100 border border-slate-200 flex items-center justify-center shrink-0 overflow-hidden" title="우편함"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="m4 7 8 6 8-6"/></svg><span id="mailbox-badge" class="hidden absolute top-1 right-1 w-2 h-2 rounded-full bg-rose-500 ring-1 ring-white pointer-events-none"></span></button>
+        <button id="mailbox-btn" type="button" aria-label="채팅 · 알림" class="relative w-7 h-7 rounded-lg text-xs font-bold text-slate-700 hover:bg-slate-100 border border-slate-200 flex items-center justify-center shrink-0 overflow-hidden" title="채팅 · 알림"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="m4 7 8 6 8-6"/></svg><span id="mailbox-badge" class="hidden absolute top-1 right-1 w-2 h-2 rounded-full bg-rose-500 ring-1 ring-white pointer-events-none"></span></button>
         <button id="dark-toggle-btn" type="button" aria-label="다크모드" aria-pressed="false" class="w-7 h-7 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 flex items-center justify-center shrink-0 text-xs" title="다크모드 전환">🌙</button>
         <button id="header-more-btn" type="button" aria-label="더보기" aria-expanded="false" aria-controls="header-more-menu" class="relative w-7 h-7 rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 flex items-center justify-center shrink-0 font-black text-sm" title="테마 · 알림 · 건의 · 관리자"><svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg><span id="admin-more-badge" class="hidden absolute top-1 right-1 w-2 h-2 rounded-full bg-rose-500 ring-1 ring-white pointer-events-none" aria-hidden="true"></span></button>
 
@@ -3382,20 +3423,21 @@
                 <span class="text-[10px] font-semibold text-slate-400">그라데이션 · 광택</span>
               </div>
               <div class="grid grid-cols-5 gap-2 place-items-center">
-                <button type="button" data-set-theme="iron" data-theme-label="아이언 스틸" data-min-lp="0" data-tier-name="아이언" class="theme-swatch-tier" style="background:linear-gradient(120deg,#212a34,#515e69 58%,#84919a)" title="아이언 스틸 (아이언 0 LP)"></button>
-                <button type="button" data-set-theme="bronze" data-theme-label="브론즈 코퍼" data-min-lp="80" data-tier-name="브론즈" class="theme-swatch-tier" style="background:linear-gradient(120deg,#392419,#865338 58%,#c58e67)" title="브론즈 코퍼 (브론즈 80 LP)"></button>
-                <button type="button" data-set-theme="silver" data-theme-label="실버 크롬" data-min-lp="170" data-tier-name="실버" class="theme-swatch-tier" style="background:linear-gradient(120deg,#242f46,#667f9f 58%,#c8d9e8)" title="실버 크롬 (실버 170 LP)"></button>
-                <button type="button" data-set-theme="gold" data-theme-label="골드 앰버" data-min-lp="270" data-tier-name="골드" class="theme-swatch-tier" style="background:linear-gradient(120deg,#3d2e15,#8e6e32 58%,#dcb971)" title="골드 앰버 (골드 270 LP)"></button>
-                <button type="button" data-set-theme="platinum" data-theme-label="플래티넘 아쿠아" data-min-lp="380" data-tier-name="플래티넘" class="theme-swatch-tier" style="background:linear-gradient(120deg,#12363f,#327781 58%,#90c9c9)" title="플래티넘 아쿠아 (플래티넘 380 LP)"></button>
-                <button type="button" data-set-theme="emerald" data-theme-label="에메랄드 포레스트" data-min-lp="500" data-tier-name="에메랄드" class="theme-swatch-tier" style="background:linear-gradient(120deg,#0c3226,#23784d 58%,#7cbd83)" title="에메랄드 포레스트 (에메랄드 500 LP)"></button>
-                <button type="button" data-set-theme="diamond" data-theme-label="다이아 사파이어" data-min-lp="630" data-tier-name="다이아몬드" class="theme-swatch-tier" style="background:linear-gradient(120deg,#142f55,#467cbd 58%,#a0cffa)" title="다이아 사파이어 (다이아몬드 630 LP)"></button>
-                <button type="button" data-set-theme="master" data-theme-label="마스터 바이올렛" data-min-lp="770" data-tier-name="마스터" class="theme-swatch-tier" style="background:linear-gradient(120deg,#2a163f,#6939a0 58%,#b787d6)" title="마스터 바이올렛 (마스터 770 LP)"></button>
-                <button type="button" data-set-theme="grandmaster" data-theme-label="그랜드마스터 크림슨" data-min-lp="930" data-tier-name="그랜드마스터" class="theme-swatch-tier" style="background:linear-gradient(120deg,#3a1727,#95364f 58%,#dd927c)" title="그랜드마스터 크림슨 (그랜드마스터 930 LP)"></button>
-                <button type="button" data-set-theme="challenger" data-theme-label="챌린저 오로라" data-min-lp="1200" data-tier-name="챌린저" class="theme-swatch-tier" style="background:linear-gradient(120deg,#112853,#285999 58%,#b49d65)" title="챌린저 오로라 (챌린저 1200 LP)"></button>
+                <button type="button" data-set-theme="iron" data-theme-label="아이언 스틸" data-min-lp="0" data-tier-name="아이언" class="theme-swatch-tier" style="background:linear-gradient(135deg,#e2e8f0,#94a3b8 55%,#64748b)" title="아이언 스틸 (아이언 0 LP)"></button>
+                <button type="button" data-set-theme="bronze" data-theme-label="브론즈 코퍼" data-min-lp="80" data-tier-name="브론즈" class="theme-swatch-tier" style="background:linear-gradient(135deg,#fed7aa,#fb923c 55%,#c26a33)" title="브론즈 코퍼 (브론즈 80 LP)"></button>
+                <button type="button" data-set-theme="silver" data-theme-label="실버 크롬" data-min-lp="170" data-tier-name="실버" class="theme-swatch-tier" style="background:linear-gradient(135deg,#ffffff,#cbd5e1 52%,#93b4d8)" title="실버 크롬 (실버 170 LP)"></button>
+                <button type="button" data-set-theme="gold" data-theme-label="골드 앰버" data-min-lp="270" data-tier-name="골드" class="theme-swatch-tier" style="background:linear-gradient(135deg,#fef9c3,#facc15 52%,#f59e0b)" title="골드 앰버 (골드 270 LP)"></button>
+                <button type="button" data-set-theme="platinum" data-theme-label="플래티넘 아쿠아" data-min-lp="380" data-tier-name="플래티넘" class="theme-swatch-tier" style="background:linear-gradient(135deg,#ccfbf1,#2dd4bf 52%,#06b6d4)" title="플래티넘 아쿠아 (플래티넘 380 LP)"></button>
+                <button type="button" data-set-theme="emerald" data-theme-label="에메랄드 포레스트" data-min-lp="500" data-tier-name="에메랄드" class="theme-swatch-tier" style="background:linear-gradient(135deg,#bbf7d0,#34d399 52%,#10b981)" title="에메랄드 포레스트 (에메랄드 500 LP)"></button>
+                <button type="button" data-set-theme="diamond" data-theme-label="다이아 사파이어" data-min-lp="630" data-tier-name="다이아몬드" class="theme-swatch-tier" style="background:linear-gradient(135deg,#e0f2fe,#60a5fa 52%,#3b82f6)" title="다이아 사파이어 (다이아몬드 630 LP)"></button>
+                <button type="button" data-set-theme="master" data-theme-label="마스터 바이올렛" data-min-lp="770" data-tier-name="마스터" class="theme-swatch-tier" style="background:linear-gradient(135deg,#f3e8ff,#c084fc 52%,#9333ea)" title="마스터 바이올렛 (마스터 770 LP)"></button>
+                <button type="button" data-set-theme="grandmaster" data-theme-label="그랜드마스터 크림슨" data-min-lp="930" data-tier-name="그랜드마스터" class="theme-swatch-tier" style="background:linear-gradient(135deg,#ffe4e6,#fb7185 52%,#e11d48)" title="그랜드마스터 크림슨 (그랜드마스터 930 LP)"></button>
+                <button type="button" data-set-theme="challenger" data-theme-label="챌린저 오로라" data-min-lp="1200" data-tier-name="챌린저" class="theme-swatch-tier" style="background:linear-gradient(135deg,#fef08a,#38bdf8 52%,#6366f1)" title="챌린저 오로라 (챌린저 1200 LP)"></button>
               </div>
             </div>
           </div>
           <button id="alert-toggle-btn" type="button" class="w-full flex items-center justify-between px-2.5 py-2 rounded-xl hover:bg-slate-100 text-xs font-bold text-slate-700 whitespace-nowrap">🔔 쉬는시간 알림 켜짐</button>
+          <button id="mute-all-alerts-btn" type="button" class="w-full flex items-center justify-between px-2.5 py-2 rounded-xl hover:bg-slate-100 text-xs font-bold text-slate-700 whitespace-nowrap">🔔 전체 알림 켜짐 (타이머 제외)</button>
           <button id="encourage-menu-btn" type="button" class="w-full flex items-center justify-between px-2.5 py-2 rounded-xl hover:bg-slate-100 text-xs font-bold text-slate-700 whitespace-nowrap">💪 격려해주세요</button>
           <button id="suggest-btn" type="button" class="w-full flex items-center justify-between px-2.5 py-2 rounded-xl hover:bg-slate-100 text-xs font-bold text-slate-700 whitespace-nowrap">💬 관리자에게 건의하기</button>
           <button id="pwa-menu-install-btn" type="button" class="hidden w-full flex items-center justify-between px-2.5 py-2 rounded-xl hover:bg-slate-100 text-xs font-bold text-indigo-600 whitespace-nowrap">📲 홈 화면에 앱 설치</button>
@@ -3735,27 +3777,23 @@
       </div>
 
       <!-- Active Group Room View -->
-      <div id="group-room-view" class="hidden space-y-3.5">
-        <div class="ed-card p-4 space-y-3">
-          <div class="flex items-start justify-between gap-2">
-            <div class="flex items-center gap-2 min-w-0">
-              <button id="btn-group-room-back" type="button" class="px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700 shrink-0">← 목록</button>
-              <div class="min-w-0">
-                <div class="flex items-center gap-1.5 flex-wrap">
-                  <h3 id="group-room-title" class="text-sm sm:text-base font-black text-slate-950 truncate"></h3>
-                  <span id="group-room-anon-badge" class="px-2 py-0.5 rounded-md bg-slate-900 text-white text-[10px] font-bold">🎭 익명</span>
-                  <span id="group-room-lock-badge" class="hidden px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[10px] font-bold">🔒 비번방</span>
+      <div id="group-room-view" class="hidden space-y-2.5">
+        <div class="ed-card px-3 py-2.5 space-y-1">
+          <div class="flex items-center justify-between gap-2">
+            <div class="flex items-center gap-2 min-w-0 flex-1">
+              <button id="btn-group-room-back" type="button" class="px-2 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700 shrink-0" aria-label="목록으로">←</button>
+              <div class="min-w-0 flex-1">
+                <div class="flex items-center gap-1.5 min-w-0">
+                  <h3 id="group-room-title" class="text-sm font-black text-slate-950 truncate"></h3>
+                  <span id="group-room-anon-badge" class="px-1.5 py-0.5 rounded bg-slate-900 text-white text-[10px] font-bold shrink-0">🎭 익명</span>
+                  <span id="group-room-lock-badge" class="hidden px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 text-[10px] font-bold shrink-0">🔒</span>
                 </div>
-                <p id="group-room-meta" class="text-[11px] font-semibold text-slate-500 mt-0.5"></p>
+                <p id="group-room-meta" class="text-[11px] font-semibold text-slate-500 truncate"></p>
               </div>
             </div>
-            <div class="flex items-center gap-1.5 shrink-0">
-              <button id="btn-group-start-timer" type="button" class="px-2.5 py-1.5 rounded-xl ed-btn-accent text-[11px] font-black whitespace-nowrap">⏱️ 타이머 켜기</button>
-              <button id="btn-group-leave" type="button" class="px-2.5 py-1.5 rounded-xl bg-white border border-rose-200 hover:bg-rose-50 text-rose-600 text-[11px] font-bold whitespace-nowrap">나가기</button>
-            </div>
+            <button id="btn-group-leave" type="button" class="px-2.5 py-1 rounded-lg bg-white border border-rose-200 hover:bg-rose-50 text-rose-600 text-[11px] font-bold whitespace-nowrap shrink-0">나가기</button>
           </div>
-          <p id="group-room-desc" class="text-xs text-slate-600 leading-relaxed"></p>
-          <div id="group-room-live-strip" class="flex items-center gap-1.5 overflow-x-auto pb-0.5"></div>
+          <p id="group-room-desc" class="hidden text-[11px] text-slate-500 truncate pl-8"></p>
         </div>
 
         <!-- Room Sub-Tabs (1. 멤버 먼저, 2. 옆 탭에 단톡방 · 익명 단톡방에서는 숨김) -->
@@ -3765,20 +3803,20 @@
         </div>
 
         <!-- Room Members Status Panel (Default First) -->
-        <div id="group-room-members-panel" class="ed-card p-4 space-y-2.5">
-          <div class="flex items-center justify-between">
-            <h4 class="text-xs sm:text-sm font-black text-slate-950">오늘 공부 현황 & 랭킹</h4>
-            <span class="text-[11px] font-semibold text-slate-500">메인 타이머 기록 자동 연동</span>
+        <div id="group-room-members-panel" class="ed-card p-3 sm:p-4 space-y-2.5">
+          <div class="flex items-center justify-between gap-2">
+            <h4 class="text-xs sm:text-sm font-black text-slate-950">오늘 공부 현황 &amp; 랭킹</h4>
+            <span class="text-[10.5px] font-semibold text-slate-500">타이머 자동 연동</span>
           </div>
-          <div id="group-room-members-list" class="space-y-2"></div>
+          <div id="group-room-members-list" class="grid grid-cols-2 sm:grid-cols-3 gap-2.5"></div>
         </div>
 
         <!-- Room Chat Panel (Second Tab) -->
         <div id="group-room-chat-panel" class="hidden ed-card overflow-hidden flex flex-col">
-          <div id="group-chat-messages" class="p-3.5 sm:p-4 space-y-2.5 max-h-[420px] min-h-[260px] overflow-y-auto bg-slate-50/70"></div>
-          <form id="group-chat-form" class="p-2.5 sm:p-3 bg-white border-t border-slate-200 flex items-center gap-2" autocomplete="off">
-            <input id="group-chat-input" type="text" maxlength="400" placeholder="모임 단톡방에 메시지 보내기…" class="flex-1 rounded-xl border border-slate-300 px-3 py-2 text-xs sm:text-sm font-medium text-slate-900 focus:outline-none focus:border-slate-900" />
-            <button type="submit" class="px-3.5 py-2 rounded-xl ed-btn-accent text-xs font-black whitespace-nowrap">전송</button>
+          <div id="group-chat-messages" class="p-3 sm:p-4 space-y-2.5 min-h-[54dvh] max-h-[68dvh] overflow-y-auto bg-slate-50/70"></div>
+          <form id="group-chat-form" class="p-2 sm:p-2.5 bg-white border-t border-slate-200 flex items-center gap-2" autocomplete="off">
+            <input id="group-chat-input" type="text" maxlength="400" placeholder="메시지 입력…" class="flex-1 min-w-0 rounded-xl border border-slate-300 px-3 py-2 text-xs sm:text-sm font-medium text-slate-900 focus:outline-none focus:border-slate-900" />
+            <button type="submit" class="px-3.5 py-2 rounded-xl ed-btn-accent text-xs font-black whitespace-nowrap shrink-0">전송</button>
           </form>
         </div>
       </div>
@@ -3786,21 +3824,6 @@
 
     <!-- TAB: 100% ANONYMOUS COMMUNITY (완전 익명 커뮤니티 · 펼침 피드 · 인라인 댓글 · 1:1 귓속말) -->
     <div id="tab-community" class="tab-panel hidden space-y-4">
-      <!-- Top Header -->
-      <div class="social-heading ed-card p-4 sm:p-5 flex flex-wrap items-center justify-between gap-3">
-        <div class="min-w-0">
-          <div class="flex items-center gap-2 flex-wrap">
-            <h2 class="text-base sm:text-lg font-black text-slate-950 tracking-tight">익명 커뮤니티</h2>
-
-          </div>
-          <p class="text-xs text-slate-500 mt-0.5">글과 댓글에는 별명 대신 ‘익명’이 표시돼요.</p>
-        </div>
-        <button id="btn-open-whisper-inbox" type="button" class="relative px-3.5 py-2 rounded-xl bg-white border border-slate-300 hover:bg-slate-50 text-slate-900 text-xs font-black whitespace-nowrap flex items-center gap-1.5">
-          <span>💌 귓속말함</span>
-          <span id="whisper-unread-badge" class="hidden px-1.5 py-0.5 rounded-full bg-rose-500 text-white text-[10px] font-black leading-none">0</span>
-        </button>
-      </div>
-
       <!-- Inline Fast Composer (Body-first + Camera + Poll + Quiz + Teaser) -->
       <form id="community-post-form" class="ed-card p-4 space-y-2.5" autocomplete="off">
         <div class="flex items-center justify-between gap-2">
@@ -4643,6 +4666,31 @@
             </div>
           </div>
         </div>
+
+        <!-- Admin Gift Grant & Revoke (Synced with Mailbox) -->
+        <div class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-sm space-y-2.5">
+          <h4 class="text-xs sm:text-sm font-black text-slate-900">🎁 선물 지급 &amp; 회수 (메시지함 자동 연동)</h4>
+          <p class="text-[11px] text-slate-500">선물을 지급하면 해당 부원 메시지함에 지급 안내가 뜨며, 회수하면 지급 메시지도 함께 삭제돼요.</p>
+          <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-2.5">
+            <div class="flex flex-wrap sm:flex-nowrap gap-2">
+              <select id="admin-gift-member" aria-label="선물 대상 부원" class="w-full sm:w-40 rounded-xl border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-semibold"></select>
+              <select id="admin-gift-select" aria-label="지급할 선물 선택" class="flex-1 min-w-[140px] rounded-xl border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-semibold"></select>
+              <button id="btn-admin-gift-grant" type="button" class="px-3.5 py-1.5 rounded-xl bg-slate-950 hover:bg-slate-800 text-white text-xs font-bold whitespace-nowrap shrink-0">지급하기</button>
+            </div>
+            <div id="admin-member-gifts-list" class="space-y-1.5 text-xs"></div>
+          </div>
+        </div>
+
+        <!-- Admin New Season Full Reset (LP, Challenges, Gifts, Titles) -->
+        <div class="bg-rose-50 rounded-2xl border border-rose-200 p-4 sm:p-5 shadow-sm space-y-2.5">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <h4 class="text-xs sm:text-sm font-black text-rose-900">🔄 새 시즌 일괄 초기화 (전체 회수)</h4>
+              <p class="text-[11px] text-rose-700 mt-0.5">전체 회원의 <strong>LP(0으로 초기화)·챌린지·보유/받은 선물·장착 칭호</strong>를 한 번에 회수해요. 회원 계정과 공부 기록·플래너는 유지됩니다.</p>
+            </div>
+            <button id="btn-admin-season-reset" type="button" class="px-3.5 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-black whitespace-nowrap shrink-0">전체 회수 적용</button>
+          </div>
+        </div>
       </div>
 
       <!-- Admin Sub-Tab 4: Inbox, Reports, Onboarding & System -->
@@ -4725,7 +4773,7 @@
   </div>
 
   <!-- Gift Box Interactive Tap-to-Open Overlay -->
-  <div id="gift-open-overlay" role="dialog" aria-modal="true" class="fixed inset-0 bg-slate-950/75 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+  <div id="gift-open-overlay" role="dialog" aria-modal="true" class="fixed inset-0 bg-slate-950/75 backdrop-blur-sm z-[60] hidden items-center justify-center p-4">
     <div id="gift-open-card" class="ed-card max-w-sm w-full p-6 text-center space-y-4 shadow-2xl relative overflow-hidden select-none">
       <div id="gift-confetti-layer" class="absolute inset-0 pointer-events-none overflow-hidden"></div>
 
@@ -4811,6 +4859,52 @@
   </div>
 
   <!-- Anonymous 1:1 Whisper Modal (Inbox + Thread + New Request) -->
+  <!-- Unified KakaoTalk-style Chat & Alerts Modal -->
+  <div id="unified-chat-modal" role="dialog" aria-modal="true" aria-labelledby="uc-title" class="hidden fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
+    <div class="ed-card max-w-md w-full max-h-[86dvh] flex flex-col overflow-hidden shadow-2xl">
+      <!-- Top Bar -->
+      <div class="px-3.5 py-3 border-b border-slate-200 flex items-center justify-between gap-2 shrink-0 bg-white">
+        <div class="flex items-center gap-2 min-w-0">
+          <button id="uc-back-btn" type="button" class="hidden px-2 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700 shrink-0" aria-label="목록으로">←</button>
+          <div class="min-w-0">
+            <h3 id="uc-title" class="text-sm font-black text-slate-950 truncate">💬 채팅 · 알림</h3>
+            <p id="uc-sub" class="text-[11px] text-slate-500 truncate">관리자 · 익명 · 아는사람</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-1 shrink-0">
+          <button id="uc-mute-btn" type="button" class="px-2 py-1 rounded-lg border border-slate-200 bg-slate-50 hover:bg-slate-100 text-[11px] font-bold text-slate-700 whitespace-nowrap" title="타이머 측정 중 알림을 제외한 모든 알림 끄기/켜기">🔔 알림</button>
+          <button type="button" data-close-modal="unified-chat-modal" class="w-7 h-7 rounded-lg hover:bg-slate-100 text-slate-500 font-bold flex items-center justify-center" aria-label="닫기">✕</button>
+        </div>
+      </div>
+
+      <!-- List View -->
+      <div id="uc-list-view" class="flex-1 flex flex-col min-h-0 overflow-hidden">
+        <div class="px-3 pt-2.5 pb-2 border-b border-slate-100 space-y-2 shrink-0 bg-white">
+          <div id="uc-cat-tabs" class="grid grid-cols-4 gap-1 p-1 rounded-xl bg-slate-100">
+            <button type="button" data-uc-cat="all" class="uc-cat-btn py-1.5 rounded-lg text-[11px] font-black bg-slate-950 text-white transition">전체</button>
+            <button type="button" data-uc-cat="admin" class="uc-cat-btn py-1.5 rounded-lg text-[11px] font-bold text-slate-600 transition">관리자</button>
+            <button type="button" data-uc-cat="anon" class="uc-cat-btn py-1.5 rounded-lg text-[11px] font-bold text-slate-600 transition">익명</button>
+            <button type="button" data-uc-cat="known" class="uc-cat-btn py-1.5 rounded-lg text-[11px] font-bold text-slate-600 transition">아는사람</button>
+          </div>
+          <div id="uc-known-picker-bar" class="hidden flex items-center gap-1.5">
+            <select id="uc-known-member-select" aria-label="대화할 부원 선택" class="flex-1 min-w-0 rounded-xl border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-800"></select>
+            <button id="uc-start-known-btn" type="button" class="px-3 py-1.5 rounded-xl bg-slate-950 hover:bg-slate-800 text-white text-[11px] font-black whitespace-nowrap shrink-0">대화 시작</button>
+          </div>
+        </div>
+        <div id="uc-rooms-list" class="flex-1 overflow-y-auto divide-y divide-slate-100 bg-white min-h-[280px]"></div>
+      </div>
+
+      <!-- Room Chat View (Admin / Known 1:1 / Gifts & Respects) -->
+      <div id="uc-room-view" class="hidden flex-1 flex-col min-h-0 overflow-hidden">
+        <div id="uc-messages-list" class="flex-1 p-3.5 space-y-2.5 overflow-y-auto bg-slate-50/80 min-h-[280px]"></div>
+        <form id="uc-chat-form" class="p-2.5 bg-white border-t border-slate-200 flex items-center gap-2 shrink-0" autocomplete="off">
+          <input id="uc-chat-input" type="text" maxlength="500" placeholder="메시지 입력…" class="flex-1 min-w-0 rounded-xl border border-slate-300 px-3 py-2 text-xs sm:text-sm font-medium text-slate-900 focus:outline-none focus:border-slate-900" />
+          <button type="submit" class="px-3.5 py-2 rounded-xl ed-btn-accent text-xs font-black whitespace-nowrap shrink-0">전송</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
   <div id="whisper-modal" role="dialog" aria-modal="true" class="fixed inset-0 bg-slate-950/60 backdrop-blur-xs z-50 hidden items-center justify-center p-4">
     <div class="ed-card max-w-md w-full max-h-[85vh] flex flex-col overflow-hidden shadow-2xl">
       <div class="p-4 border-b border-slate-200 flex items-center justify-between gap-2">
@@ -5218,6 +5312,7 @@
           encouragements: {},
           reports: {},
           directMessages: {},
+        memberChats: {},
           lpHistory: {},
           respectLpRewardedByDay: {},
           periodLpRewarded: {},
@@ -5258,7 +5353,7 @@
       }
 
       function loadPrefs() {
-        const defaults = { currentUserId: 'm1', adminMode: false, alertEnabled: true, simTime: null, adminBrush: 'present', activeTab: 'dashboard', theme: 'white' };
+        const defaults = { currentUserId: 'm1', adminMode: false, alertEnabled: true, muteAllAlerts: false, simTime: null, adminBrush: 'present', activeTab: 'dashboard', theme: 'white' };
         try {
           const stored = JSON.parse(localStorage.getItem(LOCAL_PREFS_KEY));
           if (stored && typeof stored === 'object' && !Array.isArray(stored)) return { ...defaults, ...stored };
@@ -5412,7 +5507,7 @@
       function snapshotSharedState(obj) {
         const snap = {};
         if (!obj) return snap;
-        const twoLevel = ['studyLogs', 'studySubminuteMs', 'maxFocusLogs', 'periodStudySecs', 'studyBlocks', 'studyRankTimes', 'motemote', 'records', 'manualExempt', 'respectSentByDate', 'respectLpRewardedByDay', 'periodLpRewarded', 'hourlyLpGiven', 'studySlotMins', 'directMessages'];
+        const twoLevel = ['studyLogs', 'studySubminuteMs', 'maxFocusLogs', 'periodStudySecs', 'studyBlocks', 'studyRankTimes', 'motemote', 'records', 'manualExempt', 'respectSentByDate', 'respectLpRewardedByDay', 'periodLpRewarded', 'hourlyLpGiven', 'studySlotMins', 'directMessages', 'memberChats'];
         const oneLevel = ['classes', 'praises', 'promoHistory', 'customBadges', 'memberChallenges', 'challengeLpGranted', 'respectLpRewarded', 'lpHistory', 'reports', 'suggestions', 'encouragements'];
         Object.keys(obj).forEach(k => {
           if (k === 'studyGroups' || k === 'community' || k === 'gifts') return;
@@ -6167,6 +6262,7 @@
               reports: inboxRecords(v.reports),
               encouragements: inboxRecords(v.encouragements),
               directMessages: memberMailboxes(v.directMessages),
+          memberChats: (v.memberChats && typeof v.memberChats === 'object') ? v.memberChats : {},
               lpHistory: normArrMap(v.lpHistory),
               respectLpRewarded: v.respectLpRewarded || {},
               respectLpRewardedByDay: v.respectLpRewardedByDay || {},
@@ -7000,7 +7096,7 @@
       }
 
       function showAdminDeviceNotice(body) {
-        if (!isAdminUser() || !prefs.adminDeviceNotices || typeof Notification === 'undefined' || Notification.permission !== 'granted') return;
+        if (prefs.muteAllAlerts || !isAdminUser() || !prefs.adminDeviceNotices || typeof Notification === 'undefined' || Notification.permission !== 'granted') return;
         const title = 'I LOVE STUDY · 관리자 알림';
         const options = { body, tag: 'iluvstudy-admin-inbox' };
         if (navigator.serviceWorker?.controller) {
@@ -7126,7 +7222,16 @@
           modeBtn.textContent = `자율모드${pendTxt}`;
           modeBtn.className = 'px-2 py-0.5 rounded-full text-[10px] font-black bg-emerald-500 text-white hover:opacity-90 whitespace-nowrap shrink-0';
         }
-        const ab = document.getElementById('alert-toggle-btn'); ab.textContent = prefs.alertEnabled ? '🔔 쉬는시간 알림 켜짐' : '🔕 쉬는시간 알림 꺼짐';
+        const ab = document.getElementById('alert-toggle-btn'); ab.textContent = (prefs.alertEnabled && !prefs.muteAllAlerts) ? '🔔 쉬는시간 알림 켜짐' : '🔕 쉬는시간 알림 꺼짐';
+        const mbMute = document.getElementById('mute-all-alerts-btn');
+        if (mbMute) mbMute.textContent = prefs.muteAllAlerts ? '🔕 전체 알림 꺼짐 (타이머만 유지)' : '🔔 전체 알림 켜짐 (타이머 제외)';
+        const ucMute = document.getElementById('uc-mute-btn');
+        if (ucMute) {
+          ucMute.textContent = prefs.muteAllAlerts ? '🔕 알림 꺼짐' : '🔔 알림 켜짐';
+          ucMute.className = prefs.muteAllAlerts
+            ? 'px-2 py-1 rounded-lg border border-rose-200 bg-rose-50 text-[11px] font-bold text-rose-700 whitespace-nowrap'
+            : 'px-2 py-1 rounded-lg border border-slate-200 bg-slate-50 hover:bg-slate-100 text-[11px] font-bold text-slate-700 whitespace-nowrap';
+        }
         const tierInfo = getMemberTier(meHdr || 0);
         const promoBar = document.getElementById('promo-action-bar');
         const promoBadge = document.getElementById('promo-bar-badge');
@@ -7185,9 +7290,15 @@
         const myPraises = (shared.praises && shared.praises[prefs.currentUserId]) || [];
         const myDms = Object.values(shared.directMessages?.[prefs.currentUserId] || {});
         const unopenedGiftsCnt = typeof countUnopenedGifts === 'function' ? countUnopenedGifts() : 0;
-        const unreadCnt = myPraises.filter(p => !p.read).length + myDms.filter(d => !d.read).length + unopenedGiftsCnt;
+        const whisperUnreadCnt = typeof countWhisperUnread === 'function' ? countWhisperUnread() : 0;
+        const knownUnreadCnt = typeof countKnownChatUnread === 'function' ? countKnownChatUnread() : 0;
+        const myPostReplyUnreadCnt = typeof countMyCommunityReplyUnread === 'function' ? countMyCommunityReplyUnread() : 0;
+        const unreadCnt = myPraises.filter(p => !p.read).length + myDms.filter(d => !d.read).length + unopenedGiftsCnt + whisperUnreadCnt + knownUnreadCnt + myPostReplyUnreadCnt;
         const mbBadge = document.getElementById('mailbox-badge');
         mbBadge.classList.toggle('hidden', unreadCnt === 0);
+        if (!isRenderingUcModal && shown(document.getElementById('unified-chat-modal')) && typeof renderUnifiedChatModal === 'function') {
+          if (!ucActiveRoom || ucActiveRoom.type === 'admin' || ucActiveRoom.type === 'known' || ucActiveRoom.type === 'gifts') renderUnifiedChatModal();
+        }
         const guideBadge = document.getElementById('guide-hint-badge');
         const guideBtn = document.getElementById('nav-tab-guide');
         if (guideBadge && guideBtn) {
@@ -7308,7 +7419,7 @@
         }
         if (phase.type === 'break' && lastNotifiedPhaseId !== phase.id) {
           lastNotifiedPhaseId = phase.id;
-          if (prefs.alertEnabled) showToast(`☕ ${phase.start} 쉬는시간 시작! (${phase.mins}분)`, 'info');
+          if (prefs.alertEnabled && !prefs.muteAllAlerts) showToast(`☕ ${phase.start} 쉬는시간 시작! (${phase.mins}분)`, 'info');
           const myP = (shared.praises && shared.praises[prefs.currentUserId]) || [];
           const unread = myP.filter(p => !p.read);
           if (unread.length) {
@@ -8718,6 +8829,7 @@
         document.getElementById('admin-preset-badges').innerHTML = PRESET_ADMIN_BADGES.map((pb, idx) => `<button type="button" data-grant-preset="${idx}" class="fancy-badge px-2.5 py-1 rounded-full text-[11px] font-extrabold border ${BADGE_THEMES[pb.theme]}">${pb.label}</button>`).join('');
         const cList = (shared.customBadges && shared.customBadges[cbm]) || [];
         document.getElementById('admin-member-badges-list').innerHTML = cList.length ? cList.map(cb => `<div class="inline-flex items-center gap-1 rounded-full border pl-2.5 pr-1.5 py-0.5 text-[11px] font-extrabold ${BADGE_THEMES[cb.theme || 'gold']}"><span>${escapeHtml(cb.label)}</span><button type="button" data-edit-badge="${cb.id}" class="px-1 hover:opacity-75" title="뱃지 이름 수정">✏️</button><button type="button" data-revoke-badge="${cb.id}" class="px-1 hover:text-rose-600" title="회수">✕</button></div>`).join('') : '<span class="text-xs text-slate-400">없음</span>';
+        if (typeof renderAdminGiftsPanel === 'function') renderAdminGiftsPanel();
 
         const dmTargetSel = document.getElementById('admin-dm-target');
         if (dmTargetSel) {
@@ -8780,11 +8892,11 @@
         const sugList = sortedInbox(shared.suggestions);
         document.getElementById('admin-suggestions-list').innerHTML = sugList.length
           ? sugList.map(([key, sg]) => `<div class="rounded-xl border ${sg.read ? 'border-slate-200 bg-slate-50' : 'border-indigo-200 bg-indigo-50/70'} p-2.5 text-xs space-y-1.5">
-              <div class="flex items-center gap-2 flex-wrap"><span class="font-bold text-slate-900">${escapeHtml(sg.fromName)}</span><span class="text-[10px] text-slate-400">${escapeHtml(sg.date)} ${escapeHtml(sg.time)}</span></div>
+              <div class="flex items-center gap-2 flex-wrap"><span class="font-bold text-slate-900">${escapeHtml(sg.fromName || sg.memberName || '부원')}</span><span class="text-[10px] text-slate-400">${escapeHtml(sg.date)} ${escapeHtml(sg.time)}</span></div>
               <p class="text-slate-700 break-words whitespace-pre-wrap">${escapeHtml(sg.text)}</p>
               <div class="flex justify-end items-center gap-2">
                 ${sg.read ? '<span class="px-1.5 py-0.5 rounded bg-slate-200 text-slate-600 text-[10px] font-bold">읽음</span>' : `<button type="button" data-read-sug="${escapeHtml(key)}" class="text-[10px] px-2 py-1 rounded bg-slate-900 text-white font-bold">✓ 읽음</button>`}
-                ${sg.replied ? '<span class="text-[10px] text-emerald-700">답장 완료</span>' : inboxReplyButton('suggestions', key, sg.fromId)}
+                ${sg.replied ? '<span class="text-[10px] text-emerald-700">답장 완료</span>' : inboxReplyButton('suggestions', key, sg.fromId || sg.memberId)}
                 <button type="button" data-del-sug="${escapeHtml(key)}" class="text-[10px] px-2 py-1 rounded text-rose-600 font-bold">삭제</button>
               </div>
             </div>`).join('')
@@ -9250,6 +9362,14 @@
       }
 
       document.getElementById('alert-toggle-btn').addEventListener('click', () => { prefs.alertEnabled = !prefs.alertEnabled; savePrefs(); renderHeaderControls(); });
+      function toggleMuteAllAlerts() {
+        prefs.muteAllAlerts = !prefs.muteAllAlerts;
+        savePrefs();
+        renderHeaderControls();
+        showToast(prefs.muteAllAlerts ? '🔕 타이머 측정 중 알림을 제외한 모든 알림을 껐어요.' : '🔔 채팅·댓글·선물 알림을 다시 켰어요.', 'info');
+      }
+      document.getElementById('mute-all-alerts-btn')?.addEventListener('click', toggleMuteAllAlerts);
+      document.getElementById('uc-mute-btn')?.addEventListener('click', toggleMuteAllAlerts);
       document.getElementById('modal-close').addEventListener('click', closeModal);
       document.getElementById('modal-overlay').addEventListener('click', e => { if (e.target.id === 'modal-overlay') closeModal(); });
       {
@@ -9655,7 +9775,7 @@
       function openInboxReply(inbox, key) {
         if (!prefs.adminMode || !Object.hasOwn(inboxLabels, inbox)) return;
         const row = shared[inbox]?.[key];
-        const memberId = row?.reporterId || row?.fromId;
+        const memberId = row?.reporterId || row?.fromId || row?.memberId;
         const recipient = shared.members.find(m => m.id === memberId);
         if (!row || row.replied || !recipient) return;
         openModal(`${inboxLabels[inbox]} 답장`, `
@@ -9670,7 +9790,7 @@
           const text = document.getElementById('admin-inbox-reply-text').value.trim();
           if (!text || !prefs.adminMode) return;
           const latest = shared[inbox]?.[key];
-          if (!latest || latest.replied || (latest.reporterId || latest.fromId) !== memberId || !shared.members.some(m => m.id === memberId)) {
+          if (!latest || latest.replied || (latest.reporterId || latest.fromId || latest.memberId) !== memberId || !shared.members.some(m => m.id === memberId)) {
             closeModal();
             showToast('이미 처리됐거나 받는 부원을 찾을 수 없어요.', 'warn');
             return;
@@ -9805,23 +9925,8 @@
         renderAdminNotices();
       });
       document.getElementById('mailbox-btn').addEventListener('click', () => {
-        const list = (shared.praises && shared.praises[prefs.currentUserId]) || [];
-        const dmList = sortedInbox(shared.directMessages?.[prefs.currentUserId]).map(([, message]) => message);
-        const dmHtml = dmList.length
-          ? `<div class="space-y-2 mb-3"><div class="text-[11px] font-black text-indigo-600">👑 관리자 다이렉트 메시지</div>${dmList.map(d => `<div class="p-3 rounded-xl bg-indigo-50 border border-indigo-200 text-xs"><p class="font-bold text-slate-900">✉️ ${escapeHtml(d.text)}</p><span class="text-[10px] text-slate-500">${escapeHtml(d.date)} ${escapeHtml(d.time)}</span></div>`).join('')}</div>`
-          : '';
-        const praiseHtml = list.length
-          ? `<div class="space-y-2">${list.slice().reverse().map(p => `<div class="p-3 rounded-xl bg-amber-50 border border-amber-200 text-xs"><p class="font-bold text-slate-900">💌 ${escapeHtml(p.msg)}</p><span class="text-[10px] text-slate-500">${p.time}</span></div>`).join('')}</div>`
-          : (!dmList.length ? '<p class="text-xs text-slate-400 text-center py-4">아직 도착한 메시지가 없습니다.</p>' : '');
-        list.forEach(p => { p.read = true; });
-        dmList.forEach(d => { d.read = true; });
         if (!prefs.adminMode) unlockChallengeFor(prefs.currentUserId, 'ch_mailbox', false);
-        saveSharedData();
-        renderHeaderControls();
-        const giftsHtml = typeof renderMailboxGiftsHtml === 'function' ? renderMailboxGiftsHtml() : '';
-        const finalBody = giftsHtml + dmHtml + (praiseHtml && !(!list.length && (giftsHtml || dmHtml)) ? praiseHtml : (list.length ? praiseHtml : ''));
-        openModal('💌 우편함 & 선물함', finalBody || '<p class="text-xs text-slate-400 text-center py-4">아직 도착한 메시지나 선물이 없습니다.</p>');
-        if (typeof bindMailboxGiftButtons === 'function') bindMailboxGiftButtons();
+        if (typeof openUnifiedChatModal === 'function') openUnifiedChatModal('all');
       });
 
       document.addEventListener('click', e => {
@@ -13941,11 +14046,14 @@
           listenSocial(db.ref('roomAccess/' + actor), v => { roomMembership.set(actor,v); refreshRooms(); });
         }
         listenSocial(db.ref('roomCatalog'), v => { roomListings = v; catalogReady = true; refreshRooms(); });
-        listenSocial(db.ref('anonPosts'), v => { communityData.posts = v; refreshSocialFeed(); });
+        listenSocial(db.ref('anonPosts'), v => { communityData.posts = v; notifSourceReady.posts = true; refreshSocialFeed(); });
         const sets = {fromUid:{}, toUid:{}};
+        const loadedFields = new Set();
         for (const field of Object.keys(sets)) {
           listenSocial(db.ref('whisperThreads').orderByChild(field).equalTo(myAnonId), v => {
-            sets[field] = v; communityData.whispers = {...sets.fromUid, ...sets.toUid}; refreshSocialFeed();
+            sets[field] = v; loadedFields.add(field);
+            if (loadedFields.size === 2) notifSourceReady.whispers = true;
+            communityData.whispers = {...sets.fromUid, ...sets.toUid}; refreshSocialFeed();
           });
         }
       }
@@ -14069,7 +14177,7 @@
       document.querySelectorAll('[data-close-modal]').forEach(btn => {
         btn.addEventListener('click', () => closeSimpleModal(btn.dataset.closeModal));
       });
-      ['group-create-modal', 'group-pw-modal', 'whisper-modal'].forEach(mid => {
+      ['group-create-modal', 'group-pw-modal', 'whisper-modal', 'unified-chat-modal'].forEach(mid => {
         document.getElementById(mid)?.addEventListener('click', e => {
           if (e.target.id === mid) closeSimpleModal(mid);
         });
@@ -14267,35 +14375,26 @@
         if (anonBadge) {
           anonBadge.classList.remove('hidden');
           if (isAnonChatOnly) {
-            anonBadge.textContent = '🎭 익명 · 경쟁 없음';
-            anonBadge.className = 'px-2 py-0.5 rounded-md bg-slate-900 text-white text-[10px] font-bold';
+            anonBadge.textContent = '🎭 익명';
+            anonBadge.className = 'px-1.5 py-0.5 rounded bg-slate-900 text-white text-[10px] font-bold shrink-0';
           } else {
-            anonBadge.textContent = '🏷️ 별명 · 공부 공유';
-            anonBadge.className = 'px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-700 border border-indigo-200 text-[10px] font-bold';
+            anonBadge.textContent = '🏷️ 별명';
+            anonBadge.className = 'px-1.5 py-0.5 rounded bg-indigo-50 text-indigo-700 border border-indigo-200 text-[10px] font-bold shrink-0';
           }
         }
         document.getElementById('group-room-lock-badge').classList.toggle('hidden', !g.password);
         document.getElementById('group-room-meta').textContent = isAnonChatOnly
-          ? `익명 단톡방 · ${infos.length}명 참여 중 · 경쟁 기능 없음`
-          : `멤버 ${infos.length}명 · 현재 ${studyingCnt}명 공부 중${g.goalHours > 0 ? ` · 하루 목표 ${g.goalHours}시간` : ''}`;
-        document.getElementById('group-room-desc').textContent = g.desc || '';
-        document.getElementById('btn-group-start-timer')?.classList.toggle('hidden', isAnonChatOnly);
+          ? `익명 단톡방 · ${infos.length}명 참여 중`
+          : `멤버 ${infos.length}명 · ${studyingCnt}명 공부 중${g.goalHours > 0 ? ` · 목표 ${g.goalHours}h` : ''}`;
+        const descEl = document.getElementById('group-room-desc');
+        if (descEl) {
+          const descTxt = (g.desc || '').trim();
+          descEl.textContent = descTxt;
+          descEl.classList.toggle('hidden', !descTxt);
+        }
         document.getElementById('group-room-subbar')?.classList.toggle('hidden', isAnonChatOnly);
         const chatInp = document.getElementById('group-chat-input');
-        if (chatInp) chatInp.placeholder = isAnonChatOnly ? '익명 단톡방에 메시지 보내기… (익명 번호로 표시)' : '모임 단톡방에 메시지 보내기… (별명으로 표시)';
-
-        const strip = document.getElementById('group-room-live-strip');
-        strip.classList.toggle('hidden', isAnonChatOnly);
-        if (!isAnonChatOnly) {
-          strip.innerHTML = infos.map(x => {
-            const live = x.status === 'studying';
-            return `<span class="shrink-0 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold ${live ? 'bg-emerald-50 border border-emerald-200 text-emerald-800' : 'bg-slate-100 text-slate-600'}">
-              <span class="w-1.5 h-1.5 rounded-full ${live ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400'}"></span>
-              <span>${escapeHtml(x.name)}</span>
-              <span class="font-mono text-[10px] opacity-75">${formatStudyMins(x.mins)}</span>
-            </span>`;
-          }).join('');
-        }
+        if (chatInp) chatInp.placeholder = isAnonChatOnly ? '익명 메시지 입력…' : '단톡방 메시지 입력…';
 
         // Sub-tab visibility (Anonymous room = chat only; Normal room = Members first, Chat second)
         document.getElementById('group-room-members-panel').classList.toggle('hidden', effectiveRoomSub !== 'members');
@@ -14340,20 +14439,39 @@
           const listEl = document.getElementById('group-room-members-list');
           listEl.innerHTML = infos.map((x, idx) => {
             const live = x.status === 'studying';
-            return `<div class="p-3 rounded-xl border border-slate-200 bg-slate-50/50 space-y-1.5">
-              <div class="flex items-center justify-between gap-2">
+            const mem = x.member;
+            const tier = mem ? getMemberTier(mem) : { name: '아이언', lp: 0, wingColor: '#94a3b8', gemColor: '#cbd5e1' };
+            const isUltra = mem ? getMemberMode(mem) === 'strict' : false;
+            const eqTitle = mem && mem.equippedTitle ? escapeHtml(mem.equippedTitle) : '';
+            const initial = escapeHtml(String(x.name || '?').slice(0, 1));
+            const statusText = MEMBER_STATUS_LABELS[x.status] || (mem ? '대기 중' : '오프라인');
+            const hrs = Math.floor((x.mins || 0) / 60);
+            const rem = (x.mins || 0) % 60;
+            return `<article class="room-member-card" style="--rank-deep:${tier.wingColor};--rank-gem:${tier.gemColor};--rank-ink:color-mix(in srgb, ${tier.wingColor} 63%, var(--ink))">
+              <div class="flex items-center justify-between gap-1.5">
                 <div class="flex items-center gap-2 min-w-0">
-                  <span class="w-5 text-center text-xs font-black ${idx === 0 ? 'text-amber-500' : 'text-slate-400'}">${idx + 1}</span>
-                  <span class="text-xs sm:text-sm font-black text-slate-900 truncate">${escapeHtml(x.name)}</span>
-                  <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${live ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-200 text-slate-600'}">${MEMBER_STATUS_LABELS[x.status] || (x.member ? '대기 중' : '오프라인')}</span>
+                  <div class="relative w-8 h-8 rounded-lg border border-slate-200 bg-slate-100 flex items-center justify-center text-xs font-black text-slate-700 shrink-0 overflow-hidden">
+                    ${mem && mem.avatarUrl ? `<img src="${escapeHtml(mem.avatarUrl)}" alt="" class="w-full h-full object-cover" loading="lazy">` : initial}
+                    ${isUltra ? '<span class="absolute -right-0.5 -bottom-0.5 w-3.5 h-3.5 rounded-full bg-amber-950 text-amber-200 text-[8px] flex items-center justify-center">⚡</span>' : ''}
+                  </div>
+                  <div class="min-w-0">
+                    <div class="flex items-center gap-1 min-w-0">
+                      <span class="text-[10px] font-black ${idx === 0 ? 'text-amber-500' : 'text-slate-400'} shrink-0">#${idx + 1}</span>
+                      <strong class="text-xs font-black text-slate-950 truncate">${escapeHtml(x.name)}</strong>
+                    </div>
+                    <span class="inline-flex items-center gap-1 text-[10px] font-bold ${live ? 'text-emerald-600' : 'text-slate-400'}">
+                      <span class="w-1.5 h-1.5 rounded-full ${live ? 'bg-emerald-500 animate-pulse' : 'bg-slate-300'}"></span>${statusText}
+                    </span>
+                  </div>
                 </div>
-                <div class="flex items-center gap-1.5 shrink-0">
-                  <span class="font-mono text-xs sm:text-sm font-black text-slate-950">${formatStudyMins(x.mins)}</span>
-                  ${!g.isAnonymous && x.uid !== myUid ? `<button type="button" data-gift-uid="${escapeHtml(x.uid)}" data-gift-name="${escapeHtml(x.name)}" class="px-2 py-1 rounded-lg bg-white border border-slate-200 hover:bg-slate-100 text-[11px] font-bold text-slate-700" title="선물 보내기">🎁</button>` : ''}
-                </div>
+                ${!g.isAnonymous && x.uid !== myUid ? `<button type="button" data-gift-uid="${escapeHtml(x.uid)}" data-gift-name="${escapeHtml(x.name)}" class="w-7 h-7 rounded-lg bg-slate-50 border border-slate-200 hover:bg-slate-100 text-xs flex items-center justify-center shrink-0" title="선물 보내기">🎁</button>` : ''}
               </div>
-
-            </div>`;
+              ${eqTitle ? `<span class="room-member-title">${eqTitle}</span>` : ''}
+              <div class="flex items-end justify-between gap-1 pt-1 border-t border-slate-100 mt-auto">
+                <span class="text-[10px] font-bold text-slate-500 truncate"><strong style="color:var(--rank-ink)">${escapeHtml(tier.name)}</strong> ${tier.lp} LP</span>
+                <strong class="font-mono text-xs sm:text-sm font-black text-slate-950 shrink-0">${hrs ? `${hrs}<span class="text-[10px] font-bold text-slate-400">시간</span> ` : ''}${rem}<span class="text-[10px] font-bold text-slate-400">분</span></strong>
+              </div>
+            </article>`;
           }).join('');
         }
       }
@@ -14394,10 +14512,6 @@
         document.getElementById('gc-goal-wrap')?.classList.toggle('hidden', e.target.checked);
       });
       document.getElementById('btn-group-room-back')?.addEventListener('click', () => { activeGroupId = null; saveGroupNavState(); renderGroupsTab(); });
-      document.getElementById('btn-group-start-timer')?.addEventListener('click', () => {
-        if (typeof openFocusOverlay === 'function') openFocusOverlay(false);
-        else switchTab('dashboard');
-      });
       document.querySelectorAll('.room-sub-btn').forEach(btn => {
         btn.addEventListener('click', () => {
           activeRoomSub = btn.dataset.roomSub;
@@ -15053,26 +15167,15 @@
       }
 
       function countUnreadWhispers() {
-        const myUid = anonId();
-        let cnt = 0;
-        for (const w of getMyWhispers()) {
-          if (w.status === 'pending' && w.toUid === myUid) { cnt++; continue; }
-          const lastRead = Number(w.lastReadAt?.[myUid] || 0);
-          const msgs = Object.values(w.messages || {});
-          if (msgs.some(m => m.senderUid !== myUid && Number(m.createdAt || 0) > lastRead)) cnt++;
-        }
-        return cnt;
+        return typeof countWhisperUnread === 'function' ? countWhisperUnread() : 0;
       }
 
       function updateWhisperBadges() {
         const cnt = countUnreadWhispers();
-        const badge = document.getElementById('whisper-unread-badge');
         const dot = document.getElementById('community-whisper-nav-dot');
-        if (badge) {
-          badge.textContent = String(cnt);
-          badge.classList.toggle('hidden', cnt === 0);
-        }
         if (dot) dot.classList.toggle('hidden', cnt === 0);
+        if (typeof renderHeaderControls === 'function') renderHeaderControls();
+        if (!isRenderingUcModal && shown(document.getElementById('unified-chat-modal')) && typeof renderUnifiedChatModal === 'function') renderUnifiedChatModal();
       }
 
       function openNewWhisperRequest(targetUid, contextText) {
@@ -15199,16 +15302,11 @@
         }).join('');
       }
 
-      document.getElementById('btn-open-whisper-inbox')?.addEventListener('click', () => {
-        activeWhisperThreadId = null;
-        pendingWhisperTarget = null;
-        openSimpleModal('whisper-modal');
-        renderWhisperModal();
-      });
       document.getElementById('whisper-back-btn')?.addEventListener('click', () => {
         activeWhisperThreadId = null;
         pendingWhisperTarget = null;
-        renderWhisperModal();
+        closeSimpleModal('whisper-modal');
+        if (typeof openUnifiedChatModal === 'function') openUnifiedChatModal('anon');
       });
       document.getElementById('whisper-inbox-view')?.addEventListener('click', e => {
         const btn = e.target.closest('[data-open-whisper]');
@@ -15245,9 +15343,14 @@
       }));
       document.getElementById('btn-whisper-accept')?.addEventListener('click', socialAction(async () => {
         if (!activeWhisperThreadId) return;
-        await socialWrite(`community/whispers/${activeWhisperThreadId}/status`, 'accepted');
+        const myUid = anonId();
+        await socialUpdate({
+          [`community/whispers/${activeWhisperThreadId}/status`]: 'accepted',
+          [`community/whispers/${activeWhisperThreadId}/lastReadAt/${myUid}`]: Date.now()
+        });
         showToast('귓속말을 수락했어요!', 'success');
         renderWhisperModal();
+        updateWhisperBadges();
       }));
       document.getElementById('btn-whisper-reject')?.addEventListener('click', socialAction(async () => {
         if (!activeWhisperThreadId) return;
@@ -15273,6 +15376,9 @@
           [`community/whispers/${w.id}/lastReadAt/${myUid}`]: now
         });
         if (activeWhisperThreadId === w.id && input.value.trim() === text) input.value = '';
+        if (filePreview) renderWhisperModal();
+        const list = document.getElementById('whisper-messages-list');
+        if (list) list.scrollTop = list.scrollHeight;
       }));
 
       if (filePreview) {
@@ -15321,6 +15427,8 @@
         if (shown(document.getElementById('auth-overlay'))) return false;
         if (shown(document.getElementById('gift-open-overlay'))) return false;
         if (shown(document.getElementById('modal-overlay'))) return false;
+        if (shown(document.getElementById('unified-chat-modal'))) return false;
+        if (shown(document.getElementById('whisper-modal'))) return false;
         return true;
       }
 
@@ -15380,6 +15488,7 @@
           try { localStorage.setItem(GIFT_PREVIEW_KEY, JSON.stringify(giftsData)); } catch (e) {}
           renderHeaderControls();
           if (prefs.activeTab === 'profile') renderProfileGifts();
+          if (prefs.activeTab === 'admin' && typeof renderAdminGiftsPanel === 'function') renderAdminGiftsPanel();
           return Promise.resolve();
         }
         return firebase.database().ref('studyData/gifts/' + path).set(val);
@@ -15584,6 +15693,826 @@
         showToast(`🎁 ${pendingGiftTarget.name}님 우편함으로 [${giftIconOf(g)} ${g.name}] 선물을 보냈어요!`, 'success');
       });
 
+
+
+      // =========================================================================
+      // UNIFIED KAKAOTALK-STYLE CHAT & NOTIFICATION ENGINE
+      // (관리자 · 익명 귓속말/내글댓글 · 아는사람 1:1 채팅/선물, 타이머 제외 전체 알림 해제)
+      // =========================================================================
+      let ucActiveCat = 'all';
+      let ucActiveRoom = null; // null | { type: 'admin' } | { type: 'known', partnerId } | { type: 'gifts' }
+      let isRenderingUcModal = false;
+      let ucForceScrollBottom = false;
+      const UC_SEEN_POST_REPLY_KEY = storageScope + 'iluvstudy_seen_post_reply_at';
+      const UC_SEEN_KNOWN_CHAT_KEY = storageScope + 'iluvstudy_seen_known_chat_map';
+      const notifSeenIds = new Set();
+      const notifSourceReady = { study: false, posts: false, whispers: false, gifts: false };
+      const notifSourceSeeded = { study: false, posts: false, whispers: false, gifts: false };
+
+      function getSeenPostReplyAt() {
+        try { return Number(localStorage.getItem(UC_SEEN_POST_REPLY_KEY) || 0); } catch { return 0; }
+      }
+      function setSeenPostReplyAt(ts) {
+        try { localStorage.setItem(UC_SEEN_POST_REPLY_KEY, String(ts)); } catch {}
+      }
+
+      function dispatchAppNotification(title, body, tag = 'iluvstudy-chat') {
+        if (prefs.muteAllAlerts) return;
+        showToast(`${title}: ${body}`, 'info');
+        if (typeof Notification === 'undefined' || Notification.permission !== 'granted') return;
+        const opts = { body, tag, icon: './icon-192.png' };
+        if (navigator.serviceWorker?.controller) {
+          navigator.serviceWorker.ready.then(reg => {
+            if (!prefs.muteAllAlerts) return reg.showNotification(title, opts);
+          }).catch(() => {});
+        } else {
+          try { new Notification(title, opts); } catch {}
+        }
+      }
+
+      function getKnownChatPairKey(idA, idB) {
+        return [String(idA || ''), String(idB || '')].sort().join('__');
+      }
+
+      function getSeenKnownChatMap() {
+        try { return JSON.parse(localStorage.getItem(UC_SEEN_KNOWN_CHAT_KEY) || '{}') || {}; } catch { return {}; }
+      }
+
+      function markKnownChatSeen(pairKey, ts = Date.now()) {
+        const map = getSeenKnownChatMap();
+        const prev = Number(map[pairKey] || 0);
+        const next = Math.max(prev, Number(ts || 0));
+        if (next <= prev) return false;
+        map[pairKey] = next;
+        try { localStorage.setItem(UC_SEEN_KNOWN_CHAT_KEY, JSON.stringify(map)); } catch {}
+        return true;
+      }
+
+      function getKnownChatMessages(pairKey) {
+        const raw = shared.memberChats?.[pairKey];
+        if (!raw || typeof raw !== 'object') return [];
+        return Object.values(raw).filter(Boolean).sort((a, b) => Number(a.createdAt || 0) - Number(b.createdAt || 0));
+      }
+
+      function getMyKnownChatRooms() {
+        const myId = prefs.currentUserId;
+        if (!myId) return [];
+        const seenMap = getSeenKnownChatMap();
+        const rooms = [];
+        Object.keys(shared.memberChats || {}).forEach(pairKey => {
+          const parts = pairKey.split('__');
+          if (parts.length !== 2 || !parts.includes(myId)) return;
+          const partnerId = parts[0] === myId ? parts[1] : parts[0];
+          const partner = (shared.members || []).find(m => m.id === partnerId);
+          if (!partner) return;
+          const msgs = getKnownChatMessages(pairKey);
+          if (!msgs.length) return;
+          const last = msgs[msgs.length - 1];
+          const seenAt = Number(seenMap[pairKey] || 0);
+          const unread = msgs.filter(m => m.fromId !== myId && Number(m.createdAt || 0) > seenAt).length;
+          rooms.push({ pairKey, partnerId, partner, msgs, last, unread });
+        });
+        return rooms.sort((a, b) => Number(b.last?.createdAt || 0) - Number(a.last?.createdAt || 0));
+      }
+
+      function countKnownChatUnread() {
+        return getMyKnownChatRooms().reduce((sum, r) => sum + r.unread, 0);
+      }
+
+      function countWhisperUnread() {
+        const myUid = typeof anonId === 'function' ? anonId() : '';
+        if (!myUid || typeof getMyWhispers !== 'function') return 0;
+        let cnt = 0;
+        getMyWhispers().forEach(w => {
+          if (w.status === 'pending' && w.toUid === myUid) cnt++;
+          else if (w.status === 'accepted') {
+            const lastRead = Number(w.lastReadAt?.[myUid] || 0);
+            const msgs = Object.values(w.messages || {}).filter(Boolean);
+            cnt += msgs.filter(m => m.senderUid !== myUid && Number(m.createdAt || 0) > lastRead).length;
+          }
+        });
+        return cnt;
+      }
+
+      function getMyCommunityReplies() {
+        const myUid = typeof anonId === 'function' ? anonId() : '';
+        if (!myUid || !communityData?.posts) return [];
+        const replies = [];
+        Object.values(communityData.posts).filter(Boolean).forEach(p => {
+          if (p.authorUid !== myUid) return;
+          Object.values(p.comments || {}).filter(Boolean).forEach(cm => {
+            if (cm.authorUid === myUid) return;
+            replies.push({
+              id: `${p.id}_${cm.id || cm.createdAt}`,
+              postId: p.id,
+              postTitle: p.title || (p.body || '').slice(0, 24) || '내 익명 글',
+              text: cm.text || '',
+              createdAt: Number(cm.createdAt || 0)
+            });
+          });
+        });
+        return replies.sort((a, b) => b.createdAt - a.createdAt);
+      }
+
+      function countMyCommunityReplyUnread() {
+        const seenAt = getSeenPostReplyAt();
+        return getMyCommunityReplies().filter(r => r.createdAt > seenAt).length;
+      }
+
+      function checkIncomingChatNotifications() {
+        const myId = prefs.currentUserId;
+        const myUid = typeof anonId === 'function' ? anonId() : '';
+        const ucOpen = shown(document.getElementById('unified-chat-modal'));
+        const whOpen = shown(document.getElementById('whisper-modal'));
+        const fresh = [];
+
+        if (filePreview) {
+          notifSourceReady.study = true;
+          notifSourceReady.posts = true;
+          notifSourceReady.whispers = true;
+          notifSourceReady.gifts = true;
+        } else if (dbLoadedOnce) {
+          notifSourceReady.study = true;
+        }
+
+        function processSource(sourceKey, sourceItems) {
+          if (!notifSourceReady[sourceKey]) return;
+          if (!notifSourceSeeded[sourceKey]) {
+            sourceItems.forEach(it => notifSeenIds.add(it.key));
+            notifSourceSeeded[sourceKey] = true;
+            return;
+          }
+          sourceItems.forEach(it => {
+            if (!notifSeenIds.has(it.key)) {
+              notifSeenIds.add(it.key);
+              if (!it.suppress) fresh.push(it);
+            }
+          });
+        }
+
+        // 1 & 2. Admin DMs + Known-member 1:1 chats (from studyData)
+        const studyItems = [];
+        const viewingAdmin = ucOpen && ucActiveRoom?.type === 'admin';
+        Object.entries(shared.directMessages?.[myId] || {}).forEach(([k, d]) => {
+          if (d && !d.read) studyItems.push({ key: 'dm:' + k, title: '🛡️ 관리자', body: d.text || '새 메시지가 도착했어요.', tag: 'uc-admin', suppress: viewingAdmin });
+        });
+        const seenKnownMap = getSeenKnownChatMap();
+        getMyKnownChatRooms().forEach(r => {
+          const seenAt = Number(seenKnownMap[r.pairKey] || 0);
+          const viewingKnown = ucOpen && ucActiveRoom?.type === 'known' && ucActiveRoom.partnerId === r.partnerId;
+          r.msgs.forEach(m => {
+            if (m.fromId !== myId && Number(m.createdAt || 0) > seenAt) {
+              studyItems.push({ key: 'kc:' + r.pairKey + ':' + m.id, title: `👤 ${r.partner.name}`, body: m.text || '', tag: 'uc-known', suppress: viewingKnown });
+            }
+          });
+        });
+        processSource('study', studyItems);
+
+        // 3. Anonymous whispers
+        const whisperItems = [];
+        if (myUid && typeof getMyWhispers === 'function') {
+          getMyWhispers().forEach(w => {
+            const viewingWh = whOpen && activeWhisperThreadId === w.id;
+            if (w.status === 'pending' && w.toUid === myUid) {
+              whisperItems.push({ key: 'whreq:' + w.id, title: '🎭 새 익명 귓속말 요청', body: w.context || '익명 대화가 도착했어요.', tag: 'uc-whisper', suppress: viewingWh });
+            } else if (w.status === 'accepted') {
+              const lastRead = Number(w.lastReadAt?.[myUid] || 0);
+              Object.values(w.messages || {}).filter(Boolean).forEach(m => {
+                if (m.senderUid !== myUid && Number(m.createdAt || 0) > lastRead) {
+                  whisperItems.push({ key: 'whm:' + w.id + ':' + m.id, title: '🎭 익명 귓속말', body: m.text || '', tag: 'uc-whisper', suppress: viewingWh });
+                }
+              });
+            }
+          });
+        }
+        processSource('whispers', whisperItems);
+
+        // 4. Community comments ONLY on my own posts (never group/talk rooms)
+        const seenReplyAt = getSeenPostReplyAt();
+        const postItems = getMyCommunityReplies()
+          .filter(r => r.createdAt > seenReplyAt)
+          .map(r => ({ key: 'reply:' + r.id, title: '💬 내 게시글에 새 댓글', body: r.text, tag: 'uc-reply', suppress: false }));
+        processSource('posts', postItems);
+
+        // 5. Unopened gifts
+        const giftItems = [];
+        const giftUid = typeof getMySocialUid === 'function' ? getMySocialUid() : '';
+        const viewingGifts = ucOpen && ucActiveRoom?.type === 'gifts';
+        if (giftUid) {
+          Object.values(giftsData.parcels?.[giftUid] || {}).filter(p => p && !p.opened).forEach(p => {
+            giftItems.push({ key: 'gift:' + p.id, title: '🎁 새 선물이 도착했어요', body: `${p.fromName || '멤버'}님이 선물을 보냈어요.`, tag: 'uc-gift', suppress: viewingGifts });
+          });
+        }
+        processSource('gifts', giftItems);
+
+        if (fresh.length) {
+          const latest = fresh[fresh.length - 1];
+          dispatchAppNotification(latest.title, latest.body, latest.tag);
+          if (typeof renderHeaderControls === 'function') renderHeaderControls();
+          if (!isRenderingUcModal && ucOpen) renderUnifiedChatModal();
+        }
+      }
+
+      setInterval(() => {
+        if (typeof currentAuthUser !== 'undefined' && (currentAuthUser || filePreview)) {
+          checkIncomingChatNotifications();
+        }
+      }, 2500);
+
+      function openUnifiedChatModal(cat = 'all', room = null) {
+        ucActiveCat = cat || 'all';
+        ucActiveRoom = room || null;
+        openSimpleModal('unified-chat-modal');
+        renderUnifiedChatModal();
+        renderHeaderControls();
+      }
+
+      function renderUnifiedChatModal() {
+        if (isRenderingUcModal) return;
+        isRenderingUcModal = true;
+        try {
+        const listView = document.getElementById('uc-list-view');
+        const roomView = document.getElementById('uc-room-view');
+        const backBtn = document.getElementById('uc-back-btn');
+        const titleEl = document.getElementById('uc-title');
+        const subEl = document.getElementById('uc-sub');
+        const roomsEl = document.getElementById('uc-rooms-list');
+        const msgEl = document.getElementById('uc-messages-list');
+        const chatForm = document.getElementById('uc-chat-form');
+        const chatInput = document.getElementById('uc-chat-input');
+        const pickerBar = document.getElementById('uc-known-picker-bar');
+        const pickerSel = document.getElementById('uc-known-member-select');
+        if (!listView || !roomView || !roomsEl) return;
+
+        const myId = prefs.currentUserId;
+        const myUid = typeof anonId === 'function' ? anonId() : '';
+
+        if (!ucActiveRoom) {
+          listView.classList.remove('hidden');
+          listView.classList.add('flex');
+          roomView.classList.add('hidden');
+          roomView.classList.remove('flex');
+          backBtn.classList.add('hidden');
+          titleEl.textContent = '💬 채팅 · 알림';
+          subEl.textContent = '관리자 · 익명 · 아는사람';
+
+          // Update category tabs with unread dots
+          const dmList = sortedInbox(shared.directMessages?.[myId]).map(([, m]) => m);
+          const adminUnread = dmList.filter(d => !d.read).length;
+          const anonUnread = countWhisperUnread() + countMyCommunityReplyUnread();
+          const praises = (shared.praises && shared.praises[myId]) || [];
+          const giftsUnread = typeof countUnopenedGifts === 'function' ? countUnopenedGifts() : 0;
+          const knownUnread = countKnownChatUnread() + praises.filter(p => !p.read).length + giftsUnread;
+          const totalUnread = adminUnread + anonUnread + knownUnread;
+          const labels = {
+            all: `전체${totalUnread ? ` ${totalUnread}` : ''}`,
+            admin: `관리자${adminUnread ? ` ${adminUnread}` : ''}`,
+            anon: `익명${anonUnread ? ` ${anonUnread}` : ''}`,
+            known: `아는사람${knownUnread ? ` ${knownUnread}` : ''}`
+          };
+          document.querySelectorAll('.uc-cat-btn').forEach(b => {
+            const on = b.dataset.ucCat === ucActiveCat;
+            b.textContent = labels[b.dataset.ucCat] || b.textContent;
+            b.className = on
+              ? 'uc-cat-btn py-1.5 rounded-lg text-[11px] font-black bg-slate-950 text-white transition'
+              : 'uc-cat-btn py-1.5 rounded-lg text-[11px] font-bold text-slate-600 hover:text-slate-900 transition';
+          });
+
+          // Show member picker for starting 1:1 nickname chat on 'known' or 'all'
+          const others = (shared.members || []).filter(m => m.id !== myId && m.inStudy !== false);
+          const showPicker = (ucActiveCat === 'known' || ucActiveCat === 'all') && others.length > 0;
+          if (pickerBar && pickerSel) {
+            pickerBar.classList.toggle('hidden', !showPicker);
+            if (showPicker) {
+              const prevVal = pickerSel.value;
+              pickerSel.innerHTML = others.map(m => `<option value="${escapeHtml(m.id)}">${escapeHtml(m.name)}</option>`).join('');
+              if (others.some(m => m.id === prevVal)) pickerSel.value = prevVal;
+            }
+          }
+
+          const rows = [];
+
+          // 1. Admin room row
+          if (ucActiveCat === 'all' || ucActiveCat === 'admin') {
+            const mySuggs = sortedInbox(shared.suggestions).map(([, s]) => s).filter(s => s && (s.fromId || s.memberId) === myId);
+            const allAdmin = [
+              ...dmList.map(d => ({ text: d.text, ts: Number(d.createdAt || 0) })),
+              ...mySuggs.map(s => ({ text: s.text, ts: Number(s.createdAt || 0) }))
+            ].sort((a, b) => b.ts - a.ts);
+            const last = allAdmin[0];
+            rows.push({
+              ts: last ? last.ts : 1,
+              html: `<button type="button" data-uc-open="admin" class="w-full px-3.5 py-3 hover:bg-slate-50 flex items-center gap-3 text-left transition">
+                <div class="w-10 h-10 rounded-2xl bg-indigo-100 text-indigo-700 flex items-center justify-center text-base font-black shrink-0">🛡️</div>
+                <div class="min-w-0 flex-1">
+                  <div class="flex items-center justify-between gap-2">
+                    <div class="flex items-center gap-1.5 min-w-0">
+                      <span class="text-xs font-black text-slate-950 truncate">관리자</span>
+                      <span class="px-1.5 py-0.5 rounded bg-indigo-50 text-indigo-700 text-[9px] font-bold shrink-0">관리자</span>
+                    </div>
+                    <span class="text-[10px] text-slate-400 shrink-0">${last && last.ts ? formatRelTime(last.ts) : ''}</span>
+                  </div>
+                  <div class="flex items-center justify-between gap-2 mt-0.5">
+                    <p class="text-[11px] text-slate-500 truncate">${escapeHtml(last ? last.text : '관리자 안내 및 1:1 문의')}</p>
+                    ${adminUnread ? `<span class="px-1.5 py-0.5 rounded-full bg-rose-500 text-white text-[10px] font-black leading-none shrink-0">${adminUnread}</span>` : ''}
+                  </div>
+                </div>
+              </button>`
+            });
+          }
+
+          // 2. Anonymous whispers + My community post replies
+          if (ucActiveCat === 'all' || ucActiveCat === 'anon') {
+            (typeof getMyWhispers === 'function' ? getMyWhispers() : []).forEach(w => {
+              const msgs = Object.values(w.messages || {}).filter(Boolean).sort((a, b) => Number(a.createdAt || 0) - Number(b.createdAt || 0));
+              const last = msgs[msgs.length - 1];
+              const lastRead = Number(w.lastReadAt?.[myUid] || 0);
+              const unread = w.status === 'pending' && w.toUid === myUid
+                ? 1
+                : (w.status === 'accepted' ? msgs.filter(m => m.senderUid !== myUid && Number(m.createdAt || 0) > lastRead).length : 0);
+              const ts = Number(w.updatedAt || last?.createdAt || w.createdAt || 0);
+              const badgeTxt = w.status === 'pending' ? (w.toUid === myUid ? '새 요청' : '수락 대기') : '익명';
+              rows.push({
+                ts,
+                html: `<button type="button" data-uc-open-whisper="${escapeHtml(w.id)}" class="w-full px-3.5 py-3 hover:bg-slate-50 flex items-center gap-3 text-left transition">
+                  <div class="w-10 h-10 rounded-2xl bg-slate-900 text-white flex items-center justify-center text-base font-black shrink-0">🎭</div>
+                  <div class="min-w-0 flex-1">
+                    <div class="flex items-center justify-between gap-2">
+                      <div class="flex items-center gap-1.5 min-w-0">
+                        <span class="text-xs font-black text-slate-950 truncate">익명 귓속말</span>
+                        <span class="px-1.5 py-0.5 rounded bg-slate-100 text-slate-700 text-[9px] font-bold shrink-0">${badgeTxt}</span>
+                      </div>
+                      <span class="text-[10px] text-slate-400 shrink-0">${ts ? formatRelTime(ts) : ''}</span>
+                    </div>
+                    <div class="flex items-center justify-between gap-2 mt-0.5">
+                      <p class="text-[11px] text-slate-500 truncate">${escapeHtml(last ? last.text : (w.context || '1:1 익명 대화'))}</p>
+                      ${unread ? `<span class="px-1.5 py-0.5 rounded-full bg-rose-500 text-white text-[10px] font-black leading-none shrink-0">${unread}</span>` : ''}
+                    </div>
+                  </div>
+                </button>`
+              });
+            });
+
+            // Comments ONLY on my own community posts
+            const seenReplyAt = getSeenPostReplyAt();
+            getMyCommunityReplies().slice(0, 6).forEach(r => {
+              const isNew = r.createdAt > seenReplyAt;
+              rows.push({
+                ts: r.createdAt,
+                html: `<button type="button" data-uc-open-post="${escapeHtml(r.postId)}" class="w-full px-3.5 py-3 hover:bg-slate-50 flex items-center gap-3 text-left transition">
+                  <div class="w-10 h-10 rounded-2xl bg-slate-100 text-slate-700 flex items-center justify-center text-base font-black shrink-0">💬</div>
+                  <div class="min-w-0 flex-1">
+                    <div class="flex items-center justify-between gap-2">
+                      <div class="flex items-center gap-1.5 min-w-0">
+                        <span class="text-xs font-black text-slate-950 truncate">내 글에 새 댓글</span>
+                        <span class="px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 text-[9px] font-bold shrink-0">익명</span>
+                      </div>
+                      <span class="text-[10px] text-slate-400 shrink-0">${r.createdAt ? formatRelTime(r.createdAt) : ''}</span>
+                    </div>
+                    <div class="flex items-center justify-between gap-2 mt-0.5">
+                      <p class="text-[11px] text-slate-500 truncate">${escapeHtml(r.text)}</p>
+                      ${isNew ? '<span class="w-2 h-2 rounded-full bg-rose-500 shrink-0"></span>' : ''}
+                    </div>
+                  </div>
+                </button>`
+              });
+            });
+          }
+
+          // 3. Known people (1:1 Nickname Chats + Gifts & Respects)
+          if (ucActiveCat === 'all' || ucActiveCat === 'known') {
+            const giftUid = typeof getMySocialUid === 'function' ? getMySocialUid() : '';
+            const parcels = Object.values(giftsData.parcels?.[giftUid] || {}).filter(Boolean);
+            const giftPraiseUnread = giftsUnread + praises.filter(p => !p.read).length;
+            if (parcels.length || praises.length) {
+              const latestParcel = parcels.slice().sort((a, b) => Number(b.createdAt || 0) - Number(a.createdAt || 0))[0];
+              const latestPraise = praises[praises.length - 1];
+              const preview = giftsUnread
+                ? `미개봉 선물 ${giftsUnread}개가 도착했어요!`
+                : (latestPraise ? latestPraise.msg : `${latestParcel?.fromName || '멤버'}님의 선물`);
+              rows.push({
+                ts: Math.max(Number(latestParcel?.createdAt || 0), 2),
+                html: `<button type="button" data-uc-open="gifts" class="w-full px-3.5 py-3 hover:bg-slate-50 flex items-center gap-3 text-left transition">
+                  <div class="w-10 h-10 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center text-base font-black shrink-0">🎁</div>
+                  <div class="min-w-0 flex-1">
+                    <div class="flex items-center justify-between gap-2">
+                      <div class="flex items-center gap-1.5 min-w-0">
+                        <span class="text-xs font-black text-slate-950 truncate">선물 · 리스펙 함</span>
+                        <span class="px-1.5 py-0.5 rounded bg-amber-50 text-amber-700 text-[9px] font-bold shrink-0">아는사람</span>
+                      </div>
+                    </div>
+                    <div class="flex items-center justify-between gap-2 mt-0.5">
+                      <p class="text-[11px] text-slate-500 truncate">${escapeHtml(preview)}</p>
+                      ${giftPraiseUnread ? `<span class="px-1.5 py-0.5 rounded-full bg-rose-500 text-white text-[10px] font-black leading-none shrink-0">${giftPraiseUnread}</span>` : ''}
+                    </div>
+                  </div>
+                </button>`
+              });
+            }
+
+            getMyKnownChatRooms().forEach(r => {
+              const avatar = r.partner.avatarUrl
+                ? `<img src="${escapeHtml(r.partner.avatarUrl)}" alt="" class="w-full h-full object-cover">`
+                : escapeHtml(String(r.partner.name || '?').slice(0, 1));
+              rows.push({
+                ts: Number(r.last?.createdAt || 0),
+                html: `<button type="button" data-uc-open-known="${escapeHtml(r.partnerId)}" class="w-full px-3.5 py-3 hover:bg-slate-50 flex items-center gap-3 text-left transition">
+                  <div class="w-10 h-10 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 flex items-center justify-center text-xs font-black shrink-0 overflow-hidden">${avatar}</div>
+                  <div class="min-w-0 flex-1">
+                    <div class="flex items-center justify-between gap-2">
+                      <div class="flex items-center gap-1.5 min-w-0">
+                        <span class="text-xs font-black text-slate-950 truncate">${escapeHtml(r.partner.name)}</span>
+                        <span class="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 text-[9px] font-bold shrink-0">아는사람</span>
+                      </div>
+                      <span class="text-[10px] text-slate-400 shrink-0">${r.last?.createdAt ? formatRelTime(r.last.createdAt) : ''}</span>
+                    </div>
+                    <div class="flex items-center justify-between gap-2 mt-0.5">
+                      <p class="text-[11px] text-slate-500 truncate">${escapeHtml(r.last?.text || '')}</p>
+                      ${r.unread ? `<span class="px-1.5 py-0.5 rounded-full bg-rose-500 text-white text-[10px] font-black leading-none shrink-0">${r.unread}</span>` : ''}
+                    </div>
+                  </div>
+                </button>`
+              });
+            });
+          }
+
+          rows.sort((a, b) => b.ts - a.ts);
+          roomsEl.innerHTML = rows.length
+            ? rows.map(r => r.html).join('')
+            : '<div class="py-12 text-center text-xs font-semibold text-slate-400">아직 대화나 알림이 없어요.</div>';
+          return;
+        }
+
+        // Room View
+        listView.classList.add('hidden');
+        listView.classList.remove('flex');
+        roomView.classList.remove('hidden');
+        roomView.classList.add('flex');
+        backBtn.classList.remove('hidden');
+
+        const roomKey = ucActiveRoom.type === 'known' ? `known:${ucActiveRoom.partnerId}` : ucActiveRoom.type;
+        const changedUcRoom = msgEl.dataset.ucRoomKey !== roomKey;
+        if (changedUcRoom) {
+          msgEl.dataset.ucRoomKey = roomKey;
+          if (chatInput) chatInput.value = '';
+        }
+        const shouldScrollBottom = changedUcRoom || ucForceScrollBottom || (msgEl.scrollHeight - msgEl.scrollTop - msgEl.clientHeight < 80);
+        ucForceScrollBottom = false;
+
+        if (ucActiveRoom.type === 'admin') {
+          titleEl.textContent = '🛡️ 관리자';
+          subEl.textContent = '관리자 공지 · 선물 지급 안내 · 1:1 문의';
+          chatForm.classList.remove('hidden');
+          chatInput.placeholder = '관리자에게 메시지 보내기…';
+
+          const dmEntries = sortedInbox(shared.directMessages?.[myId]);
+          let changed = false;
+          dmEntries.forEach(([, d]) => { if (d && !d.read) { d.read = true; changed = true; } });
+          if (changed) { saveSharedData(); renderHeaderControls(); }
+
+          const mySuggs = sortedInbox(shared.suggestions).map(([, s]) => s).filter(s => s && (s.fromId || s.memberId) === myId);
+          const timeline = [
+            ...dmEntries.map(([, d]) => ({ mine: false, text: d.text, ts: Number(d.createdAt || 0), label: `${d.date || ''} ${d.time || ''}`.trim() })),
+            ...mySuggs.map(s => ({ mine: true, text: s.text, ts: Number(s.createdAt || 0), label: `${s.date || ''} ${s.time || ''}`.trim() }))
+          ].sort((a, b) => a.ts - b.ts);
+
+          msgEl.innerHTML = timeline.length
+            ? timeline.map(m => `<div class="flex flex-col ${m.mine ? 'items-end' : 'items-start'} gap-0.5">
+                ${m.mine ? '' : '<span class="text-[10px] font-bold text-indigo-600 px-1">관리자</span>'}
+                <div class="flex items-end gap-1.5 max-w-[84%] ${m.mine ? 'flex-row-reverse' : ''}">
+                  <div class="px-3 py-2 rounded-2xl text-xs leading-relaxed break-words ${m.mine ? 'bg-slate-950 text-white rounded-br-sm' : 'bg-white border border-indigo-200 text-slate-900 rounded-bl-sm'}">${escapeHtml(m.text)}</div>
+                  <span class="text-[10px] text-slate-400 shrink-0">${escapeHtml(m.ts ? formatClockShort(m.ts) : m.label)}</span>
+                </div>
+              </div>`).join('')
+            : '<div class="py-12 text-center text-xs text-slate-400">관리자와 주고받은 메시지가 아직 없어요.</div>';
+          if (shouldScrollBottom) msgEl.scrollTop = msgEl.scrollHeight;
+        } else if (ucActiveRoom.type === 'known') {
+          const partner = (shared.members || []).find(m => m.id === ucActiveRoom.partnerId);
+          const pairKey = getKnownChatPairKey(myId, ucActiveRoom.partnerId);
+          titleEl.textContent = `👤 ${partner ? partner.name : '멤버'}`;
+          subEl.textContent = '아는사람 (별명) 1:1 채팅';
+          chatForm.classList.remove('hidden');
+          chatInput.placeholder = `${partner ? partner.name : '상대'}님에게 메시지 입력…`;
+
+          const msgs = getKnownChatMessages(pairKey);
+          const latestTs = msgs.length ? Number(msgs[msgs.length - 1].createdAt || 0) : 0;
+          if (latestTs && markKnownChatSeen(pairKey, latestTs)) renderHeaderControls();
+
+          msgEl.innerHTML = msgs.length
+            ? msgs.map(m => {
+                const mine = m.fromId === myId;
+                return `<div class="flex flex-col ${mine ? 'items-end' : 'items-start'} gap-0.5">
+                  ${mine ? '' : `<span class="text-[10px] font-bold text-slate-500 px-1">${escapeHtml(partner?.name || m.fromName || '멤버')}</span>`}
+                  <div class="flex items-end gap-1.5 max-w-[84%] ${mine ? 'flex-row-reverse' : ''}">
+                    <div class="px-3 py-2 rounded-2xl text-xs leading-relaxed break-words ${mine ? 'bg-slate-950 text-white rounded-br-sm' : 'bg-white border border-slate-200 text-slate-900 rounded-bl-sm'}">${escapeHtml(m.text)}</div>
+                    <span class="text-[10px] text-slate-400 shrink-0">${formatClockShort(m.createdAt)}</span>
+                  </div>
+                </div>`;
+              }).join('')
+            : `<div class="py-12 text-center text-xs text-slate-400">${escapeHtml(partner?.name || '상대')}님과의 첫 대화를 시작해 보세요!</div>`;
+          if (shouldScrollBottom) msgEl.scrollTop = msgEl.scrollHeight;
+        } else if (ucActiveRoom.type === 'gifts') {
+          titleEl.textContent = '🎁 선물 · 리스펙 함';
+          subEl.textContent = '도착한 선물과 응원 메시지';
+          chatForm.classList.add('hidden');
+          const praises = (shared.praises && shared.praises[myId]) || [];
+          let changed = false;
+          praises.forEach(p => { if (!p.read) { p.read = true; changed = true; } });
+          if (changed) { saveSharedData(); renderHeaderControls(); }
+          const giftsHtml = typeof renderMailboxGiftsHtml === 'function' ? renderMailboxGiftsHtml() : '';
+          const praiseHtml = praises.length
+            ? `<div class="space-y-2"><div class="text-[11px] font-black text-amber-700">👏 받은 리스펙</div>${praises.slice().reverse().map(p => `<div class="p-3 rounded-xl bg-amber-50 border border-amber-200 text-xs"><p class="font-bold text-slate-900">💌 ${escapeHtml(p.msg)}</p><span class="text-[10px] text-slate-500">${escapeHtml(p.time || '')}</span></div>`).join('')}</div>`
+            : '';
+          msgEl.innerHTML = (giftsHtml + praiseHtml) || '<div class="py-12 text-center text-xs text-slate-400">도착한 선물이나 리스펙이 없어요.</div>';
+          if (typeof bindMailboxGiftButtons === 'function') bindMailboxGiftButtons();
+        }
+        } finally {
+          isRenderingUcModal = false;
+        }
+      }
+
+      document.getElementById('uc-cat-tabs')?.addEventListener('click', e => {
+        const btn = e.target.closest('[data-uc-cat]');
+        if (!btn) return;
+        ucActiveCat = btn.dataset.ucCat;
+        renderUnifiedChatModal();
+      });
+      document.getElementById('uc-back-btn')?.addEventListener('click', () => {
+        ucActiveRoom = null;
+        renderUnifiedChatModal();
+      });
+      document.getElementById('uc-start-known-btn')?.addEventListener('click', () => {
+        const pid = document.getElementById('uc-known-member-select')?.value;
+        if (!pid) return;
+        ucActiveRoom = { type: 'known', partnerId: pid };
+        renderUnifiedChatModal();
+        document.getElementById('uc-chat-input')?.focus({ preventScroll: true });
+      });
+      document.getElementById('uc-rooms-list')?.addEventListener('click', e => {
+        const openBtn = e.target.closest('[data-uc-open]');
+        if (openBtn) {
+          ucActiveRoom = { type: openBtn.dataset.ucOpen };
+          renderUnifiedChatModal();
+          return;
+        }
+        const knownBtn = e.target.closest('[data-uc-open-known]');
+        if (knownBtn) {
+          ucActiveRoom = { type: 'known', partnerId: knownBtn.dataset.ucOpenKnown };
+          renderUnifiedChatModal();
+          return;
+        }
+        const whBtn = e.target.closest('[data-uc-open-whisper]');
+        if (whBtn) {
+          closeSimpleModal('unified-chat-modal');
+          activeWhisperThreadId = whBtn.dataset.ucOpenWhisper;
+          pendingWhisperTarget = null;
+          openSimpleModal('whisper-modal');
+          renderWhisperModal();
+          return;
+        }
+        const postBtn = e.target.closest('[data-uc-open-post]');
+        if (postBtn) {
+          const targetPostId = postBtn.dataset.ucOpenPost;
+          setSeenPostReplyAt(Date.now());
+          closeSimpleModal('unified-chat-modal');
+          renderHeaderControls();
+          switchTab('community');
+          if (targetPostId) {
+            requestAnimationFrame(() => {
+              const postEl = document.querySelector(`[data-post-id="${CSS.escape(targetPostId)}"]`);
+              if (postEl) {
+                postEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                postEl.classList.add('ring-2', 'ring-indigo-400');
+                setTimeout(() => postEl.classList.remove('ring-2', 'ring-indigo-400'), 1800);
+              }
+            });
+          }
+          return;
+        }
+      });
+      document.getElementById('uc-chat-form')?.addEventListener('submit', e => {
+        e.preventDefault();
+        const input = document.getElementById('uc-chat-input');
+        const text = (input?.value || '').trim();
+        if (!text || !ucActiveRoom) return;
+        const myId = prefs.currentUserId;
+        const me = (shared.members || []).find(m => m.id === myId);
+        if (!me) return;
+        const now = Date.now();
+        if (ucActiveRoom.type === 'admin') {
+          const key = 'sug_' + now + '_' + Math.random().toString(36).slice(2, 5);
+          (shared.suggestions ||= {})[key] = inboxMessage({
+            fromId: myId,
+            fromName: me.name,
+            memberId: myId,
+            memberName: me.name,
+            text
+          }, key);
+          input.value = '';
+          ucForceScrollBottom = true;
+          saveSharedData();
+          renderUnifiedChatModal();
+        } else if (ucActiveRoom.type === 'known') {
+          const pairKey = getKnownChatPairKey(myId, ucActiveRoom.partnerId);
+          const mid = 'km_' + now + '_' + Math.random().toString(36).slice(2, 5);
+          ((shared.memberChats ||= {})[pairKey] ||= {})[mid] = {
+            id: mid,
+            fromId: myId,
+            fromName: me.name,
+            toId: ucActiveRoom.partnerId,
+            text,
+            createdAt: now
+          };
+          markKnownChatSeen(pairKey, now);
+          input.value = '';
+          ucForceScrollBottom = true;
+          saveSharedData();
+          renderUnifiedChatModal();
+        }
+      });
+
+      function getMemberGiftUid(m) {
+        return (m && (m.uid || m.id)) || '';
+      }
+
+      function renderAdminGiftsPanel() {
+        const memSel = document.getElementById('admin-gift-member');
+        const giftSel = document.getElementById('admin-gift-select');
+        const listEl = document.getElementById('admin-member-gifts-list');
+        if (!memSel || !giftSel || !listEl) return;
+
+        const curMid = validMemberId(memSel.value);
+        memSel.innerHTML = shared.members.map(m => `<option value="${escapeHtml(m.id)}" ${m.id === curMid ? 'selected' : ''}>${escapeHtml(m.name)}</option>`).join('');
+        if (!giftSel.options.length) {
+          giftSel.innerHTML = GIFT_CATALOG.map(g => {
+            const r = GIFT_RARITIES[g.rarity]?.label || '';
+            return `<option value="${g.id}">${giftIconOf(g)} ${g.name} (${r})</option>`;
+          }).join('');
+        }
+
+        const targetMem = shared.members.find(m => m.id === curMid);
+        if (!targetMem) {
+          listEl.innerHTML = '<span class="text-slate-400">선택된 부원이 없습니다.</span>';
+          return;
+        }
+        const uid = getMemberGiftUid(targetMem);
+        const bag = giftsData.bags?.[uid] || {};
+        const invEntries = Object.entries(bag.inventory || {}).filter(([, cnt]) => Number(cnt) > 0);
+        const recvEntries = Object.entries(bag.received || {}).filter(([, cnt]) => Number(cnt) > 0);
+        const parcelEntries = Object.entries(giftsData.parcels?.[uid] || {}).filter(([, p]) => p && !p.opened);
+
+        let htmlOut = '';
+        htmlOut += `<div class="space-y-1"><p class="text-[11px] font-black text-slate-700">보유 선물 (보낼 수 있음)</p><div class="flex flex-wrap gap-1.5">`;
+        htmlOut += invEntries.length
+          ? invEntries.map(([gid, cnt]) => {
+              const g = GIFT_MAP[gid] || { name: gid, emoji: '🎁' };
+              return `<span class="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-white border border-slate-200 text-[11px] font-bold text-slate-800">${giftIconOf(g)} ${escapeHtml(g.name)} ×${cnt}<button type="button" data-admin-revoke-inv="${escapeHtml(gid)}" class="ml-0.5 text-rose-600 hover:underline font-black" title="1개 회수">회수</button></span>`;
+            }).join('')
+          : '<span class="text-[11px] text-slate-400">없음</span>';
+        htmlOut += '</div></div>';
+
+        htmlOut += `<div class="space-y-1 pt-1"><p class="text-[11px] font-black text-slate-700">받은 선물 (보관함 · 미개봉 우편)</p><div class="flex flex-wrap gap-1.5">`;
+        const recvChips = recvEntries.map(([gid, cnt]) => {
+          const g = GIFT_MAP[gid] || { name: gid, emoji: '🎁' };
+          return `<span class="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-amber-50 border border-amber-200 text-[11px] font-bold text-amber-900">${giftIconOf(g)} ${escapeHtml(g.name)} ×${cnt}<button type="button" data-admin-revoke-recv="${escapeHtml(gid)}" class="ml-0.5 text-rose-600 hover:underline font-black" title="1개 회수">회수</button></span>`;
+        });
+        const parcelChips = parcelEntries.map(([pid, p]) => {
+          const g = GIFT_MAP[p.giftId] || { name: p.giftId, emoji: '🎁' };
+          return `<span class="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-rose-50 border border-rose-200 text-[11px] font-bold text-rose-800">📦 미개봉 ${giftIconOf(g)} ${escapeHtml(g.name)}<button type="button" data-admin-revoke-parcel="${escapeHtml(pid)}" data-admin-revoke-gid="${escapeHtml(p.giftId || '')}" class="ml-0.5 text-rose-600 hover:underline font-black" title="우편 회수">회수</button></span>`;
+        });
+        const allRecv = [...recvChips, ...parcelChips];
+        htmlOut += allRecv.length ? allRecv.join('') : '<span class="text-[11px] text-slate-400">없음</span>';
+        htmlOut += '</div></div>';
+        listEl.innerHTML = htmlOut;
+      }
+
+      function removeLatestAdminGiftMessage(memberId, giftId) {
+        const mailbox = shared.directMessages?.[memberId];
+        if (!mailbox || typeof mailbox !== 'object') return false;
+        const suffix = '_' + giftId;
+        const g = GIFT_MAP[giftId];
+        const token = g ? `[${giftIconOf(g)} ${g.name}]` : '';
+        const matches = Object.entries(mailbox)
+          .filter(([key, msg]) => key.startsWith('gift_grant_') && (key.endsWith(suffix) || (token && String(msg?.text || '').includes(token))))
+          .sort((a, b) => Number(b[1]?.createdAt || 0) - Number(a[1]?.createdAt || 0));
+        if (!matches.length) return false;
+        delete mailbox[matches[0][0]];
+        return true;
+      }
+
+      document.getElementById('admin-gift-member')?.addEventListener('change', renderAdminGiftsPanel);
+
+      document.getElementById('btn-admin-gift-grant')?.addEventListener('click', async () => {
+        if (!prefs.adminMode || !isAdminUser()) return;
+        const mid = document.getElementById('admin-gift-member')?.value;
+        const giftId = document.getElementById('admin-gift-select')?.value;
+        const m = shared.members.find(x => x.id === mid);
+        const g = GIFT_MAP[giftId];
+        if (!m || !g) return;
+        const uid = getMemberGiftUid(m);
+        const curCnt = Number(giftsData.bags?.[uid]?.inventory?.[giftId] || 0);
+        await giftWrite(`bags/${uid}/inventory/${giftId}`, curCnt + 1);
+        const msgKey = `gift_grant_${Date.now()}_${Math.random().toString(36).slice(2, 5)}_${giftId}`;
+        addDirectMessage(m.id, `🎁 관리자가 [${giftIconOf(g)} ${g.name}] 선물을 지급했어요! 프로필 → 내 선물함에서 확인할 수 있어요.`, msgKey);
+        saveSharedData();
+        renderAdminGiftsPanel();
+        showToast(`🎁 ${m.name}님에게 [${giftIconOf(g)} ${g.name}] 선물을 지급하고 메시지함에 안내를 보냈어요.`, 'success');
+      });
+
+      document.getElementById('admin-member-gifts-list')?.addEventListener('click', async e => {
+        if (!prefs.adminMode || !isAdminUser()) return;
+        const mid = document.getElementById('admin-gift-member')?.value;
+        const m = shared.members.find(x => x.id === mid);
+        if (!m) return;
+        const uid = getMemberGiftUid(m);
+
+        const invBtn = e.target.closest('[data-admin-revoke-inv]');
+        if (invBtn) {
+          const giftId = invBtn.dataset.adminRevokeInv;
+          const g = GIFT_MAP[giftId] || { name: giftId, emoji: '🎁' };
+          const curCnt = Number(giftsData.bags?.[uid]?.inventory?.[giftId] || 0);
+          if (curCnt <= 0) return;
+          await giftWrite(`bags/${uid}/inventory/${giftId}`, curCnt - 1 > 0 ? curCnt - 1 : null);
+          const removedMsg = removeLatestAdminGiftMessage(m.id, giftId);
+          saveSharedData();
+          renderAdminGiftsPanel();
+          showToast(`${m.name}님의 [${giftIconOf(g)} ${g.name}] 선물을 회수했어요.${removedMsg ? ' (지급 메시지도 삭제됨)' : ''}`, 'info');
+          return;
+        }
+
+        const recvBtn = e.target.closest('[data-admin-revoke-recv]');
+        if (recvBtn) {
+          const giftId = recvBtn.dataset.adminRevokeRecv;
+          const g = GIFT_MAP[giftId] || { name: giftId, emoji: '🎁' };
+          const curCnt = Number(giftsData.bags?.[uid]?.received?.[giftId] || 0);
+          if (curCnt <= 0) return;
+          await giftWrite(`bags/${uid}/received/${giftId}`, curCnt - 1 > 0 ? curCnt - 1 : null);
+          const removedMsg = removeLatestAdminGiftMessage(m.id, giftId);
+          saveSharedData();
+          renderAdminGiftsPanel();
+          showToast(`${m.name}님의 받은 선물 [${giftIconOf(g)} ${g.name}]을 회수했어요.${removedMsg ? ' (지급 메시지도 삭제됨)' : ''}`, 'info');
+          return;
+        }
+
+        const parcelBtn = e.target.closest('[data-admin-revoke-parcel]');
+        if (parcelBtn) {
+          const pid = parcelBtn.dataset.adminRevokeParcel;
+          const giftId = parcelBtn.dataset.adminRevokeGid || '';
+          await giftWrite(`parcels/${uid}/${pid}`, null);
+          const removedMsg = giftId ? removeLatestAdminGiftMessage(m.id, giftId) : false;
+          saveSharedData();
+          renderAdminGiftsPanel();
+          showToast(`${m.name}님의 미개봉 선물을 회수했어요.${removedMsg ? ' (지급 메시지도 삭제됨)' : ''}`, 'info');
+        }
+      });
+
+      document.getElementById('btn-admin-season-reset')?.addEventListener('click', () => {
+        if (!prefs.adminMode || !isAdminUser()) return;
+        openModal('🔄 새 시즌 일괄 초기화 확인', `
+          <div class="space-y-3 text-xs text-slate-700 leading-relaxed">
+            <p>전체 회원의 <strong>LP(0으로 초기화)·챌린지·보유/받은 선물·장착 칭호</strong>를 모두 회수할까요?</p>
+            <p class="text-[11px] text-slate-500">회원 계정, 누적 공부 기록, 개인 플래너는 그대로 유지됩니다.</p>
+            <div class="flex items-center justify-end gap-2 pt-2">
+              <button type="button" id="btn-season-reset-cancel" class="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold">취소</button>
+              <button type="button" id="btn-season-reset-confirm" class="px-3.5 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-black">전체 회수 적용</button>
+            </div>
+          </div>
+        `);
+        document.getElementById('btn-season-reset-cancel')?.addEventListener('click', closeModal);
+        document.getElementById('btn-season-reset-confirm')?.addEventListener('click', async () => {
+          closeModal();
+          (shared.members || []).forEach(m => {
+            m.lp = 0;
+            m.equippedTitle = '';
+            delete m.promo;
+            delete m.promoPendingDate;
+            delete m.promoLastFailedDate;
+          });
+          shared.memberChallenges = {};
+          shared.challengeLpGranted = {};
+          shared.lpHistory = {};
+          shared.promoHistory = {};
+          shared.respectLpRewarded = {};
+          shared.respectLpRewardedByDay = {};
+          shared.periodLpRewarded = {};
+          shared.hourlyLpGiven = {};
+          if (shared.directMessages && typeof shared.directMessages === 'object') {
+            Object.values(shared.directMessages).forEach(mailbox => {
+              if (!mailbox || typeof mailbox !== 'object') return;
+              Object.keys(mailbox).forEach(k => {
+                if (k.startsWith('gift_grant_')) delete mailbox[k];
+              });
+            });
+          }
+          await giftWrite('bags', null);
+          await giftWrite('parcels', null);
+          giftsData = { bags: {}, parcels: {} };
+          saveSharedData();
+          renderAll();
+          showToast('🔄 전체 회원의 LP·챌린지·선물·칭호를 모두 회수했어요!', 'success');
+        });
+      });
+
       function renderMailboxGiftsHtml() {
         const uid = getMySocialUid();
         const parcels = Object.values(giftsData.parcels?.[uid] || {}).filter(Boolean).sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
@@ -15745,7 +16674,9 @@
         activeTapSession = null;
         closeSimpleModal('gift-open-overlay');
         renderHeaderControls();
+        if (shown(document.getElementById('unified-chat-modal')) && typeof renderUnifiedChatModal === 'function') renderUnifiedChatModal();
         if (prefs.activeTab === 'profile') renderProfileGifts();
+        if (prefs.activeTab === 'admin' && typeof renderAdminGiftsPanel === 'function') renderAdminGiftsPanel();
       });
 
       // Delegated clicks for Lounge member card gift button & Study Group member gift button
@@ -15779,6 +16710,7 @@
           giftsRef.on('value', snap => {
             const val = snap.val() || {};
             giftsData = { bags: val.bags || {}, parcels: val.parcels || {} };
+            notifSourceReady.gifts = true;
             ensureStarterGifts();
             renderHeaderControls();
             if (prefs.activeTab === 'profile') renderProfileGifts();
@@ -15815,15 +16747,22 @@
         document.getElementById('group-create-form').reset();
         document.getElementById('group-pw-form').reset();
         for (const panel of [pollPanelEl, quizPanelEl, spoilerPanelEl]) panel?.classList.add('hidden');
-        for (const id of ['group-create-modal', 'group-pw-modal', 'whisper-modal']) closeSimpleModal(id);
-        for (const id of ['group-chat-input', 'whisper-new-input', 'whisper-reply-input']) document.getElementById(id).value = '';
+        ucActiveRoom = null;
+        ucActiveCat = 'all';
+        notifSeenIds.clear();
+        for (const k of Object.keys(notifSourceReady)) { notifSourceReady[k] = false; notifSourceSeeded[k] = false; }
+        for (const id of ['group-create-modal', 'group-pw-modal', 'whisper-modal', 'unified-chat-modal', 'gift-send-modal', 'gift-open-overlay']) closeSimpleModal(id);
+        for (const id of ['group-chat-input', 'whisper-new-input', 'whisper-reply-input', 'uc-chat-input']) {
+          const inp = document.getElementById(id);
+          if (inp) inp.value = '';
+        }
         expandedCommentsPosts.clear();
         updateWhisperBadges();
       };
 
       document.addEventListener('keydown', e => {
         if (e.key !== 'Escape') return;
-        ['group-create-modal', 'group-pw-modal', 'whisper-modal', 'gift-send-modal'].forEach(mid => {
+        ['group-create-modal', 'group-pw-modal', 'whisper-modal', 'unified-chat-modal', 'gift-send-modal'].forEach(mid => {
           if (shown(document.getElementById(mid))) closeSimpleModal(mid);
         });
         if (shown(document.getElementById('gift-open-overlay')) && !activeTapSession) {
