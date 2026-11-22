@@ -71,7 +71,7 @@
     body[data-dark="true"] :is(.member-roster-live[data-active="true"], .member-status[data-status="studying"]) { color: #6ee7b7; }
     body[data-dark="true"] .member-status[data-status="class"] { color: #7dd3fc; }
 
-    #group-status-grid {
+    #group-status-grid, #group-room-members-list {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: clamp(16px, 1.75vw, 22px);
@@ -370,23 +370,20 @@
     .member-photo-preview img { display: block; object-fit: cover; }
     .member-photo-initial { display: grid; place-items: center; color: var(--ink); font-size: 2rem; font-weight: 900; }
     .member-photo-note { margin: 0; color: var(--muted); font-size: .82rem; }
-    .member-song-chip {
-      display: flex; align-items: center; gap: 5px; min-width: 0;
-      padding: 4px 7px; border-radius: 8px;
-      background: var(--soft); border: 1px solid var(--line);
-      font-size: .67rem; font-weight: 700; color: var(--ink);
+    .member-song-dot {
+      display: inline-flex; align-items: center; justify-content: center;
+      flex: none; font-size: .78rem; line-height: 1; margin-left: 2px;
     }
-    .member-song-chip img { width: 16px; height: 16px; border-radius: 4px; object-fit: cover; flex-shrink: 0; }
-    .member-song-chip-text { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .member-song-chip-artist { color: var(--muted); font-weight: 600; }
-    .member-badges { display: flex; align-items: center; gap: 4px; min-width: 0; margin-top: auto; }
-    .member-badges .badge-pill { display: block; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: .64rem; padding-inline: 6px; }
-    .member-badge-count { flex: none; color: var(--muted); font-size: .67rem; font-weight: 800; }
+    .member-badges { display: flex; align-items: center; gap: 4px; min-width: 0; margin-top: auto; flex-wrap: nowrap; overflow: hidden; }
+    .member-badges .badge-pill { flex: 0 0 auto; white-space: nowrap; font-size: .64rem; padding-inline: 6px; }
+    .member-badges .badge-pill.is-only-badge { flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+    .member-badges .badge-pill[hidden], .member-badge-count[hidden] { display: none; }
+    .member-badge-count { flex: none; color: var(--muted); font-size: .67rem; font-weight: 800; white-space: nowrap; }
     .member-roster-empty { grid-column: 1 / -1; margin: 0; padding: 10px 16px; color: var(--muted); font-size: .82rem; }
 
-    @media (max-width: 365px) { #group-status-grid { grid-template-columns: minmax(0, 1fr); } }
-    @media (min-width: 650px) { #group-status-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-    @media (min-width: 1020px) { #group-status-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+    @media (max-width: 365px) { #group-status-grid, #group-room-members-list { grid-template-columns: minmax(0, 1fr); } }
+    @media (min-width: 650px) { #group-status-grid, #group-room-members-list { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+    @media (min-width: 1020px) { #group-status-grid, #group-room-members-list { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
     @media (max-width: 470px) {
       .member-card {
         --member-portrait-size: 32px;
@@ -1797,11 +1794,12 @@
       #modal-overlay[data-variant="planner-form"] #modal-box > :nth-child(2) {margin-bottom:.5rem}
     }
     #tab-profile:not(.hidden) {
-      display:grid;grid-template: "account history" auto "gifts history" auto "collection history" 1fr/minmax(0,.88fr) minmax(0,1.12fr);
+      display:grid;grid-template: "account history" auto "song history" auto "gifts history" auto "collection history" 1fr/minmax(0,.88fr) minmax(0,1.12fr);
       align-items:start;gap:1rem
     }
     .profile-card,.lp-home-card {min-width:0;padding:clamp(.9rem,2.4vw,1.4rem)}
     .profile-account-card {grid-area:account}
+    .profile-song-card {grid-area:song}
     .profile-gifts-card {grid-area:gifts}
     .profile-lp-card {grid-area:history;scroll-margin-top:11rem}
     .profile-collection-card {grid-area:collection}
@@ -1835,7 +1833,7 @@
     .lp-pager {display:flex;align-items:center;justify-content:space-between;gap:.4rem;color:var(--muted);font-size:.72rem;font-weight:700}
     .lp-empty {margin:0;padding:1rem .2rem;color:var(--muted);font-size:.81rem;text-align:center}
     @media(max-width:760px) {
-      #tab-profile:not(.hidden) {grid-template:"account" auto "gifts" auto "collection" auto "history" auto/minmax(0,1fr)}
+      #tab-profile:not(.hidden) {grid-template:"account" auto "song" auto "gifts" auto "collection" auto "history" auto/minmax(0,1fr)}
     }
     #tab-calendar {
       --calendar-heat:var(--link);
@@ -2676,7 +2674,7 @@
     }
 
     /* === THEME & DARK MODE SYNC FOR NEW SOCIAL / AUTH / GUIDE UI === */
-    :is(#tab-groups, #tab-community, #group-create-modal, #group-pw-modal, #whisper-modal, #unified-chat-modal, #auth-overlay) .bg-slate-950 {
+    :is(#tab-groups, #tab-community, #group-create-modal, #group-pw-modal, #whisper-modal, #unified-chat-modal, #profile-song-box, #auth-overlay) .bg-slate-950 {
       background-color: var(--primary) !important;
       color: var(--on-primary) !important;
     }
@@ -3816,7 +3814,7 @@
             <h4 class="text-xs sm:text-sm font-black text-slate-950">오늘 공부 현황 &amp; 랭킹</h4>
             <span class="text-[10.5px] font-semibold text-slate-500">타이머 자동 연동</span>
           </div>
-          <div id="group-room-members-list" class="grid grid-cols-2 sm:grid-cols-3 gap-2.5"></div>
+          <div id="group-room-members-list"></div>
         </div>
 
         <!-- Room Chat Panel (Second Tab) -->
@@ -4023,25 +4021,25 @@
           </div>
         </div>
       </section>
-      <section id="profile-song-box" class="ed-card profile-card space-y-3" aria-label="오늘의 추천 노래">
+      <section id="profile-song-box" class="ed-card profile-card profile-song-card space-y-3" aria-label="오늘의 추천 노래">
         <div class="flex items-center justify-between gap-2 flex-wrap">
           <span class="inline-flex items-center gap-1.5 text-xs font-black text-slate-900">🎵 오늘의 추천 노래</span>
-          <span class="text-[10px] font-semibold text-slate-400">라운지 카드 · 내 상세 기록에 표시돼요</span>
+          <span class="text-[10px] font-semibold text-slate-400">라운지 카드 · 상세 기록에 표시</span>
         </div>
         <div id="profile-song-current"></div>
-        <div class="space-y-2">
-          <div class="flex gap-1.5">
-            <label for="profile-song-search-input" class="sr-only">노래 제목이나 가수 검색</label>
-            <input id="profile-song-search-input" type="search" maxlength="60" placeholder="노래 제목이나 가수 검색 (예: 아이유 밤편지)" class="flex-1 min-w-0 rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-900 focus:outline-none focus:border-slate-900" autocomplete="off" />
-            <button id="profile-song-search-btn" type="button" class="px-3.5 py-2 rounded-xl bg-slate-950 hover:bg-slate-800 text-white text-xs font-bold whitespace-nowrap shrink-0">검색</button>
+        <form id="profile-song-form" class="space-y-2" autocomplete="off">
+          <div class="grid grid-cols-2 gap-1.5">
+            <label for="profile-song-title-input" class="sr-only">노래 제목</label>
+            <input id="profile-song-title-input" type="text" maxlength="60" placeholder="노래 제목" class="w-full min-w-0 rounded-xl border border-slate-300 bg-white px-2.5 py-2 text-xs font-semibold text-slate-900 focus:outline-none focus:border-slate-900" />
+            <label for="profile-song-artist-input" class="sr-only">가수 이름</label>
+            <input id="profile-song-artist-input" type="text" maxlength="40" placeholder="가수 이름" class="w-full min-w-0 rounded-xl border border-slate-300 bg-white px-2.5 py-2 text-xs font-semibold text-slate-900 focus:outline-none focus:border-slate-900" />
           </div>
-          <div class="flex gap-1.5">
-            <label for="profile-song-note-input" class="sr-only">추천 한 마디</label>
-            <input id="profile-song-note-input" type="text" maxlength="60" placeholder="추천 한 마디 (선택 · 예: 새벽 공부할 때 틀기 좋아요)" class="flex-1 min-w-0 rounded-xl border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-slate-900" autocomplete="off" />
-            <button id="profile-song-note-save" type="button" class="hidden px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-[11px] font-bold text-slate-700 whitespace-nowrap shrink-0">한 마디 저장</button>
+          <div class="flex items-center gap-1.5">
+            <button id="profile-song-search-btn" type="button" class="flex-1 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold whitespace-nowrap transition">🔍 곡 검색</button>
+            <button id="profile-song-save-btn" type="submit" class="flex-1 py-2 rounded-xl bg-slate-950 hover:bg-slate-800 text-white text-xs font-bold whitespace-nowrap transition">직접 저장</button>
           </div>
           <div id="profile-song-results" class="hidden space-y-1.5 max-h-64 overflow-y-auto pt-1"></div>
-        </div>
+        </form>
       </section>
       <section id="profile-lp-panel" class="ed-card profile-card profile-lp-card" aria-labelledby="profile-lp-title">
         <div class="lp-panel-heading">
@@ -7926,13 +7924,14 @@
         </span>`;
       }
 
-      function renderMemberCard(m, date, mins, now) {
+      function renderMemberCard(m, date, mins, now, idPrefix = '') {
         const id = escapeHtml(m.id);
+        const domId = escapeHtml(idPrefix + m.id);
         const name = escapeHtml(m.name);
         const title = escapeHtml(m.equippedTitle);
         const tier = getMemberTier(m);
         const badges = getBadgesForMember(m, date);
-        const featured = badges.find(b => b.isCustom) || badges[0];
+        const orderedBadges = [...badges.filter(b => b.isCustom), ...badges.filter(b => !b.isCustom)];
         const isUltra = getMemberMode(m) === 'strict';
         const status = memberStatus(m, now);
         const isMe = m.id === prefs.currentUserId;
@@ -7943,50 +7942,47 @@
 
         return `<article class="member-card" data-member-card-wrap="${id}" data-member-tier="${tier.idx}"${tier.idx >= 6 ? ' data-elite' : ''}${hasMenu ? ' data-has-menu' : ''}
             style="--rank-deep:${tier.wingColor};--rank-gem:${tier.gemColor}">
-          <button class="member-avatar" id="member-avatar-${id}" type="button" data-member-avatar="${id}" aria-haspopup="dialog"
+          <button class="member-avatar" id="member-avatar-${domId}" type="button" data-member-avatar="${id}" aria-haspopup="dialog"
             aria-label="${name} 프로필 사진 보기"${isUltra ? ' data-ultra title="울트라집중모드 · 프로필 사진 보기"' : ' title="프로필 사진 보기"'}>
             ${m.avatarUrl ? `<img src="${escapeHtml(m.avatarUrl)}" alt="" loading="lazy">` : escapeHtml(String(m.name || '').slice(0, 1))}
             ${isUltra ? '<span class="member-avatar-bolt" aria-hidden="true">⚡</span>' : ''}
           </button>
-          <button class="member-card-details" id="member-card-${id}" type="button" data-member-detail="${id}"
+          <button class="member-card-details" id="member-card-${domId}" type="button" data-member-detail="${id}"
             aria-label="${name} 상세 기록"
-            aria-describedby="member-rank-${id} member-study-${id}${status ? ` member-status-${id}` : ''}${title ? ` member-title-${id}` : ''}${featured ? ` member-badges-${id}` : ''}">
+            aria-describedby="member-rank-${domId} member-study-${domId}${status ? ` member-status-${domId}` : ''}${title ? ` member-title-${domId}` : ''}${orderedBadges.length ? ` member-badges-${domId}` : ''}">
             ${renderMemberFlame(tier, mins)}
             <span class="member-identity">
               <span class="member-nameplate">
                 <strong class="member-name" title="${name}">${name}</strong>
+                ${m.recommendedSong && m.recommendedSong.title ? `<span class="member-song-dot" id="member-song-${domId}" title="추천 노래: ${escapeHtml(m.recommendedSong.title)}${m.recommendedSong.artist ? ` - ${escapeHtml(m.recommendedSong.artist)}` : ''}" aria-label="추천 노래 있음">🎵</span>` : ''}
               </span>
             </span>
-            ${title ? `<span class="member-title" id="member-title-${id}" title="${title}">${title}</span>` : ''}
+            ${title ? `<span class="member-title" id="member-title-${domId}" title="${title}">${title}</span>` : ''}
             <span class="member-rank-line">
-              <span id="member-rank-${id}"><span class="member-rank">${tier.name}</span> ${tier.lp} LP</span>
-              ${status ? `<span id="member-status-${id}" class="member-status" data-status="${status}">${MEMBER_STATUS_LABELS[status]}</span>` : ''}
+              <span id="member-rank-${domId}"><span class="member-rank">${tier.name}</span> ${tier.lp} LP</span>
+              ${status ? `<span id="member-status-${domId}" class="member-status" data-status="${status}">${MEMBER_STATUS_LABELS[status]}</span>` : ''}
               ${promotionIsActive(m) && tier.nextName ? '<span class="member-promo">승급전 진행 중</span>'
                 : m.promoPendingDate ? '<span class="member-promo">승급전 예약</span>'
                 : tier.inPromo ? '<span class="member-promo">승급 LP 충족</span>' : ''}
             </span>
-            <span class="member-study" id="member-study-${id}">
+            <span class="member-study" id="member-study-${domId}">
               <span class="member-study-label">공부일 누적 공부</span>
               <strong class="member-study-time">${hours ? `${hours}<small>시간</small> ` : ''}${mins % 60}<small>분</small></strong>
             </span>
-            ${m.recommendedSong && m.recommendedSong.title ? `<span class="member-song-chip" id="member-song-${id}" title="${escapeHtml(m.recommendedSong.title)}${m.recommendedSong.artist ? ` - ${escapeHtml(m.recommendedSong.artist)}` : ''}">
-              ${safeSongUrl(m.recommendedSong.artworkUrl) ? `<img src="${escapeHtml(safeSongUrl(m.recommendedSong.artworkUrl))}" alt="" loading="lazy">` : '<span aria-hidden="true">🎵</span>'}
-              <span class="member-song-chip-text">${escapeHtml(m.recommendedSong.title)}${m.recommendedSong.artist ? ` <span class="member-song-chip-artist">· ${escapeHtml(m.recommendedSong.artist)}</span>` : ''}</span>
-            </span>` : ''}
-            ${featured ? `<span class="member-badges" id="member-badges-${id}">
-              ${renderBadgePill(featured)}
-              ${badges.length > 1 ? `<span class="member-badge-count" aria-label="뱃지 ${badges.length - 1}개 더 보기">+${badges.length - 1}</span>` : ''}
+            ${orderedBadges.length ? `<span class="member-badges" id="member-badges-${domId}">
+              ${orderedBadges.map(renderBadgePill).join('')}
+              <span class="member-badge-count" hidden></span>
             </span>` : ''}
           </button>
           ${hasMenu ? `<div class="member-card-actions">
-            <button type="button" id="member-menu-${id}" class="member-card-menu" data-card-menu-btn="${id}" aria-label="${name} 더보기" aria-expanded="false" aria-controls="member-menu-box-${id}">⋯</button>
-            <div id="member-menu-box-${id}" data-card-menu-box="${id}" class="hidden absolute right-0 z-50 w-40 rounded-xl bg-white border border-slate-200 shadow-xl p-1 space-y-0.5 text-left">
-              ${!isMe ? `<button type="button" id="member-chat-${id}" data-chat-member="${id}" class="w-full px-2.5 py-2 rounded-lg hover:bg-slate-100 text-[11px] font-bold text-slate-800 text-left">💬 쪽지 보내기</button>
-              <button type="button" id="member-gift-${id}" data-gift-member="${id}" class="w-full px-2.5 py-2 rounded-lg hover:bg-slate-100 text-[11px] font-bold text-slate-800 text-left">🎁 선물 보내기</button>
-              <button type="button" id="member-respect-${id}" data-respect-member="${id}" class="w-full px-2.5 py-2 rounded-lg hover:bg-slate-100 text-[11px] font-bold text-slate-800 text-left">👏 리스펙 보내기</button>
-              <button type="button" id="member-report-${id}" data-report-member="${id}" class="w-full px-2.5 py-2 rounded-lg hover:bg-rose-50 text-[11px] font-bold text-rose-600 text-left">🚨 신고하기</button>` : ''}
-              ${canForceStop ? `<button type="button" id="member-stop-${id}" data-force-stop-timer="${id}" class="w-full px-2.5 py-2 rounded-lg hover:bg-amber-50 text-[11px] font-bold text-amber-700 text-left">⏹️ 타이머 강제 종료</button>` : ''}
-              ${canRemove ? `<button type="button" id="member-remove-${id}" data-del-member="${id}" class="w-full px-2.5 py-2 rounded-lg hover:bg-rose-50 text-[11px] font-bold text-rose-600 text-left">스터디에서 내보내기</button>` : ''}
+            <button type="button" id="member-menu-${domId}" class="member-card-menu" data-card-menu-btn="${domId}" aria-label="${name} 더보기" aria-expanded="false" aria-controls="member-menu-box-${domId}">⋯</button>
+            <div id="member-menu-box-${domId}" data-card-menu-box="${domId}" class="hidden absolute right-0 z-50 w-40 rounded-xl bg-white border border-slate-200 shadow-xl p-1 space-y-0.5 text-left">
+              ${!isMe ? `<button type="button" id="member-chat-${domId}" data-chat-member="${id}" class="w-full px-2.5 py-2 rounded-lg hover:bg-slate-100 text-[11px] font-bold text-slate-800 text-left">💬 쪽지 보내기</button>
+              <button type="button" id="member-gift-${domId}" data-gift-member="${id}" class="w-full px-2.5 py-2 rounded-lg hover:bg-slate-100 text-[11px] font-bold text-slate-800 text-left">🎁 선물 보내기</button>
+              <button type="button" id="member-respect-${domId}" data-respect-member="${id}" class="w-full px-2.5 py-2 rounded-lg hover:bg-slate-100 text-[11px] font-bold text-slate-800 text-left">👏 리스펙 보내기</button>
+              <button type="button" id="member-report-${domId}" data-report-member="${id}" class="w-full px-2.5 py-2 rounded-lg hover:bg-rose-50 text-[11px] font-bold text-rose-600 text-left">🚨 신고하기</button>` : ''}
+              ${canForceStop ? `<button type="button" id="member-stop-${domId}" data-force-stop-timer="${id}" class="w-full px-2.5 py-2 rounded-lg hover:bg-amber-50 text-[11px] font-bold text-amber-700 text-left">⏹️ 타이머 강제 종료</button>` : ''}
+              ${canRemove ? `<button type="button" id="member-remove-${domId}" data-del-member="${id}" class="w-full px-2.5 py-2 rounded-lg hover:bg-rose-50 text-[11px] font-bold text-rose-600 text-left">스터디에서 내보내기</button>` : ''}
             </div>
           </div>` : ''}
         </article>`;
@@ -8054,7 +8050,53 @@
         if (modalFocusId) previousModalFocus = document.getElementById(modalFocusId);
         if (openMenu) setMemberCardMenu(document.getElementById(openMenu.id), true);
         if (focused?.id) document.getElementById(focused.id)?.focus({ preventScroll: true });
+        requestAnimationFrame(() => fitMemberCardBadges(grid));
       }
+
+      function fitMemberCardBadges(root = document) {
+        const rows = root.querySelectorAll('.member-badges');
+        rows.forEach(row => {
+          const avail = row.clientWidth;
+          if (!avail) return;
+          const pills = Array.from(row.querySelectorAll('.badge-pill'));
+          const counter = row.querySelector('.member-badge-count');
+          if (!pills.length) return;
+          pills.forEach(p => { p.hidden = false; p.classList.remove('is-only-badge'); });
+          if (counter) counter.hidden = true;
+          const gap = 4;
+          const reserve = 26;
+          let used = 0;
+          let visibleCount = 0;
+          for (let i = 0; i < pills.length; i++) {
+            const w = Math.ceil(pills[i].getBoundingClientRect().width);
+            const hasMore = i < pills.length - 1;
+            const need = (visibleCount > 0 ? gap : 0) + w + (hasMore ? gap + reserve : 0);
+            if (visibleCount === 0 || used + need <= avail) {
+              used += (visibleCount > 0 ? gap : 0) + w;
+              visibleCount++;
+            } else {
+              break;
+            }
+          }
+          if (visibleCount === 1) pills[0].classList.add('is-only-badge');
+          for (let i = visibleCount; i < pills.length; i++) pills[i].hidden = true;
+          const hiddenCount = pills.length - visibleCount;
+          if (counter) {
+            if (hiddenCount > 0) {
+              counter.textContent = `+${hiddenCount}`;
+              counter.setAttribute('aria-label', `뱃지 ${hiddenCount}개 더 보기`);
+              counter.hidden = false;
+            } else {
+              counter.hidden = true;
+            }
+          }
+        });
+      }
+      let badgeFitResizeTimer = null;
+      window.addEventListener('resize', () => {
+        clearTimeout(badgeFitResizeTimer);
+        badgeFitResizeTimer = setTimeout(() => fitMemberCardBadges(document), 120);
+      }, { passive: true });
 
       const PLANNER_STATUS = [
         ['', '미체크'], ['V', '✓ 완료'], ['△', '△ 일부 완료'], ['X', '× 미완료']
@@ -9114,7 +9156,9 @@
         });
         document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('hidden', p.id !== `tab-${tab}`));
         document.getElementById('home-top-banners').classList.toggle('hidden', tab !== 'dashboard');
+        if (tab !== 'profile' && typeof stopSongPreview === 'function') stopSongPreview();
         savePrefs(); renderAll();
+        if (tab === 'members' || tab === 'groups') requestAnimationFrame(() => fitMemberCardBadges(document));
       }
 
       // Listeners
@@ -9969,7 +10013,7 @@
 
       document.addEventListener('click', e => {
         if (!e.target.closest('[data-card-menu-btn], [data-card-menu-box]')) {
-          setMemberCardMenu(document.querySelector('[data-card-menu-btn][aria-expanded="true"]'), false);
+          document.querySelectorAll('[data-card-menu-btn][aria-expanded="true"]').forEach(btn => setMemberCardMenu(btn, false));
         }
       });
       const memberGrid = document.getElementById('group-status-grid');
@@ -14481,42 +14525,15 @@
           }
         } else {
           const listEl = document.getElementById('group-room-members-list');
-          listEl.innerHTML = infos.map((x, idx) => {
-            const live = x.status === 'studying';
-            const mem = x.member;
-            const tier = mem ? getMemberTier(mem) : { name: '아이언', lp: 0, wingColor: '#94a3b8', gemColor: '#cbd5e1' };
-            const isUltra = mem ? getMemberMode(mem) === 'strict' : false;
-            const eqTitle = mem && mem.equippedTitle ? escapeHtml(mem.equippedTitle) : '';
-            const initial = escapeHtml(String(x.name || '?').slice(0, 1));
-            const statusText = MEMBER_STATUS_LABELS[x.status] || (mem ? '대기 중' : '오프라인');
-            const hrs = Math.floor((x.mins || 0) / 60);
-            const rem = (x.mins || 0) % 60;
-            return `<article class="room-member-card" style="--rank-deep:${tier.wingColor};--rank-gem:${tier.gemColor};--rank-ink:color-mix(in srgb, ${tier.wingColor} 63%, var(--ink))">
-              <div class="flex items-center justify-between gap-1.5">
-                <div class="flex items-center gap-2 min-w-0">
-                  <div class="relative w-8 h-8 rounded-lg border border-slate-200 bg-slate-100 flex items-center justify-center text-xs font-black text-slate-700 shrink-0 overflow-hidden">
-                    ${mem && mem.avatarUrl ? `<img src="${escapeHtml(mem.avatarUrl)}" alt="" class="w-full h-full object-cover" loading="lazy">` : initial}
-                    ${isUltra ? '<span class="absolute -right-0.5 -bottom-0.5 w-3.5 h-3.5 rounded-full bg-amber-950 text-amber-200 text-[8px] flex items-center justify-center">⚡</span>' : ''}
-                  </div>
-                  <div class="min-w-0">
-                    <div class="flex items-center gap-1 min-w-0">
-                      <span class="text-[10px] font-black ${idx === 0 ? 'text-amber-500' : 'text-slate-400'} shrink-0">#${idx + 1}</span>
-                      <strong class="text-xs font-black text-slate-950 truncate">${escapeHtml(x.name)}</strong>
-                    </div>
-                    <span class="inline-flex items-center gap-1 text-[10px] font-bold ${live ? 'text-emerald-600' : 'text-slate-400'}">
-                      <span class="w-1.5 h-1.5 rounded-full ${live ? 'bg-emerald-500 animate-pulse' : 'bg-slate-300'}"></span>${statusText}
-                    </span>
-                  </div>
-                </div>
-                ${!g.isAnonymous && x.uid !== myUid ? `<button type="button" data-gift-uid="${escapeHtml(x.uid)}" data-gift-name="${escapeHtml(x.name)}" class="w-7 h-7 rounded-lg bg-slate-50 border border-slate-200 hover:bg-slate-100 text-xs flex items-center justify-center shrink-0" title="선물 보내기">🎁</button>` : ''}
-              </div>
-              ${eqTitle ? `<span class="room-member-title">${eqTitle}</span>` : ''}
-              <div class="flex items-end justify-between gap-1 pt-1 border-t border-slate-100 mt-auto">
-                <span class="text-[10px] font-bold text-slate-500 truncate"><strong style="color:var(--rank-ink)">${escapeHtml(tier.name)}</strong> ${tier.lp} LP</span>
-                <strong class="font-mono text-xs sm:text-sm font-black text-slate-950 shrink-0">${hrs ? `${hrs}<span class="text-[10px] font-bold text-slate-400">시간</span> ` : ''}${rem}<span class="text-[10px] font-bold text-slate-400">분</span></strong>
-              </div>
-            </article>`;
+          const nowParts = getNowParts();
+          const dayKey = studyDayKey();
+          const openMenu = listEl.querySelector('[data-card-menu-btn][aria-expanded="true"]');
+          listEl.innerHTML = infos.map(x => {
+            const mem = x.member || { id: x.uid, uid: x.uid, name: x.name, lp: 0, mode: 'free' };
+            return renderMemberCard(mem, dayKey, x.mins || 0, nowParts, 'room-');
           }).join('');
+          if (openMenu) setMemberCardMenu(document.getElementById(openMenu.id), true);
+          requestAnimationFrame(() => fitMemberCardBadges(listEl));
         }
       }
 
@@ -15484,17 +15501,18 @@
         epic:      { label: '영웅', cls: 'gift-rarity-epic',      weight: 15, colors: ['#a855f7', '#c084fc', '#e879f9'] },
         legendary: { label: '전설', cls: 'gift-rarity-legendary', weight: 5,  colors: ['#f59e0b', '#fbbf24', '#fde047', '#f97316'] }
       };
+      const GIFT_RARITY_ORDER = { legendary: 0, epic: 1, rare: 2, common: 3 };
       const GIFT_CATALOG = [
         { id: 'aplus',       emoji: '🅰️', name: 'A+',       rarity: 'legendary' },
         { id: 'gradeL',      emoji: '🇱', name: 'L',         rarity: 'legendary', displayIcon: '𝐋' },
-        { id: 'scholarship', emoji: '💎', name: '장학금',     rarity: 'legendary' },
-        { id: 'endterm',     emoji: '🎉', name: '종강',       rarity: 'legendary' },
+        { id: 'poop',        emoji: '💩', name: '똥',         rarity: 'legendary' },
         { id: 'clover',      emoji: '🍀', name: '네잎클로버', rarity: 'epic' },
         { id: 'heart',       emoji: '❤️', name: '내 마음',    rarity: 'epic' },
         { id: 'chicken',     emoji: '🍗', name: '치킨',       rarity: 'epic' },
-        { id: 'poop',        emoji: '💩', name: '똥',         rarity: 'rare' },
+        { id: 'gradef',      emoji: '📉', name: 'F',          rarity: 'epic' },
+        { id: 'scholarship', emoji: '💎', name: '장학금',     rarity: 'rare' },
+        { id: 'endterm',     emoji: '🎉', name: '종강',       rarity: 'rare' },
         { id: 'bomb',        emoji: '💣', name: '폭탄',       rarity: 'rare' },
-        { id: 'gradef',      emoji: '📉', name: 'F',          rarity: 'rare' },
         { id: 'ghost',       emoji: '👻', name: '유령',       rarity: 'rare' },
         { id: 'banana',      emoji: '🍌', name: '바나나',     rarity: 'common' },
         { id: 'brick',       emoji: '🧱', name: '벽돌',       rarity: 'common' },
@@ -15671,8 +15689,18 @@
         if (!recEl || !invEl) return;
         const bag = getMyGiftBag();
 
+        const giftIdxMap = Object.fromEntries(GIFT_CATALOG.map((g, idx) => [g.id, idx]));
         const recEntries = Object.entries(bag.received || {}).filter(([, c]) => Number(c) > 0);
-        const invEntries = Object.entries(bag.inventory || {}).filter(([, c]) => Number(c) > 0);
+        const invEntries = Object.entries(bag.inventory || {})
+          .filter(([, c]) => Number(c) > 0)
+          .sort(([aId], [bId]) => {
+            const ga = GIFT_MAP[aId];
+            const gb = GIFT_MAP[bId];
+            const ra = GIFT_RARITY_ORDER[ga?.rarity] ?? 99;
+            const rb = GIFT_RARITY_ORDER[gb?.rarity] ?? 99;
+            if (ra !== rb) return ra - rb;
+            return (giftIdxMap[aId] ?? 999) - (giftIdxMap[bId] ?? 999);
+          });
 
         recEl.innerHTML = recEntries.length
           ? recEntries.map(([gid, cnt]) => {
@@ -16787,10 +16815,36 @@
         setMemberCardMenu(document.querySelector('[data-card-menu-btn][aria-expanded="true"]'), false);
         openGiftSendModal(target.uid || target.id, target.name);
       });
-      document.getElementById('group-room-members-list')?.addEventListener('click', e => {
-        const gBtn = e.target.closest('[data-gift-uid]');
-        if (!gBtn) return;
-        openGiftSendModal(gBtn.dataset.giftUid, gBtn.dataset.giftName);
+      const roomMembersGrid = document.getElementById('group-room-members-list');
+      roomMembersGrid?.addEventListener('click', e => {
+        const cBtn = e.target.closest('[data-chat-member]');
+        if (cBtn) {
+          e.stopPropagation();
+          const target = (shared.members || []).find(m => m.id === cBtn.dataset.chatMember);
+          if (!target || target.id === prefs.currentUserId) return;
+          setMemberCardMenu(roomMembersGrid.querySelector('[data-card-menu-btn][aria-expanded="true"]'), false);
+          openUnifiedChatModal('known', { type: 'known', partnerId: target.id });
+          document.getElementById('uc-chat-input')?.focus({ preventScroll: true });
+          return;
+        }
+        const gBtn = e.target.closest('[data-gift-member]');
+        if (gBtn) {
+          e.stopPropagation();
+          const target = (shared.members || []).find(m => m.id === gBtn.dataset.giftMember);
+          if (!target) return;
+          setMemberCardMenu(roomMembersGrid.querySelector('[data-card-menu-btn][aria-expanded="true"]'), false);
+          openGiftSendModal(target.uid || target.id, target.name);
+          return;
+        }
+        handleMemberCardClick(e);
+      });
+      roomMembersGrid?.addEventListener('keydown', e => {
+        if (e.key !== 'Escape') return;
+        const menu = roomMembersGrid.querySelector('[data-card-menu-btn][aria-expanded="true"]');
+        if (!menu) return;
+        e.preventDefault();
+        setMemberCardMenu(menu, false);
+        menu.focus({ preventScroll: true });
       });
       ['gift-send-modal', 'gift-open-overlay'].forEach(mid => {
         document.getElementById(mid)?.addEventListener('click', e => {
@@ -16889,7 +16943,6 @@
             <div class="min-w-0 flex-1">
               <p class="text-xs sm:text-sm font-black text-slate-950 truncate">${escapeHtml(song.title)}</p>
               <p class="text-[11px] font-semibold text-slate-500 truncate">${escapeHtml(song.artist || '')}</p>
-              ${song.note ? `<p class="text-[11px] font-medium text-slate-700 mt-1 break-words">“${escapeHtml(song.note)}”</p>` : ''}
             </div>
           </div>
           <div class="flex flex-wrap gap-1.5 pt-0.5">
@@ -16909,8 +16962,6 @@
 
       function renderProfileSong(tm) {
         const curEl = document.getElementById('profile-song-current');
-        const noteInput = document.getElementById('profile-song-note-input');
-        const noteSaveBtn = document.getElementById('profile-song-note-save');
         if (!curEl) return;
         const song = tm?.recommendedSong;
         if (song && song.title) {
@@ -16925,7 +16976,6 @@
               <div class="min-w-0 flex-1">
                 <p class="text-xs sm:text-sm font-black text-slate-950 truncate">${escapeHtml(song.title)}</p>
                 <p class="text-[11px] font-semibold text-slate-500 truncate">${escapeHtml(song.artist || '')}</p>
-                ${song.note ? `<p class="text-[11px] text-slate-700 truncate mt-0.5">“${escapeHtml(song.note)}”</p>` : ''}
               </div>
               <div class="flex items-center gap-1 shrink-0">
                 ${prev ? `<button type="button" data-song-preview="${escapeHtml(prev)}" data-preview-compact="1" aria-label="30초 미리듣기" aria-pressed="false" class="w-8 h-8 rounded-lg bg-slate-950 hover:bg-slate-800 text-white text-xs font-black flex items-center justify-center">▶</button>` : ''}
@@ -16939,13 +16989,48 @@
               <a href="${escapeHtml(links.apple)}" target="_blank" rel="noopener noreferrer" class="px-2 py-0.5 rounded-md bg-white border border-slate-200 text-[10px] font-bold text-slate-600 hover:bg-slate-100">애플뮤직 ↗</a>
             </div>
           </div>`;
-          if (noteInput && document.activeElement !== noteInput) noteInput.value = song.note || '';
-          noteSaveBtn?.classList.remove('hidden');
         } else {
-          curEl.innerHTML = '<p class="text-xs text-slate-400">아직 설정한 추천 노래가 없어요. 아래에서 곡 제목이나 가수를 검색해 보세요.</p>';
-          if (noteInput && document.activeElement !== noteInput) noteInput.value = '';
-          noteSaveBtn?.classList.add('hidden');
+          curEl.innerHTML = '<p class="text-xs text-slate-400">제목이나 가수를 입력해 검색하거나 직접 저장해 보세요.</p>';
         }
+      }
+
+      let songSearchSeq = 0;
+      function fetchItunesJsonp(q) {
+        return new Promise((resolve, reject) => {
+          const cbName = '__iluvItunesCb_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7);
+          const script = document.createElement('script');
+          let done = false;
+          const cleanup = () => {
+            done = true;
+            try { delete window[cbName]; } catch { window[cbName] = undefined; }
+            if (script.parentNode) script.parentNode.removeChild(script);
+          };
+          const timer = setTimeout(() => {
+            if (done) return;
+            cleanup();
+            reject(new Error('timeout'));
+          }, 7000);
+          window[cbName] = data => {
+            if (done) return;
+            clearTimeout(timer);
+            cleanup();
+            resolve(data);
+          };
+          script.onerror = () => {
+            if (done) return;
+            clearTimeout(timer);
+            cleanup();
+            reject(new Error('jsonp_error'));
+          };
+          script.src = `https://itunes.apple.com/search?term=${encodeURIComponent(q)}&country=KR&lang=ko_kr&entity=song&limit=6&callback=${cbName}`;
+          document.head.appendChild(script);
+        });
+      }
+
+      function getSongQueryText() {
+        const title = (document.getElementById('profile-song-title-input')?.value || '').trim();
+        const artist = (document.getElementById('profile-song-artist-input')?.value || '').trim();
+        return `${artist} ${title}`.trim();
       }
 
       async function searchItunesSongs(rawQuery) {
@@ -16958,16 +17043,23 @@
           songSearchResultsCache = [];
           return;
         }
+        const seq = ++songSearchSeq;
         if (songSearchAbort) { try { songSearchAbort.abort(); } catch {} }
         songSearchAbort = typeof AbortController !== 'undefined' ? new AbortController() : null;
         resEl.classList.remove('hidden');
         resEl.innerHTML = '<p class="text-[11px] font-semibold text-slate-400 px-1 py-2">노래를 검색하는 중이에요…</p>';
         try {
-          const url = `https://itunes.apple.com/search?term=${encodeURIComponent(q)}&country=KR&entity=song&limit=6`;
-          const resp = await fetch(url, songSearchAbort ? { signal: songSearchAbort.signal } : undefined);
-          if (!resp.ok) throw new Error('search_failed');
-          const data = await resp.json();
-          const tracks = (data.results || []).filter(r => r && r.trackName).map(r => ({
+          let data = null;
+          try {
+            data = await fetchItunesJsonp(q);
+          } catch {
+            const url = `https://itunes.apple.com/search?term=${encodeURIComponent(q)}&country=KR&lang=ko_kr&entity=song&limit=6`;
+            const resp = await fetch(url, songSearchAbort ? { signal: songSearchAbort.signal } : undefined);
+            if (!resp.ok) throw new Error('search_failed');
+            data = await resp.json();
+          }
+          if (seq !== songSearchSeq) return;
+          const tracks = (data?.results || []).filter(r => r && r.trackName).map(r => ({
             title: String(r.trackName || '').trim(),
             artist: String(r.artistName || '').trim(),
             artworkUrl: safeSongUrl(String(r.artworkUrl100 || r.artworkUrl60 || '')),
@@ -16976,7 +17068,7 @@
           }));
           songSearchResultsCache = tracks;
           if (!tracks.length) {
-            resEl.innerHTML = '<p class="text-[11px] text-slate-400 px-1 py-2">검색 결과가 없어요. 제목이나 가수 이름을 다르게 입력해 보세요.</p>';
+            resEl.innerHTML = '<p class="text-[11px] text-slate-400 px-1 py-2">검색 결과가 없어요. 제목·가수를 입력하고 [직접 저장]을 눌러도 등록돼요.</p>';
             return;
           }
           resEl.innerHTML = tracks.map((tr, idx) => `<div class="flex items-center justify-between gap-2 p-2 rounded-xl bg-slate-50 border border-slate-200 hover:border-slate-300 transition">
@@ -16996,35 +17088,49 @@
           </div>`).join('');
         } catch (err) {
           if (err && err.name === 'AbortError') return;
-          resEl.innerHTML = '<p class="text-[11px] text-rose-500 px-1 py-2">검색에 실패했어요. 인터넷 연결을 확인하고 다시 시도해 주세요.</p>';
+          if (seq !== songSearchSeq) return;
+          resEl.innerHTML = '<p class="text-[11px] text-slate-500 px-1 py-2">자동 검색에 연결하지 못했어요. 제목과 가수를 입력한 뒤 [직접 저장]을 눌러 등록해 주세요.</p>';
         }
       }
 
-      document.getElementById('profile-song-search-input')?.addEventListener('input', e => {
-        clearTimeout(songSearchTimer);
-        const val = e.target.value;
-        if (!val.trim()) { searchItunesSongs(''); return; }
-        songSearchTimer = setTimeout(() => searchItunesSongs(val), 360);
-      });
-      document.getElementById('profile-song-search-input')?.addEventListener('keydown', e => {
-        if (e.key === 'Enter') {
-          e.preventDefault();
+      ['profile-song-title-input', 'profile-song-artist-input'].forEach(id => {
+        document.getElementById(id)?.addEventListener('input', () => {
           clearTimeout(songSearchTimer);
-          searchItunesSongs(e.target.value);
-        }
+          const q = getSongQueryText();
+          if (!q) { searchItunesSongs(''); return; }
+          songSearchTimer = setTimeout(() => searchItunesSongs(q), 420);
+        });
       });
       document.getElementById('profile-song-search-btn')?.addEventListener('click', () => {
         clearTimeout(songSearchTimer);
-        searchItunesSongs(document.getElementById('profile-song-search-input')?.value || '');
+        const q = getSongQueryText();
+        if (!q) { showToast('노래 제목이나 가수 이름을 입력해 주세요.', 'warn'); return; }
+        searchItunesSongs(q);
       });
-      document.getElementById('profile-song-note-save')?.addEventListener('click', () => {
+      document.getElementById('profile-song-form')?.addEventListener('submit', e => {
+        e.preventDefault();
+        const title = (document.getElementById('profile-song-title-input')?.value || '').trim();
+        const artist = (document.getElementById('profile-song-artist-input')?.value || '').trim();
+        if (!title) { showToast('노래 제목을 입력해 주세요.', 'warn'); return; }
         const tm = getTargetProfileMember();
-        if (!tm || !tm.recommendedSong) return;
-        tm.recommendedSong.note = (document.getElementById('profile-song-note-input')?.value || '').trim();
-        tm.recommendedSong.updatedAt = Date.now();
+        if (!tm) return;
+        stopSongPreview();
+        tm.recommendedSong = {
+          title,
+          artist,
+          artworkUrl: '',
+          previewUrl: '',
+          appleUrl: '',
+          updatedAt: Date.now()
+        };
+        document.getElementById('profile-song-title-input').value = '';
+        document.getElementById('profile-song-artist-input').value = '';
+        const resEl = document.getElementById('profile-song-results');
+        if (resEl) { resEl.classList.add('hidden'); resEl.innerHTML = ''; }
+        songSearchResultsCache = [];
         saveSharedData();
         renderAll();
-        showToast('추천 한 마디를 저장했어요!', 'success');
+        showToast(`🎵 "${title}"을(를) 추천 노래로 저장했어요!`, 'success');
       });
       document.getElementById('profile-song-box')?.addEventListener('click', e => {
         const prevBtn = e.target.closest('[data-song-preview]');
@@ -17050,19 +17156,19 @@
           const tm = getTargetProfileMember();
           if (!tr || !tm) return;
           stopSongPreview();
-          const note = (document.getElementById('profile-song-note-input')?.value || '').trim();
           tm.recommendedSong = {
             title: tr.title,
             artist: tr.artist,
             artworkUrl: tr.artworkUrl,
             previewUrl: tr.previewUrl,
             appleUrl: tr.appleUrl,
-            note,
             updatedAt: Date.now()
           };
-          const searchInp = document.getElementById('profile-song-search-input');
+          const titleInp = document.getElementById('profile-song-title-input');
+          const artistInp = document.getElementById('profile-song-artist-input');
           const resEl = document.getElementById('profile-song-results');
-          if (searchInp) searchInp.value = '';
+          if (titleInp) titleInp.value = '';
+          if (artistInp) artistInp.value = '';
           if (resEl) { resEl.classList.add('hidden'); resEl.innerHTML = ''; }
           songSearchResultsCache = [];
           saveSharedData();
@@ -17118,6 +17224,7 @@
         document.getElementById('group-create-form').reset();
         document.getElementById('group-pw-form').reset();
         for (const panel of [pollPanelEl, quizPanelEl, spoilerPanelEl]) panel?.classList.add('hidden');
+        if (typeof stopSongPreview === 'function') stopSongPreview();
         ucActiveRoom = null;
         ucActiveCat = 'all';
         notifSeenIds.clear();
