@@ -352,14 +352,17 @@
 
     .member-study {
       display: grid;
+      grid-template-columns: minmax(0, 1fr);
       gap: 3px;
       padding: 6px 9px 7px;
+      min-width: 0;
+      overflow: hidden;
       border: 1px solid var(--line);
       border-radius: 11px;
       background: var(--soft);
       color: var(--ink);
     }
-    .member-study-label { display: flex; align-items: center; justify-content: space-between; gap: 4px; color: var(--muted); font-size: .65rem; font-weight: 700; line-height: 1.2; }
+    .member-study-label { display: flex; align-items: center; justify-content: space-between; gap: 6px; min-width: 0; overflow: hidden; color: var(--muted); font-size: .65rem; font-weight: 700; line-height: 1.2; }
     .member-study-time {
       color: var(--ink);
       font-size: clamp(1.1rem, 3.4vw, 1.55rem);
@@ -383,32 +386,52 @@
     .member-photo-initial { display: grid; place-items: center; color: var(--ink); font-size: 2rem; font-weight: 900; }
     .member-photo-note { margin: 0; color: var(--muted); font-size: .82rem; }
     .member-song-ticker {
-      display: inline-flex; align-items: center; gap: 3px;
-      flex: 0 1 auto; min-width: 0; max-width: 96px;
-      padding: 1px 6px 1px 4px; border-radius: 999px;
-      background: var(--surface); border: 1px solid var(--line);
+      display: inline-flex; align-items: center; gap: 4px;
+      flex: 1 1 0; min-width: 0; max-width: 100%;
+      padding: 1.5px 6px 1.5px 5px; border-radius: 999px;
+      background: color-mix(in srgb, var(--rank-gem) 12%, var(--surface));
+      border: 1px solid color-mix(in srgb, var(--rank-edge) 75%, var(--line));
       overflow: hidden; line-height: 1.15;
     }
-    .member-song-dot {
-      display: inline-flex; align-items: center; justify-content: center;
-      flex: none; font-size: .68rem; line-height: 1;
+    .member-eq-icon {
+      display: inline-flex; align-items: flex-end; gap: 1.5px;
+      width: 9px; height: 9px; flex: none;
+    }
+    .member-eq-icon i {
+      display: block; width: 2px; border-radius: 999px;
+      background: var(--rank-ink);
+      transform-origin: bottom;
+      animation: memberEqBounce 1.05s ease-in-out infinite;
+    }
+    .member-eq-icon i:nth-child(1) { height: 55%; animation-delay: 0s; }
+    .member-eq-icon i:nth-child(2) { height: 100%; animation-delay: -.35s; }
+    .member-eq-icon i:nth-child(3) { height: 70%; animation-delay: -.7s; }
+    .comm-bgm-eq i { animation-play-state: paused; transform: scaleY(.45); }
+    .comm-bgm-bar[data-playing="true"] .comm-bgm-eq i { animation-play-state: running; }
+    @keyframes memberEqBounce {
+      0%, 100% { transform: scaleY(.35); }
+      50% { transform: scaleY(1); }
     }
     .member-song-marquee {
       display: block; flex: 1 1 auto; min-width: 0;
       overflow: hidden; white-space: nowrap;
-      font-size: .6rem; font-weight: 700; color: var(--ink);
+      font-size: .59rem; font-weight: 700; color: var(--ink);
+      -webkit-mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
       mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
     }
     .member-song-marquee-track {
-      display: inline-block; padding-left: 100%;
-      animation: memberSongMarquee 8.5s linear infinite;
+      display: inline-flex; align-items: center; gap: 18px;
+      width: max-content; will-change: transform;
+      animation: memberSongMarquee 9s linear infinite;
     }
     @keyframes memberSongMarquee {
       0% { transform: translateX(0); }
-      100% { transform: translateX(-100%); }
+      100% { transform: translateX(-50%); }
     }
     @media (prefers-reduced-motion: reduce) {
-      .member-song-marquee-track { padding-left: 0; animation: none; }
+      .member-eq-icon i { animation: none; }
+      .member-song-marquee-track { animation: none; }
+      .member-song-marquee-dup { display: none; }
     }
     .member-badges { display: flex; align-items: center; gap: 4px; min-width: 0; margin-top: auto; flex-wrap: nowrap; overflow: hidden; }
     .member-badges .badge-pill { flex: 0 0 auto; white-space: nowrap; font-size: .64rem; padding-inline: 6px; }
@@ -3904,10 +3927,10 @@
           </div>
         </div>
 
-        <!-- Song Recommendation Builder Panel -->
+        <!-- Post Music Attachment Panel (Instagram-style BGM + Range Picker) -->
         <div id="comm-song-panel" class="hidden p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
           <div class="flex items-center justify-between gap-2">
-            <span class="text-[11px] font-black text-slate-900">🎵 이 노래 추천해요!</span>
+            <span class="text-[11px] font-black text-slate-900">🎵 배경 음악 첨부</span>
             <button type="button" id="comm-song-close" class="text-[11px] font-bold text-slate-500 hover:text-slate-900">취소</button>
           </div>
           <div id="comm-song-selected" class="hidden"></div>
@@ -3953,7 +3976,7 @@
                 <button type="button" id="btn-toggle-poll" class="w-full flex items-center justify-between px-2.5 py-2 rounded-lg hover:bg-slate-100 text-[11px] font-bold text-slate-700 text-left transition"><span>📊 투표</span><span data-extra-check="poll" class="hidden text-indigo-600 font-black">✓</span></button>
                 <button type="button" id="btn-toggle-quiz" class="w-full flex items-center justify-between px-2.5 py-2 rounded-lg hover:bg-slate-100 text-[11px] font-bold text-slate-700 text-left transition"><span>❓ 퀴즈</span><span data-extra-check="quiz" class="hidden text-indigo-600 font-black">✓</span></button>
                 <button type="button" id="btn-toggle-spoiler" class="w-full flex items-center justify-between px-2.5 py-2 rounded-lg hover:bg-slate-100 text-[11px] font-bold text-slate-700 text-left transition"><span>👀 제목만</span><span data-extra-check="spoiler" class="hidden text-indigo-600 font-black">✓</span></button>
-                <button type="button" id="btn-toggle-comm-song" class="w-full flex items-center justify-between px-2.5 py-2 rounded-lg hover:bg-slate-100 text-[11px] font-bold text-slate-700 text-left transition"><span>🎵 노래 추천</span><span data-extra-check="song" class="hidden text-indigo-600 font-black">✓</span></button>
+                <button type="button" id="btn-toggle-comm-song" class="w-full flex items-center justify-between px-2.5 py-2 rounded-lg hover:bg-slate-100 text-[11px] font-bold text-slate-700 text-left transition"><span>🎵 음악 첨부</span><span data-extra-check="song" class="hidden text-indigo-600 font-black">✓</span></button>
               </div>
             </div>
           </div>
@@ -8018,7 +8041,7 @@
                 : tier.inPromo ? '<span class="member-promo">승급 LP 충족</span>' : ''}
             </span>
             <span class="member-study" id="member-study-${domId}">
-              <span class="member-study-label"><span class="shrink-0 whitespace-nowrap">공부일 누적 공부</span>${m.recommendedSong && m.recommendedSong.title ? `<span class="member-song-ticker" id="member-song-${domId}" title="추천 노래: ${escapeHtml(m.recommendedSong.title)}${m.recommendedSong.artist ? ` - ${escapeHtml(m.recommendedSong.artist)}` : ''}" aria-label="추천 노래 ${escapeHtml(m.recommendedSong.title)}"><span class="member-song-dot" aria-hidden="true">🎵</span><span class="member-song-marquee"><span class="member-song-marquee-track">${escapeHtml(m.recommendedSong.title)}</span></span></span>` : ''}</span>
+              <span class="member-study-label"><span class="shrink-0 whitespace-nowrap">공부일 누적 공부</span>${m.recommendedSong && m.recommendedSong.title ? `<span class="member-song-ticker" id="member-song-${domId}" title="추천 노래: ${escapeHtml(m.recommendedSong.title)}${m.recommendedSong.artist ? ` - ${escapeHtml(m.recommendedSong.artist)}` : ''}" aria-label="추천 노래 ${escapeHtml(m.recommendedSong.title)}"><span class="member-eq-icon" aria-hidden="true"><i></i><i></i><i></i></span><span class="member-song-marquee"><span class="member-song-marquee-track"><span>${escapeHtml(m.recommendedSong.title)}</span><span class="member-song-marquee-dup" aria-hidden="true">${escapeHtml(m.recommendedSong.title)}</span></span></span></span>` : ''}</span>
               <strong class="member-study-time">${hours ? `${hours}<small>시간</small> ` : ''}${mins % 60}<small>분</small></strong>
             </span>
             ${orderedBadges.length ? `<span class="member-badges" id="member-badges-${domId}">
@@ -15281,14 +15304,12 @@
           }
           return;
         }
-        const commPrevBtn = e.target.closest('[data-comm-song-preview]');
-        if (commPrevBtn) {
-          const pid = commPrevBtn.dataset.commSongPreview;
+        const commMuteBtn = e.target.closest('[data-comm-bgm-toggle]');
+        if (commMuteBtn) {
+          const pid = commMuteBtn.dataset.commBgmToggle;
           const post = communityData.posts?.[pid];
           if (!post?.song) return;
-          const ytId = extractYouTubeId(post.song.ytMusicUrl);
-          if (ytId) toggleYoutubePreview(ytId, commPrevBtn, document.getElementById(`comm-song-yt-${pid}`));
-          else if (post.song.previewUrl) toggleSongPreview(post.song.previewUrl, commPrevBtn);
+          toggleCommPostBgm(pid, post.song, commMuteBtn);
           return;
         }
         const spoilerBtn = e.target.closest('[data-open-spoiler]');
@@ -17109,9 +17130,78 @@
         ytPreviewActiveId = '';
       }
 
-      function toggleYoutubePreview(ytId, btn, wrapEl) {
+      function formatSongSec(sec) {
+        const s = Math.max(0, Math.floor(Number(sec) || 0));
+        return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+      }
+
+      let commBgmActivePid = '';
+      let commBgmTimer = null;
+
+      function stopCommPostBgm() {
+        if (commBgmTimer) { clearTimeout(commBgmTimer); commBgmTimer = null; }
+        if (commBgmActivePid) {
+          const bar = document.getElementById(`comm-bgm-bar-${commBgmActivePid}`);
+          const btn = bar?.querySelector('[data-comm-bgm-toggle]');
+          const host = document.getElementById(`comm-bgm-host-${commBgmActivePid}`);
+          if (bar) bar.dataset.playing = 'false';
+          if (btn) {
+            btn.textContent = '🔇';
+            btn.setAttribute('aria-pressed', 'false');
+            btn.setAttribute('aria-label', '음소거 해제하고 재생');
+          }
+          if (host) host.innerHTML = '';
+        }
+        commBgmActivePid = '';
+      }
+
+      function toggleCommPostBgm(pid, song, btn) {
+        if (commBgmActivePid === pid) {
+          stopCommPostBgm();
+          return;
+        }
+        if (isAppOffline()) {
+          showToast('인터넷(Wi-Fi/데이터)에 연결해야 노래를 들을 수 있어요.', 'warn');
+          return;
+        }
+        stopSongPreview();
+        const ytId = extractYouTubeId(song.ytMusicUrl);
+        const prev = safeSongUrl(song.previewUrl);
+        const startSec = Math.max(0, Math.floor(Number(song.startSec || 0)));
+        const endSec = startSec + 30;
+        const bar = document.getElementById(`comm-bgm-bar-${pid}`);
+        const host = document.getElementById(`comm-bgm-host-${pid}`);
+        if (!ytId && !prev) {
+          showToast('이 곡은 앱 내 재생을 지원하지 않아요.', 'info');
+          return;
+        }
+        commBgmActivePid = pid;
+        if (bar) bar.dataset.playing = 'true';
+        if (btn) {
+          btn.textContent = '🔊';
+          btn.setAttribute('aria-pressed', 'true');
+          btn.setAttribute('aria-label', '음소거');
+        }
+        if (ytId && host) {
+          host.innerHTML = `<iframe src="https://www.youtube.com/embed/${encodeURIComponent(ytId)}?autoplay=1&start=${startSec}&end=${endSec}&rel=0&modestbranding=1&playsinline=1" title="게시글 배경 음악" allow="autoplay; encrypted-media" class="w-px h-px opacity-0 pointer-events-none absolute"></iframe>`;
+          commBgmTimer = setTimeout(() => stopCommPostBgm(), 31500);
+        } else if (prev) {
+          try {
+            if (!songPreviewAudio) songPreviewAudio = new Audio();
+            songPreviewAudio.src = prev;
+            songPreviewAudio.volume = 0.7;
+            songPreviewAudio.onended = () => stopCommPostBgm();
+            songPreviewAudio.onerror = () => { stopCommPostBgm(); showToast('노래를 재생할 수 없어요.', 'warn'); };
+            songPreviewAudio.play().catch(() => { stopCommPostBgm(); showToast('브라우저에서 오디오 재생이 차단되었어요.', 'warn'); });
+          } catch { stopCommPostBgm(); }
+        }
+      }
+
+      function toggleYoutubePreview(ytId, btn, wrapEl, startSec = 0) {
         if (!ytId || !wrapEl) return;
-        if (ytPreviewActiveId === ytId && ytPreviewActiveWrap === wrapEl) {
+        const st = Math.max(0, Math.floor(Number(startSec) || 0));
+        const key = `${ytId}@${st}`;
+        if (ytPreviewActiveId === key && ytPreviewActiveWrap === wrapEl) {
           stopYoutubePreview();
           return;
         }
@@ -17120,14 +17210,14 @@
           return;
         }
         stopSongPreview();
-        ytPreviewActiveId = ytId;
+        ytPreviewActiveId = key;
         ytPreviewActiveBtn = btn || null;
         ytPreviewActiveWrap = wrapEl;
         setPreviewBtnState(btn, true);
         wrapEl.classList.remove('hidden');
         wrapEl.innerHTML = `<div class="space-y-1">
-          <iframe src="https://www.youtube.com/embed/${encodeURIComponent(ytId)}?autoplay=1&start=0&end=30&rel=0&modestbranding=1&playsinline=1" title="30초 미리듣기" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen class="w-full h-36 rounded-xl border border-slate-200 bg-black"></iframe>
-          <p class="text-[10px] text-slate-400 text-right">30초 후 자동 정지됩니다</p>
+          <iframe src="https://www.youtube.com/embed/${encodeURIComponent(ytId)}?autoplay=1&start=${st}&end=${st + 30}&rel=0&modestbranding=1&playsinline=1" title="30초 미리듣기" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen class="w-full h-36 rounded-xl border border-slate-200 bg-black"></iframe>
+          <p class="text-[10px] text-slate-400 text-right">${formatSongSec(st)} ~ ${formatSongSec(st + 30)} 구간 · 30초 후 자동 정지</p>
         </div>`;
         ytPreviewTimer = setTimeout(() => {
           stopYoutubePreview();
@@ -17142,6 +17232,7 @@
         songPreviewActiveBtn = null;
         songPreviewActiveUrl = '';
         stopYoutubePreview();
+        stopCommPostBgm();
       }
 
       function toggleSongPreview(url, btn) {
@@ -17573,29 +17664,25 @@
         const art = safeSongUrl(song.artworkUrl);
         const prev = safeSongUrl(song.previewUrl);
         const ytId = extractYouTubeId(song.ytMusicUrl);
-        const links = buildMusicServiceLinks(song);
-        const canPreview = !!(ytId || prev);
-        return `<div class="mt-2 p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
-          <div class="flex items-center justify-between gap-2">
-            <span class="text-[11px] font-black text-indigo-700">🎵 이 노래 추천해요!</span>
-            ${canPreview ? `<button type="button" data-comm-song-preview="${escapeHtml(postId)}" aria-pressed="false" class="px-2.5 py-1 rounded-lg bg-slate-950 hover:bg-slate-800 text-white text-[10.5px] font-bold whitespace-nowrap transition">▶ 30초 미리듣기</button>` : ''}
-          </div>
-          <div class="flex items-center gap-2.5 min-w-0">
-            <div class="w-11 h-11 rounded-xl bg-slate-200 border border-slate-200 overflow-hidden flex items-center justify-center text-base shrink-0">
-              ${art ? `<img src="${escapeHtml(art)}" alt="" class="w-full h-full object-cover" loading="lazy">` : '🎵'}
+        const canPlay = !!(ytId || prev);
+        const isPlaying = commBgmActivePid === postId;
+        const startSec = Math.max(0, Math.floor(Number(song.startSec || 0)));
+        const rangeTxt = ytId ? `${formatSongSec(startSec)}~${formatSongSec(startSec + 30)}` : '';
+        return `<div id="comm-bgm-bar-${escapeHtml(postId)}" data-playing="${isPlaying ? 'true' : 'false'}" class="comm-bgm-bar relative mt-2 px-2.5 py-2 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between gap-2">
+          <div class="flex items-center gap-2 min-w-0 flex-1">
+            <div class="w-8 h-8 rounded-lg bg-slate-200 border border-slate-200 overflow-hidden flex items-center justify-center text-xs shrink-0">
+              ${art ? `<img src="${escapeHtml(art)}" alt="" class="w-full h-full object-cover" loading="lazy">` : '<span class="member-eq-icon comm-bgm-eq" aria-hidden="true"><i></i><i></i><i></i></span>'}
             </div>
             <div class="min-w-0 flex-1">
-              <p class="text-xs font-black text-slate-950 truncate">${escapeHtml(song.title)}</p>
-              <p class="text-[11px] font-semibold text-slate-500 truncate">${escapeHtml(song.artist || '')}</p>
+              <div class="flex items-center gap-1.5 min-w-0">
+                <span class="member-eq-icon comm-bgm-eq shrink-0" aria-hidden="true"><i></i><i></i><i></i></span>
+                <p class="text-xs font-black text-slate-900 truncate">${escapeHtml(song.title)}</p>
+              </div>
+              <p class="text-[10.5px] font-semibold text-slate-500 truncate">${escapeHtml(song.artist || '')}${rangeTxt ? ` · ${rangeTxt}` : ''}</p>
             </div>
           </div>
-          <div id="comm-song-yt-${escapeHtml(postId)}" class="hidden"></div>
-          <div class="flex flex-wrap gap-1.5">
-            <a href="${escapeHtml(links.melon)}" data-comm-music-app="${escapeHtml(postId)}::melon" target="_blank" rel="noopener noreferrer" class="px-2 py-0.5 rounded-md bg-emerald-50 border border-emerald-200 text-emerald-800 text-[10.5px] font-bold">멜론 ↗</a>
-            <a href="${escapeHtml(links.spotify)}" data-comm-music-app="${escapeHtml(postId)}::spotify" target="_blank" rel="noopener noreferrer" class="px-2 py-0.5 rounded-md bg-green-50 border border-green-200 text-green-800 text-[10.5px] font-bold">스포티파이 ↗</a>
-            <a href="${escapeHtml(links.ytMusic)}" data-comm-music-app="${escapeHtml(postId)}::ytMusic" target="_blank" rel="noopener noreferrer" class="px-2 py-0.5 rounded-md bg-rose-50 border border-rose-200 text-rose-700 text-[10.5px] font-bold">유튜브 뮤직 ↗</a>
-            <a href="${escapeHtml(links.apple)}" data-comm-music-app="${escapeHtml(postId)}::apple" target="_blank" rel="noopener noreferrer" class="px-2 py-0.5 rounded-md bg-white border border-slate-200 text-slate-700 text-[10.5px] font-bold">애플뮤직 ↗</a>
-          </div>
+          ${canPlay ? `<button type="button" data-comm-bgm-toggle="${escapeHtml(postId)}" aria-pressed="${isPlaying ? 'true' : 'false'}" aria-label="${isPlaying ? '음소거' : '음소거 해제하고 재생'}" class="w-8 h-8 rounded-full bg-slate-950 hover:bg-slate-800 text-white text-xs flex items-center justify-center shrink-0 transition" title="${isPlaying ? '음소거' : '음소거 해제하고 듣기'}">${isPlaying ? '🔊' : '🔇'}</button>` : ''}
+          <div id="comm-bgm-host-${escapeHtml(postId)}" class="sr-only" aria-hidden="true"></div>
         </div>`;
       }
 
@@ -17621,19 +17708,31 @@
         }
         if (pendingCommSong && pendingCommSong.title) {
           const art = safeSongUrl(pendingCommSong.artworkUrl);
+          const ytId = extractYouTubeId(pendingCommSong.ytMusicUrl);
+          const startSec = Math.max(0, Math.floor(Number(pendingCommSong.startSec || 0)));
           selEl.classList.remove('hidden');
           pickerEl.classList.add('hidden');
-          selEl.innerHTML = `<div class="flex items-center justify-between gap-2 p-2 rounded-xl bg-white border border-indigo-200">
-            <div class="flex items-center gap-2 min-w-0 flex-1">
-              <div class="w-9 h-9 rounded-lg bg-slate-200 overflow-hidden flex items-center justify-center text-sm shrink-0">
-                ${art ? `<img src="${escapeHtml(art)}" alt="" class="w-full h-full object-cover">` : '🎵'}
+          selEl.innerHTML = `<div class="p-2.5 rounded-xl bg-white border border-indigo-200 space-y-2">
+            <div class="flex items-center justify-between gap-2">
+              <div class="flex items-center gap-2 min-w-0 flex-1">
+                <div class="w-9 h-9 rounded-lg bg-slate-200 overflow-hidden flex items-center justify-center text-sm shrink-0">
+                  ${art ? `<img src="${escapeHtml(art)}" alt="" class="w-full h-full object-cover">` : '🎵'}
+                </div>
+                <div class="min-w-0 flex-1">
+                  <p class="text-xs font-black text-slate-900 truncate">${escapeHtml(pendingCommSong.title)}</p>
+                  <p class="text-[10.5px] font-semibold text-slate-500 truncate">${escapeHtml(pendingCommSong.artist || '')}</p>
+                </div>
               </div>
-              <div class="min-w-0 flex-1">
-                <p class="text-xs font-black text-slate-900 truncate">${escapeHtml(pendingCommSong.title)}</p>
-                <p class="text-[10.5px] font-semibold text-slate-500 truncate">${escapeHtml(pendingCommSong.artist || '')}</p>
-              </div>
+              <button type="button" id="btn-comm-song-change" class="px-2 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-[10.5px] font-bold text-slate-700 shrink-0">변경</button>
             </div>
-            <button type="button" id="btn-comm-song-change" class="px-2 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-[10.5px] font-bold text-slate-700 shrink-0">변경</button>
+            ${ytId ? `<div class="space-y-1.5 pt-1.5 border-t border-slate-100">
+              <div class="flex items-center justify-between gap-2">
+                <span class="text-[10.5px] font-bold text-slate-600">재생 구간 (30초): <strong id="comm-song-range-label" class="font-mono text-indigo-700">${formatSongSec(startSec)} ~ ${formatSongSec(startSec + 30)}</strong></span>
+                <button type="button" id="btn-comm-range-preview" data-yt-preview="${escapeHtml(ytId)}" data-yt-wrap="comm-song-range-yt-wrap" class="px-2 py-0.5 rounded-lg bg-slate-950 text-white text-[10px] font-bold whitespace-nowrap">▶ 구간 미리듣기</button>
+              </div>
+              <input id="comm-song-start-slider" type="range" min="0" max="210" step="1" value="${startSec}" aria-label="노래 시작 위치 선택" class="w-full accent-indigo-600 cursor-pointer" />
+              <div id="comm-song-range-yt-wrap" class="hidden"></div>
+            </div>` : ''}
           </div>`;
         } else {
           selEl.classList.add('hidden');
@@ -17709,6 +17808,14 @@
         });
       });
 
+      document.getElementById('comm-song-panel')?.addEventListener('input', e => {
+        if (e.target?.id === 'comm-song-start-slider' && pendingCommSong) {
+          const st = Math.max(0, Math.floor(Number(e.target.value) || 0));
+          pendingCommSong.startSec = st;
+          const lbl = document.getElementById('comm-song-range-label');
+          if (lbl) lbl.textContent = `${formatSongSec(st)} ~ ${formatSongSec(st + 30)}`;
+        }
+      });
       document.getElementById('comm-song-panel')?.addEventListener('click', e => {
         if (e.target.closest('#btn-comm-use-my-song')) {
           const me = (shared.members || []).find(m => m.id === prefs.currentUserId);
@@ -17727,7 +17834,9 @@
         }
         const ytBtn = e.target.closest('[data-yt-preview]');
         if (ytBtn) {
-          toggleYoutubePreview(ytBtn.dataset.ytPreview, ytBtn, document.getElementById(ytBtn.dataset.ytWrap || 'comm-song-search-yt-wrap'));
+          const isRangeBtn = ytBtn.id === 'btn-comm-range-preview';
+          const st = isRangeBtn ? Number(pendingCommSong?.startSec || 0) : 0;
+          toggleYoutubePreview(ytBtn.dataset.ytPreview, ytBtn, document.getElementById(ytBtn.dataset.ytWrap || 'comm-song-search-yt-wrap'), st);
           return;
         }
         const prevBtn = e.target.closest('[data-song-preview]');
