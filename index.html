@@ -19233,7 +19233,6 @@
       let deferredInstallPrompt = null;
       const isStandalone = window.matchMedia('(display-mode: standalone)').matches
         || window.matchMedia('(display-mode: fullscreen)').matches
-        || window.matchMedia('(display-mode: minimal-ui)').matches
         || window.navigator.standalone === true
         || (document.referrer || '').startsWith('android-app://');
       const ua = navigator.userAgent || '';
@@ -19246,12 +19245,9 @@
       const pwaBanner = document.getElementById('pwa-install-banner');
       const authPwaHint = document.getElementById('auth-pwa-hint');
       const pwaMenuBtn = document.getElementById('pwa-menu-install-btn');
-      const INSTALLED_KEY = storageScope + 'iluvstudy_pwa_installed';
+      const INSTALLED_KEY = storageScope + 'iluvstudy_pwa_user_installed_v2';
       const APP_CANONICAL_URL = (location.protocol === 'http:' || location.protocol === 'https:') ? location.href.split('#')[0] : 'https://llease.github.io/ilovestudy/';
 
-      if (isStandalone) {
-        try { localStorage.setItem(INSTALLED_KEY, '1'); } catch (e) {}
-      }
       function isAlreadyInstalled() {
         if (isStandalone) return true;
         try { return localStorage.getItem(INSTALLED_KEY) === '1'; } catch { return false; }
@@ -19281,9 +19277,12 @@
         try {
           const ta = document.createElement('textarea');
           ta.value = text;
-          ta.style.cssText = 'position:fixed;left:-9999px;top:0';
+          ta.readOnly = true;
+          ta.style.cssText = 'position:fixed;left:-9999px;top:0;font-size:16px';
           document.body.appendChild(ta);
+          ta.focus();
           ta.select();
+          ta.setSelectionRange(0, text.length);
           document.execCommand('copy');
           ta.remove();
           showToast(okMsg, 'success');
@@ -19523,15 +19522,6 @@
         }
       }
 
-      // Check installed related apps on Android Chrome so already-installed users are never nagged
-      if (!isAlreadyInstalled() && typeof navigator.getInstalledRelatedApps === 'function') {
-        navigator.getInstalledRelatedApps().then(apps => {
-          if (Array.isArray(apps) && apps.length > 0) {
-            hideAllInstallGuidance({ markInstalled: true });
-          }
-        }).catch(() => {});
-      }
-
       if (!isAlreadyInstalled()) {
         const initialMode = detectPwaGuideMode();
         if (initialMode) renderInstallGuidance(initialMode);
@@ -19547,7 +19537,7 @@
 
       window.addEventListener('appinstalled', () => {
         deferredInstallPrompt = null;
-        hideAllInstallGuidance({ markInstalled: true });
+        hideAllInstallGuidance({ markInstalled: false });
         showToast('I LOVE STUDY 앱이 홈 화면에 설치되었습니다!', 'success');
       });
 
@@ -19557,7 +19547,7 @@
           const { outcome } = await deferredInstallPrompt.userChoice;
           if (outcome === 'accepted') {
             deferredInstallPrompt = null;
-            hideAllInstallGuidance({ markInstalled: true });
+            hideAllInstallGuidance({ markInstalled: false });
           }
         } else {
           openDetailedPwaGuide(detectPwaGuideMode() || (isIOS ? 'ios' : 'android'));
