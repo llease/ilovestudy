@@ -4050,7 +4050,7 @@
             <button id="profile-song-search-btn" type="button" class="flex-1 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold whitespace-nowrap transition">🔍 곡 검색</button>
             <button id="profile-song-save-btn" type="submit" class="flex-1 py-2 rounded-xl bg-slate-950 hover:bg-slate-800 text-white text-xs font-bold whitespace-nowrap transition">직접 저장</button>
           </div>
-          <div id="profile-song-results" class="hidden space-y-1.5 max-h-64 overflow-y-auto pt-1"></div>
+          <div id="profile-song-results" class="hidden space-y-1.5 max-h-80 overflow-y-auto pt-1"></div>
         </form>
       </section>
       <section id="profile-lp-panel" class="ed-card profile-card profile-lp-card" aria-labelledby="profile-lp-title">
@@ -17005,8 +17005,44 @@
         }
       }
 
+      const KR_ARTIST_ALIASES = {
+        '지코': 'ZICO', '아이유': 'IU', '뉴진스': 'NewJeans', '방탄소년단': 'BTS', '블랙핑크': 'BLACKPINK',
+        '에스파': 'aespa', '아이브': 'IVE', '르세라핌': 'LE SSERAFIM', '세븐틴': 'SEVENTEEN', '데이식스': 'DAY6',
+        '악뮤': 'AKMU', '악동뮤지션': 'AKMU', '비비': 'BIBI', '지드래곤': 'G-DRAGON', '지디': 'G-DRAGON',
+        '로제': 'ROSÉ', '제니': 'JENNIE', '지수': 'JISOO', '리사': 'LISA', '정국': 'Jung Kook', '뷔': 'V',
+        '트와이스': 'TWICE', '스트레이키즈': 'Stray Kids', '스키즈': 'Stray Kids', '라이즈': 'RIIZE',
+        '아일릿': 'ILLIT', '투어스': 'TWS', '태연': 'TAEYEON', '크러쉬': 'Crush', '박재범': 'Jay Park',
+        '딘': 'DEAN', '우즈': 'WOODZ', '윤하': 'YOUNHA', '엑소': 'EXO', '빅뱅': 'BIGBANG', '샤이니': 'SHINee',
+        '레드벨벳': 'Red Velvet', '있지': 'ITZY', '엔믹스': 'NMIXX', '보이넥스트도어': 'BOYNEXTDOOR',
+        '제로베이스원': 'ZEROBASEONE', '제베원': 'ZEROBASEONE', '투바투': 'TOMORROW X TOGETHER',
+        '여자아이들': '(G)I-DLE', '아이들': '(G)I-DLE', '키스오브라이프': 'KISS OF LIFE', '키오프': 'KISS OF LIFE',
+        '큐더블유이알': 'QWER', '다비치': 'DAVICHI', '멜로망스': 'MeloMance', '볼빨간사춘기': 'BOL4',
+        '십센치': '10CM', '카더가든': 'Car, the garden', '혁오': 'HYUKOH', '검정치마': 'The Black Skirts',
+        '새소년': 'SE SO NEON', '실리카겔': 'Silica Gel', '백현': 'BAEKHYUN', '도경수': 'D.O.',
+        '엔시티': 'NCT', '엔하이픈': 'ENHYPEN', '트레저': 'TREASURE', '베이비몬스터': 'BABYMONSTER',
+        '미야오': 'MEOVV', '이클립스': 'ECLIPSE', '헤이즈': 'Heize', '로꼬': 'Loco', '그레이': 'GRAY',
+        '기리보이': 'Giriboy', '비오': 'BE\'O', '창모': 'CHANGMO', '애쉬아일랜드': 'ASH ISLAND',
+        '사이먼도미닉': 'Simon Dominic', '쌈디': 'Simon Dominic', '빈지노': 'Beenzino', '에픽하이': 'Epik High',
+        '선미': 'SUNMI', '청하': 'CHUNG HA', '화사': 'HWASA', '마마무': 'MAMAMOO', '오마이걸': 'OH MY GIRL',
+        '스테이씨': 'STAYC', '프로미스나인': 'fromis_9', '비투비': 'BTOB', '몬스타엑스': 'MONSTA X',
+        '위너': 'WINNER', '아이콘': 'iKON', '플레이브': 'PLAVE', '루시': 'LUCY', '잔나비': 'JANNABI',
+        '이무진': 'Lee Mujin', '성시경': 'Sung Si Kyung', '박효신': 'Park Hyo Shin', '김범수': 'Kim Bum Soo'
+      };
+      const JUNK_TRACK_RE = /\b(inst\.?|instrumental|karaoke|mr\b|backing track|tribute|cover|sped up|slowed|8d audio|lullaby|piano ver|acoustic ver|live ver|remix)\b|반주|노래방/i;
+
+      function resolveArtistAlias(rawArtist) {
+        const clean = (rawArtist || '').trim();
+        if (!clean) return '';
+        const noSpace = clean.replace(/\s+/g, '');
+        return KR_ARTIST_ALIASES[clean] || KR_ARTIST_ALIASES[noSpace] || '';
+      }
+
+      function normalizeTrackKey(s) {
+        return String(s || '').toLowerCase().replace(/\([^)]*\)|\[[^\]]*\]/g, '').replace(/[^a-z0-9가-힣]+/g, '');
+      }
+
       let songSearchSeq = 0;
-      function fetchItunesJsonp(q) {
+      function fetchItunesJsonp(q, attribute = '', limit = 25) {
         return new Promise((resolve, reject) => {
           const cbName = '__iluvItunesCb_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7);
           const script = document.createElement('script');
@@ -17033,12 +17069,13 @@
             cleanup();
             reject(new Error('jsonp_error'));
           };
-          script.src = `https://itunes.apple.com/search?term=${encodeURIComponent(q)}&country=KR&media=music&entity=song&limit=6&callback=${cbName}`;
+          const attrParam = attribute ? `&attribute=${encodeURIComponent(attribute)}` : '';
+          script.src = `https://itunes.apple.com/search?term=${encodeURIComponent(q)}&country=KR&media=music&entity=song${attrParam}&limit=${limit}&callback=${cbName}`;
           document.head.appendChild(script);
         });
       }
 
-      function fetchDeezerJsonp(q) {
+      function fetchDeezerJsonp(q, limit = 20) {
         return new Promise((resolve, reject) => {
           const cbName = '__iluvDeezerCb_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7);
           const script = document.createElement('script');
@@ -17065,22 +17102,100 @@
             cleanup();
             reject(new Error('jsonp_error'));
           };
-          script.src = `https://api.deezer.com/search/track?q=${encodeURIComponent(q)}&limit=6&output=jsonp&callback=${cbName}`;
+          script.src = `https://api.deezer.com/search/track?q=${encodeURIComponent(q)}&limit=${limit}&output=jsonp&callback=${cbName}`;
           document.head.appendChild(script);
         });
       }
 
-      function getSongQueryText() {
-        const title = (document.getElementById('profile-song-title-input')?.value || '').trim();
-        const artist = (document.getElementById('profile-song-artist-input')?.value || '').trim();
-        return `${artist} ${title}`.trim();
+      function mapItunesResults(results) {
+        return (results || []).filter(r => r && r.trackName).map((r, idx) => ({
+          title: String(r.trackName || '').trim(),
+          artist: String(r.artistName || '').trim(),
+          artworkUrl: safeSongUrl(String(r.artworkUrl100 || r.artworkUrl60 || '')),
+          previewUrl: safeSongUrl(String(r.previewUrl || '')),
+          appleUrl: safeSongUrl(String(r.trackViewUrl || '')),
+          _rank: idx
+        }));
       }
 
-      async function searchItunesSongs(rawQuery) {
+      function scoreAndFilterSongs(rawTracks, titleQ, artistQ, artistAlias) {
+        const normTitle = normalizeTrackKey(titleQ);
+        const normArtist = normalizeTrackKey(artistQ);
+        const normAlias = normalizeTrackKey(artistAlias);
+        const seen = new Set();
+        const scored = [];
+
+        for (const tr of rawTracks) {
+          const nt = normalizeTrackKey(tr.title);
+          const na = normalizeTrackKey(tr.artist);
+          const dedupKey = `${nt}__${na}`;
+          if (!nt || seen.has(dedupKey)) continue;
+          seen.add(dedupKey);
+
+          let score = Math.max(0, 60 - (tr._rank || 0) * 2);
+          const artistMatched = (normArtist && (na.includes(normArtist) || normArtist.includes(na)))
+            || (normAlias && (na.includes(normAlias) || normAlias.includes(na)));
+          const titleMatched = normTitle && (nt.includes(normTitle) || normTitle.includes(nt));
+
+          // Strict artist-only filter: if only artist is entered, prioritize actual artist matches heavily
+          if (normArtist && !normTitle) {
+            if (na === normArtist || (normAlias && na === normAlias)) score += 120;
+            else if (artistMatched) score += 80;
+            else score -= 100;
+          } else if (normTitle && !normArtist) {
+            if (nt === normTitle) score += 110;
+            else if (nt.startsWith(normTitle)) score += 75;
+            else if (titleMatched) score += 45;
+          } else if (normTitle && normArtist) {
+            if (titleMatched && artistMatched) score += 160;
+            else if (titleMatched) score += 70;
+            else if (artistMatched) score += 50;
+            if (nt === normTitle) score += 40;
+            if (na === normArtist || (normAlias && na === normAlias)) score += 40;
+          }
+
+          if (JUNK_TRACK_RE.test(tr.title)) score -= 90;
+          if (tr.previewUrl) score += 6;
+          scored.push({ ...tr, _score: score });
+        }
+
+        // If artist-only search has actual artist matches, drop unrelated tracks
+        let out = scored;
+        if (normArtist && !normTitle) {
+          const matchedOnly = scored.filter(tr => {
+            const na = normalizeTrackKey(tr.artist);
+            return (normArtist && (na.includes(normArtist) || normArtist.includes(na)))
+              || (normAlias && (na.includes(normAlias) || normAlias.includes(na)));
+          });
+          if (matchedOnly.length >= 3) out = matchedOnly;
+        }
+        return out.sort((a, b) => b._score - a._score).slice(0, 20);
+      }
+
+      async function queryItunesSafe(term, attribute = '', limit = 25) {
+        try {
+          const data = await fetchItunesJsonp(term, attribute, limit);
+          return mapItunesResults(data?.results);
+        } catch {
+          try {
+            const attrParam = attribute ? `&attribute=${encodeURIComponent(attribute)}` : '';
+            const url = `https://itunes.apple.com/search?term=${encodeURIComponent(term)}&country=KR&media=music&entity=song${attrParam}&limit=${limit}`;
+            const resp = await fetch(url, songSearchAbort ? { signal: songSearchAbort.signal } : undefined);
+            if (resp.ok) {
+              const data = await resp.json();
+              return mapItunesResults(data?.results);
+            }
+          } catch {}
+        }
+        return [];
+      }
+
+      async function searchItunesSongs() {
         const resEl = document.getElementById('profile-song-results');
         if (!resEl) return;
-        const q = (rawQuery || '').trim();
-        if (!q) {
+        const titleQ = (document.getElementById('profile-song-title-input')?.value || '').trim();
+        const artistQ = (document.getElementById('profile-song-artist-input')?.value || '').trim();
+        if (!titleQ && !artistQ) {
           resEl.classList.add('hidden');
           resEl.innerHTML = '';
           songSearchResultsCache = [];
@@ -17091,44 +17206,47 @@
         songSearchAbort = typeof AbortController !== 'undefined' ? new AbortController() : null;
         resEl.classList.remove('hidden');
         resEl.innerHTML = '<p class="text-[11px] font-semibold text-slate-400 px-1 py-2">노래를 검색하는 중이에요…</p>';
+
+        const artistAlias = resolveArtistAlias(artistQ);
         try {
-          let tracks = [];
-          try {
-            const data = await fetchItunesJsonp(q);
-            tracks = (data?.results || []).filter(r => r && r.trackName).map(r => ({
-              title: String(r.trackName || '').trim(),
-              artist: String(r.artistName || '').trim(),
-              artworkUrl: safeSongUrl(String(r.artworkUrl100 || r.artworkUrl60 || '')),
-              previewUrl: safeSongUrl(String(r.previewUrl || '')),
-              appleUrl: safeSongUrl(String(r.trackViewUrl || ''))
-            }));
-          } catch {
+          const queries = [];
+          if (artistQ && !titleQ) {
+            // Artist-only search: strictly use artistTerm + Korean/English alias
+            if (artistAlias) queries.push(queryItunesSafe(artistAlias, 'artistTerm', 25));
+            queries.push(queryItunesSafe(artistQ, 'artistTerm', 25));
+          } else if (titleQ && !artistQ) {
+            // Title-only search: use songTerm
+            queries.push(queryItunesSafe(titleQ, 'songTerm', 25));
+          } else {
+            // Both title & artist: search mappedArtist+title, original artist+title, AND title-only fallback
+            if (artistAlias) queries.push(queryItunesSafe(`${artistAlias} ${titleQ}`, '', 20));
+            queries.push(queryItunesSafe(`${artistQ} ${titleQ}`, '', 20));
+            queries.push(queryItunesSafe(titleQ, 'songTerm', 25));
+          }
+
+          const batchResults = await Promise.all(queries);
+          if (seq !== songSearchSeq) return;
+          let combined = batchResults.flat();
+
+          if (!combined.length) {
+            const dzQuery = artistQ && !titleQ
+              ? `artist:"${artistAlias || artistQ}"`
+              : `${artistAlias || artistQ} ${titleQ}`.trim();
             try {
-              const url = `https://itunes.apple.com/search?term=${encodeURIComponent(q)}&country=KR&media=music&entity=song&limit=6`;
-              const resp = await fetch(url, songSearchAbort ? { signal: songSearchAbort.signal } : undefined);
-              if (resp.ok) {
-                const data = await resp.json();
-                tracks = (data?.results || []).filter(r => r && r.trackName).map(r => ({
-                  title: String(r.trackName || '').trim(),
-                  artist: String(r.artistName || '').trim(),
-                  artworkUrl: safeSongUrl(String(r.artworkUrl100 || r.artworkUrl60 || '')),
-                  previewUrl: safeSongUrl(String(r.previewUrl || '')),
-                  appleUrl: safeSongUrl(String(r.trackViewUrl || ''))
-                }));
-              }
+              const dz = await fetchDeezerJsonp(dzQuery, 20);
+              if (seq !== songSearchSeq) return;
+              combined = (dz?.data || []).filter(r => r && r.title).map((r, idx) => ({
+                title: String(r.title || '').trim(),
+                artist: String(r.artist?.name || '').trim(),
+                artworkUrl: safeSongUrl(String(r.album?.cover_medium || r.album?.cover_small || '')),
+                previewUrl: safeSongUrl(String(r.preview || '')),
+                appleUrl: '',
+                _rank: idx
+              }));
             } catch {}
           }
-          if (!tracks.length) {
-            const dz = await fetchDeezerJsonp(q);
-            tracks = (dz?.data || []).filter(r => r && r.title).map(r => ({
-              title: String(r.title || '').trim(),
-              artist: String(r.artist?.name || '').trim(),
-              artworkUrl: safeSongUrl(String(r.album?.cover_medium || r.album?.cover_small || '')),
-              previewUrl: safeSongUrl(String(r.preview || '')),
-              appleUrl: ''
-            }));
-          }
-          if (seq !== songSearchSeq) return;
+
+          const tracks = scoreAndFilterSongs(combined, titleQ, artistQ, artistAlias);
           songSearchResultsCache = tracks;
           if (!tracks.length) {
             resEl.innerHTML = '<p class="text-[11px] text-slate-400 px-1 py-2">검색 결과가 없어요. 제목·가수를 입력하고 [직접 저장]을 눌러도 등록돼요.</p>';
@@ -17159,16 +17277,18 @@
       ['profile-song-title-input', 'profile-song-artist-input'].forEach(id => {
         document.getElementById(id)?.addEventListener('input', () => {
           clearTimeout(songSearchTimer);
-          const q = getSongQueryText();
-          if (!q) { searchItunesSongs(''); return; }
-          songSearchTimer = setTimeout(() => searchItunesSongs(q), 420);
+          const hasAny = (document.getElementById('profile-song-title-input')?.value || '').trim()
+            || (document.getElementById('profile-song-artist-input')?.value || '').trim();
+          if (!hasAny) { searchItunesSongs(); return; }
+          songSearchTimer = setTimeout(() => searchItunesSongs(), 420);
         });
       });
       document.getElementById('profile-song-search-btn')?.addEventListener('click', () => {
         clearTimeout(songSearchTimer);
-        const q = getSongQueryText();
-        if (!q) { showToast('노래 제목이나 가수 이름을 입력해 주세요.', 'warn'); return; }
-        searchItunesSongs(q);
+        const hasAny = (document.getElementById('profile-song-title-input')?.value || '').trim()
+          || (document.getElementById('profile-song-artist-input')?.value || '').trim();
+        if (!hasAny) { showToast('노래 제목이나 가수 이름을 입력해 주세요.', 'warn'); return; }
+        searchItunesSongs();
       });
       document.getElementById('profile-song-form')?.addEventListener('submit', e => {
         e.preventDefault();
