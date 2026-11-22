@@ -438,7 +438,80 @@
       border: 2px solid #f472b6;
       background: linear-gradient(90deg, rgba(244, 114, 182, .24), rgba(99, 102, 241, .24));
       box-shadow: 0 0 0 1px rgba(0, 0, 0, .25) inset;
-      pointer-events: none;
+      cursor: grab;
+      touch-action: none;
+    }
+    .ig-wave-window:active { cursor: grabbing; }
+    .ig-wave-handle {
+      position: absolute; top: -2px; bottom: -2px; width: 16px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: ew-resize; touch-action: none; z-index: 3;
+    }
+    .ig-wave-handle::after {
+      content: ''; width: 4px; height: 18px; border-radius: 999px;
+      background: #ffffff; box-shadow: 0 1px 4px rgba(0,0,0,.45);
+    }
+    .ig-wave-handle-l { left: -8px; }
+    .ig-wave-handle-r { right: -8px; }
+    body[data-dark="true"] #comm-song-panel,
+    body[data-dark="true"] #comm-spoiler-panel,
+    body[data-dark="true"] #comm-poll-panel,
+    body[data-dark="true"] #comm-quiz-panel {
+      background-color: #0f172a !important;
+      border-color: #334155 !important;
+      color: #f1f5f9 !important;
+    }
+    body[data-dark="true"] #comm-song-panel .text-slate-900,
+    body[data-dark="true"] #comm-song-panel .text-slate-950,
+    body[data-dark="true"] #comm-spoiler-panel .text-slate-900,
+    body[data-dark="true"] #comm-poll-panel .text-slate-900,
+    body[data-dark="true"] #comm-quiz-panel .text-indigo-950,
+    body[data-dark="true"] #profile-song-current .text-slate-950,
+    body[data-dark="true"] #profile-song-results .text-slate-900 {
+      color: #f8fafc !important;
+    }
+    body[data-dark="true"] #comm-song-panel .text-slate-600,
+    body[data-dark="true"] #comm-song-panel .text-slate-500,
+    body[data-dark="true"] #comm-song-panel .text-slate-700,
+    body[data-dark="true"] #profile-song-current .text-slate-500,
+    body[data-dark="true"] #profile-song-results .text-slate-500 {
+      color: #cbd5e1 !important;
+    }
+    body[data-dark="true"] #comm-song-mode-tabs {
+      background-color: #1e293b !important;
+    }
+    body[data-dark="true"] #comm-song-panel input,
+    body[data-dark="true"] #comm-spoiler-panel input,
+    body[data-dark="true"] #comm-poll-panel input,
+    body[data-dark="true"] #comm-quiz-panel input {
+      background-color: #1e293b !important;
+      border-color: #475569 !important;
+      color: #f8fafc !important;
+    }
+    body[data-dark="true"] #comm-song-panel input::placeholder,
+    body[data-dark="true"] #comm-spoiler-panel input::placeholder,
+    body[data-dark="true"] #comm-poll-panel input::placeholder,
+    body[data-dark="true"] #comm-quiz-panel input::placeholder {
+      color: #94a3b8 !important;
+    }
+    body[data-dark="true"] #comm-song-selected > div,
+    body[data-dark="true"] #comm-song-results > div,
+    body[data-dark="true"] #profile-song-current > div,
+    body[data-dark="true"] #profile-song-results > div {
+      background-color: #1e293b !important;
+      border-color: #334155 !important;
+      color: #f1f5f9 !important;
+    }
+    body[data-dark="true"] #comm-song-panel #btn-comm-song-change,
+    body[data-dark="true"] #comm-song-panel [data-wave-reset] {
+      background-color: #334155 !important;
+      color: #f8fafc !important;
+    }
+    body[data-dark="true"] #comm-song-panel [data-yt-preview].bg-white,
+    body[data-dark="true"] #profile-song-results [data-yt-preview].bg-white {
+      background-color: #0f172a !important;
+      border-color: #475569 !important;
+      color: #f8fafc !important;
     }
     @keyframes memberEqBounce {
       0%, 100% { transform: scaleY(.35); }
@@ -518,6 +591,12 @@
     body[data-dark="true"] input::placeholder, body[data-dark="true"] textarea::placeholder { color: #94a3b8 !important; opacity: 1 !important; }
     body[data-dark="true"] .tab-idle { color: #cbd5e1 !important; }
     body[data-dark="true"] .tab-active { background-color: #f8fafc !important; color: #0f172a !important; }
+    body[data-dark="true"] #app-notice-popup .ed-card, body[data-dark="true"] #app-confirm-modal .ed-card { background-color: #0f172a; border-color: #1e293b; color: #f1f5f9; }
+    body[data-dark="true"] #app-notice-popup .bg-slate-50\/80 { background-color: rgba(15, 23, 42, 0.92); border-color: #1e293b; }
+    body[data-dark="true"] #app-notice-popup .text-slate-950, body[data-dark="true"] #app-confirm-modal .text-slate-950 { color: #f8fafc; }
+    body[data-dark="true"] #app-notice-popup .text-slate-700, body[data-dark="true"] #app-confirm-modal .text-slate-600 { color: #cbd5e1; }
+    body[data-dark="true"] #app-notice-popup #app-notice-hide-today { color: #94a3b8; }
+    body[data-dark="true"] #app-notice-popup #app-notice-hide-today:hover { background-color: #1e293b; color: #f8fafc; }
     body[data-dark="true"] #focus-overlay, body[data-dark="true"] #modal-box { background-color: #0b1120 !important; color: #f1f5f9 !important; }
     body[data-dark="true"] .bg-rose-50 { background-color: rgba(136, 19, 55, 0.28) !important; }
     body[data-dark="true"] .bg-emerald-50 { background-color: rgba(6, 78, 59, 0.32) !important; }
@@ -1709,7 +1788,7 @@
       display:flex;align-items:center;gap:.45rem
     }
     .planner-heading,.planner-section-heading {justify-content:space-between;flex-wrap:wrap}
-    .planner-title-row {display:flex;align-items:center;gap:.5rem}
+    .planner-title-row {display:flex;align-items:center;justify-content:space-between;gap:.5rem;width:100%}
     .planner-heading h3 {margin:0;font-size:1.22rem;font-weight:900;letter-spacing:-.045em}
     #planner-edit-toggle {color:var(--link);background:var(--tint)}
     #planner-edit-toggle[aria-pressed="true"] {background:var(--primary);border-color:var(--primary);color:var(--on-primary)}
@@ -1805,10 +1884,10 @@
     .planner-editor {position:relative}
     .planner-toolbar {justify-content:space-between;flex-wrap:wrap}
     #planner-edit-guide {
-      position:absolute;z-index:4;top:calc(100% + .3rem);inset-inline-end:var(--planner-inset);
-      max-width:min(27rem,calc(100% - 2 * var(--planner-inset)));margin:0;padding:.48rem .66rem;
-      background:var(--ink);color:var(--surface);border-radius:.55rem;box-shadow:0 3px 12px #0f172a30;
-      font-size:.72rem;line-height:1.45;font-weight:700;pointer-events:none
+      margin:0;padding:.5rem var(--planner-inset);
+      background:var(--ink);color:var(--surface);border-bottom:1px solid var(--line);
+      border-radius:var(--r-card, 14px) var(--r-card, 14px) 0 0;
+      font-size:.74rem;line-height:1.45;font-weight:700
     }
     #planner-save-status {color:var(--planner-actual);font-size:.72rem;font-weight:850}
     .planner-class-list {display:flex;flex-wrap:wrap;gap:.3rem;width:100%;margin:0;padding:0;list-style:none}
@@ -3252,14 +3331,14 @@
             <label for="auth-login-pw" class="block text-[11px] font-bold text-slate-600 mb-1">비밀번호</label>
             <input id="auth-login-pw" type="password" autocomplete="current-password" maxlength="40" placeholder="비밀번호 입력" class="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm font-bold text-slate-900 focus:outline-none focus:border-slate-900" />
           </div>
-          <button id="btn-id-login" type="submit" class="w-full py-3 px-4 rounded-xl ed-btn-accent font-black text-sm">아이디로 로그인</button>
+          <button id="btn-id-login" type="submit" class="w-full py-3 px-4 rounded-xl ed-btn-accent font-black text-sm">로그인</button>
         </form>
 
         <!-- Signup / Migration Wrapper -->
         <div id="auth-signup-wrapper" class="hidden space-y-3">
           <div class="grid grid-cols-2 gap-1.5">
-            <button id="auth-kind-new-btn" type="button" class="py-2 px-2.5 rounded-xl text-[11px] font-black border border-slate-950 bg-slate-950 text-white transition">🌱 처음 가입 (신규)</button>
-            <button id="auth-kind-google-btn" type="button" class="py-2 px-2.5 rounded-xl text-[11px] font-bold border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100 transition">🔄 기존 Google 회원 전환</button>
+            <button id="auth-kind-new-btn" type="button" class="inline-flex items-center justify-center gap-1.5 py-2 px-2.5 rounded-xl text-[11px] font-black border border-slate-950 bg-slate-950 text-white transition"><svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="3.5"/><path d="M20 8v6M23 11h-6"/></svg><span>처음 가입 (신규)</span></button>
+            <button id="auth-kind-google-btn" type="button" class="inline-flex items-center justify-center gap-1.5 py-2 px-2.5 rounded-xl text-[11px] font-bold border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100 transition"><svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg><span>기존 Google 회원 전환</span></button>
           </div>
 
           <!-- New ID/PW Signup Form -->
@@ -3280,8 +3359,8 @@
               <input id="auth-signup-pw2" type="password" autocomplete="new-password" maxlength="40" placeholder="비밀번호 한 번 더 입력" class="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm font-bold text-slate-900 focus:outline-none focus:border-slate-900" />
             </div>
             <div class="p-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-[11px] text-emerald-900 leading-relaxed space-y-0.5">
-              <p class="font-black">🔒 100% 익명 · 서버 측 보안 아키텍처</p>
-              <p class="text-[10.5px] text-emerald-800"><strong>Web Crypto 128-bit 난수 익명 토큰</strong> 분리, <strong>SHA-256 해시 검증</strong>, <strong>Firebase 서버 보안 규칙(Security Rules)</strong> 경로 격리를 적용해 커뮤니티·익명 톡방·1:1 귓속말은 당사자 외 다른 회원과 운영자도 열람할 수 없어요.</p>
+              <p class="font-black inline-flex items-center gap-1.5"><svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg><span>100% 익명 · 서버 측 보안 아키텍처</span></p>
+              <p class="text-[10.5px] text-emerald-800"><strong>Web Crypto 128-bit 난수 익명 토큰</strong> 분리, <strong>SHA-256 해시 검증</strong>, <strong>Firebase 서버 보안 규칙(Security Rules)</strong> 경로 격리를 적용해 커뮤니티·익명 모임·1:1 쪽지는 당사자 외 다른 회원과 운영자도 열람할 수 없어요.</p>
             </div>
             <button id="btn-id-signup" type="submit" class="w-full py-3 px-4 rounded-xl ed-btn-accent font-black text-sm">아이디 만들고 시작하기</button>
           </form>
@@ -3289,11 +3368,11 @@
           <!-- Existing Google Account Migration Panel -->
           <div id="auth-google-migrate-panel" class="hidden space-y-3">
             <div class="p-3 rounded-xl bg-indigo-50 border border-indigo-200 text-[11px] text-indigo-900 leading-relaxed space-y-1">
-              <p class="font-black text-indigo-950">🔄 기존 Google 회원이신가요?</p>
+              <p class="font-black text-indigo-950 inline-flex items-center gap-1.5"><svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg><span>기존 Google 회원이신가요?</span></p>
               <p>예전에 쓰던 Google 계정으로 한 번만 본인 확인하면 기존 공부 기록·티어·LP를 그대로 유지한 채 아이디·비밀번호 계정으로 전환돼요.</p>
             </div>
             <div class="p-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-[11px] text-emerald-900 leading-relaxed space-y-0.5">
-              <p class="font-black">🔒 더 철저한 익명성을 위한 전환</p>
+              <p class="font-black inline-flex items-center gap-1.5"><svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg><span>더 철저한 익명성을 위한 전환</span></p>
               <p class="text-[10.5px] text-emerald-800">전환이 완료되면 <strong>기존 Google 이메일 정보는 안전하게 삭제</strong>되며, Web Crypto 128-bit 난수 익명 토큰과 Firebase 서버 보안 규칙으로 익명 활동이 보호돼요.</p>
             </div>
             <button id="btn-google-login" type="button" class="w-full py-2.5 px-4 rounded-xl bg-white border border-slate-300 hover:bg-slate-50 text-slate-800 font-bold text-xs flex items-center justify-center gap-2 transition">
@@ -3309,12 +3388,12 @@
         <!-- Stage 1: Clean Intro for Already-Signed-In Google Members -->
         <div id="migrate-intro-pane" class="space-y-3.5">
           <div class="p-3.5 rounded-2xl bg-indigo-50 border border-indigo-200 space-y-1">
-            <p class="text-xs font-black text-indigo-950">🔄 로그인 방식이 아이디·비밀번호로 바뀌었어요</p>
+            <p class="text-xs font-black text-indigo-950 inline-flex items-center gap-1.5"><svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg><span>로그인 방식이 아이디·비밀번호로 바뀌었어요</span></p>
             <p id="migrate-member-summary" class="text-[11px] font-semibold text-indigo-800 leading-relaxed">기존 공부 기록과 티어는 모두 그대로 유지되며, 전환 후 기존 Google 이메일 정보는 안전하게 삭제돼요.</p>
           </div>
           <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-[11px] text-emerald-900 leading-relaxed space-y-1">
-            <p class="font-black">🔒 더 철저한 익명성을 위한 보안 개편</p>
-            <p class="text-[10.5px] text-emerald-800">개인 Google 계정(이메일)과의 연결을 끊어 익명성을 한층 강화했어요. 전환이 완료되면 <strong>기존 Google 이메일 정보는 안전하게 삭제</strong>되며, <strong>Web Crypto 128-bit 난수 익명 토큰</strong>·<strong>SHA-256 해시 검증</strong>·<strong>Firebase 서버 보안 규칙(Security Rules)</strong> 경로 격리가 적용돼 당사자 외 다른 회원과 운영자도 귓속말·익명 활동을 열람할 수 없어요.</p>
+            <p class="font-black inline-flex items-center gap-1.5"><svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg><span>더 철저한 익명성을 위한 보안 개편</span></p>
+            <p class="text-[10.5px] text-emerald-800">개인 Google 계정(이메일)과의 연결을 끊어 익명성을 한층 강화했어요. 전환이 완료되면 <strong>기존 Google 이메일 정보는 안전하게 삭제</strong>되며, <strong>Web Crypto 128-bit 난수 익명 토큰</strong>·<strong>SHA-256 해시 검증</strong>·<strong>Firebase 서버 보안 규칙(Security Rules)</strong> 경로 격리가 적용돼 당사자 외 다른 회원과 운영자도 쪽지·익명 활동을 열람할 수 없어요.</p>
           </div>
           <button id="btn-migrate-start" type="button" class="w-full py-3 px-4 rounded-xl ed-btn-accent font-black text-sm">아이디·비밀번호로 전환하기 →</button>
         </div>
@@ -3377,14 +3456,14 @@
         <!-- Step 1: Nickname -->
         <div data-onboard-pane="1" class="onboard-step-pane space-y-3">
           <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-900 space-y-0.5">
-            <p class="font-black">반가워요! 딱 1분이면 준비 끝나요 👋</p>
+            <p class="font-black inline-flex items-center gap-1.5"><svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8.5 14.5a4 4 0 0 0 7 0"/><circle cx="9.5" cy="10" r=".8" fill="currentColor" stroke="none"/><circle cx="14.5" cy="10" r=".8" fill="currentColor" stroke="none"/></svg><span>반가워요! 딱 1분이면 준비 끝나요</span></p>
             <p id="onboard-google-email" class="text-[11px] opacity-80"></p>
           </div>
           <div class="space-y-2.5">
             <div>
               <label for="onboard-nickname-input" class="block text-xs font-bold text-slate-700 mb-1">활동할 별명 <span class="text-slate-400 font-normal">(스터디원에게 표시됨)</span></label>
               <input id="onboard-nickname-input" type="text" autocomplete="off" aria-describedby="onboard-nickname-help" maxlength="16" placeholder="예: 열공하는 스터디원" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm font-bold" />
-              <p id="onboard-nickname-help" class="mt-1 text-[11px] text-slate-600">별명은 <strong>라운지</strong>와 <strong>스터디 모임</strong>에서만 표시되며, <strong>커뮤니티 · 익명 톡방</strong>에서는 완전히 숨겨져요. 가입 후 내 프로필에서 언제든 바꿀 수 있어요.</p>
+              <p id="onboard-nickname-help" class="mt-1 text-[11px] text-slate-600">별명은 <strong>라운지</strong>와 <strong>스터디 모임</strong>에서만 표시되며, <strong>커뮤니티 · 익명 모임</strong>에서는 완전히 숨겨져요. 가입 후 내 프로필에서 언제든 바꿀 수 있어요.</p>
             </div>
           </div>
           <button type="button" data-onboard-next="2" class="w-full py-3 px-4 rounded-xl ed-btn-accent font-black text-sm">다음으로 →</button>
@@ -3393,15 +3472,15 @@
         <!-- Step 2: Join Source -->
         <div data-onboard-pane="2" class="onboard-step-pane hidden space-y-3">
           <div>
-            <p class="text-sm font-black text-slate-900">어느 경로로 찾아오셨나요? 👀</p>
+            <p class="text-sm font-black text-slate-900 inline-flex items-center gap-1.5"><svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg><span>어느 경로로 찾아오셨나요?</span></p>
             <p class="text-[11px] text-slate-500 mt-0.5">관리자만 참고용으로 확인하며 다른 곳에 쓰이지 않아요.</p>
           </div>
           <input id="onboard-survey-source" type="hidden" value="" />
           <div id="onboard-source-cards" class="grid grid-cols-1 gap-2">
-            <button type="button" data-source-val="지인 추천" aria-pressed="false" class="onboard-choice-card text-left px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs font-bold text-slate-800">🤝 지인의 추천을 받아서</button>
-            <button type="button" data-source-val="궁금해서" aria-pressed="false" class="onboard-choice-card text-left px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs font-bold text-slate-800">🔍 어떤 앱인지 궁금해서</button>
-            <button type="button" data-source-val="주변 권유(반강제)" aria-pressed="false" class="onboard-choice-card text-left px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs font-bold text-slate-800">😅 주변에서 같이 하자고 해서 (반강제 가입)</button>
-            <button type="button" data-source-val="재밌어 보여서" aria-pressed="false" class="onboard-choice-card text-left px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs font-bold text-slate-800">✨ 재밌고 유용해 보여서</button>
+            <button type="button" data-source-val="지인 추천" aria-pressed="false" class="onboard-choice-card inline-flex items-center gap-2 text-left px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs font-bold text-slate-800"><svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="3.5"/><path d="M22 21v-2a4 4 0 0 0-3-3.8"/><path d="M16 3.5a3.5 3.5 0 0 1 0 7"/></svg><span>지인의 추천을 받아서</span></button>
+            <button type="button" data-source-val="궁금해서" aria-pressed="false" class="onboard-choice-card inline-flex items-center gap-2 text-left px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs font-bold text-slate-800"><svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span>어떤 앱인지 궁금해서</span></button>
+            <button type="button" data-source-val="주변 권유(반강제)" aria-pressed="false" class="onboard-choice-card inline-flex items-center gap-2 text-left px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs font-bold text-slate-800"><svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-12.5 7.5L3 20.5l1.6-4.8A8.5 8.5 0 1 1 21 11.5z"/></svg><span>주변에서 같이 하자고 해서 (반강제 가입)</span></button>
+            <button type="button" data-source-val="재밌어 보여서" aria-pressed="false" class="onboard-choice-card inline-flex items-center gap-2 text-left px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs font-bold text-slate-800"><svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3z"/><path d="M19 3v3M20.5 4.5h-3M5 17v3M6.5 18.5h-3"/></svg><span>재밌고 유용해 보여서</span></button>
           </div>
           <div class="grid grid-cols-3 gap-2 pt-1">
             <button type="button" data-onboard-prev="1" class="py-2.5 rounded-xl bg-slate-100 text-xs font-bold text-slate-700">← 이전</button>
@@ -3412,18 +3491,18 @@
         <!-- Step 3: Expected Feature & Daily Goal -->
         <div data-onboard-pane="3" class="onboard-step-pane hidden space-y-3.5">
           <div class="space-y-2">
-            <p class="text-sm font-black text-slate-900">가장 기대되는 기능은 뭔가요? ✨</p>
+            <p class="text-sm font-black text-slate-900 inline-flex items-center gap-1.5"><svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3z"/><path d="M19 3v3M20.5 4.5h-3M5 17v3M6.5 18.5h-3"/></svg><span>가장 기대되는 기능은 뭔가요?</span></p>
             <input id="onboard-survey-feature" type="hidden" value="" />
             <div id="onboard-feature-cards" class="flex flex-wrap gap-1.5">
-              <button type="button" data-feature-val="스톱워치" aria-pressed="false" class="onboard-choice-card px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-xs font-bold text-slate-800">⏱️ 스톱워치</button>
-              <button type="button" data-feature-val="플래너" aria-pressed="false" class="onboard-choice-card px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-xs font-bold text-slate-800">📝 플래너</button>
-              <button type="button" data-feature-val="랭킹·티어" aria-pressed="false" class="onboard-choice-card px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-xs font-bold text-slate-800">🏆 랭킹 · 티어</button>
-              <button type="button" data-feature-val="소통" aria-pressed="false" class="onboard-choice-card px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-xs font-bold text-slate-800">💌 소통</button>
-              <button type="button" data-feature-val="울트라집중모드" aria-pressed="false" class="onboard-choice-card px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-xs font-bold text-slate-800">⚡ 울트라집중모드</button>
+              <button type="button" data-feature-val="스톱워치" aria-pressed="false" class="onboard-choice-card inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-xs font-bold text-slate-800"><svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 1.5M9 2h6"/></svg><span>스톱워치</span></button>
+              <button type="button" data-feature-val="플래너" aria-pressed="false" class="onboard-choice-card inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-xs font-bold text-slate-800"><svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3.5" width="16" height="17" rx="2"/><path d="M8 8.5h8M8 12.5h8M8 16.5h5"/></svg><span>플래너</span></button>
+              <button type="button" data-feature-val="랭킹·티어" aria-pressed="false" class="onboard-choice-card inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-xs font-bold text-slate-800"><svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4z"/><path d="M7 6H4a1 1 0 0 0-1 1v1a3 3 0 0 0 3 3h1M17 6h3a1 1 0 0 1 1 1v1a3 3 0 0 1-3 3h-1"/></svg><span>랭킹 · 티어</span></button>
+              <button type="button" data-feature-val="소통" aria-pressed="false" class="onboard-choice-card inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-xs font-bold text-slate-800"><svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4z"/></svg><span>소통</span></button>
+              <button type="button" data-feature-val="울트라집중모드" aria-pressed="false" class="onboard-choice-card inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-xs font-bold text-slate-800"><svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg><span>울트라집중모드</span></button>
             </div>
           </div>
           <div class="space-y-2">
-            <p class="text-sm font-black text-slate-900">하루 목표 공부시간은 몇 시간인가요? 🎯</p>
+            <p class="text-sm font-black text-slate-900 inline-flex items-center gap-1.5"><svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg><span>하루 목표 공부시간은 몇 시간인가요?</span></p>
             <p class="text-[11px] text-slate-600">플래너의 기본 목표로 적용돼요. 플래너에서 날짜별로 바꿀 수 있어요.</p>
             <div class="flex flex-wrap gap-1.5">
               <button type="button" data-goal-preset="3" class="px-2.5 py-1.5 rounded-lg border border-slate-200 bg-slate-50 hover:bg-slate-100 text-xs font-bold">3시간</button>
@@ -3446,11 +3525,11 @@
         <!-- Step 4: Consent & Launch -->
         <div data-onboard-pane="4" class="onboard-step-pane hidden space-y-3">
           <div class="p-3 rounded-xl bg-indigo-50/60 border border-indigo-200 text-xs space-y-1">
-            <p class="font-black text-indigo-950">🎉 거의 다 끝났어요!</p>
+            <p class="font-black text-indigo-950 inline-flex items-center gap-1.5"><svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.2 2.4 2.4 4.8-5"/></svg><span>거의 다 끝났어요!</span></p>
             <p id="onboard-summary-line" class="text-[11px] text-indigo-900 font-semibold"></p>
           </div>
           <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-[11px] text-emerald-900 leading-relaxed space-y-1">
-            <p class="font-black">🛡️ 안심하고 쓰세요 · 100% 익명 보안 아키텍처</p>
+            <p class="font-black inline-flex items-center gap-1.5"><svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg><span>안심하고 쓰세요 · 100% 익명 보안 아키텍처</span></p>
             <ul class="space-y-0.5 text-[10.5px] text-emerald-800">
               <li>• <strong>128-bit 난수 익명 토큰</strong>: Web Crypto API로 계정과 분리된 익명 식별자를 발급해 작성자를 추적할 수 없어요.</li>
               <li>• <strong>SHA-256 해시 &amp; 서버 규칙 격리</strong>: 비밀번호 방은 SHA-256 해시로 검증되며, Firebase 서버 보안 규칙(Security Rules)이 당사자 외 다른 회원·운영자의 열람을 원천 차단해요.</li>
@@ -3564,7 +3643,7 @@
     <!-- Smart PWA Install & In-App Browser Guidance Banner -->
     <div id="pwa-install-banner" class="hidden rounded-2xl border border-indigo-200 bg-indigo-50/90 px-3.5 py-2.5 flex items-center justify-between gap-2.5 text-xs">
       <div class="min-w-0 flex-1">
-        <p id="pwa-install-title" class="font-black text-indigo-950 truncate">📲 홈 화면에 앱 아이콘으로 추가하기</p>
+        <p id="pwa-install-title" class="inline-flex items-center gap-1.5 font-black text-indigo-950 truncate"><svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg><span>홈 화면에 앱 아이콘으로 추가하기</span></p>
         <p id="pwa-install-desc" class="text-[11px] text-indigo-800 leading-snug"></p>
       </div>
       <div class="flex items-center gap-1.5 shrink-0">
@@ -3574,7 +3653,7 @@
     </div>
     <!-- Admin Member-Inspection Return Bar -->
     <div id="admin-inspect-bar" class="hidden rounded-2xl border-2 border-indigo-600 bg-indigo-50 px-4 py-3 flex items-center justify-between gap-3">
-      <span id="admin-inspect-label" class="text-xs sm:text-sm font-black text-indigo-950">👀 멤버 화면 보는 중</span>
+      <span id="admin-inspect-label" class="inline-flex items-center gap-1.5 text-xs sm:text-sm font-black text-indigo-950"><svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.8-6.5 10-6.5S22 12 22 12s-3.8 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="2.8"/></svg><span>멤버 화면 보는 중</span></span>
       <button id="admin-return-btn" type="button" class="px-3 py-1.5 rounded-xl bg-indigo-600 text-white text-xs font-bold whitespace-nowrap">관리자 화면으로 복귀</button>
     </div>
 
@@ -3737,7 +3816,7 @@
       <div id="tier-grouped-rankings-card" class="ed-card p-4 sm:p-5 space-y-3">
         <div class="flex flex-wrap items-center justify-between gap-2">
           <div>
-            <h3 class="text-sm sm:text-base font-black text-slate-950">🏅 티어별 랭킹</h3>
+            <h3 class="inline-flex items-center gap-1.5 text-sm sm:text-base font-black text-slate-950"><svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg><span>티어별 랭킹</span></h3>
             <p class="text-xs text-slate-500">공부 시작·마지막 시각은 한국 시간 오전 5시부터 다음 날 오전 5시까지 집계합니다.</p>
           </div>
         </div>
@@ -3746,11 +3825,11 @@
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
         <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
-          <h3 class="text-sm font-bold text-slate-900 mb-3">🌅 오늘 가장 먼저 시작한 사람</h3>
+          <h3 class="inline-flex items-center gap-1.5 text-sm font-bold text-slate-900 mb-3"><svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v4M4.93 10.93l1.41 1.41M2 18h20M19.07 10.93l-1.41 1.41M16 18a4 4 0 0 0-8 0"/></svg><span>오늘 가장 먼저 시작한 사람</span></h3>
           <div id="rank-first-list" class="space-y-2"></div>
         </div>
         <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
-          <h3 class="text-sm font-bold text-slate-900 mb-3">🌙 가장 늦게까지 공부한 사람</h3>
+          <h3 class="inline-flex items-center gap-1.5 text-sm font-bold text-slate-900 mb-3"><svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><span>가장 늦게까지 공부한 사람</span></h3>
           <div id="rank-last-list" class="space-y-2"></div>
         </div>
       </div>
@@ -3761,14 +3840,14 @@
       <div class="ed-card p-5 space-y-4">
         <div class="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h3 class="text-base font-black text-slate-950">🎖️ 내 티어 & 전체 랭크 체계표</h3>
+            <h3 class="inline-flex items-center gap-1.5 text-base font-black text-slate-950"><svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg><span>내 티어 &amp; 전체 랭크 체계표</span></h3>
             <p class="text-xs text-slate-500">출석과 챌린지로 LP를 모아 한 달 안에 그랜드마스터(930 LP) 이상에 도전하세요.</p>
           </div>
           <div id="my-rank-tier-summary" class="flex flex-wrap items-center gap-2"></div>
         </div>
         <div id="rank-tier-table-wrap" class="overflow-visible p-1"></div>
         <div class="rounded-xl bg-slate-50 border border-slate-200 p-3 text-[11px] text-slate-600 leading-relaxed">
-          <strong class="text-slate-900">💎 LP 적립 체계</strong> : 울트라집중 교시 출석 <strong>+4</strong>(지각 +1, 면제 +2) · 자율모드 일일 출석 <strong>+5</strong> · 연속 출석 <strong>+3</strong>(5일마다 +15) · 공부 1시간당 <strong>+3</strong>(일 최대 8시간) · 리스펙 첫 수신 <strong>+2</strong>(공부일당 1회) · 챌린지 보상
+          <strong class="text-slate-900"><svg class="w-3.5 h-3.5 inline-block align-[-2px] mr-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h12l4 6-10 13L2 9Z"/><path d="M2 9h20"/></svg>LP 적립 체계</strong> : 울트라집중 교시 출석 <strong>+4</strong>(지각 +1, 면제 +2) · 자율모드 일일 출석 <strong>+5</strong> · 연속 출석 <strong>+3</strong>(5일마다 +15) · 공부 1시간당 <strong>+3</strong>(일 최대 8시간) · 리스펙 첫 수신 <strong>+2</strong>(공부일당 1회) · 챌린지 보상
         </div>
       </div>
 
@@ -3795,7 +3874,7 @@
 
       <!-- Sub-Tab 3: Brag Feed (Study Members Only) -->
       <div id="members-sub-brag" class="hidden space-y-4">
-        <div id="brag-locked-notice" class="hidden ed-card p-6 text-center text-xs font-bold text-slate-500">🔒 스터디에 참가한 멤버만 STUDYGRAM 피드를 이용하고 볼 수 있습니다.</div>
+        <div id="brag-locked-notice" class="hidden ed-card p-6 text-center text-xs font-bold text-slate-500"><span class="inline-flex items-center gap-1 align-middle"><svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span> 스터디에 참가한 멤버만 STUDYGRAM 피드를 이용하고 볼 수 있습니다.</div>
         <div id="brag-content-wrap">
       <div class="max-w-lg mx-auto space-y-4">
         <!-- Instagram-style Active Members Story Bar -->
@@ -3844,27 +3923,22 @@
 
     <!-- TAB: MULTI-STUDY GROUPS (열품타식 스터디 모임 + 단톡방/읽음 표시 + 익명 모임 지원) -->
     <div id="tab-groups" class="tab-panel hidden space-y-4">
-      <!-- Group List View (🔥 스터디 | 🎭 톡 2분할) -->
+      <!-- Group List View (스터디 모임 + 익명 모임 통합 목록) -->
       <div id="groups-list-view" class="space-y-3.5">
-        <div class="grid grid-cols-2 gap-1.5 p-1 rounded-2xl bg-slate-100 border border-slate-200">
-          <button type="button" data-group-section="study" class="group-section-btn inline-flex items-center justify-center gap-1.5 py-2 px-2 rounded-xl text-xs font-black bg-slate-950 text-white transition"><svg class="comm-svg-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H12v18H6.5A2.5 2.5 0 0 1 4 18.5zM20 5.5A2.5 2.5 0 0 0 17.5 3H12v18h5.5a2.5 2.5 0 0 0 2.5-2.5z"/></svg><span>스터디</span></button>
-          <button type="button" data-group-section="talk" class="group-section-btn inline-flex items-center justify-center gap-1.5 py-2 px-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-950 transition"><svg class="comm-svg-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-12.5 7.5L3 20.5l1.6-4.8A8.5 8.5 0 1 1 21 11.5z"/></svg><span>톡 (익명 단톡방)</span></button>
-        </div>
-
         <div class="social-heading ed-card p-4 sm:p-5 flex flex-wrap items-center justify-between gap-3">
           <div class="min-w-0">
-            <h2 id="groups-section-title" class="text-base sm:text-lg font-black text-slate-950 tracking-tight">스터디 모임</h2>
-            <p id="groups-section-desc" class="text-xs text-slate-500 mt-0.5">별명으로 공부시간을 함께 공유하고 단톡방을 쓰는 공부 모임이에요. 참여자 목록은 가입 후에만 보여요.</p>
+            <h2 id="groups-section-title" class="text-base sm:text-lg font-black text-slate-950 tracking-tight">모임 · 톡</h2>
+            <p id="groups-section-desc" class="text-xs text-slate-500 mt-0.5">스터디 모임과 익명 모임을 한곳에서 둘러보고 바로 참여해 보세요.</p>
           </div>
-          <button id="btn-open-create-group" type="button" class="px-3.5 py-2 rounded-xl ed-btn-accent text-xs font-black whitespace-nowrap">+ 새 스터디 만들기</button>
+          <button id="btn-open-create-group" type="button" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl ed-btn-accent text-xs font-black whitespace-nowrap"><svg class="comm-svg-ic-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span>새 모임 만들기</span></button>
         </div>
 
         <div class="flex flex-wrap items-center justify-between gap-2">
           <div class="inline-flex p-1 rounded-xl bg-slate-100 border border-slate-200 gap-1">
-            <button type="button" aria-pressed="true" data-group-filter="mine" class="group-filter-btn px-3 py-1.5 rounded-lg text-xs font-black bg-slate-950 text-white transition"><span id="groups-mine-label">내 스터디</span> <span id="groups-mine-count" class="opacity-75">0</span></button>
-            <button type="button" aria-pressed="false" data-group-filter="all" class="group-filter-btn px-3 py-1.5 rounded-lg text-xs font-bold text-slate-600 hover:text-slate-950 transition"><span id="groups-all-label">전체 찾기</span> <span id="groups-all-count" class="opacity-75">0</span></button>
+            <button type="button" aria-pressed="true" data-group-filter="all" class="group-filter-btn px-3 py-1.5 rounded-lg text-xs font-black bg-slate-950 text-white transition"><span id="groups-all-label">전체 모임</span> <span id="groups-all-count" class="opacity-75">0</span></button>
+            <button type="button" aria-pressed="false" data-group-filter="mine" class="group-filter-btn px-3 py-1.5 rounded-lg text-xs font-bold text-slate-600 hover:text-slate-950 transition"><span id="groups-mine-label">내 모임</span> <span id="groups-mine-count" class="opacity-75">0</span></button>
           </div>
-          <input id="groups-search-input" aria-label="방 이름이나 소개로 검색" type="search" placeholder="방 이름·소개 검색…" class="w-full sm:w-56 rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-800 focus:outline-none focus:border-slate-900" />
+          <input id="groups-search-input" aria-label="모임 이름이나 소개로 검색" type="search" placeholder="모임 이름·소개 검색…" class="w-full sm:w-56 rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-800 focus:outline-none focus:border-slate-900" />
         </div>
 
         <div id="groups-cards-grid" class="space-y-2.5"></div>
@@ -3879,8 +3953,8 @@
               <div class="min-w-0 flex-1">
                 <div class="flex items-center gap-1.5 min-w-0">
                   <h3 id="group-room-title" class="text-sm font-black text-slate-950 truncate"></h3>
-                  <span id="group-room-anon-badge" class="px-1.5 py-0.5 rounded bg-slate-900 text-white text-[10px] font-bold shrink-0">🎭 익명</span>
-                  <span id="group-room-lock-badge" class="hidden px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 text-[10px] font-bold shrink-0">🔒</span>
+                  <span id="group-room-anon-badge" class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200 text-[10px] font-bold shrink-0"><svg class="w-3 h-3 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12c2.5-3.5 6-5 10-5s7.5 1.5 10 5c-2.5 3.5-6 5-10 5s-7.5-1.5-10-5z"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/></svg><span>익명</span></span>
+                  <span id="group-room-lock-badge" class="hidden inline-flex items-center px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 text-[10px] font-bold shrink-0" aria-label="비밀번호 방"><svg class="w-3 h-3 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>
                 </div>
                 <p id="group-room-meta" class="text-[11px] font-semibold text-slate-500 truncate"></p>
               </div>
@@ -3916,7 +3990,7 @@
       </div>
     </div>
 
-    <!-- TAB: 100% ANONYMOUS COMMUNITY (완전 익명 커뮤니티 · 펼침 피드 · 인라인 댓글 · 1:1 귓속말) -->
+    <!-- TAB: 100% ANONYMOUS COMMUNITY (완전 익명 커뮤니티 · 펼침 피드 · 인라인 댓글 · 1:1 쪽지) -->
     <div id="tab-community" class="tab-panel hidden space-y-4">
       <!-- Inline Fast Composer (Body-first + Camera + Poll + Quiz + Teaser) -->
       <form id="community-post-form" class="ed-card p-4 space-y-2.5" autocomplete="off">
@@ -3926,12 +4000,12 @@
         </div>
 
         <!-- Optional Click-to-Reveal Teaser Title -->
-        <div id="comm-spoiler-panel" class="hidden p-2.5 rounded-xl bg-amber-50/80 border border-amber-200 space-y-1.5">
+        <div id="comm-spoiler-panel" class="hidden p-2.5 rounded-xl bg-slate-50 border border-slate-200 space-y-1.5">
           <div class="flex items-center justify-between">
-            <span class="text-[11px] font-black text-amber-900">제목만 보이고 눌러야 본문이 열려요</span>
-            <button type="button" id="comm-spoiler-close" class="text-[11px] font-bold text-amber-700 hover:text-amber-950">닫기</button>
+            <span class="inline-flex items-center gap-1.5 text-[11px] font-black text-slate-700"><svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" y1="2" x2="22" y2="22"/></svg><span>제목만 보이고 눌러야 본문이 열려요</span></span>
+            <button type="button" id="comm-spoiler-close" class="text-[11px] font-bold text-slate-500 hover:text-slate-900">닫기</button>
           </div>
-          <input id="comm-spoiler-title" type="text" maxlength="60" placeholder="누르기 전에 보여줄 한 줄 제목 입력 (예: 방금 진짜 역대급 사건…)" class="w-full rounded-lg border border-amber-300 bg-white px-2.5 py-1.5 text-xs font-bold text-slate-900 focus:outline-none focus:border-slate-900" />
+          <input id="comm-spoiler-title" type="text" maxlength="60" placeholder="누르기 전에 보여줄 한 줄 제목 입력" class="w-full rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-bold text-slate-900 focus:outline-none focus:border-slate-900" />
         </div>
 
         <textarea id="comm-post-body" aria-label="새 글 내용" rows="2" maxlength="1500" placeholder="오늘 나누고 싶은 공부 이야기나 질문을 남겨보세요." class="w-full rounded-xl border border-slate-200 bg-slate-50/60 px-3 py-2 text-xs sm:text-sm font-medium text-slate-900 leading-relaxed resize-none overflow-hidden focus:outline-none focus:bg-white focus:border-slate-900"></textarea>
@@ -4030,6 +4104,7 @@
 
     <div id="tab-planner" class="tab-panel hidden">
       <section class="ed-card planner-sheet" aria-labelledby="planner-title">
+        <p id="planner-edit-guide" class="hidden" role="status"></p>
         <div class="planner-sheet-header">
           <div class="planner-heading">
             <div class="planner-title-row">
@@ -4056,7 +4131,6 @@
             <select id="planner-range-select" class="planner-field hidden" aria-label="선택한 할 일의 계획 시간 수정"></select>
             <span id="planner-save-status" role="status"></span>
           </div>
-          <p id="planner-edit-guide" class="hidden" role="status"></p>
         </div>
 
         <div class="planner-sheet-body">
@@ -4268,7 +4342,7 @@
       </div>
       <div id="ultra-exempt-card" class="tt-card hidden bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-sm space-y-2.5">
         <div>
-          <h4 class="text-sm font-black text-slate-900">⚡ 울트라집중모드 · 전용 면제 시간표</h4>
+          <h4 class="inline-flex items-center gap-1.5 text-sm font-black text-slate-900"><svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg><span>울트라집중모드 · 전용 면제 시간표</span></h4>
           <p class="text-[11px] text-slate-500">등록한 대학 수업이 자동 면제되며, 칸을 눌러 직접 <strong>수업면제</strong>를 켜고 끌 수도 있습니다.</p>
         </div>
         <div id="ultra-exempt-table-wrap" class="overflow-x-auto"></div>
@@ -4342,8 +4416,9 @@
             <a href="#guide-sec-2">02 공부 모드</a>
             <a href="#guide-sec-3">03 타이머 · 플래너 · 캘린더</a>
             <a href="#guide-sec-4">04 티어 · LP · 승급전</a>
-            <a href="#guide-sec-5">05 테마 · 소통</a>
-            <a href="#guide-sec-6">06 주의사항</a>
+            <a href="#guide-sec-social">05 라운지 · 모임 · 커뮤니티</a>
+            <a href="#guide-sec-5">06 테마 · 소통</a>
+            <a href="#guide-sec-6">07 주의사항</a>
           </nav>
         </div>
 
@@ -4352,27 +4427,24 @@
           <section id="guide-sec-1" class="ed-card guide-section">
             <div class="guide-sec-head">
               <span class="guide-sec-num">01</span>
-              <h4>시작 · 프로필 · 시간표 · 스터디 참가</h4>
+              <h4>시작 · 프로필 · 시간표 · 나의 추천 노래</h4>
             </div>
             <div class="guide-items guide-items-2col">
               <div class="guide-item">
-                <h5 class="guide-item-title">내 프로필</h5>
+                <h5 class="guide-item-title">내 프로필 &amp; 나의 추천 노래</h5>
                 <ul class="guide-bullets">
-                  <li>별명과 프로필 사진(정사각형 크롭·기본 복원)을 자유롭게 바꿀 수 있어요.</li>
-                  <li>LP 획득 내역, 보유 칭호·뱃지를 확인하고 자율모드 홈 배너의 명언과 배경을 꾸밀 수 있어요.</li>
+                  <li>별명과 프로필 사진(정사각형 크롭·기본 복원), LP 획득 내역, 보유 칭호·뱃지, 자율모드 홈 배너의 명언과 배경을 꾸밀 수 있어요.</li>
+                  <li><strong>나의 추천 노래</strong>에서 원하는 노래 1곡을 영구 설정할 수 있어요. 검색 중에 바로 30초 미리듣기가 가능하며, 멜론·스포티파이·유튜브 뮤직·애플 뮤직 앱으로 바로 연결돼요.</li>
                 </ul>
               </div>
               <div class="guide-item">
-                <h5 class="guide-item-title">수업 시간표</h5>
+                <h5 class="guide-item-title">대학 수업 시간표</h5>
                 <ul class="guide-bullets">
                   <li>대학 수업을 직접 등록하거나 <strong>충남대 전자과 시간표 불러오기</strong>로 한 번에 채울 수 있어요.</li>
+                  <li>등록한 수업은 <strong>과목마다 고유한 색상</strong>으로 구분되며, 같은 과목끼리만 같은 색으로 표시돼요.</li>
                   <li>울트라집중모드에서는 수업과 겹치거나 애매하게 끝나는 다음 교시까지 자동 면제됩니다.</li>
                 </ul>
               </div>
-            </div>
-            <div class="guide-item">
-              <h5 class="guide-item-title">스터디 참가하기</h5>
-              <p>처음에는 혼자 조용히(비공개) 시작하며, 원할 때 <strong>스터디 · 랭킹</strong> 탭에서 스터디에 참가할 수 있어요. 나중에 탈퇴하더라도 기존 공부 기록·시간표·사진은 그대로 보존됩니다.</p>
             </div>
           </section>
 
@@ -4399,7 +4471,7 @@
               </div>
             </div>
             <div class="guide-item mt-3">
-              <h5 class="guide-item-title">📅 울트라집중모드 기본 시간표 <span class="guide-pill">수업 없는 날 기준</span></h5>
+              <h5 class="guide-item-title inline-flex items-center gap-1.5"><svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4.5" width="18" height="16.5" rx="2.5"/><path d="M16 2.5v4M8 2.5v4M3 10h18"/></svg><span>울트라집중모드 기본 시간표</span> <span class="guide-pill">수업 없는 날 기준</span></h5>
               <p class="text-[11px] text-slate-500 mb-2.5">수업 시간표에 등록된 수업과 겹치는 교시는 자동으로 면제돼요.</p>
               <div class="overflow-x-auto rounded-xl border border-slate-200">
                 <table class="w-full text-left text-[11px] sm:text-xs border-collapse">
@@ -4475,7 +4547,7 @@
           <section id="guide-sec-4" class="ed-card guide-section">
             <div class="guide-sec-head">
               <span class="guide-sec-num">04</span>
-              <h4>티어 · LP 기준 · 승급전 · 카드 효과</h4>
+              <h4>티어 · LP 기준 · 승급전 · 멤버 카드</h4>
             </div>
             <div class="guide-item">
               <h5 class="guide-item-title">LP 적립 기준 <span class="guide-pill">감점 없음</span></h5>
@@ -4483,9 +4555,9 @@
                 <div class="guide-lp-card"><span>교시 출석 (울트라집중)</span><strong>+4 LP</strong><small>지각 +1 · 수업 면제 +2</small></div>
                 <div class="guide-lp-card"><span>자율모드 일일 출석</span><strong>+5 LP</strong><small>하루 1회 체크</small></div>
                 <div class="guide-lp-card"><span>연속 출석 보너스</span><strong>+3 LP</strong><small>5일마다 +15 LP 추가</small></div>
-                <div class="guide-lp-card"><span>누적 공부시간</span><strong>1시간당 +3 LP</strong><small>하루 최대 8시간까지</small></div>
+                <div class="guide-lp-card"><span>누적 공부 시간</span><strong>1시간당 +3 LP</strong><small>하루 최대 8시간까지</small></div>
                 <div class="guide-lp-card"><span>리스펙 첫 수신</span><strong>+2 LP</strong><small>공부일당 1회 (오전 5시 기준)</small></div>
-                <div class="guide-lp-card"><span>시즌 · 입문 챌린지</span><strong>보상 LP</strong><small>달성 시 즉시 지급</small></div>
+                <div class="guide-lp-card"><span>시즌 · 스페셜 챌린지</span><strong>보상 LP</strong><small>달성 시 즉시 지급</small></div>
               </div>
             </div>
             <div class="guide-items guide-items-2col">
@@ -4498,10 +4570,10 @@
                 </ul>
               </div>
               <div class="guide-item">
-                <h5 class="guide-item-title">뱃지 · 카드 불꽃 효과</h5>
+                <h5 class="guide-item-title">멤버 카드 · 뱃지 · 불꽃 효과</h5>
                 <ul class="guide-bullets">
-                  <li>아바타 주변 불꽃은 티어 색상을 띠며, 공부일 누적 시간이 쌓일수록 높이와 움직임이 커져요.</li>
-                  <li>아바타를 누르면 프로필 사진을, 카드 본문을 누르면 상세 기록과 뱃지를 볼 수 있어요.</li>
+                  <li>아바타 주변 불꽃은 티어 색상을 띠며, 누적 공부 시간이 쌓일수록 높이와 움직임이 커져요.</li>
+                  <li>아바타를 누르면 프로필 사진을, 카드 본문을 누르면 상세 기록·뱃지·추천 노래를 볼 수 있고, 보유 뱃지는 한 줄로 깔끔하게 표시(+N)돼요.</li>
                   <li>활동 뱃지: <strong>얼리버드</strong>(08시 전), <strong>심야 올빼미</strong>(자정~04:59 공부), <strong>연속 출석</strong>(2일~10일+ 진화)</li>
                 </ul>
               </div>
@@ -4515,7 +4587,7 @@
               <h4>라운지 · 모임 · 톡 · 커뮤니티 (익명/별명 안내)</h4>
             </div>
             <div class="guide-item">
-              <h5 class="guide-item-title">🔍 공간마다 내 이름이 어떻게 보이나요?</h5>
+              <h5 class="guide-item-title inline-flex items-center gap-1.5"><svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span>공간마다 내 이름이 어떻게 보이나요?</span></h5>
               <div class="overflow-x-auto rounded-xl border border-slate-200 mt-2">
                 <table class="w-full text-left text-[11px] sm:text-xs border-collapse">
                   <thead>
@@ -4529,27 +4601,27 @@
                   <tbody class="divide-y divide-slate-100 bg-white text-slate-800">
                     <tr>
                       <td class="py-1.5 px-2.5 font-black">라운지</td>
-                      <td class="py-1.5 px-2.5 font-bold text-indigo-700">🏷️ 별명 공개</td>
+                      <td class="py-1.5 px-2.5 font-bold text-indigo-700"><span class="inline-flex items-center gap-1"><svg class="w-3 h-3 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2H4a2 2 0 0 0-2 2v8l9.2 9.2a2 2 0 0 0 2.8 0l7.2-7.2a2 2 0 0 0 0-2.8L12 2z"/><circle cx="7" cy="7" r="1.3" fill="currentColor" stroke="none"/></svg><span>별명 공개</span></span></td>
                       <td class="py-1.5 px-2.5">공개</td>
-                      <td class="py-1.5 px-2.5 text-slate-600">가입만 하면 자동 입장 · 전체 랭킹/챌린지</td>
+                      <td class="py-1.5 px-2.5 text-slate-600">가입 시 자동 입장 · 주간 성적표 · 랭킹 · 챌린지</td>
                     </tr>
                     <tr>
-                      <td class="py-1.5 px-2.5 font-black">모임 · 톡 → 🔥 스터디</td>
-                      <td class="py-1.5 px-2.5 font-bold text-indigo-700">🏷️ 별명 공개</td>
+                      <td class="py-1.5 px-2.5 font-black"><span class="inline-flex items-center gap-1"><svg class="w-3 h-3 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H12v18H6.5A2.5 2.5 0 0 1 4 18.5zM20 5.5A2.5 2.5 0 0 0 17.5 3H12v18h5.5a2.5 2.5 0 0 0 2.5-2.5z"/></svg><span>스터디 모임</span></span></td>
+                      <td class="py-1.5 px-2.5 font-bold text-indigo-700"><span class="inline-flex items-center gap-1"><svg class="w-3 h-3 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2H4a2 2 0 0 0-2 2v8l9.2 9.2a2 2 0 0 0 2.8 0l7.2-7.2a2 2 0 0 0 0-2.8L12 2z"/><circle cx="7" cy="7" r="1.3" fill="currentColor" stroke="none"/></svg><span>별명 공개</span></span></td>
                       <td class="py-1.5 px-2.5">공개</td>
-                      <td class="py-1.5 px-2.5 text-slate-600">여러 방 동시 가입 · 멤버 현황+단톡방(읽음 표시) · 미가입자는 멤버 비공개</td>
+                      <td class="py-1.5 px-2.5 text-slate-600">멤버 현황 + 단톡방(읽음 표시) · 가입한 멤버만 참여자와 대화 열람 가능</td>
                     </tr>
                     <tr>
-                      <td class="py-1.5 px-2.5 font-black">모임 · 톡 → 🎭 톡</td>
-                      <td class="py-1.5 px-2.5 font-bold text-slate-900">🎭 익명</td>
+                      <td class="py-1.5 px-2.5 font-black"><span class="inline-flex items-center gap-1"><svg class="w-3 h-3 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12c2.5-3.5 6-5 10-5s7.5 1.5 10 5c-2.5 3.5-6 5-10 5s-7.5-1.5-10-5z"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/></svg><span>익명 모임</span></span></td>
+                      <td class="py-1.5 px-2.5 font-bold text-slate-700"><span class="inline-flex items-center gap-1"><svg class="w-3 h-3 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12c2.5-3.5 6-5 10-5s7.5 1.5 10 5c-2.5 3.5-6 5-10 5s-7.5-1.5-10-5z"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/></svg><span>완전 익명</span></span></td>
                       <td class="py-1.5 px-2.5 font-bold text-emerald-700">비공개</td>
-                      <td class="py-1.5 px-2.5 text-slate-600">경쟁 기능 없음 · 방 안에서 '익명1, 익명2…'로 단톡</td>
+                      <td class="py-1.5 px-2.5 text-slate-600">별명이 사용되지 않음 · 경쟁 기능 없이 익명으로 대화 · 가입한 멤버만 대화 열람 가능</td>
                     </tr>
                     <tr>
-                      <td class="py-1.5 px-2.5 font-black">커뮤니티 · 귓속말</td>
-                      <td class="py-1.5 px-2.5 font-bold text-slate-900">🎭 익명</td>
+                      <td class="py-1.5 px-2.5 font-black"><span class="inline-flex items-center gap-1"><svg class="w-3 h-3 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-12.5 7.5L3 20.5l1.6-4.8A8.5 8.5 0 1 1 21 11.5z"/></svg><span>커뮤니티 · 쪽지</span></span></td>
+                      <td class="py-1.5 px-2.5 font-bold text-slate-700"><span class="inline-flex items-center gap-1"><svg class="w-3 h-3 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12c2.5-3.5 6-5 10-5s7.5 1.5 10 5c-2.5 3.5-6 5-10 5s-7.5-1.5-10-5z"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/></svg><span>완전 익명</span></span></td>
                       <td class="py-1.5 px-2.5 font-bold text-emerald-700">비공개</td>
-                      <td class="py-1.5 px-2.5 text-slate-600">펼침형 피드 · 추천 5개 이상 인기글 · 1:1 수락형 익명 귓속말</td>
+                      <td class="py-1.5 px-2.5 text-slate-600">펼침형 피드 · 추천 5개 이상 인기글 · 1:1 수락형 익명 쪽지</td>
                     </tr>
                   </tbody>
                 </table>
@@ -4557,18 +4629,19 @@
             </div>
             <div class="guide-items guide-items-2col">
               <div class="guide-item">
-                <h5 class="guide-item-title">아이디 로그인 &amp; 기존 회원 전환</h5>
+                <h5 class="guide-item-title">모임 · 톡 통합 목록 &amp; 만들기</h5>
                 <ul class="guide-bullets">
-                  <li>로그인할 때는 <strong>아이디</strong>를 사용하고, 라운지와 스터디 모임에서는 <strong>별명</strong>으로 활동해요.</li>
-                  <li>기존에 Google로 쓰던 분은 로그인 화면의 <strong>기존 Google 회원 전환</strong>을 통해 새 아이디·비번을 만들면 기존 공부 기록·티어·LP가 그대로 유지돼요.</li>
+                  <li><strong>모임 · 톡</strong> 탭에서 스터디 모임과 익명 모임을 한 화면에서 둘러보고, 상단 <strong>새 모임 만들기</strong>에서 모임 유형(스터디 모임 / 익명 모임)을 골라 바로 만들 수 있어요.</li>
+                  <li>모임에 입장하거나 나갈 때는 확인창이 뜨며, <strong>가입하지 않은 모임의 대화 내용은 절대 열람할 수 없어요.</strong></li>
+                  <li>필요한 경우 비밀번호를 설정해 비공개 방으로 운영할 수 있어요.</li>
                 </ul>
               </div>
               <div class="guide-item">
-                <h5 class="guide-item-title">모임 · 톡 &amp; 익명 커뮤니티 활용</h5>
+                <h5 class="guide-item-title">익명 커뮤니티 &amp; 음악 첨부 · 쪽지</h5>
                 <ul class="guide-bullets">
-                  <li><strong>모임 · 톡</strong>에서 열린 방은 다른 탭을 다녀와도 유지되며, 입장 화면에 비밀번호를 설정할 수 있어요.</li>
-                  <li><strong>커뮤니티</strong>에서 투표·퀴즈·제목만 보이기(눌러서 열기)·사진/카메라 촬영을 올릴 수 있고, 글이나 댓글에 <strong>💌 귓속말</strong>을 보내 수락 후 1:1 익명 대화를 할 수 있어요.</li>
-                  <li>커뮤니티, 익명 톡방, 1:1 귓속말은 모두 100% 익명으로 운영돼요.</li>
+                  <li>사진·카메라 촬영, <strong>투표·퀴즈·제목만 보기</strong>와 함께 <strong>음악 첨부</strong>(30초 구간을 직접 지정하는 <strong>배경음악</strong> 또는 <strong>음악 카드</strong>)를 올릴 수 있어요.</li>
+                  <li>배경음악이 붙은 게시글은 음소거 버튼을 눌러 바로 재생할 수 있고, 본인 글·댓글 삭제 시 확인창이 표시돼요.</li>
+                  <li>글이나 댓글의 <strong>쪽지</strong> 버튼으로 수락형 1:1 익명 대화를 시작할 수 있으며, 커뮤니티·익명 모임·1:1 쪽지는 모두 100% 익명으로 운영돼요.</li>
                 </ul>
               </div>
             </div>
@@ -4582,17 +4655,17 @@
             </div>
             <div class="guide-items guide-items-2col">
               <div class="guide-item">
-                <h5 class="guide-item-title">우편함 &amp; 다크모드</h5>
-                <p>상단 편지 아이콘에서 <strong>도착한 선물 상자(열어보기 연출)</strong>·리스펙·안내 메시지를 확인하고(미확인 시 빨간 점 표시), 달 아이콘으로 라이트·다크모드를 전환할 수 있어요. 챌린지를 깨면 선물을 얻어 라운지·스터디 멤버에게 보낼 수 있고, 받은 선물은 내 프로필에 영구 보관됩니다.</p>
+                <h5 class="guide-item-title">채팅 · 알림함 &amp; 다크모드</h5>
+                <p>상단 편지 아이콘에서 <strong>1:1 채팅·익명 쪽지·도착한 선물 상자(열어보기 연출)·내 글 댓글 알림</strong>을 한곳에서 확인하고(미확인 시 빨간 점 표시), 달 아이콘으로 라이트·다크모드를 전환할 수 있어요. 챌린지를 깨면 선물을 얻어 멤버에게 보낼 수 있고, 받은 선물은 희귀도순으로 내 프로필에 영구 보관됩니다.</p>
               </div>
               <div class="guide-item">
                 <h5 class="guide-item-title">더보기(⋯) 설정 &amp; 테마</h5>
-                <p><strong>기본 포인트 컬러</strong> 4종과 티어 달성 시 열리는 <strong>티어 해금 에디션</strong>을 고를 수 있고, 쉬는시간 알림 · 격려 요청 · 건의하기 · 로그아웃을 이용할 수 있어요.</p>
+                <p><strong>기본 포인트 컬러</strong> 4종과 티어 달성 시 열리는 <strong>티어 해금 에디션</strong>을 고를 수 있고, <strong>모든 알림 해제(타이머 제외) · 건의하기 · 로그아웃</strong>을 이용할 수 있어요.</p>
               </div>
             </div>
             <div class="guide-item">
-              <h5 class="guide-item-title">리스펙 &amp; 신고하기</h5>
-              <p>라운지 멤버 카드 우측 <strong>⋯</strong> 버튼을 눌러 익명으로 리스펙(응원)을 보내거나, 부적절한 활동을 신고할 수 있어요.</p>
+              <h5 class="guide-item-title">멤버 카드 더보기(⋯) · 리스펙 · 쪽지</h5>
+              <p>라운지·스터디 멤버 카드 우측 <strong>⋯</strong> 버튼을 눌러 <strong>쪽지 보내기</strong>(아는 사람 1:1 채팅), <strong>선물 보내기</strong>, <strong>리스펙 보내기</strong>, <strong>신고하기</strong>를 바로 이용할 수 있어요.</p>
             </div>
           </section>
 
@@ -4836,6 +4909,32 @@
 
       <!-- Admin Sub-Tab 4: Inbox, Reports, Onboarding & System -->
       <div id="admin-sub-inbox" class="hidden space-y-3.5">
+        <!-- Admin App Notice Popup Manager -->
+        <div class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-sm space-y-3">
+          <div class="flex items-center justify-between gap-2">
+            <h4 class="inline-flex items-center gap-1.5 text-xs sm:text-sm font-black text-slate-900"><svg class="comm-svg-ic shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 11 18-5v12L3 13v-2z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg><span>앱 전체 공지 팝업 관리</span></h4>
+            <span class="text-[10.5px] font-semibold text-slate-500">기간 내 앱 접속 시 팝업 노출</span>
+          </div>
+          <form id="admin-app-notice-form" class="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-2.5" autocomplete="off">
+            <input id="admin-app-notice-title" type="text" maxlength="80" required placeholder="공지 제목 (예: 중간고사 집중 주간 안내)" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs sm:text-sm font-bold text-slate-900" />
+            <textarea id="admin-app-notice-body" rows="3" maxlength="2000" required placeholder="공지 내용을 입력하세요. (줄바꿈이 그대로 표시돼요)" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs sm:text-sm text-slate-800 leading-relaxed"></textarea>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <div>
+                <label for="admin-app-notice-start" class="block text-[11px] font-bold text-slate-600 mb-1">노출 시작일</label>
+                <input id="admin-app-notice-start" type="date" required class="w-full rounded-xl border border-slate-300 bg-white px-3 py-1.5 text-xs font-bold text-slate-900" />
+              </div>
+              <div>
+                <label for="admin-app-notice-end" class="block text-[11px] font-bold text-slate-600 mb-1">노출 종료일 (포함)</label>
+                <input id="admin-app-notice-end" type="date" required class="w-full rounded-xl border border-slate-300 bg-white px-3 py-1.5 text-xs font-bold text-slate-900" />
+              </div>
+            </div>
+            <div class="flex items-center justify-end">
+              <button type="submit" class="px-4 py-2 rounded-xl bg-slate-950 hover:bg-slate-800 text-white text-xs font-black transition">공지 등록</button>
+            </div>
+          </form>
+          <div id="admin-app-notices-list" class="space-y-2 max-h-64 overflow-y-auto scrollbar-thin"></div>
+        </div>
+
         <!-- Admin Direct Message to Members -->
         <div class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-sm space-y-2">
           <h4 class="text-xs sm:text-sm font-black text-slate-900">✉️ 부원에게 다이렉트 메시지 보내기</h4>
@@ -4942,14 +5041,28 @@
     </div>
   </div>
 
-  <!-- Create Study Group Modal -->
+  <!-- Create Study / Anonymous Group Modal (Unified) -->
   <div id="group-create-modal" role="dialog" aria-modal="true" class="fixed inset-0 bg-slate-950/60 backdrop-blur-xs z-50 hidden items-center justify-center p-4">
     <form id="group-create-form" class="ed-card max-w-md w-full p-5 space-y-3.5 shadow-2xl" autocomplete="off">
       <div class="flex items-center justify-between">
-        <h3 id="group-create-modal-title" class="text-base font-black text-slate-950">새 모임 · 톡 만들기</h3>
+        <h3 id="group-create-modal-title" class="text-base font-black text-slate-950">새 모임 만들기</h3>
         <button type="button" data-close-modal="group-create-modal" class="w-7 h-7 rounded-lg hover:bg-slate-100 text-slate-500 font-bold">✕</button>
       </div>
       <div class="space-y-2.5">
+        <div>
+          <span class="block text-[11px] font-bold text-slate-700 mb-1.5">모임 유형 선택</span>
+          <input id="gc-anon" type="checkbox" class="sr-only" />
+          <div class="grid grid-cols-2 gap-2" role="radiogroup" aria-label="모임 유형">
+            <button type="button" data-gc-type="study" aria-pressed="true" class="gc-type-btn flex flex-col items-start gap-1 p-3 rounded-xl border-2 border-slate-950 bg-slate-950 text-white text-left transition">
+              <span class="inline-flex items-center gap-1.5 text-xs font-black"><svg class="comm-svg-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H12v18H6.5A2.5 2.5 0 0 1 4 18.5zM20 5.5A2.5 2.5 0 0 0 17.5 3H12v18h5.5a2.5 2.5 0 0 0 2.5-2.5z"/></svg><span>스터디 모임</span></span>
+              <span class="gc-type-sub text-[10.5px] opacity-80 leading-snug">별명으로 공부시간 공유 · 단톡방</span>
+            </button>
+            <button type="button" data-gc-type="anon" aria-pressed="false" class="gc-type-btn flex flex-col items-start gap-1 p-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 hover:border-slate-400 text-left transition">
+              <span class="inline-flex items-center gap-1.5 text-xs font-black"><svg class="comm-svg-ic-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12c2.5-3.5 6-5 10-5s7.5 1.5 10 5c-2.5 3.5-6 5-10 5s-7.5-1.5-10-5z"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/></svg><span>익명 모임</span></span>
+              <span class="gc-type-sub text-[10.5px] text-slate-500 leading-snug">완전 익명 · 별명이 사용되지 않아요</span>
+            </button>
+          </div>
+        </div>
         <div>
           <label for="gc-name" class="block text-[11px] font-bold text-slate-700 mb-1">모임 이름 <span class="text-rose-500">*</span></label>
           <input id="gc-name" type="text" maxlength="28" required placeholder="예: 전자회로 기말 뿌수기" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm font-bold text-slate-900" />
@@ -4958,13 +5071,6 @@
           <label for="gc-desc" class="block text-[11px] font-bold text-slate-700 mb-1">한 줄 소개</label>
           <input id="gc-desc" type="text" maxlength="100" placeholder="예: 매일 밤 11시까지 4시간 인증해요" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-xs font-semibold text-slate-800" />
         </div>
-        <label class="flex items-start gap-2.5 p-3 rounded-xl bg-slate-50 border border-slate-200 cursor-pointer">
-          <input id="gc-anon" type="checkbox" class="mt-0.5 rounded border-slate-300" />
-          <div class="space-y-0.5">
-            <span class="block text-xs font-black text-slate-900">🎭 익명 단톡방으로 만들기 (경쟁 기능 없음)</span>
-            <span class="block text-[11px] text-slate-500">공부시간·랭킹·멤버 현황 없이 순수 익명 단톡방으로만 운영됩니다.</span>
-          </div>
-        </label>
         <div class="grid grid-cols-2 gap-2.5">
           <div id="gc-goal-wrap">
             <label for="gc-goal" class="block text-[11px] font-bold text-slate-700 mb-1">하루 목표 (시간)</label>
@@ -4983,11 +5089,47 @@
     </form>
   </div>
 
+
+  <!-- App-Wide Notice Popup Modal -->
+  <div id="app-notice-popup" role="dialog" aria-modal="true" aria-labelledby="app-notice-popup-heading" class="fixed inset-0 bg-slate-950/70 backdrop-blur-xs z-[65] hidden items-center justify-center p-4">
+    <div class="ed-card max-w-md w-full max-h-[82vh] flex flex-col overflow-hidden shadow-2xl">
+      <div class="px-5 py-4 border-b border-slate-200 flex items-center justify-between gap-2 bg-slate-50/80">
+        <div class="inline-flex items-center gap-2 min-w-0">
+          <span class="inline-flex items-center justify-center w-7 h-7 rounded-xl bg-slate-950 text-white shrink-0"><svg class="comm-svg-ic shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 11 18-5v12L3 13v-2z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg></span>
+          <div class="min-w-0">
+            <h3 id="app-notice-popup-heading" class="text-sm font-black text-slate-950">공지사항</h3>
+            <p id="app-notice-popup-period" class="text-[11px] font-semibold text-slate-500 truncate"></p>
+          </div>
+        </div>
+        <button id="app-notice-popup-x" type="button" aria-label="공지 닫기" class="w-8 h-8 rounded-xl hover:bg-slate-200/70 text-slate-500 font-bold shrink-0">✕</button>
+      </div>
+      <div id="app-notice-popup-content" class="p-5 overflow-y-auto flex-1 space-y-4"></div>
+      <div class="px-4 py-3 border-t border-slate-200 bg-slate-50/80 flex items-center justify-between gap-2">
+        <button id="app-notice-hide-today" type="button" class="px-3 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-200/70 hover:text-slate-900 transition">오늘 하루 보지 않기</button>
+        <button id="app-notice-close-btn" type="button" class="px-4 py-2 rounded-xl ed-btn-accent text-xs font-black transition">닫기</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reusable Confirmation Modal -->
+  <div id="app-confirm-modal" role="dialog" aria-modal="true" aria-labelledby="app-confirm-title" class="fixed inset-0 bg-slate-950/60 backdrop-blur-xs z-[70] hidden items-center justify-center p-4">
+    <div class="ed-card max-w-xs w-full p-5 space-y-4 shadow-2xl">
+      <div class="space-y-1.5">
+        <h3 id="app-confirm-title" class="text-sm font-black text-slate-950">확인</h3>
+        <p id="app-confirm-msg" class="text-xs font-medium text-slate-600 leading-relaxed"></p>
+      </div>
+      <div class="flex items-center justify-end gap-2">
+        <button id="app-confirm-cancel" type="button" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700 transition">취소</button>
+        <button id="app-confirm-ok" type="button" class="px-4 py-2 rounded-xl ed-btn-accent text-xs font-black transition">확인</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Password Prompt Modal for Private Study Groups -->
   <div id="group-pw-modal" role="dialog" aria-modal="true" class="fixed inset-0 bg-slate-950/60 backdrop-blur-xs z-50 hidden items-center justify-center p-4">
     <form id="group-pw-form" class="ed-card max-w-sm w-full p-5 space-y-3 shadow-2xl" autocomplete="off">
       <div class="flex items-center justify-between">
-        <h3 id="group-pw-title" class="text-sm font-black text-slate-950">🔒 비밀번호 입력</h3>
+        <h3 id="group-pw-title" class="inline-flex items-center gap-1.5 text-sm font-black text-slate-950"><svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg><span>비밀번호 입력</span></h3>
         <button type="button" data-close-modal="group-pw-modal" class="w-7 h-7 rounded-lg hover:bg-slate-100 text-slate-500 font-bold">✕</button>
       </div>
       <p class="text-xs text-slate-500">이 모임의 입장 비밀번호를 입력해 주세요.</p>
@@ -5008,7 +5150,7 @@
         <div class="flex items-center gap-2 min-w-0">
           <button id="uc-back-btn" type="button" class="hidden px-2 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700 shrink-0" aria-label="목록으로">←</button>
           <div class="min-w-0">
-            <h3 id="uc-title" class="text-sm font-black text-slate-950 truncate">💬 채팅 · 알림</h3>
+            <h3 id="uc-title" class="inline-flex items-center gap-1.5 text-sm font-black text-slate-950 truncate"><svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-12.5 7.5L3 20.5l1.6-4.8A8.5 8.5 0 1 1 21 11.5z"/></svg><span>채팅 · 알림</span></h3>
             <p id="uc-sub" class="text-[11px] text-slate-500 truncate">관리자 · 익명 · 아는사람</p>
           </div>
         </div>
@@ -5052,7 +5194,7 @@
         <div class="flex items-center gap-2 min-w-0">
           <button id="whisper-back-btn" type="button" class="hidden px-2 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-[11px] font-bold text-slate-700">← 목록</button>
           <div class="min-w-0">
-            <h3 id="whisper-modal-title" class="text-sm font-black text-slate-950 truncate">💌 익명 귓속말 함</h3>
+            <h3 id="whisper-modal-title" class="text-sm font-black text-slate-950 truncate">익명 쪽지 함</h3>
             <p id="whisper-modal-sub" class="text-[11px] text-slate-500 truncate">100% 익명으로 안전하게 대화해요.</p>
           </div>
         </div>
@@ -5065,18 +5207,18 @@
       <!-- New Whisper Request View -->
       <form id="whisper-new-view" class="hidden p-4 space-y-3" autocomplete="off">
         <div id="whisper-new-context" class="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-[11px] font-semibold text-slate-600"></div>
-        <p class="text-[11px] text-slate-500">대화 당사자 외에는 운영자도 내용을 볼 수 없는 100% 익명 귓속말이에요.</p>
-        <textarea id="whisper-new-input" rows="3" maxlength="400" placeholder="첫 귓속말 메시지를 보내보세요. 상대가 수락하면 1:1 익명 대화가 열려요." class="w-full rounded-xl border border-slate-300 px-3 py-2 text-xs sm:text-sm font-medium text-slate-900 focus:outline-none focus:border-slate-900"></textarea>
+        <p class="text-[11px] text-slate-500">대화 당사자 외에는 운영자도 내용을 볼 수 없는 100% 익명 쪽지이에요.</p>
+        <textarea id="whisper-new-input" rows="3" maxlength="400" placeholder="첫 쪽지 메시지를 보내보세요. 상대가 수락하면 1:1 익명 대화가 열려요." class="w-full rounded-xl border border-slate-300 px-3 py-2 text-xs sm:text-sm font-medium text-slate-900 focus:outline-none focus:border-slate-900"></textarea>
         <div class="flex items-center justify-end gap-2">
           <button type="button" data-close-modal="whisper-modal" class="px-3 py-2 rounded-xl bg-slate-100 text-xs font-bold text-slate-700">취소</button>
-          <button type="submit" class="px-4 py-2 rounded-xl ed-btn-accent text-xs font-black">귓속말 보내기</button>
+          <button type="submit" class="px-4 py-2 rounded-xl ed-btn-accent text-xs font-black">쪽지 보내기</button>
         </div>
       </form>
 
       <!-- Active Thread View -->
       <div id="whisper-thread-view" class="hidden flex-col flex-1 min-h-0">
         <div id="whisper-accept-bar" class="hidden p-3 bg-indigo-50 border-b border-indigo-200 flex items-center justify-between gap-2">
-          <span class="text-[11px] font-bold text-indigo-950">익명 귓속말 요청이 도착했어요</span>
+          <span class="text-[11px] font-bold text-indigo-950">익명 쪽지 요청이 도착했어요</span>
           <div class="flex items-center gap-1.5 shrink-0">
             <button id="btn-whisper-reject" type="button" class="px-2.5 py-1 rounded-lg bg-white border border-slate-300 text-[11px] font-bold text-slate-600">거절</button>
             <button id="btn-whisper-accept" type="button" class="px-2.5 py-1 rounded-lg bg-indigo-600 text-white text-[11px] font-black">수락</button>
@@ -5453,6 +5595,7 @@
           encouragements: {},
           reports: {},
           directMessages: {},
+          appNotices: {},
         memberChats: {},
           lpHistory: {},
           respectLpRewardedByDay: {},
@@ -5545,6 +5688,7 @@
             parsed.suggestions = inboxRecords(parsed.suggestions);
             parsed.encouragements = inboxRecords(parsed.encouragements);
             parsed.directMessages = memberMailboxes(parsed.directMessages);
+            parsed.appNotices = (parsed.appNotices && typeof parsed.appNotices === 'object') ? parsed.appNotices : {};
             if (!parsed.lpHistory) parsed.lpHistory = {};
             if (!parsed.respectLpRewardedByDay) parsed.respectLpRewardedByDay = {};
             if (!parsed.periodLpRewarded) parsed.periodLpRewarded = {};
@@ -6083,6 +6227,7 @@
             setTimeout(() => {
               document.body.classList.remove('is-entering');
               if (typeof renderLiveBanner === 'function') renderLiveBanner();
+              if (typeof maybeShowAppNoticePopup === 'function') setTimeout(maybeShowAppNoticePopup, 150);
             }, 700);
           }, 680);
         }, 980);
@@ -6118,6 +6263,7 @@
         welcomePlayedForSession = true;
         if (reduceMotion.matches) {
           showToast(`모든 설정이 완료되었습니다. ${nickname}님, 이제 시작해보세요!`, 'success');
+          if (typeof maybeShowAppNoticePopup === 'function') setTimeout(maybeShowAppNoticePopup, 300);
           return;
         }
         const ov = document.getElementById('login-welcome-overlay');
@@ -6161,6 +6307,7 @@
             setTimeout(() => {
               document.body.classList.remove('is-entering');
               if (typeof renderLiveBanner === 'function') renderLiveBanner();
+              if (typeof maybeShowAppNoticePopup === 'function') setTimeout(maybeShowAppNoticePopup, 150);
             }, 700);
           }, 1700);
         }, 6500);
@@ -6405,6 +6552,7 @@
               reports: inboxRecords(v.reports),
               encouragements: inboxRecords(v.encouragements),
               directMessages: memberMailboxes(v.directMessages),
+              appNotices: (v.appNotices && typeof v.appNotices === 'object') ? v.appNotices : {},
           memberChats: (v.memberChats && typeof v.memberChats === 'object') ? v.memberChats : {},
               lpHistory: normArrMap(v.lpHistory),
               respectLpRewarded: v.respectLpRewarded || {},
@@ -8077,7 +8225,7 @@
                 : tier.inPromo ? '<span class="member-promo">승급 LP 충족</span>' : ''}
             </span>
             <span class="member-study" id="member-study-${domId}">
-              <span class="member-study-label"><span class="shrink-0 whitespace-nowrap">공부일 누적 공부</span>${m.recommendedSong && m.recommendedSong.title ? `<span class="member-song-ticker" id="member-song-${domId}" title="추천 노래: ${escapeHtml(m.recommendedSong.title)}${m.recommendedSong.artist ? ` - ${escapeHtml(m.recommendedSong.artist)}` : ''}" aria-label="추천 노래 ${escapeHtml(m.recommendedSong.title)}"><span class="member-eq-icon" aria-hidden="true"><i></i><i></i><i></i></span><span class="member-song-marquee"><span class="member-song-marquee-track"><span>${escapeHtml(m.recommendedSong.title)}</span><span class="member-song-marquee-dup" aria-hidden="true">${escapeHtml(m.recommendedSong.title)}</span></span></span></span>` : ''}</span>
+              <span class="member-study-label"><span class="shrink-0 whitespace-nowrap">누적 공부 시간</span>${m.recommendedSong && m.recommendedSong.title ? `<span class="member-song-ticker" id="member-song-${domId}" title="추천 노래: ${escapeHtml(m.recommendedSong.title)}${m.recommendedSong.artist ? ` - ${escapeHtml(m.recommendedSong.artist)}` : ''}" aria-label="추천 노래 ${escapeHtml(m.recommendedSong.title)}"><span class="member-eq-icon" aria-hidden="true"><i></i><i></i><i></i></span><span class="member-song-marquee"><span class="member-song-marquee-track"><span>${escapeHtml(m.recommendedSong.title)}</span><span class="member-song-marquee-dup" aria-hidden="true">${escapeHtml(m.recommendedSong.title)}</span></span></span></span>` : ''}</span>
               <strong class="member-study-time">${hours ? `${hours}<small>시간</small> ` : ''}${mins % 60}<small>분</small></strong>
             </span>
             ${orderedBadges.length ? `<span class="member-badges" id="member-badges-${domId}">
@@ -8088,11 +8236,11 @@
           ${hasMenu ? `<div class="member-card-actions">
             <button type="button" id="member-menu-${domId}" class="member-card-menu" data-card-menu-btn="${domId}" aria-label="${name} 더보기" aria-expanded="false" aria-controls="member-menu-box-${domId}">⋯</button>
             <div id="member-menu-box-${domId}" data-card-menu-box="${domId}" class="hidden absolute right-0 z-50 w-40 rounded-xl bg-white border border-slate-200 shadow-xl p-1 space-y-0.5 text-left">
-              ${!isMe ? `<button type="button" id="member-chat-${domId}" data-chat-member="${id}" class="w-full px-2.5 py-2 rounded-lg hover:bg-slate-100 text-[11px] font-bold text-slate-800 text-left">💬 쪽지 보내기</button>
-              <button type="button" id="member-gift-${domId}" data-gift-member="${id}" class="w-full px-2.5 py-2 rounded-lg hover:bg-slate-100 text-[11px] font-bold text-slate-800 text-left">🎁 선물 보내기</button>
-              <button type="button" id="member-respect-${domId}" data-respect-member="${id}" class="w-full px-2.5 py-2 rounded-lg hover:bg-slate-100 text-[11px] font-bold text-slate-800 text-left">👏 리스펙 보내기</button>
-              <button type="button" id="member-report-${domId}" data-report-member="${id}" class="w-full px-2.5 py-2 rounded-lg hover:bg-rose-50 text-[11px] font-bold text-rose-600 text-left">🚨 신고하기</button>` : ''}
-              ${canForceStop ? `<button type="button" id="member-stop-${domId}" data-force-stop-timer="${id}" class="w-full px-2.5 py-2 rounded-lg hover:bg-amber-50 text-[11px] font-bold text-amber-700 text-left">⏹️ 타이머 강제 종료</button>` : ''}
+              ${!isMe ? `<button type="button" id="member-chat-${domId}" data-chat-member="${id}" class="w-full inline-flex items-center gap-1.5 px-2.5 py-2 rounded-lg hover:bg-slate-100 text-[11px] font-bold text-slate-800 text-left"><svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-12.5 7.5L3 20.5l1.6-4.8A8.5 8.5 0 1 1 21 11.5z"/></svg><span>쪽지 보내기</span></button>
+              <button type="button" id="member-gift-${domId}" data-gift-member="${id}" class="w-full inline-flex items-center gap-1.5 px-2.5 py-2 rounded-lg hover:bg-slate-100 text-[11px] font-bold text-slate-800 text-left"><svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5"/></svg><span>선물 보내기</span></button>
+              <button type="button" id="member-respect-${domId}" data-respect-member="${id}" class="w-full inline-flex items-center gap-1.5 px-2.5 py-2 rounded-lg hover:bg-slate-100 text-[11px] font-bold text-slate-800 text-left"><svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 10v12"/><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z"/></svg><span>리스펙 보내기</span></button>
+              <button type="button" id="member-report-${domId}" data-report-member="${id}" class="w-full inline-flex items-center gap-1.5 px-2.5 py-2 rounded-lg hover:bg-rose-50 text-[11px] font-bold text-rose-600 text-left"><svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span>신고하기</span></button>` : ''}
+              ${canForceStop ? `<button type="button" id="member-stop-${domId}" data-force-stop-timer="${id}" class="w-full inline-flex items-center gap-1.5 px-2.5 py-2 rounded-lg hover:bg-amber-50 text-[11px] font-bold text-amber-700 text-left"><svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><rect x="9" y="9" width="6" height="6" rx="1" fill="currentColor" stroke="none"/></svg><span>타이머 강제 종료</span></button>` : ''}
               ${canRemove ? `<button type="button" id="member-remove-${domId}" data-del-member="${id}" class="w-full px-2.5 py-2 rounded-lg hover:bg-rose-50 text-[11px] font-bold text-rose-600 text-left">스터디에서 내보내기</button>` : ''}
             </div>
           </div>` : ''}
@@ -8424,9 +8572,11 @@
             const status = PLANNER_STATUS.find(([value]) => value === task.status)?.[1] || '미체크';
             const marker = { V: '✓', '△': '△', X: '×' }[task.status] || '';
             const taskLabel = `${escapeHtml(name)} ${escapeHtml(task.title)}`;
-            const statusBox = canEdit
-              ? `<button type="button" id="planner-status-${id}" data-planner-cycle="${id}" class="planner-task-status ${task.status === 'V' ? 'is-done' : ''}" title="${escapeHtml(status)}" aria-label="${taskLabel} 상태 (${escapeHtml(status)})">${marker}</button>`
-              : `<span class="planner-task-status ${task.status === 'V' ? 'is-done' : ''}" title="${escapeHtml(status)}" role="img" aria-label="${escapeHtml(status)}">${marker}</span>`;
+            const statusBox = editable
+              ? ''
+              : (canEdit
+                ? `<button type="button" id="planner-status-${id}" data-planner-cycle="${id}" class="planner-task-status ${task.status === 'V' ? 'is-done' : ''}" title="${escapeHtml(status)}" aria-label="${taskLabel} 상태 (${escapeHtml(status)})">${marker}</button>`
+                : `<span class="planner-task-status ${task.status === 'V' ? 'is-done' : ''}" title="${escapeHtml(status)}" role="img" aria-label="${escapeHtml(status)}">${marker}</span>`);
             const titleClass = `planner-task-title ${task.status === 'V' ? 'is-done' : ''}`;
             const selectedTask = editable && plannerBrushId === task.id;
             const title = editable
@@ -8983,6 +9133,7 @@
       }
 
       function renderAdminTab() {
+        if (typeof renderAdminAppNoticesList === 'function') renderAdminAppNoticesList();
         const di = document.getElementById('admin-date-input');
         if (!di.value || di.value === di.dataset.automaticDate) {
           di.value = studyDayKey();
@@ -9218,6 +9369,7 @@
       }
 
       function renderAll() {
+        if (typeof maybeShowAppNoticePopup === 'function') queueMicrotask(maybeShowAppNoticePopup);
         if (focusInterval) updateFocusDisplay();
         renderFocusStudy();
         const focusOverlayOpen = shown(document.getElementById('focus-overlay'));
@@ -10309,16 +10461,16 @@
           openModal(`${m.name} 상세 기록`, `
             <div class="space-y-3 text-xs">
               ${m.equippedTitle ? `<p class="text-sm font-bold text-slate-900"><span class="mr-1 text-xs text-slate-500">장착 칭호</span> ${escapeHtml(m.equippedTitle)}</p>` : ''}
-              <div class="flex flex-wrap items-center gap-1.5">${renderTierPill(m)} ${getMemberMode(m) === 'strict' ? '<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-black text-amber-300 border border-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.45)]" style="background:linear-gradient(90deg,#0f172a,#7f1d1d,#0f172a)"><span class="inline-block animate-pulse">⚡</span>울트라집중모드</span>' : '<span class="px-2 py-0.5 rounded bg-slate-100 font-bold">자율모드</span>'}</div>
+              <div class="flex flex-wrap items-center gap-1.5">${renderTierPill(m)} ${getMemberMode(m) === 'strict' ? '<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-black text-amber-300 border border-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.45)]" style="background:linear-gradient(90deg,#0f172a,#7f1d1d,#0f172a)"><span class="inline-flex animate-pulse"><svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span><span>울트라집중모드</span></span>' : '<span class="px-2 py-0.5 rounded bg-slate-100 font-bold">자율모드</span>'}</div>
               <div class="grid grid-cols-2 gap-2">
-                <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200"><div class="text-slate-400">공부일 누적 공부</div><div class="text-sm font-black text-slate-900 mt-0.5">${formatStudyMins(todayTotalMins)}</div></div>
+                <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200"><div class="text-slate-400">누적 공부 시간</div><div class="text-sm font-black text-slate-900 mt-0.5">${formatStudyMins(todayTotalMins)}</div></div>
                 <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200"><div class="text-slate-400">오늘 최장 연속</div><div class="text-sm font-black text-slate-900 mt-0.5">${maxF}분</div></div>
                 <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200"><div class="text-slate-400">연속 출석</div><div class="text-sm font-black text-slate-900 mt-0.5">${Number(m.streak) || 0}일</div></div>
-                <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200"><div class="text-slate-400">오늘 받은 리스펙</div><div class="text-sm font-black text-slate-900 mt-0.5">👏 ${todayRespect}회</div></div>
+                <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200"><div class="text-slate-400">오늘 받은 리스펙</div><div class="inline-flex items-center gap-1 text-sm font-black text-slate-900 mt-0.5"><svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 10v12"/><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z"/></svg><span>${todayRespect}회</span></div></div>
               </div>
               ${renderMemberDetailSongHtml(m.recommendedSong)}
               ${m.id === prefs.currentUserId ? `<div>
-                <div class="font-bold text-slate-700 mb-1.5">👑 보유 칭호</div>
+                <div class="inline-flex items-center gap-1.5 font-bold text-slate-700 mb-1.5"><svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14"/></svg><span>보유 칭호</span></div>
                 <div class="flex flex-wrap gap-1">${(() => {
                   const doneIds = (shared.memberChallenges && shared.memberChallenges[m.id]) || [];
                   const chs = (shared.challenges || []).filter(c => doneIds.includes(c.id));
@@ -10326,10 +10478,10 @@
                 })()}</div>
               </div>` : ''}
               <div>
-                <div class="font-bold text-slate-700 mb-1.5">🏅 보유 뱃지 (${allB.length}개)</div>
+                <div class="inline-flex items-center gap-1.5 font-bold text-slate-700 mb-1.5"><svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg><span>보유 뱃지 (${allB.length}개)</span></div>
                 <div class="flex flex-wrap gap-1">${allB.length ? allB.map(renderBadgePill).join('') : '<span class="text-slate-400">없음</span>'}</div>
               </div>
-              ${(prefs.adminMode && isAdminUser() && (m.isFocusing || m.isFocusPaused)) ? `<div class="pt-1"><button type="button" id="modal-force-stop-btn" data-force-stop-timer="${escapeHtml(m.id)}" class="w-full py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-black">⏹️ 실행 중인 타이머 강제 종료</button></div>` : ''}
+              ${(prefs.adminMode && isAdminUser() && (m.isFocusing || m.isFocusPaused)) ? `<div class="pt-1"><button type="button" id="modal-force-stop-btn" data-force-stop-timer="${escapeHtml(m.id)}" class="w-full inline-flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-black"><svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><rect x="9" y="9" width="6" height="6" rx="1" fill="currentColor" stroke="none"/></svg><span>실행 중인 타이머 강제 종료</span></button></div>` : ''}
             </div>
           `);
           modalCleanupFn = stopSongPreview;
@@ -12576,6 +12728,11 @@
       }
 
       function openFocusOverlay(isRestoring = false) {
+        const noticeModal = document.getElementById('app-notice-popup');
+        if (noticeModal && shown(noticeModal)) {
+          activeShownNoticeIds = [];
+          closeSimpleModal('app-notice-popup');
+        }
         if (prefs.adminMode) {
           showToast('관리자 모드에서는 멤버 타이머 충돌 방지를 위해 스톱워치를 켤 수 없습니다.', 'warn');
           return;
@@ -12723,6 +12880,7 @@
           }
         } catch (e) {}
         refreshStudyDialogs();
+        if (!quiet && typeof maybeShowAppNoticePopup === 'function') setTimeout(maybeShowAppNoticePopup, 120);
         if (quiet) return;
         if (wasOpen && !discard) {
           renderAll();
@@ -13382,7 +13540,7 @@
             </div>
             <div class="space-y-1">
               <p class="font-black text-slate-900">3. 100% 익명 보호</p>
-              <p>커뮤니티, 익명 톡방, 1:1 귓속말은 100% 익명으로 운영되며, 대화 당사자 외에는 운영자도 참여 회원이나 대화 내용을 열람할 수 없어요.</p>
+              <p>커뮤니티, 익명 모임, 1:1 쪽지은 100% 익명으로 운영되며, 대화 당사자 외에는 운영자도 참여 회원이나 대화 내용을 열람할 수 없어요.</p>
             </div>
             <div class="space-y-1">
               <p class="font-black text-slate-900">4. 탈퇴 및 삭제</p>
@@ -13644,11 +13802,11 @@
           if (errEl) errEl.classList.add('hidden');
           if (kindNewBtn && kindGoogleBtn) {
             kindNewBtn.className = isNew
-              ? 'py-2 px-2.5 rounded-xl text-[11px] font-black border border-slate-950 bg-slate-950 text-white transition'
-              : 'py-2 px-2.5 rounded-xl text-[11px] font-bold border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100 transition';
+              ? 'inline-flex items-center justify-center gap-1.5 py-2 px-2.5 rounded-xl text-[11px] font-black border border-slate-950 bg-slate-950 text-white transition'
+              : 'inline-flex items-center justify-center gap-1.5 py-2 px-2.5 rounded-xl text-[11px] font-bold border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100 transition';
             kindGoogleBtn.className = !isNew
-              ? 'py-2 px-2.5 rounded-xl text-[11px] font-black border border-slate-950 bg-slate-950 text-white transition'
-              : 'py-2 px-2.5 rounded-xl text-[11px] font-bold border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100 transition';
+              ? 'inline-flex items-center justify-center gap-1.5 py-2 px-2.5 rounded-xl text-[11px] font-black border border-slate-950 bg-slate-950 text-white transition'
+              : 'inline-flex items-center justify-center gap-1.5 py-2 px-2.5 rounded-xl text-[11px] font-bold border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100 transition';
           }
         }
         function setAuthMode(mode) {
@@ -13717,7 +13875,7 @@
             showLoginErr(friendlyAuthError(err));
           } finally {
             btn.disabled = false;
-            btn.textContent = '아이디로 로그인';
+            btn.textContent = '로그인';
           }
         });
 
@@ -13848,7 +14006,7 @@
       let composingComment = false;
 
       let activeGroupSection = prefs.activeGroupSection === 'talk' ? 'talk' : 'study';
-      let activeGroupFilter = 'mine';
+      let activeGroupFilter = 'all';
       let activeGroupId = prefs.activeGroupId || null;
       let activeRoomSub = prefs.activeRoomSub || 'members';
       let pendingPwGroupId = null;
@@ -13927,7 +14085,7 @@
             grp_anon_dawn: {
               id: 'grp_anon_dawn',
               name: '새벽 5시 익명 기상방',
-              desc: '공부시간 경쟁 없이 편하게 수다 떨고 질문하는 순수 익명 단톡방이에요.',
+              desc: '공부시간 부담 없이 익명으로 편하게 대화해요.',
               goalHours: 0,
               password: '',
               isAnonymous: true,
@@ -14414,6 +14572,302 @@
         });
       });
 
+      let appConfirmResolver = null;
+      function closeAppConfirm(result) {
+        closeSimpleModal('app-confirm-modal');
+        const resolve = appConfirmResolver;
+        appConfirmResolver = null;
+        if (resolve) resolve(!!result);
+      }
+      function openActionConfirm({ title = '확인', message = '', confirmText = '확인', danger = false } = {}) {
+        const modal = document.getElementById('app-confirm-modal');
+        if (!modal) return Promise.resolve(true);
+        if (appConfirmResolver) closeAppConfirm(false);
+        const titleEl = document.getElementById('app-confirm-title');
+        const msgEl = document.getElementById('app-confirm-msg');
+        const okBtn = document.getElementById('app-confirm-ok');
+        if (titleEl) titleEl.textContent = title;
+        if (msgEl) msgEl.textContent = message;
+        if (okBtn) {
+          okBtn.textContent = confirmText;
+          okBtn.className = danger
+            ? 'px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-black transition'
+            : 'px-4 py-2 rounded-xl ed-btn-accent text-xs font-black transition';
+        }
+        openSimpleModal('app-confirm-modal');
+        return new Promise(resolve => { appConfirmResolver = resolve; });
+      }
+      document.getElementById('app-confirm-cancel')?.addEventListener('click', () => closeAppConfirm(false));
+      document.getElementById('app-confirm-ok')?.addEventListener('click', () => closeAppConfirm(true));
+      document.getElementById('app-confirm-modal')?.addEventListener('click', e => {
+        if (e.target.id === 'app-confirm-modal') closeAppConfirm(false);
+      });
+      document.addEventListener('keydown', e => {
+        if (e.key !== 'Escape') return;
+        if (appConfirmResolver) { closeAppConfirm(false); return; }
+        const noticeModal = document.getElementById('app-notice-popup');
+        if (noticeModal && shown(noticeModal)) closeAppNoticePopup({ hideToday: false });
+      });
+
+      // =========================================================================
+      // APP-WIDE NOTICE POPUP LOGIC (관리자 공지 팝업 · 자정 기준 오늘 보지 않기)
+      // =========================================================================
+      const APP_NOTICE_HIDE_KEY = 'ils_notice_hide_today_v1';
+      const APP_NOTICE_SEEN_SESSION_KEY = 'ils_notice_seen_session_v1';
+      let activeShownNoticeIds = [];
+
+      function kstCalendarDateStr(date = new Date()) {
+        const parts = new Intl.DateTimeFormat('en-CA', {
+          timeZone: 'Asia/Seoul',
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit'
+        }).formatToParts(date);
+        const y = parts.find(p => p.type === 'year')?.value || '2026';
+        const m = parts.find(p => p.type === 'month')?.value || '01';
+        const d = parts.find(p => p.type === 'day')?.value || '01';
+        return `${y}-${m}-${d}`;
+      }
+
+      function formatNoticeDateKr(isoDate) {
+        if (!isoDate || !/^\d{4}-\d{2}-\d{2}$/.test(isoDate)) return isoDate || '';
+        const [, mm, dd] = isoDate.split('-');
+        return `${Number(mm)}월 ${Number(dd)}일`;
+      }
+
+      function getNoticeHideTodayMap() {
+        try {
+          const raw = localStorage.getItem(APP_NOTICE_HIDE_KEY);
+          const parsed = raw ? JSON.parse(raw) : {};
+          return (parsed && typeof parsed === 'object') ? parsed : {};
+        } catch (e) { return {}; }
+      }
+
+      function getNoticeSeenSessionSet() {
+        try {
+          const raw = sessionStorage.getItem(APP_NOTICE_SEEN_SESSION_KEY);
+          const arr = raw ? JSON.parse(raw) : [];
+          return new Set(Array.isArray(arr) ? arr : []);
+        } catch (e) { return new Set(); }
+      }
+
+      function markNoticesSeenInSession(ids) {
+        if (!ids || !ids.length) return;
+        const set = getNoticeSeenSessionSet();
+        ids.forEach(id => set.add(id));
+        try { sessionStorage.setItem(APP_NOTICE_SEEN_SESSION_KEY, JSON.stringify([...set])); } catch (e) {}
+      }
+
+      function markNoticesHiddenToday(ids) {
+        if (!ids || !ids.length) return;
+        const todayKst = kstCalendarDateStr();
+        const map = getNoticeHideTodayMap();
+        // Prune expired dates from previous days
+        Object.keys(map).forEach(k => { if (map[k] !== todayKst) delete map[k]; });
+        ids.forEach(id => { map[id] = todayKst; });
+        try { localStorage.setItem(APP_NOTICE_HIDE_KEY, JSON.stringify(map)); } catch (e) {}
+        markNoticesSeenInSession(ids);
+      }
+
+      function getActiveAppNotices() {
+        const todayKst = kstCalendarDateStr();
+        return Object.values(shared.appNotices || {})
+          .filter(n => n && n.id && n.title && n.startDate && n.endDate && n.startDate <= todayKst && todayKst <= n.endDate)
+          .sort((a, b) => (Number(b.createdAt) || 0) - (Number(a.createdAt) || 0));
+      }
+
+      function isTimerBlockingNotice() {
+        return !!(focusInterval || shown(document.getElementById('focus-overlay')));
+      }
+
+      function openAppNoticePopupWithList(notices, { isPreview = false } = {}) {
+        const modal = document.getElementById('app-notice-popup');
+        const contentEl = document.getElementById('app-notice-popup-content');
+        const periodEl = document.getElementById('app-notice-popup-period');
+        const hideTodayBtn = document.getElementById('app-notice-hide-today');
+        if (!modal || !contentEl || !notices.length) return;
+
+        activeShownNoticeIds = isPreview ? [] : notices.map(n => n.id);
+        if (periodEl) {
+          periodEl.textContent = notices.length === 1
+            ? `${formatNoticeDateKr(notices[0].startDate)} ~ ${formatNoticeDateKr(notices[0].endDate)}`
+            : `진행 중인 공지 ${notices.length}건`;
+        }
+        if (hideTodayBtn) hideTodayBtn.classList.toggle('hidden', isPreview);
+
+        contentEl.innerHTML = notices.map((n, idx) => `
+          <article class="${idx > 0 ? 'pt-4 border-t border-slate-200' : ''} space-y-2">
+            <div class="flex items-start justify-between gap-2">
+              <h4 class="text-base sm:text-lg font-black text-slate-950 leading-snug break-words">${escapeHtml(n.title)}</h4>
+              ${notices.length > 1 ? `<span class="shrink-0 px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[10px] font-bold">${escapeHtml(formatNoticeDateKr(n.startDate))} ~ ${escapeHtml(formatNoticeDateKr(n.endDate))}</span>` : ''}
+            </div>
+            <p class="text-xs sm:text-sm text-slate-700 leading-relaxed whitespace-pre-wrap break-words">${escapeHtml(n.body || '')}</p>
+          </article>
+        `).join('');
+
+        openSimpleModal('app-notice-popup');
+      }
+
+      function closeAppNoticePopup({ hideToday = false } = {}) {
+        if (hideToday) markNoticesHiddenToday(activeShownNoticeIds);
+        else markNoticesSeenInSession(activeShownNoticeIds);
+        activeShownNoticeIds = [];
+        closeSimpleModal('app-notice-popup');
+      }
+
+      function isUiAnimationOrModalBlockingNotice() {
+        const welcomeOv = document.getElementById('login-welcome-overlay');
+        const approvedOv = document.getElementById('approved-toast-overlay');
+        const joinGuideDlg = document.getElementById('join-guide');
+        if (shown(document.getElementById('auth-overlay'))) return true;
+        if (welcomeOv && welcomeOv.classList.contains('is-active')) return true;
+        if (approvedOv && approvedOv.classList.contains('is-active')) return true;
+        if (document.body.classList.contains('is-entering')) return true;
+        if (joinGuideDlg && joinGuideDlg.open) return true;
+        if (isTimerBlockingNotice()) return true;
+        if (shown(document.getElementById('promotion-overlay'))) return true;
+        if (shown(document.getElementById('starter-clear-overlay'))) return true;
+        if (shown(document.getElementById('gift-open-overlay'))) return true;
+        if (shown(document.getElementById('modal-overlay'))) return true;
+        if (shown(document.getElementById('app-confirm-modal'))) return true;
+        if (Array.isArray(pendingCelebrations) && pendingCelebrations.length > 0) return true;
+        return false;
+      }
+
+      function isRegisteredMemberForNotice() {
+        if (prefs.adminMode || !prefs.currentUserId) return false;
+        if (!filePreview && !currentAuthUser) return false;
+        return (shared.members || []).some(m => m && m.id === prefs.currentUserId);
+      }
+
+      function maybeShowAppNoticePopup() {
+        const modal = document.getElementById('app-notice-popup');
+        if (!modal || shown(modal)) return;
+        if (!isRegisteredMemberForNotice()) return;
+        if (isUiAnimationOrModalBlockingNotice()) return;
+
+        const todayKst = kstCalendarDateStr();
+        const hideMap = getNoticeHideTodayMap();
+        const seenSession = getNoticeSeenSessionSet();
+        const eligible = getActiveAppNotices().filter(n => hideMap[n.id] !== todayKst && !seenSession.has(n.id));
+        if (!eligible.length) return;
+        openAppNoticePopupWithList(eligible);
+      }
+
+      function renderAdminAppNoticesList() {
+        const listEl = document.getElementById('admin-app-notices-list');
+        if (!listEl) return;
+        const startInp = document.getElementById('admin-app-notice-start');
+        const endInp = document.getElementById('admin-app-notice-end');
+        const todayKst = kstCalendarDateStr();
+        if (startInp && !startInp.value) startInp.value = todayKst;
+        if (endInp && !endInp.value) endInp.value = todayKst;
+
+        const items = Object.values(shared.appNotices || {})
+          .filter(n => n && n.id)
+          .sort((a, b) => (Number(b.createdAt) || 0) - (Number(a.createdAt) || 0));
+
+        if (!items.length) {
+          listEl.innerHTML = '<p class="text-xs text-slate-400 py-2">등록된 앱 공지가 없어요.</p>';
+          return;
+        }
+        listEl.innerHTML = items.map(n => {
+          const isActive = n.startDate <= todayKst && todayKst <= n.endDate;
+          const isUpcoming = todayKst < n.startDate;
+          const badge = isActive
+            ? '<span class="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 text-[10px] font-black">노출 중</span>'
+            : isUpcoming
+              ? '<span class="px-1.5 py-0.5 rounded bg-amber-100 text-amber-800 text-[10px] font-black">예정</span>'
+              : '<span class="px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 text-[10px] font-bold">종료</span>';
+          return `<div class="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-1.5">
+            <div class="flex items-start justify-between gap-2">
+              <div class="min-w-0 space-y-0.5">
+                <div class="flex items-center gap-1.5 flex-wrap">
+                  ${badge}
+                  <span class="text-xs font-black text-slate-900 break-words">${escapeHtml(n.title)}</span>
+                </div>
+                <p class="text-[11px] font-semibold text-slate-500">${escapeHtml(formatNoticeDateKr(n.startDate))} ~ ${escapeHtml(formatNoticeDateKr(n.endDate))} (${escapeHtml(n.startDate)} ~ ${escapeHtml(n.endDate)})</p>
+              </div>
+              <div class="flex items-center gap-1 shrink-0">
+                <button type="button" data-preview-app-notice="${escapeHtml(n.id)}" class="px-2 py-1 rounded-lg bg-white border border-slate-200 hover:bg-slate-100 text-[11px] font-bold text-slate-700">미리보기</button>
+                <button type="button" data-del-app-notice="${escapeHtml(n.id)}" class="px-2 py-1 rounded-lg bg-white border border-rose-200 hover:bg-rose-50 text-[11px] font-bold text-rose-600">삭제</button>
+              </div>
+            </div>
+            <p class="text-xs text-slate-700 whitespace-pre-wrap break-words line-clamp-3">${escapeHtml(n.body || '')}</p>
+          </div>`;
+        }).join('');
+      }
+
+      document.getElementById('app-notice-close-btn')?.addEventListener('click', () => closeAppNoticePopup({ hideToday: false }));
+      document.getElementById('app-notice-popup-x')?.addEventListener('click', () => closeAppNoticePopup({ hideToday: false }));
+      document.getElementById('app-notice-hide-today')?.addEventListener('click', () => closeAppNoticePopup({ hideToday: true }));
+      document.getElementById('app-notice-popup')?.addEventListener('click', e => {
+        if (e.target.id === 'app-notice-popup') closeAppNoticePopup({ hideToday: false });
+      });
+
+      document.getElementById('admin-app-notice-form')?.addEventListener('submit', e => {
+        e.preventDefault();
+        if (!prefs.adminMode) return;
+        const titleEl = document.getElementById('admin-app-notice-title');
+        const bodyEl = document.getElementById('admin-app-notice-body');
+        const startEl = document.getElementById('admin-app-notice-start');
+        const endEl = document.getElementById('admin-app-notice-end');
+        const title = (titleEl?.value || '').trim();
+        const body = (bodyEl?.value || '').trim();
+        const startDate = (startEl?.value || '').trim();
+        const endDate = (endEl?.value || '').trim();
+        if (!title || !body || !startDate || !endDate) {
+          showToast('제목, 내용, 시작일과 종료일을 모두 입력해 주세요.', 'warn');
+          return;
+        }
+        if (endDate < startDate) {
+          showToast('종료일은 시작일과 같거나 이후여야 해요.', 'warn');
+          return;
+        }
+        const nid = 'notice_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6);
+        shared.appNotices ||= {};
+        shared.appNotices[nid] = {
+          id: nid,
+          title,
+          body,
+          startDate,
+          endDate,
+          createdAt: Date.now()
+        };
+        saveSharedData();
+        if (titleEl) titleEl.value = '';
+        if (bodyEl) bodyEl.value = '';
+        renderAdminAppNoticesList();
+        showToast(`공지가 등록되었어요 (${formatNoticeDateKr(startDate)} ~ ${formatNoticeDateKr(endDate)})`, 'success');
+      });
+
+      document.getElementById('admin-app-notices-list')?.addEventListener('click', async e => {
+        const prevBtn = e.target.closest('[data-preview-app-notice]');
+        if (prevBtn) {
+          const n = shared.appNotices?.[prevBtn.dataset.previewAppNotice];
+          if (n) openAppNoticePopupWithList([n], { isPreview: true });
+          return;
+        }
+        const delBtn = e.target.closest('[data-del-app-notice]');
+        if (delBtn) {
+          const nid = delBtn.dataset.delAppNotice;
+          if (!shared.appNotices?.[nid]) return;
+          const ok = await openActionConfirm({
+            title: '공지 삭제',
+            message: '이 공지를 삭제하겠습니까?',
+            confirmText: '삭제',
+            danger: true
+          });
+          if (!ok) return;
+          delete shared.appNotices[nid];
+          saveSharedData();
+          renderAdminAppNoticesList();
+          showToast('공지가 삭제되었어요.', 'info');
+        }
+      });
+
+
+
       // =========================================================================
       // STUDY GROUPS LOGIC (스터디 모임)
       // =========================================================================
@@ -14471,6 +14925,11 @@
           renderActiveGroupRoom(activeG);
         } else {
           if (activeGroupId && groupsLoaded) { activeGroupId = null; saveGroupNavState(); }
+          roomView.dataset.roomId = '';
+          const chatBox = document.getElementById('group-chat-messages');
+          const memBox = document.getElementById('group-room-members-list');
+          if (chatBox) chatBox.innerHTML = '';
+          if (memBox) memBox.innerHTML = '';
           roomView.classList.add('hidden');
           listView.classList.remove('hidden');
           renderGroupsList();
@@ -14480,36 +14939,31 @@
       function renderGroupsList() {
         const grid = document.getElementById('groups-cards-grid');
         if (!grid) return;
-        const isTalk = activeGroupSection === 'talk';
-        document.querySelectorAll('.group-section-btn').forEach(b => {
-          const on = b.dataset.groupSection === activeGroupSection;
-            b.setAttribute('aria-pressed', String(on));
-          b.className = on
-            ? 'group-section-btn inline-flex items-center justify-center gap-1.5 py-2 px-2 rounded-xl text-xs font-black bg-slate-950 text-white transition'
-            : 'group-section-btn inline-flex items-center justify-center gap-1.5 py-2 px-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-950 transition';
-        });
-        const secTitle = document.getElementById('groups-section-title');
-        const secDesc = document.getElementById('groups-section-desc');
-        const createBtn = document.getElementById('btn-open-create-group');
-        const mineLbl = document.getElementById('groups-mine-label');
-        if (secTitle) secTitle.textContent = isTalk ? '익명 톡방' : '스터디 모임';
-        if (secDesc) secDesc.textContent = isTalk
-          ? '방 안에서는 별명 대신 익명 번호로 대화해요.'
-          : '함께 공부한 시간을 보고 모임 단톡방에서 이야기를 나눠요.';
-        if (createBtn) createBtn.textContent = isTalk ? '+ 새 익명 톡방 만들기' : '+ 새 스터디 만들기';
-        if (mineLbl) mineLbl.textContent = isTalk ? '내 톡방' : '내 스터디';
 
-        const myUid = isTalk ? anonId() : getMySocialUid();
+        document.querySelectorAll('.group-filter-btn').forEach(b => {
+          const on = b.dataset.groupFilter === activeGroupFilter;
+          b.setAttribute('aria-pressed', String(on));
+          b.className = on
+            ? 'group-filter-btn px-3 py-1.5 rounded-lg text-xs font-black bg-slate-950 text-white transition'
+            : 'group-filter-btn px-3 py-1.5 rounded-lg text-xs font-bold text-slate-600 hover:text-slate-950 transition';
+        });
+
         const q = (document.getElementById('groups-search-input')?.value || '').trim().toLowerCase();
-        const allGroups = Object.values(studyGroupsData || {}).filter(g => g && (isTalk ? !!g.isAnonymous : !g.isAnonymous));
-        const latestMessages = new Map(allGroups.map(g => [g, Object.values(g.messages || {}).reduce(
-          (latest, message) => message && (!latest || message.createdAt > latest.createdAt) ? message : latest, null
-        )]));
+        const allGroups = Object.values(studyGroupsData || {}).filter(Boolean);
+        const latestMessages = new Map(allGroups.map(g => {
+          const joinedG = !!(g.members && g.members[groupActor(g)]);
+          if (!joinedG) return [g, null];
+          return [g, Object.values(g.messages || {}).reduce(
+            (latest, message) => message && (!latest || message.createdAt > latest.createdAt) ? message : latest, null
+          )];
+        }));
         const latestMsgOf = g => latestMessages.get(g);
         const mineGroups = allGroups
-          .filter(g => g.members && g.members[myUid])
+          .filter(g => g.members && g.members[groupActor(g)])
           .sort((a, b) => ((latestMsgOf(b)?.createdAt || b.createdAt || 0) - (latestMsgOf(a)?.createdAt || a.createdAt || 0)));
-        const discoverGroups = allGroups.slice().sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+        const discoverGroups = allGroups
+          .slice()
+          .sort((a, b) => ((latestMsgOf(b)?.createdAt || b.createdAt || 0) - (latestMsgOf(a)?.createdAt || a.createdAt || 0)));
 
         const mineCntEl = document.getElementById('groups-mine-count');
         const allCntEl = document.getElementById('groups-all-count');
@@ -14527,13 +14981,14 @@
         }
         if (!filtered.length) {
           grid.innerHTML = `<div class="ed-card p-8 text-center space-y-2">
-            <p class="text-sm font-black text-slate-800">${q ? '검색 결과가 없어요' : activeGroupFilter === 'mine' ? (isTalk ? '아직 참여 중인 익명 톡방이 없어요' : '아직 가입한 스터디가 없어요') : '조건에 맞는 방이 없어요'}</p>
-            <p class="text-xs text-slate-500">${q ? '다른 방 이름이나 소개 문구로 검색해 보세요.' : activeGroupFilter === 'mine' ? '[전체 찾기]에서 원하는 방에 들어가거나, 새 방을 직접 만들어 보세요!' : '새 방을 만들어 동기들을 초대해 보세요.'}</p>
+            <p class="text-sm font-black text-slate-800">${q ? '검색 결과가 없어요' : activeGroupFilter === 'mine' ? '아직 참여 중인 모임이 없어요' : '아직 만들어진 모임이 없어요'}</p>
+            <p class="text-xs text-slate-500">${q ? '다른 모임 이름이나 소개 문구로 검색해 보세요.' : activeGroupFilter === 'mine' ? '[전체 모임]에서 원하는 모임에 들어가거나, 새 모임을 직접 만들어 보세요!' : '새 모임을 만들어 동기들을 초대해 보세요.'}</p>
           </div>`;
           return;
         }
 
         grid.innerHTML = filtered.map(g => {
+          const myUid = groupActor(g);
           const memberEntries = Object.entries(g.members || {});
           const joined = !!(g.members && g.members[myUid]);
           const anonMap = g.isAnonymous ? getGroupAnonLabels(g) : {};
@@ -14542,6 +14997,9 @@
           const lastMsg = latestMsgOf(g);
           const myLastRead = Number(g.lastReadAt?.[myUid] || 0);
           const unread = joined ? msgs.filter(m => m.uid !== myUid && Number(m.createdAt || 0) > myLastRead).length : 0;
+          const typeBadge = g.isAnonymous
+            ? '<span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-slate-100 text-slate-700 border border-slate-200 text-[10px] font-bold"><svg class="w-3 h-3 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12c2.5-3.5 6-5 10-5s7.5 1.5 10 5c-2.5 3.5-6 5-10 5s-7.5-1.5-10-5z"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/></svg><span>익명 모임</span></span>'
+            : '<span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-indigo-50 text-indigo-700 border border-indigo-100 text-[10px] font-bold"><svg class="w-3 h-3 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H12v18H6.5A2.5 2.5 0 0 1 4 18.5zM20 5.5A2.5 2.5 0 0 0 17.5 3H12v18h5.5a2.5 2.5 0 0 0 2.5-2.5z"/></svg><span>스터디</span></span>';
 
           if (joined) {
             // Chat-room list row style: click anywhere to enter!
@@ -14553,8 +15011,8 @@
               <div class="min-w-0 flex-1 space-y-1">
                 <div class="flex items-center gap-1.5 flex-wrap">
                   <span class="text-sm font-black text-slate-950 truncate">${escapeHtml(g.name)}</span>
-                  ${g.isAnonymous ? '<span class="px-1.5 py-0.5 rounded-md bg-slate-900 text-white text-[10px] font-bold">🎭 익명 단톡방</span>' : ''}
-                  ${g.password ? '<span class="px-1.5 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[10px] font-bold">🔒</span>' : ''}
+                  ${typeBadge}
+                  ${g.password ? '<span class="inline-flex items-center px-1.5 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[10px] font-bold" aria-label="비밀번호 방"><svg class="w-3 h-3 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>' : ''}
                   <span class="text-[11px] font-bold text-slate-400">${memberEntries.length}명</span>
                   ${!g.isAnonymous && studyingCnt > 0 ? `<span class="text-[11px] font-bold text-emerald-600">● 공부 중 ${studyingCnt}</span>` : ''}
                 </div>
@@ -14574,13 +15032,13 @@
             <div class="min-w-0 flex-1 space-y-1">
               <div class="flex items-center gap-1.5 flex-wrap">
                 <h3 class="text-sm font-black text-slate-950 truncate">${escapeHtml(g.name)}</h3>
-                ${g.isAnonymous ? '<span class="px-1.5 py-0.5 rounded-md bg-slate-900 text-white text-[10px] font-bold">🎭 익명 단톡방 · 경쟁 없음</span>' : ''}
-                ${g.password ? '<span class="px-1.5 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[10px] font-bold">🔒 비번방</span>' : ''}
-                ${!g.isAnonymous && g.goalHours > 0 ? `<span class="px-1.5 py-0.5 rounded-md bg-indigo-50 text-indigo-700 text-[10px] font-black">목표 ${escapeHtml(g.goalHours)}h</span>` : ''}
+                ${typeBadge}
+                ${g.password ? '<span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[10px] font-bold"><svg class="w-3 h-3 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg><span>비번방</span></span>' : ''}
+                ${!g.isAnonymous && g.goalHours > 0 ? `<span class="px-1.5 py-0.5 rounded-md bg-slate-100 text-slate-700 text-[10px] font-black">목표 ${escapeHtml(g.goalHours)}h</span>` : ''}
               </div>
-              <p class="text-xs text-slate-600 line-clamp-2 leading-relaxed">${escapeHtml(g.desc || '함께 공부하는 모임이에요.')}</p>
+              <p class="text-xs text-slate-600 line-clamp-2 leading-relaxed">${escapeHtml(g.desc || (g.isAnonymous ? '익명으로 편하게 대화해요.' : '함께 공부하는 모임이에요.'))}</p>
               <div class="flex items-center gap-2 text-[11px] font-bold text-slate-400">
-                <span>가입 후 모임의 참여자를 볼 수 있어요</span>
+                <span>${g.isAnonymous ? '가입 후 익명으로 대화를 보고 참여할 수 있어요' : '가입 후 참여자와 대화를 볼 수 있어요'}</span>
               </div>
             </div>
             <button type="button" data-join-group="${escapeHtml(g.id)}" class="shrink-0 px-3.5 py-2 rounded-xl bg-slate-950 hover:bg-slate-800 text-white text-xs font-black">가입하기</button>
@@ -14590,6 +15048,19 @@
 
       function renderActiveGroupRoom(g) {
         const myUid = groupActor(g);
+        if (!g || !g.members || !g.members[myUid]) {
+          activeGroupId = null;
+          saveGroupNavState();
+          const chatBox = document.getElementById('group-chat-messages');
+          const memBox = document.getElementById('group-room-members-list');
+          if (chatBox) chatBox.innerHTML = '';
+          if (memBox) memBox.innerHTML = '';
+          const rv = document.getElementById('group-room-view');
+          if (rv) { rv.dataset.roomId = ''; rv.classList.add('hidden'); }
+          document.getElementById('groups-list-view')?.classList.remove('hidden');
+          renderGroupsList();
+          return;
+        }
         const anonMap = g.isAnonymous ? getGroupAnonLabels(g) : {};
         const memberEntries = Object.entries(g.members || {});
         const infos = memberEntries.map(([uid, meta]) => getGroupMemberLiveInfo(g, uid, meta, anonMap)).sort((a, b) => b.mins - a.mins);
@@ -14606,16 +15077,16 @@
         if (anonBadge) {
           anonBadge.classList.remove('hidden');
           if (isAnonChatOnly) {
-            anonBadge.textContent = '🎭 익명';
-            anonBadge.className = 'px-1.5 py-0.5 rounded bg-slate-900 text-white text-[10px] font-bold shrink-0';
+            anonBadge.innerHTML = '<svg class="w-3 h-3 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12c2.5-3.5 6-5 10-5s7.5 1.5 10 5c-2.5 3.5-6 5-10 5s-7.5-1.5-10-5z"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/></svg><span>익명</span>';
+            anonBadge.className = 'inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200 text-[10px] font-bold shrink-0';
           } else {
-            anonBadge.textContent = '🏷️ 별명';
-            anonBadge.className = 'px-1.5 py-0.5 rounded bg-indigo-50 text-indigo-700 border border-indigo-200 text-[10px] font-bold shrink-0';
+            anonBadge.innerHTML = '<svg class="w-3 h-3 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2H4a2 2 0 0 0-2 2v8l9.2 9.2a2 2 0 0 0 2.8 0l7.2-7.2a2 2 0 0 0 0-2.8L12 2z"/><circle cx="7" cy="7" r="1.3" fill="currentColor" stroke="none"/></svg><span>별명</span>';
+            anonBadge.className = 'inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-indigo-50 text-indigo-700 border border-indigo-200 text-[10px] font-bold shrink-0';
           }
         }
         document.getElementById('group-room-lock-badge').classList.toggle('hidden', !g.password);
         document.getElementById('group-room-meta').textContent = isAnonChatOnly
-          ? `익명 단톡방 · ${infos.length}명 참여 중`
+          ? `익명 모임 · ${infos.length}명 참여 중`
           : `멤버 ${infos.length}명 · ${studyingCnt}명 공부 중${g.goalHours > 0 ? ` · 목표 ${g.goalHours}h` : ''}`;
         const descEl = document.getElementById('group-room-desc');
         if (descEl) {
@@ -14702,18 +15173,34 @@
           renderGroupsList();
         });
       });
-      document.getElementById('btn-open-create-group')?.addEventListener('click', () => {
-        const isTalk = activeGroupSection === 'talk';
+      function syncGroupCreateType(isAnon) {
         const anonEl = document.getElementById('gc-anon');
         const goalWrap = document.getElementById('gc-goal-wrap');
-        const titleEl = document.getElementById('group-create-modal-title');
-        if (anonEl) anonEl.checked = isTalk;
-        if (goalWrap) goalWrap.classList.toggle('hidden', isTalk);
-        if (titleEl) titleEl.textContent = isTalk ? '새 익명 톡방 만들기' : '새 스터디 모임 만들기';
+        const nameInp = document.getElementById('gc-name');
+        const descInp = document.getElementById('gc-desc');
+        if (anonEl) anonEl.checked = !!isAnon;
+        if (goalWrap) goalWrap.classList.toggle('hidden', !!isAnon);
+        if (nameInp) nameInp.placeholder = isAnon ? '예: 새벽 수다 익명 모임' : '예: 전자회로 기말 뿌수기';
+        if (descInp) descInp.placeholder = isAnon ? '예: 익명으로 편하게 대화해요' : '예: 매일 밤 11시까지 4시간 인증해요';
+        document.querySelectorAll('.gc-type-btn').forEach(btn => {
+          const active = (btn.dataset.gcType === 'anon') === !!isAnon;
+          btn.setAttribute('aria-pressed', String(active));
+          btn.className = active
+            ? 'gc-type-btn flex flex-col items-start gap-1 p-3 rounded-xl border-2 border-slate-950 bg-slate-950 text-white text-left transition'
+            : 'gc-type-btn flex flex-col items-start gap-1 p-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 hover:border-slate-400 text-left transition';
+          const sub = btn.querySelector('.gc-type-sub');
+          if (sub) sub.className = active ? 'gc-type-sub text-[10.5px] opacity-80 leading-snug' : 'gc-type-sub text-[10.5px] text-slate-500 leading-snug';
+        });
+      }
+      document.querySelectorAll('.gc-type-btn').forEach(btn => {
+        btn.addEventListener('click', () => syncGroupCreateType(btn.dataset.gcType === 'anon'));
+      });
+      document.getElementById('btn-open-create-group')?.addEventListener('click', () => {
+        syncGroupCreateType(false);
         openSimpleModal('group-create-modal');
       });
       document.getElementById('gc-anon')?.addEventListener('change', e => {
-        document.getElementById('gc-goal-wrap')?.classList.toggle('hidden', e.target.checked);
+        syncGroupCreateType(e.target.checked);
       });
       document.getElementById('btn-group-room-back')?.addEventListener('click', () => { activeGroupId = null; saveGroupNavState(); renderGroupsTab(); });
       document.querySelectorAll('.room-sub-btn').forEach(btn => {
@@ -14788,8 +15275,14 @@
           const gid = enterBtn.dataset.enterGroup;
           const g = studyGroupsData[gid];
           if (!g || !g.members || !g.members[groupActor(g)]) return;
+          const ok = await openActionConfirm({
+            title: g.isAnonymous ? '익명 모임 입장' : '스터디 모임 입장',
+            message: `'${g.name}'에 입장하시겠습니까?`,
+            confirmText: '입장'
+          });
+          if (!ok) return;
           activeGroupId = gid;
-          activeRoomSub = 'members';
+          activeRoomSub = g.isAnonymous ? 'chat' : 'members';
           saveGroupNavState();
           renderGroupsTab();
           return;
@@ -14801,10 +15294,17 @@
           if (!g) return;
           if (g.password) {
             pendingPwGroupId = gid;
-            document.getElementById('group-pw-title').textContent = `🔒 ${g.name}`;
+            const pwTitleEl = document.getElementById('group-pw-title');
+            if (pwTitleEl) pwTitleEl.innerHTML = `<svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg><span>${escapeHtml(g.name)}</span>`;
             document.getElementById('group-pw-input').value = '';
             openSimpleModal('group-pw-modal');
           } else {
+            const ok = await openActionConfirm({
+              title: g.isAnonymous ? '익명 모임 입장' : '스터디 모임 입장',
+              message: `'${g.name}'에 입장하시겠습니까?`,
+              confirmText: '입장'
+            });
+            if (!ok) return;
             await joinStudyGroup(gid);
           }
         }
@@ -14827,6 +15327,13 @@
       document.getElementById('btn-group-leave')?.addEventListener('click', socialAction(async () => {
         if (!activeGroupId || !studyGroupsData[activeGroupId]) return;
         const g = studyGroupsData[activeGroupId];
+        const ok = await openActionConfirm({
+          title: g.isAnonymous ? '익명 모임 나가기' : '스터디 모임 나가기',
+          message: `'${g.name}'에서 나가시겠습니까?`,
+          confirmText: '나가기',
+          danger: true
+        });
+        if (!ok) return;
         const myUid = groupActor(g);
         const removeMember = room => {
           if (!room?.members?.[myUid]) return undefined;
@@ -14840,6 +15347,12 @@
         if (filePreview) await socialWrite(`studyGroups/${g.id}`, removeMember(g));
         else await leaveCloudRoom(g,myUid);
         activeGroupId = null;
+        const chatBox = document.getElementById('group-chat-messages');
+        const memBox = document.getElementById('group-room-members-list');
+        if (chatBox) chatBox.innerHTML = '';
+        if (memBox) memBox.innerHTML = '';
+        const rv = document.getElementById('group-room-view');
+        if (rv) rv.dataset.roomId = '';
         saveGroupNavState();
         showToast('모임에서 나왔어요.', 'info');
         renderGroupsTab();
@@ -14851,7 +15364,13 @@
         const input = document.getElementById('group-chat-input');
         const text = (input?.value || '').trim();
         if (!text) return;
-        const myUid = groupActor(studyGroupsData[activeGroupId]);
+        const g = studyGroupsData[activeGroupId];
+        const myUid = groupActor(g);
+        if (!g?.members?.[myUid]) {
+          showToast('가입한 모임에서만 대화할 수 있어요.', 'warn');
+          renderGroupsTab();
+          return;
+        }
         const myMem = getMySocialMember();
         const now = Date.now();
         const mid = 'm_' + now + '_' + Math.random().toString(36).slice(2, 6);
@@ -14867,7 +15386,7 @@
       }));
 
       // =========================================================================
-      // 100% ANONYMOUS COMMUNITY LOGIC (커뮤니티 · 펼침 피드 · 인라인 댓글 · 귓속말)
+      // 100% ANONYMOUS COMMUNITY LOGIC (커뮤니티 · 펼침 피드 · 인라인 댓글 · 쪽지)
       // =========================================================================
       function onEnterCommunityTab() {
         updateWhisperBadges();
@@ -14949,12 +15468,12 @@
             ${(() => {
               const isSpoilerLocked = !!(post.spoilerTitle && !openedSpoilerPosts.has(post.id));
               if (isSpoilerLocked) {
-                return `<button type="button" data-open-spoiler="${escapeHtml(post.id)}" class="comm-spoiler-teaser w-full text-left p-3.5 rounded-xl border border-dashed border-slate-300 bg-slate-50 hover:bg-slate-100 text-slate-900 transition space-y-1">
-                  <div class="flex items-center justify-between gap-2">
-                    <span class="text-[10px] font-bold text-slate-500">👀 제목만 보기</span>
-                    <span class="text-[11px] font-semibold text-slate-400">눌러서 열기 →</span>
+                return `<button type="button" data-open-spoiler="${escapeHtml(post.id)}" class="comm-spoiler-teaser w-full text-left px-3.5 py-3 rounded-xl border border-slate-200 bg-slate-50/70 hover:bg-slate-100/80 text-slate-900 transition flex items-center justify-between gap-3">
+                  <div class="min-w-0 space-y-0.5">
+                    <p class="text-sm font-bold leading-snug break-words">${escapeHtml(post.spoilerTitle)}</p>
+                    <span class="inline-flex items-center gap-1 text-[10.5px] font-semibold text-slate-400"><svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" y1="2" x2="22" y2="22"/></svg><span>탭하여 내용 보기</span></span>
                   </div>
-                  <p class="text-sm font-bold leading-snug">${escapeHtml(post.spoilerTitle)}</p>
+                  <svg class="w-4 h-4 text-slate-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
                 </button>`;
               }
 
@@ -14966,7 +15485,7 @@
                 const hasVoted = myVote !== undefined && myVote !== null;
                 pollHtml = `<div class="mt-2.5 p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-1.5">
                   <div class="flex items-center justify-between text-[11px] font-black text-slate-700">
-                    <span>📊 익명 투표</span>
+                    <span class="inline-flex items-center gap-1"><svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" aria-hidden="true"><path d="M6 20v-7M12 20V4M18 20v-11"/></svg><span>익명 투표</span></span>
                     <span class="text-slate-400 font-semibold">${totalVotes}명 참여</span>
                   </div>
                   ${post.poll.options.map((opt, idx) => {
@@ -14994,8 +15513,8 @@
                 const gotRight = hasAns && Number(myAns) === correctIdx;
                 quizHtml = `<div class="mt-2.5 p-3 rounded-xl bg-indigo-50/60 border border-indigo-200 space-y-1.5">
                   <div class="flex items-center justify-between text-[11px] font-black text-indigo-950">
-                    <span>❓ 익명 퀴즈</span>
-                    <span class="${hasAns ? (gotRight ? 'text-emerald-700' : 'text-rose-600') : 'text-indigo-500'}">${hasAns ? (gotRight ? '⭕ 정답!' : '❌ 오답!') : `${totalAns}명 도전`}</span>
+                    <span class="inline-flex items-center gap-1"><svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.2a2.5 2.5 0 0 1 4.8.9c0 1.7-2.3 2.1-2.3 3.4"/><circle cx="12" cy="17" r=".8" fill="currentColor" stroke="none"/></svg><span>익명 퀴즈</span></span>
+                    <span class="inline-flex items-center gap-1 ${hasAns ? (gotRight ? 'text-emerald-700' : 'text-rose-600') : 'text-indigo-500'}">${hasAns ? (gotRight ? '<svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.2 2.4 2.4 4.8-5"/></svg><span>정답!</span>' : '<svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m9.2 9.2 5.6 5.6M14.8 9.2l-5.6 5.6"/></svg><span>오답!</span>') : `${totalAns}명 도전`}</span>
                   </div>
                   ${post.quiz.options.map((opt, idx) => {
                     const cnt = Object.values(answers).filter(v => Number(v) === idx).length;
@@ -15009,11 +15528,11 @@
                       else cls = 'border-slate-200 bg-white/70';
                     }
                     return `<button type="button" data-answer-quiz="${escapeHtml(post.id)}::${idx}" ${hasAns ? 'disabled' : ''} class="w-full text-left rounded-xl border ${cls} px-3 py-2 transition flex items-center justify-between gap-2 text-xs">
-                      <span class="font-bold text-slate-900">${hasAns && isCorrect ? '⭕ ' : (hasAns && isMyPick ? '❌ ' : '')}${escapeHtml(opt)}</span>
+                      <span class="inline-flex items-center gap-1.5 font-bold text-slate-900">${hasAns && isCorrect ? '<span class="text-emerald-600 inline-flex"><svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.2 2.4 2.4 4.8-5"/></svg></span>' : (hasAns && isMyPick ? '<span class="text-rose-600 inline-flex"><svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m9.2 9.2 5.6 5.6M14.8 9.2l-5.6 5.6"/></svg></span>' : '')}<span>${escapeHtml(opt)}</span></span>
                       ${hasAns ? `<span class="font-mono text-[11px] font-bold text-slate-500">${pct}%</span>` : ''}
                     </button>`;
                   }).join('')}
-                  ${hasAns && post.quiz.explain ? `<p class="text-[11px] font-semibold text-indigo-900 bg-white/80 rounded-lg px-2.5 py-1.5 border border-indigo-100">💡 ${escapeHtml(post.quiz.explain)}</p>` : ''}
+                  ${hasAns && post.quiz.explain ? `<p class="flex items-start gap-1.5 text-[11px] font-semibold text-indigo-900 bg-white/80 rounded-lg px-2.5 py-1.5 border border-indigo-100"><svg class="w-3.5 h-3.5 shrink-0 mt-0.5 text-indigo-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.8 10.6c.7.6 1.3 1.4 1.5 2.4h4.6c.2-1 .8-1.8 1.5-2.4A6 6 0 0 0 12 3z"/></svg><span>${escapeHtml(post.quiz.explain)}</span></p>` : ''}
                 </div>`;
               }
 
@@ -15028,7 +15547,7 @@
                 : '';
 
               return `<div class="space-y-2">
-                ${post.spoilerTitle ? `<p class="text-xs font-black text-amber-800 bg-amber-50 border border-amber-200 rounded-lg px-2.5 py-1 inline-block">${escapeHtml(post.spoilerTitle)}</p>` : ''}
+                ${post.spoilerTitle ? `<p class="text-sm font-black text-slate-950 leading-snug">${escapeHtml(post.spoilerTitle)}</p>` : ''}
                 ${post.body ? `<p class="comm-post-body text-slate-800 whitespace-pre-wrap break-words">${escapeHtml(post.body)}</p>` : ''}
                 ${photoHtml}
                 ${songCardHtml}
@@ -15050,7 +15569,7 @@
               </div>
               ${!isMine ? `<button type="button" data-whisper-post="${escapeHtml(post.id)}" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold transition">
                 <svg class="comm-svg-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4z"/></svg>
-                <span>귓속말</span>
+                <span>쪽지</span>
               </button>` : ''}
             </div>
 
@@ -15069,7 +15588,7 @@
                     <p class="text-xs text-slate-800 leading-relaxed whitespace-pre-wrap break-words">${escapeHtml(c.text)}</p>
                   </div>
                   <div class="flex items-center gap-1.5 shrink-0">
-                    ${!cMine ? `<button type="button" data-whisper-comment="${escapeHtml(post.id)}::${escapeHtml(c.id)}" class="text-[10px] font-bold text-slate-400 hover:text-indigo-600">귓속말</button>` : ''}
+                    ${!cMine ? `<button type="button" data-whisper-comment="${escapeHtml(post.id)}::${escapeHtml(c.id)}" class="text-[10px] font-bold text-slate-400 hover:text-indigo-600">쪽지</button>` : ''}
                     ${(cMine || admin) ? `<button type="button" data-del-comment="${escapeHtml(post.id)}::${escapeHtml(c.id)}" class="text-[10px] font-bold text-slate-400 hover:text-rose-600">삭제</button>` : ''}
                   </div>
                 </div>`;
@@ -15321,21 +15840,20 @@
         let songObj = null;
         if (commSongPanelEl && !commSongPanelEl.classList.contains('hidden')) {
           if (pendingCommSong && pendingCommSong.title) {
+            const st = pendingCommSongMode === 'bgm' ? Math.max(0, Math.floor(Number(pendingCommSong.startSec || 0))) : 0;
+            const en = pendingCommSongMode === 'bgm' ? Math.max(0, Math.floor(Number(pendingCommSong.endSec || 0))) : 0;
             songObj = {
               ...pendingCommSong,
               displayMode: pendingCommSongMode === 'card' ? 'card' : 'bgm',
-              startSec: pendingCommSongMode === 'bgm' ? Math.max(0, Math.floor(Number(pendingCommSong.startSec || 0))) : 0
+              startSec: st,
+              endSec: (en > st && en < IG_WAVE_TOTAL_SEC) ? en : 0
             };
           } else {
-            const cTitle = (document.getElementById('comm-song-title-input')?.value || '').trim();
-            const cArtist = (document.getElementById('comm-song-artist-input')?.value || '').trim();
-            if (cTitle) {
-              songObj = {
-                title: cTitle, artist: cArtist,
-                artworkUrl: '', previewUrl: '', ytMusicUrl: '', spotifyUrl: '', appleUrl: '',
-                displayMode: pendingCommSongMode === 'card' ? 'card' : 'bgm',
-                startSec: 0
-              };
+            const typedQ = (document.getElementById('comm-song-title-input')?.value || '').trim()
+              || (document.getElementById('comm-song-artist-input')?.value || '').trim();
+            if (typedQ) {
+              showToast('검색 결과에서 노래를 선택해 주세요.', 'warn');
+              return;
             }
           }
         }
@@ -15472,12 +15990,26 @@
         }
         const delPostBtn = e.target.closest('[data-del-post]');
         if (delPostBtn) {
+          const ok = await openActionConfirm({
+            title: '게시글 삭제',
+            message: '삭제하겠습니까?',
+            confirmText: '삭제',
+            danger: true
+          });
+          if (!ok) return;
           await socialWrite(`community/posts/${delPostBtn.dataset.delPost}`, null);
           showToast('글이 삭제되었어요.', 'info');
           return;
         }
         const delComBtn = e.target.closest('[data-del-comment]');
         if (delComBtn) {
+          const ok = await openActionConfirm({
+            title: '댓글 삭제',
+            message: '삭제하겠습니까?',
+            confirmText: '삭제',
+            danger: true
+          });
+          if (!ok) return;
           const [pid, cid] = delComBtn.dataset.delComment.split('::');
           await socialWrite(`community/posts/${pid}/comments/${cid}`, null);
           return;
@@ -15520,7 +16052,7 @@
       }));
 
       // =========================================================================
-      // 1:1 ANONYMOUS WHISPER LOGIC (귓속말)
+      // 1:1 ANONYMOUS WHISPER LOGIC (쪽지)
       // =========================================================================
       function getMyWhispers() {
         const myUid = anonId();
@@ -15580,7 +16112,7 @@
         if (pendingWhisperTarget) {
           newEl.classList.remove('hidden');
           backBtn.classList.add('hidden');
-          titleEl.textContent = '💌 익명 귓속말 보내기';
+          titleEl.textContent = '익명 쪽지 보내기';
           subEl.textContent = '상대가 수락하면 1:1 익명 대화가 열려요';
           document.getElementById('whisper-new-context').textContent = pendingWhisperTarget.contextText;
           return;
@@ -15592,7 +16124,7 @@
           threadEl.classList.remove('hidden');
           threadEl.classList.add('flex');
           backBtn.classList.remove('hidden');
-          titleEl.textContent = '익명 상대와의 귓속말';
+          titleEl.textContent = '익명 상대와의 쪽지';
           subEl.textContent = w.context || '1:1 익명 대화';
 
           const isPendingReceiver = w.status === 'pending' && w.toUid === myUid;
@@ -15603,7 +16135,7 @@
           replyForm.classList.toggle('hidden', isPendingReceiver);
           if (isPendingSender) {
             replyInput.disabled = true;
-            replyInput.placeholder = '상대가 귓속말을 수락하면 대화를 이어갈 수 있어요…';
+            replyInput.placeholder = '상대가 쪽지를 수락하면 대화를 이어갈 수 있어요…';
           } else {
             replyInput.disabled = false;
             replyInput.placeholder = '익명 메시지 입력…';
@@ -15633,13 +16165,13 @@
         activeWhisperThreadId = null;
         inboxEl.classList.remove('hidden');
         backBtn.classList.add('hidden');
-        titleEl.textContent = '💌 익명 귓속말 함';
+        titleEl.textContent = '익명 쪽지 함';
         subEl.textContent = '대화 당사자 외에는 운영자도 볼 수 없는 100% 익명 대화예요.';
         const list = getMyWhispers();
         if (!list.length) {
           inboxEl.innerHTML = `<div class="py-10 text-center space-y-1.5">
-            <p class="text-xs font-black text-slate-700">아직 주고받은 귓속말이 없어요</p>
-            <p class="text-[11px] text-slate-400">커뮤니티 글이나 댓글의 [귓속말] 버튼으로 1:1 익명 대화를 시작해 보세요.</p>
+            <p class="text-xs font-black text-slate-700">아직 주고받은 쪽지가 없어요</p>
+            <p class="text-[11px] text-slate-400">커뮤니티 글이나 댓글의 [쪽지] 버튼으로 1:1 익명 대화를 시작해 보세요.</p>
           </div>`;
           return;
         }
@@ -15701,7 +16233,7 @@
         input.value = '';
         pendingWhisperTarget = null;
         activeWhisperThreadId = wid;
-        showToast('익명 귓속말 요청을 보냈어요!', 'success');
+        showToast('익명 쪽지 요청을 보냈어요!', 'success');
         renderWhisperModal();
       }));
       document.getElementById('btn-whisper-accept')?.addEventListener('click', socialAction(async () => {
@@ -15711,7 +16243,7 @@
           [`community/whispers/${activeWhisperThreadId}/status`]: 'accepted',
           [`community/whispers/${activeWhisperThreadId}/lastReadAt/${myUid}`]: Date.now()
         });
-        showToast('귓속말을 수락했어요!', 'success');
+        showToast('쪽지를 수락했어요!', 'success');
         renderWhisperModal();
         updateWhisperBadges();
       }));
@@ -15719,7 +16251,7 @@
         if (!activeWhisperThreadId) return;
         await socialWrite(`community/whispers/${activeWhisperThreadId}/status`, 'rejected');
         activeWhisperThreadId = null;
-        showToast('귓속말 요청을 거절했어요.', 'info');
+        showToast('쪽지 요청을 거절했어요.', 'info');
         renderWhisperModal();
       }));
       document.getElementById('whisper-reply-form')?.addEventListener('submit', socialAction(async e => {
@@ -16071,7 +16603,7 @@
 
       // =========================================================================
       // UNIFIED KAKAOTALK-STYLE CHAT & NOTIFICATION ENGINE
-      // (관리자 · 익명 귓속말/내글댓글 · 아는사람 1:1 채팅/선물, 타이머 제외 전체 알림 해제)
+      // (관리자 · 익명 쪽지/내글댓글 · 아는사람 1:1 채팅/선물, 타이머 제외 전체 알림 해제)
       // =========================================================================
       let ucActiveCat = 'all';
       let ucActiveRoom = null; // null | { type: 'admin' } | { type: 'known', partnerId } | { type: 'gifts' }
@@ -16248,12 +16780,12 @@
           getMyWhispers().forEach(w => {
             const viewingWh = whOpen && activeWhisperThreadId === w.id;
             if (w.status === 'pending' && w.toUid === myUid) {
-              whisperItems.push({ key: 'whreq:' + w.id, title: '🎭 새 익명 귓속말 요청', body: w.context || '익명 대화가 도착했어요.', tag: 'uc-whisper', suppress: viewingWh });
+              whisperItems.push({ key: 'whreq:' + w.id, title: '새 익명 쪽지 요청', body: w.context || '익명 대화가 도착했어요.', tag: 'uc-whisper', suppress: viewingWh });
             } else if (w.status === 'accepted') {
               const lastRead = Number(w.lastReadAt?.[myUid] || 0);
               Object.values(w.messages || {}).filter(Boolean).forEach(m => {
                 if (m.senderUid !== myUid && Number(m.createdAt || 0) > lastRead) {
-                  whisperItems.push({ key: 'whm:' + w.id + ':' + m.id, title: '🎭 익명 귓속말', body: m.text || '', tag: 'uc-whisper', suppress: viewingWh });
+                  whisperItems.push({ key: 'whm:' + w.id + ':' + m.id, title: '익명 쪽지', body: m.text || '', tag: 'uc-whisper', suppress: viewingWh });
                 }
               });
             }
@@ -16409,11 +16941,11 @@
               rows.push({
                 ts,
                 html: `<button type="button" data-uc-open-whisper="${escapeHtml(w.id)}" class="w-full px-3.5 py-3 hover:bg-slate-50 flex items-center gap-3 text-left transition">
-                  <div class="w-10 h-10 rounded-2xl bg-slate-900 text-white flex items-center justify-center text-base font-black shrink-0">🎭</div>
+                  <div class="w-10 h-10 rounded-2xl bg-slate-900 text-white flex items-center justify-center shrink-0"><svg class="comm-svg-ic-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12c2.5-3.5 6-5 10-5s7.5 1.5 10 5c-2.5 3.5-6 5-10 5s-7.5-1.5-10-5z"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/></svg></div>
                   <div class="min-w-0 flex-1">
                     <div class="flex items-center justify-between gap-2">
                       <div class="flex items-center gap-1.5 min-w-0">
-                        <span class="text-xs font-black text-slate-950 truncate">익명 귓속말</span>
+                        <span class="text-xs font-black text-slate-950 truncate">익명 쪽지</span>
                         <span class="px-1.5 py-0.5 rounded bg-slate-100 text-slate-700 text-[9px] font-bold shrink-0">${badgeTxt}</span>
                       </div>
                       <span class="text-[10px] text-slate-400 shrink-0">${ts ? formatRelTime(ts) : ''}</span>
@@ -17226,10 +17758,15 @@
         }
       }
 
+      const SVG_PLAY_IC = '<svg class="w-3 h-3 shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 4 20 12 6 20 6 4"/></svg>';
+      const SVG_STOP_IC = '<svg class="w-3 h-3 shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="2"/></svg>';
       function setPreviewBtnState(btn, playing) {
         if (!btn) return;
         const compact = btn.dataset.previewCompact === '1';
-        btn.textContent = playing ? (compact ? '⏹' : '⏹ 정지') : (compact ? '▶' : '▶ 30초 미리듣기');
+        const customLabel = btn.dataset.playLabel || '재생';
+        btn.innerHTML = playing
+          ? (compact ? SVG_STOP_IC : `${SVG_STOP_IC}<span>정지</span>`)
+          : (compact ? SVG_PLAY_IC : `${SVG_PLAY_IC}<span>${escapeHtml(customLabel)}</span>`);
         btn.setAttribute('aria-pressed', String(playing));
       }
 
@@ -17269,8 +17806,10 @@
           if (host.querySelector('iframe')) return;
           const ytId = host.dataset.bgmYt;
           const st = Math.max(0, Math.floor(Number(host.dataset.bgmStart || 0)));
+          const en = Math.max(0, Math.floor(Number(host.dataset.bgmEnd || 0)));
           if (!ytId) return;
-          host.innerHTML = `<iframe src="https://www.youtube.com/embed/${encodeURIComponent(ytId)}?enablejsapi=1&autoplay=1&mute=1&start=${st}&end=${st + 30}&loop=1&playlist=${encodeURIComponent(ytId)}&rel=0&modestbranding=1&playsinline=1" title="게시글 배경 음악" allow="autoplay; encrypted-media" class="w-px h-px opacity-0 pointer-events-none absolute"></iframe>`;
+          const endParam = (en > st) ? `&end=${en}` : '';
+          host.innerHTML = `<iframe src="https://www.youtube.com/embed/${encodeURIComponent(ytId)}?enablejsapi=1&autoplay=1&mute=1&start=${st}${endParam}&loop=1&playlist=${encodeURIComponent(ytId)}&rel=0&modestbranding=1&playsinline=1" title="게시글 배경 음악" allow="autoplay; encrypted-media" class="w-px h-px opacity-0 pointer-events-none absolute"></iframe>`;
         });
       }
 
@@ -17309,7 +17848,8 @@
         const ytId = extractYouTubeId(song.ytMusicUrl);
         const prev = safeSongUrl(song.previewUrl);
         const startSec = Math.max(0, Math.floor(Number(song.startSec || 0)));
-        const endSec = startSec + 30;
+        const rawEnd = Math.floor(Number(song.endSec || 0));
+        const endSec = (rawEnd > startSec) ? rawEnd : 0;
         const bar = document.getElementById(`comm-bgm-bar-${pid}`);
         const host = document.getElementById(`comm-bgm-host-${pid}`);
         if (!ytId && !prev) {
@@ -17333,9 +17873,12 @@
             sendYtCmd(existing, 'setVolume', [80]);
             sendYtCmd(existing, 'playVideo');
           } else {
-            host.innerHTML = `<iframe src="https://www.youtube.com/embed/${encodeURIComponent(ytId)}?enablejsapi=1&autoplay=1&mute=0&start=${startSec}&end=${endSec}&rel=0&modestbranding=1&playsinline=1" title="게시글 배경 음악" allow="autoplay; encrypted-media" class="w-px h-px opacity-0 pointer-events-none absolute"></iframe>`;
+            const endParam = endSec > startSec ? `&end=${endSec}` : '';
+            host.innerHTML = `<iframe src="https://www.youtube.com/embed/${encodeURIComponent(ytId)}?enablejsapi=1&autoplay=1&mute=0&start=${startSec}${endParam}&rel=0&modestbranding=1&playsinline=1" title="게시글 배경 음악" allow="autoplay; encrypted-media" class="w-px h-px opacity-0 pointer-events-none absolute"></iframe>`;
           }
-          commBgmTimer = setTimeout(() => stopCommPostBgm(false), 31500);
+          if (endSec > startSec) {
+            commBgmTimer = setTimeout(() => stopCommPostBgm(false), (endSec - startSec + 1.5) * 1000);
+          }
         } else if (prev) {
           try {
             if (!songPreviewAudio) songPreviewAudio = new Audio();
@@ -17348,10 +17891,12 @@
         }
       }
 
-      function toggleYoutubePreview(ytId, btn, wrapEl, startSec = 0, forceRestart = false) {
+      function toggleYoutubePreview(ytId, btn, wrapEl, startSec = 0, forceRestart = false, endSec = 0) {
         if (!ytId || !wrapEl) return;
         const st = Math.max(0, Math.floor(Number(startSec) || 0));
-        const key = `${ytId}@${st}`;
+        const en = Math.max(0, Math.floor(Number(endSec) || 0));
+        const hasEnd = en > st && en < IG_WAVE_TOTAL_SEC;
+        const key = `${ytId}@${st}-${hasEnd ? en : 'full'}`;
         if (!forceRestart && ytPreviewActiveId === key && ytPreviewActiveWrap === wrapEl) {
           stopYoutubePreview();
           return;
@@ -17366,13 +17911,17 @@
         ytPreviewActiveWrap = wrapEl;
         setPreviewBtnState(btn, true);
         wrapEl.classList.remove('hidden');
+        const endParam = hasEnd ? `&end=${en}` : '';
+        const rangeNote = hasEnd ? `${formatSongSec(st)} ~ ${formatSongSec(en)} 구간 재생` : (st > 0 ? `${formatSongSec(st)}부터 재생` : '전체 재생');
         wrapEl.innerHTML = `<div class="space-y-1">
-          <iframe src="https://www.youtube.com/embed/${encodeURIComponent(ytId)}?autoplay=1&start=${st}&end=${st + 30}&rel=0&modestbranding=1&playsinline=1" title="30초 미리듣기" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen class="w-full h-36 rounded-xl border border-slate-200 bg-black"></iframe>
-          <p class="text-[10px] text-slate-400 text-right">${formatSongSec(st)} ~ ${formatSongSec(st + 30)} 구간 · 30초 후 자동 정지</p>
+          <iframe src="https://www.youtube.com/embed/${encodeURIComponent(ytId)}?autoplay=1&start=${st}${endParam}&rel=0&modestbranding=1&playsinline=1" title="노래 재생" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen class="w-full h-36 rounded-xl border border-slate-200 bg-black"></iframe>
+          <p class="text-[10px] text-slate-400 text-right">${rangeNote}</p>
         </div>`;
-        ytPreviewTimer = setTimeout(() => {
-          stopYoutubePreview();
-        }, 32000);
+        if (hasEnd) {
+          ytPreviewTimer = setTimeout(() => {
+            stopYoutubePreview();
+          }, (en - st + 1.5) * 1000);
+        }
       }
 
       function stopSongPreview() {
@@ -17431,12 +17980,12 @@
         const canPreview = !!(prev || ytId);
         return `<div class="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-2.5">
           <div class="flex items-center justify-between gap-2">
-            <span class="font-bold text-slate-700">🎵 추천 노래</span>
-            ${canPreview ? `<button type="button" id="modal-song-preview-btn" ${ytId ? `data-yt-preview="${escapeHtml(ytId)}"` : `data-preview-url="${escapeHtml(prev)}"`} aria-pressed="false" class="px-2.5 py-1 rounded-lg bg-slate-950 hover:bg-slate-800 text-white text-[11px] font-bold whitespace-nowrap transition">▶ 30초 미리듣기</button>` : ''}
+            <span class="inline-flex items-center gap-1.5 font-bold text-slate-700"><svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V6l11-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="17.5" cy="16" r="2.5"/></svg><span>추천 노래</span></span>
+            ${canPreview ? `<button type="button" id="modal-song-preview-btn" ${ytId ? `data-yt-preview="${escapeHtml(ytId)}"` : `data-preview-url="${escapeHtml(prev)}"`} aria-pressed="false" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-950 hover:bg-slate-800 text-white text-[11px] font-bold whitespace-nowrap transition"><svg class="w-3 h-3 shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 4 20 12 6 20 6 4"/></svg><span>재생</span></button>` : ''}
           </div>
           <div class="flex items-center gap-3 min-w-0">
             <div class="w-12 h-12 rounded-xl bg-slate-200 border border-slate-200 overflow-hidden flex items-center justify-center text-lg shrink-0">
-              ${art ? `<img src="${escapeHtml(art)}" alt="" class="w-full h-full object-cover" loading="lazy">` : '🎵'}
+              ${art ? `<img src="${escapeHtml(art)}" alt="" class="w-full h-full object-cover" loading="lazy">` : '<svg class="w-5 h-5 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V6l11-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="17.5" cy="16" r="2.5"/></svg>'}
             </div>
             <div class="min-w-0 flex-1">
               <p class="text-xs sm:text-sm font-black text-slate-950 truncate">${escapeHtml(song.title)}</p>
@@ -17471,14 +18020,14 @@
           curEl.innerHTML = `<div class="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
             <div class="flex items-center gap-3 min-w-0">
               <div class="w-12 h-12 rounded-xl bg-slate-200 border border-slate-200 overflow-hidden flex items-center justify-center text-lg shrink-0">
-                ${art ? `<img src="${escapeHtml(art)}" alt="" class="w-full h-full object-cover" loading="lazy">` : '🎵'}
+                ${art ? `<img src="${escapeHtml(art)}" alt="" class="w-full h-full object-cover" loading="lazy">` : '<svg class="w-5 h-5 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V6l11-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="17.5" cy="16" r="2.5"/></svg>'}
               </div>
               <div class="min-w-0 flex-1">
                 <p class="text-xs sm:text-sm font-black text-slate-950 truncate">${escapeHtml(song.title)}</p>
                 <p class="text-[11px] font-semibold text-slate-500 truncate">${escapeHtml(song.artist || '')}</p>
               </div>
               <div class="flex items-center gap-1 shrink-0">
-                ${(ytId || prev) ? `<button type="button" ${ytId ? `data-yt-preview="${escapeHtml(ytId)}"` : `data-song-preview="${escapeHtml(prev)}"`} data-preview-compact="1" aria-label="30초 미리듣기" aria-pressed="false" class="w-8 h-8 rounded-lg bg-slate-950 hover:bg-slate-800 text-white text-xs font-black flex items-center justify-center">▶</button>` : ''}
+                ${(ytId || prev) ? `<button type="button" ${ytId ? `data-yt-preview="${escapeHtml(ytId)}"` : `data-song-preview="${escapeHtml(prev)}"`} aria-label="재생" aria-pressed="false" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-slate-950 hover:bg-slate-800 text-white text-[11px] font-black whitespace-nowrap"><svg class="w-3 h-3 shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 4 20 12 6 20 6 4"/></svg><span>재생</span></button>` : ''}
                 <button type="button" id="btn-profile-song-clear" class="px-2 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 text-[11px] font-bold">삭제</button>
               </div>
             </div>
@@ -17803,7 +18352,7 @@
               </div>
             </div>
             <div class="flex items-center gap-1 shrink-0">
-              ${canPrev ? `<button type="button" ${ytId ? `data-yt-preview="${escapeHtml(ytId)}" data-yt-wrap="${ytWrapId}"` : `data-song-preview="${escapeHtml(tr.previewUrl)}"`} data-preview-compact="1" aria-label="미리듣기" aria-pressed="false" class="w-7 h-7 rounded-lg bg-white border border-slate-300 hover:bg-slate-100 text-[11px] font-bold text-slate-700 flex items-center justify-center">▶</button>` : ''}
+              ${canPrev ? `<button type="button" ${ytId ? `data-yt-preview="${escapeHtml(ytId)}" data-yt-wrap="${ytWrapId}"` : `data-song-preview="${escapeHtml(tr.previewUrl)}"`} data-preview-compact="1" aria-label="재생" aria-pressed="false" class="w-7 h-7 rounded-lg bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 flex items-center justify-center"><svg class="w-3 h-3 shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 4 20 12 6 20 6 4"/></svg></button>` : ''}
               <button type="button" ${pickAttr}="${idx}" class="px-2.5 py-1.5 rounded-lg ed-btn-accent text-[11px] font-black whitespace-nowrap">선택</button>
             </div>
           </div>`;
@@ -17827,11 +18376,12 @@
         const isPlaying = commBgmActivePid === postId;
         const ytId = extractYouTubeId(song.ytMusicUrl);
         const startSec = Math.max(0, Math.floor(Number(song.startSec || 0)));
+        const endSec = Math.max(0, Math.floor(Number(song.endSec || 0)));
         return `<div id="comm-bgm-bar-${escapeHtml(postId)}" data-playing="${isPlaying ? 'true' : 'false'}" class="comm-bgm-bar flex items-center gap-1.5 min-w-0 mt-0.5 text-[10.5px] leading-tight">
           <span class="member-eq-icon comm-bgm-eq shrink-0" style="--rank-ink:var(--ink)" aria-hidden="true"><i></i><i></i><i></i></span>
           <span class="font-semibold text-slate-700 truncate">${escapeHtml(song.title)}</span>
           ${song.artist ? `<span class="text-slate-400 truncate">· ${escapeHtml(song.artist)}</span>` : ''}
-          <div id="comm-bgm-host-${escapeHtml(postId)}" ${ytId ? `data-bgm-yt="${escapeHtml(ytId)}" data-bgm-start="${startSec}"` : ''} class="sr-only" aria-hidden="true"></div>
+          <div id="comm-bgm-host-${escapeHtml(postId)}" ${ytId ? `data-bgm-yt="${escapeHtml(ytId)}" data-bgm-start="${startSec}" data-bgm-end="${endSec > startSec ? endSec : 0}"` : ''} class="sr-only" aria-hidden="true"></div>
         </div>`;
       }
 
@@ -17846,14 +18396,14 @@
           <div class="flex items-center justify-between gap-2">
             <div class="flex items-center gap-2.5 min-w-0 flex-1">
               <div class="w-11 h-11 rounded-xl bg-slate-200 border border-slate-200 overflow-hidden flex items-center justify-center text-base shrink-0">
-                ${art ? `<img src="${escapeHtml(art)}" alt="" class="w-full h-full object-cover" loading="lazy">` : '🎵'}
+                ${art ? `<img src="${escapeHtml(art)}" alt="" class="w-full h-full object-cover" loading="lazy">` : '<svg class="w-5 h-5 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V6l11-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="17.5" cy="16" r="2.5"/></svg>'}
               </div>
               <div class="min-w-0 flex-1">
                 <p class="text-xs font-black text-slate-950 truncate">${escapeHtml(song.title)}</p>
                 <p class="text-[11px] font-semibold text-slate-500 truncate">${escapeHtml(song.artist || '')}</p>
               </div>
             </div>
-            ${canPreview ? `<button type="button" data-comm-card-preview="${escapeHtml(postId)}" aria-pressed="false" class="px-2.5 py-1 rounded-lg bg-slate-950 hover:bg-slate-800 text-white text-[10.5px] font-bold whitespace-nowrap shrink-0 transition">▶ 30초 미리듣기</button>` : ''}
+            ${canPreview ? `<button type="button" data-comm-card-preview="${escapeHtml(postId)}" aria-pressed="false" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-950 hover:bg-slate-800 text-white text-[10.5px] font-bold whitespace-nowrap shrink-0 transition"><svg class="w-3 h-3 shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 4 20 12 6 20 6 4"/></svg><span>재생</span></button>` : ''}
           </div>
           <div id="comm-card-yt-${escapeHtml(postId)}" class="hidden"></div>
           <div class="flex flex-wrap gap-1.5">
@@ -17865,14 +18415,22 @@
         </div>`;
       }
 
-      function updateIgWaveUi(startSec) {
-        const st = Math.max(0, Math.min(IG_WAVE_TOTAL_SEC - IG_WAVE_CLIP_SEC, Math.floor(Number(startSec) || 0)));
-        if (pendingCommSong) pendingCommSong.startSec = st;
+      const IG_WAVE_MIN_SEC = 5;
+      function updateIgWaveUi(startSec, endSec) {
+        let st = Math.max(0, Math.min(IG_WAVE_TOTAL_SEC - IG_WAVE_MIN_SEC, Math.floor(Number(startSec) || 0)));
+        let en = Math.floor(Number(endSec));
+        if (!Number.isFinite(en) || en <= 0) en = IG_WAVE_TOTAL_SEC;
+        en = Math.max(st + IG_WAVE_MIN_SEC, Math.min(IG_WAVE_TOTAL_SEC, en));
+        if (pendingCommSong) {
+          pendingCommSong.startSec = st;
+          pendingCommSong.endSec = en;
+        }
+        const isFull = (st === 0 && en >= IG_WAVE_TOTAL_SEC);
         const lbl = document.getElementById('comm-song-range-label');
-        if (lbl) lbl.textContent = `${formatSongSec(st)} ~ ${formatSongSec(st + IG_WAVE_CLIP_SEC)}`;
+        if (lbl) lbl.textContent = isFull ? `전체 (${formatSongSec(0)} ~ ${formatSongSec(IG_WAVE_TOTAL_SEC)})` : `${formatSongSec(st)} ~ ${formatSongSec(en)} (${en - st}초)`;
         const win = document.getElementById('ig-wave-window');
         const leftPct = (st / IG_WAVE_TOTAL_SEC) * 100;
-        const widthPct = (IG_WAVE_CLIP_SEC / IG_WAVE_TOTAL_SEC) * 100;
+        const widthPct = ((en - st) / IG_WAVE_TOTAL_SEC) * 100;
         if (win) {
           win.style.left = `${leftPct}%`;
           win.style.width = `${widthPct}%`;
@@ -17905,7 +18463,8 @@
         if (pendingCommSong && pendingCommSong.title) {
           const art = safeSongUrl(pendingCommSong.artworkUrl);
           const ytId = extractYouTubeId(pendingCommSong.ytMusicUrl);
-          const startSec = Math.max(0, Math.min(IG_WAVE_TOTAL_SEC - IG_WAVE_CLIP_SEC, Math.floor(Number(pendingCommSong.startSec || 0))));
+          const startSec = Math.max(0, Math.min(IG_WAVE_TOTAL_SEC - IG_WAVE_MIN_SEC, Math.floor(Number(pendingCommSong.startSec || 0))));
+          const endSec = (Number(pendingCommSong.endSec) > startSec) ? Math.min(IG_WAVE_TOTAL_SEC, Math.floor(Number(pendingCommSong.endSec))) : IG_WAVE_TOTAL_SEC;
           const isBgm = pendingCommSongMode === 'bgm';
           selEl.classList.remove('hidden');
           pickerEl.classList.add('hidden');
@@ -17923,29 +18482,29 @@
               <button type="button" id="btn-comm-song-change" class="px-2 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-[10.5px] font-bold text-slate-700 shrink-0">변경</button>
             </div>
             ${isBgm && ytId ? `<div class="space-y-2 pt-2 border-t border-slate-100">
-              <div class="flex items-center justify-between gap-2">
-                <div class="flex items-center gap-1.5">
-                  <span class="px-2 py-0.5 rounded-full bg-slate-950 text-white font-mono text-[10.5px] font-black" id="comm-song-range-label">${formatSongSec(startSec)} ~ ${formatSongSec(startSec + IG_WAVE_CLIP_SEC)}</span>
-                  <span class="text-[10px] font-semibold text-slate-400">좌우로 드래그해 구간 선택</span>
+              <div class="flex items-center justify-between gap-2 flex-wrap">
+                <div class="flex items-center gap-1.5 min-w-0">
+                  <span class="px-2 py-0.5 rounded-full bg-slate-950 text-white font-mono text-[10.5px] font-black whitespace-nowrap" id="comm-song-range-label">전체 (0:00 ~ 4:00)</span>
+                  <button type="button" data-wave-reset="1" class="px-1.5 py-0.5 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px] font-bold whitespace-nowrap">전체</button>
                 </div>
-                <button type="button" id="btn-comm-range-preview" data-yt-preview="${escapeHtml(ytId)}" data-yt-wrap="comm-song-range-yt-wrap" class="px-2.5 py-1 rounded-lg bg-slate-950 text-white text-[10px] font-bold whitespace-nowrap">▶ 구간 듣기</button>
+                <button type="button" id="btn-comm-range-preview" data-play-label="재생" data-yt-preview="${escapeHtml(ytId)}" data-yt-wrap="comm-song-range-yt-wrap" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-950 text-white text-[10.5px] font-bold whitespace-nowrap"><svg class="w-3 h-3 shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 4 20 12 6 20 6 4"/></svg><span>재생</span></button>
               </div>
-              <div id="ig-wave-track" class="ig-wave-track" role="slider" aria-label="30초 구간 선택 파형" aria-valuemin="0" aria-valuemax="${IG_WAVE_TOTAL_SEC - IG_WAVE_CLIP_SEC}" aria-valuenow="${startSec}">
+              <div id="ig-wave-track" class="ig-wave-track" aria-label="배경음악 재생 구간 선택 파형">
                 ${IG_WAVE_BAR_HEIGHTS.map(h => `<span class="ig-wave-bar" style="height:${h}%"></span>`).join('')}
-                <div id="ig-wave-window" class="ig-wave-window"></div>
+                <div id="ig-wave-window" class="ig-wave-window">
+                  <span class="ig-wave-handle ig-wave-handle-l" data-wave-handle="start" aria-label="시작 지점 조절"></span>
+                  <span class="ig-wave-handle ig-wave-handle-r" data-wave-handle="end" aria-label="끝 지점 조절"></span>
+                </div>
               </div>
               <div class="flex items-center justify-between text-[10px] font-semibold text-slate-400">
                 <span>0:00</span>
-                <div class="flex items-center gap-1">
-                  <button type="button" data-wave-nudge="-5" class="px-1.5 py-0.5 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold">-5초</button>
-                  <button type="button" data-wave-nudge="5" class="px-1.5 py-0.5 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold">+5초</button>
-                </div>
+                <span>양쪽 끝을 드래그해 구간 조절</span>
                 <span>4:00</span>
               </div>
               <div id="comm-song-range-yt-wrap" class="hidden"></div>
             </div>` : ''}
           </div>`;
-          if (isBgm && ytId) updateIgWaveUi(startSec);
+          if (isBgm && ytId) updateIgWaveUi(startSec, endSec);
         } else {
           selEl.classList.add('hidden');
           selEl.innerHTML = '';
@@ -18020,43 +18579,71 @@
         });
       });
 
-      let igWaveDragging = false;
-      function setIgWaveFromClientX(clientX) {
+      let igWaveDragMode = '';
+      let igWaveDragOriginX = 0;
+      let igWaveOrigStart = 0;
+      let igWaveOrigEnd = IG_WAVE_TOTAL_SEC;
+      function secFromTrackClientX(clientX) {
         const track = document.getElementById('ig-wave-track');
-        if (!track || !pendingCommSong) return;
+        if (!track) return 0;
         const rect = track.getBoundingClientRect();
-        if (!rect.width) return;
-        const halfWinRatio = (IG_WAVE_CLIP_SEC / IG_WAVE_TOTAL_SEC) / 2;
-        const ratio = Math.max(0, Math.min(1 - (IG_WAVE_CLIP_SEC / IG_WAVE_TOTAL_SEC), ((clientX - rect.left) / rect.width) - halfWinRatio));
-        const sec = Math.round(ratio * IG_WAVE_TOTAL_SEC);
-        updateIgWaveUi(sec);
+        if (!rect.width) return 0;
+        const ratio = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+        return Math.round(ratio * IG_WAVE_TOTAL_SEC);
       }
       document.getElementById('comm-song-panel')?.addEventListener('pointerdown', e => {
         const track = e.target.closest('#ig-wave-track');
-        if (!track) return;
-        igWaveDragging = true;
+        if (!track || !pendingCommSong) return;
+        const handleEl = e.target.closest('[data-wave-handle]');
+        igWaveOrigStart = Math.max(0, Math.floor(Number(pendingCommSong.startSec || 0)));
+        igWaveOrigEnd = (Number(pendingCommSong.endSec) > igWaveOrigStart) ? Math.floor(Number(pendingCommSong.endSec)) : IG_WAVE_TOTAL_SEC;
+        igWaveDragOriginX = e.clientX;
+        if (handleEl) {
+          igWaveDragMode = handleEl.dataset.waveHandle === 'end' ? 'end' : 'start';
+        } else if (e.target.closest('#ig-wave-window')) {
+          igWaveDragMode = 'move';
+        } else {
+          const clickedSec = secFromTrackClientX(e.clientX);
+          igWaveDragMode = Math.abs(clickedSec - igWaveOrigStart) <= Math.abs(clickedSec - igWaveOrigEnd) ? 'start' : 'end';
+          if (igWaveDragMode === 'start') updateIgWaveUi(Math.min(clickedSec, igWaveOrigEnd - IG_WAVE_MIN_SEC), igWaveOrigEnd);
+          else updateIgWaveUi(igWaveOrigStart, Math.max(clickedSec, igWaveOrigStart + IG_WAVE_MIN_SEC));
+        }
         try { track.setPointerCapture(e.pointerId); } catch {}
-        setIgWaveFromClientX(e.clientX);
       });
       document.getElementById('comm-song-panel')?.addEventListener('pointermove', e => {
-        if (!igWaveDragging) return;
-        setIgWaveFromClientX(e.clientX);
+        if (!igWaveDragMode || !pendingCommSong) return;
+        const track = document.getElementById('ig-wave-track');
+        if (!track) return;
+        const rect = track.getBoundingClientRect();
+        if (!rect.width) return;
+        if (igWaveDragMode === 'start') {
+          const sec = secFromTrackClientX(e.clientX);
+          updateIgWaveUi(Math.min(sec, igWaveOrigEnd - IG_WAVE_MIN_SEC), igWaveOrigEnd);
+        } else if (igWaveDragMode === 'end') {
+          const sec = secFromTrackClientX(e.clientX);
+          updateIgWaveUi(igWaveOrigStart, Math.max(sec, igWaveOrigStart + IG_WAVE_MIN_SEC));
+        } else if (igWaveDragMode === 'move') {
+          const deltaSec = Math.round(((e.clientX - igWaveDragOriginX) / rect.width) * IG_WAVE_TOTAL_SEC);
+          const span = igWaveOrigEnd - igWaveOrigStart;
+          const nextStart = Math.max(0, Math.min(IG_WAVE_TOTAL_SEC - span, igWaveOrigStart + deltaSec));
+          updateIgWaveUi(nextStart, nextStart + span);
+        }
       });
       function replayCommRangeIfActive() {
         const wrapEl = document.getElementById('comm-song-range-yt-wrap');
         const prevBtn = document.getElementById('btn-comm-range-preview');
         const ytId = extractYouTubeId(pendingCommSong?.ytMusicUrl);
         if (ytId && wrapEl && !wrapEl.classList.contains('hidden')) {
-          toggleYoutubePreview(ytId, prevBtn, wrapEl, Number(pendingCommSong?.startSec || 0), true);
+          toggleYoutubePreview(ytId, prevBtn, wrapEl, Number(pendingCommSong?.startSec || 0), true, Number(pendingCommSong?.endSec || 0));
         }
       }
       document.getElementById('comm-song-panel')?.addEventListener('pointerup', () => {
-        if (!igWaveDragging) return;
-        igWaveDragging = false;
+        if (!igWaveDragMode) return;
+        igWaveDragMode = '';
         replayCommRangeIfActive();
       });
       document.getElementById('comm-song-panel')?.addEventListener('pointercancel', () => {
-        igWaveDragging = false;
+        igWaveDragMode = '';
       });
       document.getElementById('comm-song-panel')?.addEventListener('click', e => {
         const modeBtn = e.target.closest('[data-comm-song-mode]');
@@ -18066,10 +18653,8 @@
           refreshCommSongPanel();
           return;
         }
-        const nudgeBtn = e.target.closest('[data-wave-nudge]');
-        if (nudgeBtn && pendingCommSong) {
-          const delta = Number(nudgeBtn.dataset.waveNudge || 0);
-          updateIgWaveUi(Number(pendingCommSong.startSec || 0) + delta);
+        if (e.target.closest('[data-wave-reset]') && pendingCommSong) {
+          updateIgWaveUi(0, IG_WAVE_TOTAL_SEC);
           replayCommRangeIfActive();
           return;
         }
@@ -18083,7 +18668,8 @@
         if (ytBtn) {
           const isRangeBtn = ytBtn.id === 'btn-comm-range-preview';
           const st = isRangeBtn ? Number(pendingCommSong?.startSec || 0) : 0;
-          toggleYoutubePreview(ytBtn.dataset.ytPreview, ytBtn, document.getElementById(ytBtn.dataset.ytWrap || 'comm-song-search-yt-wrap'), st);
+          const en = isRangeBtn ? Number(pendingCommSong?.endSec || 0) : 0;
+          toggleYoutubePreview(ytBtn.dataset.ytPreview, ytBtn, document.getElementById(ytBtn.dataset.ytWrap || 'comm-song-search-yt-wrap'), st, false, en);
           return;
         }
         const prevBtn = e.target.closest('[data-song-preview]');
@@ -18103,7 +18689,9 @@
             previewUrl: tr.previewUrl || '',
             spotifyUrl: tr.spotifyUrl || '',
             ytMusicUrl: tr.ytMusicUrl || '',
-            appleUrl: tr.appleUrl || ''
+            appleUrl: tr.appleUrl || '',
+            startSec: 0,
+            endSec: IG_WAVE_TOTAL_SEC
           };
           commSongResultsCache = [];
           const resEl = document.getElementById('comm-song-results');
