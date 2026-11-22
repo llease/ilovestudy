@@ -19231,30 +19231,53 @@
         navigator.serviceWorker.register('./sw.js', { scope: './' }).catch(() => {});
       }
       let deferredInstallPrompt = null;
-      const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+      const isStandalone = window.matchMedia('(display-mode: standalone)').matches
+        || window.matchMedia('(display-mode: fullscreen)').matches
+        || window.matchMedia('(display-mode: minimal-ui)').matches
+        || window.navigator.standalone === true
+        || (document.referrer || '').startsWith('android-app://');
       const ua = navigator.userAgent || '';
       const isKakaoInApp = /KAKAOTALK/i.test(ua);
       const isInAppBrowser = isKakaoInApp || /NAVER|Instagram|FBAN|FBAV|Line\/|Everytime/i.test(ua);
-      const isIOS = /iPhone|iPad|iPod/i.test(ua);
+      const isIOS = /iPhone|iPad|iPod/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+      const isIOSSafari = isIOS && /Safari/i.test(ua) && !/CriOS|FxiOS|EdgiOS|OPiOS|Whale/i.test(ua) && !isInAppBrowser;
       const isAndroid = /Android/i.test(ua);
       const isMobileWeb = isIOS || isAndroid;
       const pwaBanner = document.getElementById('pwa-install-banner');
       const authPwaHint = document.getElementById('auth-pwa-hint');
       const pwaMenuBtn = document.getElementById('pwa-menu-install-btn');
-      const DISMISS_KEY = storageScope + 'iluvstudy_install_dismissed';
+      const INSTALLED_KEY = storageScope + 'iluvstudy_pwa_installed';
       const APP_CANONICAL_URL = (location.protocol === 'http:' || location.protocol === 'https:') ? location.href.split('#')[0] : 'https://llease.github.io/ilovestudy/';
+
+      if (isStandalone) {
+        try { localStorage.setItem(INSTALLED_KEY, '1'); } catch (e) {}
+      }
+      function isAlreadyInstalled() {
+        if (isStandalone) return true;
+        try { return localStorage.getItem(INSTALLED_KEY) === '1'; } catch { return false; }
+      }
+      function hideAllInstallGuidance({ markInstalled = false } = {}) {
+        if (markInstalled) {
+          try { localStorage.setItem(INSTALLED_KEY, '1'); } catch (e) {}
+        }
+        if (pwaBanner) pwaBanner.classList.add('hidden');
+        if (authPwaHint) authPwaHint.classList.add('hidden');
+        if (markInstalled && pwaMenuBtn) pwaMenuBtn.classList.add('hidden');
+      }
 
       function copyAppLinkForBrowser() {
         const text = APP_CANONICAL_URL;
+        const targetName = isIOS ? 'Safari' : 'Chrome';
+        const okMsg = `앱 주소를 복사했어요! ${targetName} 주소창에 붙여넣어 열어주세요.`;
         if (navigator.clipboard && navigator.clipboard.writeText) {
           navigator.clipboard.writeText(text).then(() => {
-            showToast('앱 주소를 복사했어요! 크롬이나 사파리 주소창에 붙여넣어 열어주세요.', 'success');
-          }).catch(() => fallbackCopyAppLink(text));
+            showToast(okMsg, 'success');
+          }).catch(() => fallbackCopyAppLink(text, okMsg));
         } else {
-          fallbackCopyAppLink(text);
+          fallbackCopyAppLink(text, okMsg);
         }
       }
-      function fallbackCopyAppLink(text) {
+      function fallbackCopyAppLink(text, okMsg) {
         try {
           const ta = document.createElement('textarea');
           ta.value = text;
@@ -19263,7 +19286,7 @@
           ta.select();
           document.execCommand('copy');
           ta.remove();
-          showToast('앱 주소를 복사했어요! 크롬이나 사파리 주소창에 붙여넣어 열어주세요.', 'success');
+          showToast(okMsg, 'success');
         } catch {
           showToast('주소 복사: ' + text, 'info');
         }
@@ -19278,32 +19301,59 @@
       }
 
       function openDetailedPwaGuide(focusMode) {
-        const externalBtn = isAndroid
-          ? `<button type="button" data-pwa-open-chrome class="pwa-btn-primary">크롬으로 바로 열기</button>`
-          : '';
         const copyBtn = `<button type="button" data-pwa-copy-url class="pwa-btn-secondary">앱 주소 복사하기</button>`;
+        const chromeBtn = `<button type="button" data-pwa-open-chrome class="pwa-btn-primary">크롬으로 바로 열기</button>`;
         const installNowBtn = deferredInstallPrompt
           ? `<button type="button" data-pwa-install-now class="pwa-btn-primary">지금 바로 앱 설치하기</button>`
           : '';
-        const bodyHtml = `
-          <div class="space-y-3 text-left">
-            ${focusMode === 'inapp' ? `
-            <div class="pwa-modal-sec">
-              <h4>1단계 · 카톡(인앱 브라우저) 밖으로 나가기</h4>
-              <ol class="pwa-modal-list">
-                ${isIOS ? `
-                  <li><span class="pwa-step-num" style="background:#d97706">1</span><span>화면 <strong>오른쪽 아래 ⋯</strong> (또는 공유 아이콘)을 눌러주세요.</span></li>
-                  <li><span class="pwa-step-num" style="background:#d97706">2</span><span><strong>Safari로 열기</strong>(또는 기본 브라우저로 열기)를 선택하세요.</span></li>
-                  <li><span class="pwa-step-num" style="background:#d97706">3</span><span>메뉴가 안 보이면 아래 <strong>앱 주소 복사하기</strong>를 눌러 사파리에 붙여넣어도 돼요.</span></li>
-                ` : `
-                  <li><span class="pwa-step-num" style="background:#d97706">1</span><span>아래 <strong>크롬으로 바로 열기</strong> 버튼을 누르거나, 화면 <strong>오른쪽 아래 ⋮</strong>을 눌러주세요.</span></li>
-                  <li><span class="pwa-step-num" style="background:#d97706">2</span><span><strong>다른 브라우저로 열기</strong>(Chrome)를 선택하세요.</span></li>
-                  <li><span class="pwa-step-num" style="background:#d97706">3</span><span>크롬으로 열리면 아래 방법대로 5초 만에 앱처럼 설치할 수 있어요.</span></li>
-                `}
-              </ol>
-              <div class="pwa-guide-actions">${externalBtn}${copyBtn}</div>
-            </div>` : ''}
 
+        let sectionsHtml = '';
+        if (focusMode === 'inapp') {
+          sectionsHtml = isIOS ? `
+            <div class="pwa-modal-sec">
+              <h4>1단계 · 카톡에서 Safari로 열기</h4>
+              <ol class="pwa-modal-list">
+                <li><span class="pwa-step-num" style="background:#d97706">1</span><span>화면 <strong>오른쪽 아래 ⋯</strong>(또는 공유 아이콘)을 눌러주세요.</span></li>
+                <li><span class="pwa-step-num" style="background:#d97706">2</span><span><strong>Safari로 열기</strong>(또는 기본 브라우저로 열기)를 선택하세요.</span></li>
+                <li><span class="pwa-step-num" style="background:#d97706">3</span><span>메뉴가 안 보이면 아래 <strong>앱 주소 복사하기</strong>를 눌러 Safari 주소창에 붙여넣어 주세요.</span></li>
+              </ol>
+              <div class="pwa-guide-actions">${copyBtn}</div>
+            </div>
+            <div class="pwa-modal-sec">
+              <h4>2단계 · Safari에서 홈 화면에 추가</h4>
+              <ol class="pwa-modal-list">
+                <li><span class="pwa-step-num">1</span><span>Safari <strong>맨 아래 가운데 공유 버튼(□↑)</strong>을 눌러주세요.</span></li>
+                <li><span class="pwa-step-num">2</span><span>아래로 내려 <strong>홈 화면에 추가</strong> → 오른쪽 위 <strong>추가</strong>를 누르면 완료!</span></li>
+              </ol>
+            </div>` : `
+            <div class="pwa-modal-sec">
+              <h4>1단계 · 카톡에서 크롬(외부 브라우저)으로 열기</h4>
+              <ol class="pwa-modal-list">
+                <li><span class="pwa-step-num" style="background:#d97706">1</span><span>아래 <strong>크롬으로 바로 열기</strong> 버튼을 누르거나, 화면 <strong>오른쪽 아래 ⋮</strong>을 눌러주세요.</span></li>
+                <li><span class="pwa-step-num" style="background:#d97706">2</span><span><strong>다른 브라우저로 열기</strong>(Chrome)를 선택하세요.</span></li>
+              </ol>
+              <div class="pwa-guide-actions">${chromeBtn}${copyBtn}</div>
+            </div>
+            <div class="pwa-modal-sec">
+              <h4>2단계 · 크롬에서 홈 화면에 앱 설치</h4>
+              <ol class="pwa-modal-list">
+                <li><span class="pwa-step-num">1</span><span>크롬이 열리면 상단 <strong>앱 설치</strong> 버튼을 눌러주세요.</span></li>
+                <li><span class="pwa-step-num">2</span><span>버튼이 안 보이면 오른쪽 위 <strong>⋮ 메뉴 → 앱 설치</strong>(또는 홈 화면에 추가)를 선택하면 끝!</span></li>
+              </ol>
+            </div>`;
+        } else if (focusMode === 'ios-non-safari') {
+          sectionsHtml = `
+            <div class="pwa-modal-sec">
+              <h4>아이폰은 Safari에서 설치해야 해요</h4>
+              <ol class="pwa-modal-list">
+                <li><span class="pwa-step-num" style="background:#d97706">1</span><span>아래 <strong>앱 주소 복사하기</strong>를 눌러 주소를 복사해 주세요.</span></li>
+                <li><span class="pwa-step-num">2</span><span>아이폰 기본 <strong>Safari</strong> 앱을 열고 주소창에 붙여넣어 이동하세요.</span></li>
+                <li><span class="pwa-step-num">3</span><span>하단 <strong>공유 버튼(□↑) → 홈 화면에 추가 → 추가</strong>를 누르면 바탕화면에 앱이 생겨요.</span></li>
+              </ol>
+              <div class="pwa-guide-actions">${copyBtn}</div>
+            </div>`;
+        } else if (isIOS) {
+          sectionsHtml = `
             <div class="pwa-modal-sec">
               <h4>아이폰 (Safari) 앱 설치 방법</h4>
               <ol class="pwa-modal-list">
@@ -19311,21 +19361,26 @@
                 <li><span class="pwa-step-num">2</span><span>메뉴를 아래로 조금 내려 <strong>홈 화면에 추가</strong>를 선택하세요.</span></li>
                 <li><span class="pwa-step-num">3</span><span>오른쪽 위 <strong>추가</strong>를 누르면 바탕화면에 <strong>I LOVE STUDY</strong> 앱 아이콘이 생겨요.</span></li>
               </ol>
-            </div>
-
+            </div>`;
+        } else {
+          sectionsHtml = `
             <div class="pwa-modal-sec">
-              <h4>안드로이드 (Chrome · 삼성 인터넷) 앱 설치 방법</h4>
+              <h4>안드로이드 (Chrome) 앱 설치 방법</h4>
               <ol class="pwa-modal-list">
-                <li><span class="pwa-step-num">1</span><span>화면 상단의 <strong>앱 설치</strong> 버튼을 누르면 바로 설치돼요.</span></li>
-                <li><span class="pwa-step-num">2</span><span>버튼이 안 보이면 브라우저 <strong>오른쪽 위 ⋮ 메뉴 → 앱 설치</strong>(또는 <strong>홈 화면에 추가</strong>)를 눌러주세요.</span></li>
+                <li><span class="pwa-step-num">1</span><span>아래 <strong>지금 바로 앱 설치</strong> 버튼을 누르거나,</span></li>
+                <li><span class="pwa-step-num">2</span><span>크롬 화면 <strong>오른쪽 위 ⋮ 메뉴 → 앱 설치</strong>(또는 <strong>홈 화면에 추가</strong>)를 선택하세요.</span></li>
                 <li><span class="pwa-step-num">3</span><span>바탕화면 아이콘으로 열면 전체 화면 앱처럼 쾌적하게 쓸 수 있어요.</span></li>
               </ol>
               ${installNowBtn ? `<div class="pwa-guide-actions">${installNowBtn}</div>` : ''}
-            </div>
+            </div>`;
+        }
 
+        const bodyHtml = `
+          <div class="space-y-3 text-left">
+            ${sectionsHtml}
             <p class="text-[11px] text-slate-500 leading-relaxed">홈 화면에 앱으로 설치해 두면 자동 로그인 유지, 전체 화면 타이머, 알림까지 훨씬 안정적으로 작동해요. 잘 안 되면 관리자에게 편하게 물어봐 주세요!</p>
           </div>`;
-        openModal('홈 화면 앱 설치 안내', bodyHtml);
+        openModal(isIOS ? '아이폰 앱 설치 안내' : '안드로이드 앱 설치 안내', bodyHtml);
         const box = document.getElementById('modal-body');
         box?.querySelector('[data-pwa-open-chrome]')?.addEventListener('click', openInAndroidChrome);
         box?.querySelector('[data-pwa-copy-url]')?.addEventListener('click', copyAppLinkForBrowser);
@@ -19333,57 +19388,77 @@
       }
 
       function buildPwaCardMarkup(mode, { compact = false, closable = true } = {}) {
-        const isInApp = mode === 'inapp';
-        const iconSvg = isInApp
+        const isWarn = mode === 'inapp' || mode === 'ios-non-safari';
+        const iconSvg = isWarn
           ? `<svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>`
           : `<svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>`;
-        const badgeText = isInApp ? '필수 안내 · 외부 브라우저로 열기' : '추천 · 홈 화면에 앱으로 설치';
-        const titleText = isInApp
-          ? (isKakaoInApp ? '카톡 안에서는 설치가 안 돼요! 크롬·사파리로 열어주세요' : '크롬이나 사파리 브라우저로 열어주세요')
-          : (isIOS ? '아이폰 홈 화면에 앱으로 추가해 보세요' : '바탕화면에 앱 아이콘을 추가해 보세요');
-        const subText = isInApp
-          ? '카톡 인앱 브라우저에서는 앱 설치·알림·전체 화면이 제한돼요.'
-          : '홈 화면에 추가해 두면 일반 앱처럼 전체 화면과 알림을 편하게 쓸 수 있어요.';
 
+        let badgeText = '추천 · 홈 화면에 앱으로 설치';
+        let titleText = '';
+        let subText = '';
         let stepsHtml = '';
-        if (isInApp) {
+        let actionsHtml = '';
+
+        if (mode === 'inapp') {
+          badgeText = isIOS ? '필수 안내 · Safari로 열기' : '필수 안내 · 외부 브라우저(크롬)로 열기';
+          titleText = isIOS
+            ? (isKakaoInApp ? '카톡에서 열었어요! Safari로 열어주세요' : '외부 브라우저(Safari)로 열어주세요')
+            : (isKakaoInApp ? '카톡에서 열었어요! 크롬(다른 브라우저)으로 열어주세요' : '크롬(외부 브라우저)으로 열어주세요');
+          subText = '인앱 브라우저에서는 홈 화면 설치와 알림이 제한돼요.';
           stepsHtml = isIOS
             ? `<div class="pwa-guide-steps">
                 <div class="pwa-step-row"><span class="pwa-step-num">1</span><span>화면 <strong>오른쪽 아래 ⋯</strong>(또는 공유) → <strong>Safari로 열기</strong> 선택</span></div>
-                <div class="pwa-step-row"><span class="pwa-step-num">2</span><span>사파리 하단 <strong>공유(□↑)</strong> → <strong>홈 화면에 추가</strong> 누르면 완료!</span></div>
+                <div class="pwa-step-row"><span class="pwa-step-num">2</span><span>Safari 하단 <strong>공유(□↑)</strong> → <strong>홈 화면에 추가</strong> 누르면 완료!</span></div>
               </div>`
             : `<div class="pwa-guide-steps">
-                <div class="pwa-step-row"><span class="pwa-step-num">1</span><span>아래 <strong>크롬으로 바로 열기</strong> 버튼 또는 우측 하단 <strong>⋮ → 다른 브라우저로 열기</strong></span></div>
-                <div class="pwa-step-row"><span class="pwa-step-num">2</span><span>크롬이 열리면 <strong>앱 설치</strong> 버튼을 눌러 홈 화면에 추가해요</span></div>
+                <div class="pwa-step-row"><span class="pwa-step-num">1</span><span>아래 <strong>크롬으로 바로 열기</strong> 또는 우측 하단 <strong>⋮ → 다른 브라우저로 열기</strong></span></div>
+                <div class="pwa-step-row"><span class="pwa-step-num">2</span><span>크롬이 열리면 상단 <strong>앱 설치</strong> 버튼을 눌러 홈 화면에 추가해요</span></div>
               </div>`;
-        } else if (isIOS) {
+          actionsHtml = isIOS
+            ? `<button type="button" data-pwa-copy-url class="pwa-btn-primary">앱 주소 복사</button>
+               <button type="button" data-pwa-open-guide class="pwa-btn-secondary">자세한 방법</button>`
+            : `<button type="button" data-pwa-open-chrome class="pwa-btn-primary">크롬으로 바로 열기</button>
+               <button type="button" data-pwa-copy-url class="pwa-btn-secondary">주소 복사</button>
+               <button type="button" data-pwa-open-guide class="pwa-btn-secondary">자세한 방법</button>`;
+        } else if (mode === 'ios-non-safari') {
+          badgeText = '안내 · 아이폰은 Safari 권장';
+          titleText = '아이폰은 Safari에서 열어야 앱으로 설치돼요';
+          subText = '주소를 복사해 Safari에서 열면 홈 화면에 바로 추가할 수 있어요.';
           stepsHtml = `<div class="pwa-guide-steps">
-              <div class="pwa-step-row"><span class="pwa-step-num">1</span><span>사파리 <strong>맨 아래 가운데 공유 버튼(□↑)</strong> 터치</span></div>
+              <div class="pwa-step-row"><span class="pwa-step-num">1</span><span>아래 <strong>앱 주소 복사</strong>를 눌러 <strong>Safari</strong> 주소창에 붙여넣기</span></div>
+              <div class="pwa-step-row"><span class="pwa-step-num">2</span><span>Safari 하단 <strong>공유(□↑)</strong> → <strong>홈 화면에 추가</strong> 선택</span></div>
+            </div>`;
+          actionsHtml = `
+            <button type="button" data-pwa-copy-url class="pwa-btn-primary">앱 주소 복사</button>
+            <button type="button" data-pwa-open-guide class="pwa-btn-secondary">자세한 방법</button>
+            <button type="button" data-pwa-already-installed class="pwa-btn-secondary">이미 설치했어요</button>`;
+        } else if (mode === 'ios') {
+          badgeText = '아이폰 Safari · 홈 화면 앱 설치';
+          titleText = 'Safari에서 홈 화면에 앱으로 추가하세요';
+          subText = '홈 화면 아이콘으로 열면 전체 화면과 알림을 편하게 쓸 수 있어요.';
+          stepsHtml = `<div class="pwa-guide-steps">
+              <div class="pwa-step-row"><span class="pwa-step-num">1</span><span>Safari <strong>맨 아래 가운데 공유 버튼(□↑)</strong> 터치</span></div>
               <div class="pwa-step-row"><span class="pwa-step-num">2</span><span>아래로 내려 <strong>홈 화면에 추가</strong> → 우측 상단 <strong>추가</strong> 터치</span></div>
             </div>`;
+          actionsHtml = `
+            <button type="button" data-pwa-open-guide class="pwa-btn-primary">설치 방법 자세히 보기</button>
+            <button type="button" data-pwa-already-installed class="pwa-btn-secondary">이미 설치했어요</button>`;
         } else {
+          badgeText = '안드로이드 Chrome · 홈 화면 앱 설치';
+          titleText = '크롬에서 홈 화면에 앱을 설치하세요';
+          subText = '바탕화면 아이콘으로 열면 일반 앱처럼 전체 화면과 알림이 작동해요.';
           stepsHtml = deferredInstallPrompt
             ? `<div class="pwa-guide-steps">
                 <div class="pwa-step-row"><span class="pwa-step-num">1</span><span>아래 <strong>지금 바로 앱 설치</strong> 버튼을 한 번만 누르면 홈 화면에 바로 추가돼요</span></div>
               </div>`
             : `<div class="pwa-guide-steps">
-                <div class="pwa-step-row"><span class="pwa-step-num">1</span><span>브라우저 <strong>오른쪽 위 ⋮ 메뉴</strong> 터치 → <strong>앱 설치</strong> 또는 <strong>홈 화면에 추가</strong> 선택</span></div>
+                <div class="pwa-step-row"><span class="pwa-step-num">1</span><span>크롬 <strong>오른쪽 위 ⋮ 메뉴</strong> 터치 → <strong>앱 설치</strong> 또는 <strong>홈 화면에 추가</strong> 선택</span></div>
               </div>`;
-        }
-
-        let actionsHtml = '';
-        if (isInApp) {
-          actionsHtml = `
-            ${isAndroid ? `<button type="button" data-pwa-open-chrome class="pwa-btn-primary">크롬으로 바로 열기</button>` : ''}
-            <button type="button" data-pwa-copy-url class="${isAndroid ? 'pwa-btn-secondary' : 'pwa-btn-primary'}">앱 주소 복사</button>
-            <button type="button" data-pwa-open-guide class="pwa-btn-secondary">자세한 방법</button>`;
-        } else if (deferredInstallPrompt) {
-          actionsHtml = `
-            <button type="button" data-pwa-install-now class="pwa-btn-primary">지금 바로 앱 설치</button>
-            <button type="button" data-pwa-open-guide class="pwa-btn-secondary">설치 방법 보기</button>`;
-        } else {
-          actionsHtml = `
-            <button type="button" data-pwa-open-guide class="pwa-btn-primary">설치 방법 자세히 보기</button>`;
+          actionsHtml = deferredInstallPrompt
+            ? `<button type="button" data-pwa-install-now class="pwa-btn-primary">지금 바로 앱 설치</button>
+               <button type="button" data-pwa-already-installed class="pwa-btn-secondary">이미 설치했어요</button>`
+            : `<button type="button" data-pwa-open-guide class="pwa-btn-primary">설치 방법 자세히 보기</button>
+               <button type="button" data-pwa-already-installed class="pwa-btn-secondary">이미 설치했어요</button>`;
         }
 
         return `
@@ -19405,37 +19480,42 @@
         container.querySelector('[data-pwa-copy-url]')?.addEventListener('click', copyAppLinkForBrowser);
         container.querySelector('[data-pwa-install-now]')?.addEventListener('click', triggerPwaInstall);
         container.querySelector('[data-pwa-open-guide]')?.addEventListener('click', () => openDetailedPwaGuide(mode));
+        container.querySelector('[data-pwa-already-installed]')?.addEventListener('click', () => {
+          hideAllInstallGuidance({ markInstalled: true });
+          showToast('설치 안내를 다시 표시하지 않을게요.', 'info');
+        });
         container.querySelector('[data-pwa-close]')?.addEventListener('click', () => {
           container.classList.add('hidden');
-          if (mode !== 'inapp') {
-            try { localStorage.setItem(DISMISS_KEY, '1'); } catch (e) {}
-          }
         });
       }
 
+      function detectPwaGuideMode() {
+        if (isAlreadyInstalled()) return '';
+        if (isInAppBrowser) return 'inapp';
+        if (isIOS) return isIOSSafari ? 'ios' : 'ios-non-safari';
+        if (isAndroid) return 'android';
+        return '';
+      }
+
       function renderInstallGuidance(mode) {
-        if (isStandalone) {
-          if (pwaBanner) pwaBanner.classList.add('hidden');
-          if (authPwaHint) authPwaHint.classList.add('hidden');
+        if (isAlreadyInstalled()) {
+          hideAllInstallGuidance({ markInstalled: isStandalone });
           return;
         }
-        const effectiveMode = mode || (isInAppBrowser ? 'inapp' : (isIOS ? 'ios' : (deferredInstallPrompt || isAndroid ? 'android' : '')));
+        const effectiveMode = mode || detectPwaGuideMode();
         if (!effectiveMode) return;
-        if (pwaMenuBtn) pwaMenuBtn.classList.remove('hidden');
+        if (pwaMenuBtn && isMobileWeb) pwaMenuBtn.classList.remove('hidden');
 
-        // Always show in-app browser warning on login screen AND main screen; for normal web, respect dismiss on main screen
-        let dismissed = false;
-        try { dismissed = localStorage.getItem(DISMISS_KEY) === '1'; } catch (e) {}
-        const cardDataMode = effectiveMode === 'inapp' ? 'inapp' : 'install';
+        const cardDataMode = (effectiveMode === 'inapp' || effectiveMode === 'ios-non-safari') ? 'inapp' : 'install';
 
-        if (authPwaHint && (effectiveMode === 'inapp' || isMobileWeb || deferredInstallPrompt)) {
+        if (authPwaHint && (effectiveMode === 'inapp' || isMobileWeb)) {
           authPwaHint.dataset.mode = cardDataMode;
           authPwaHint.innerHTML = buildPwaCardMarkup(effectiveMode, { compact: true, closable: effectiveMode !== 'inapp' });
           authPwaHint.classList.remove('hidden');
           bindPwaCardActions(authPwaHint, effectiveMode);
         }
 
-        if (pwaBanner && (effectiveMode === 'inapp' || !dismissed)) {
+        if (pwaBanner) {
           pwaBanner.dataset.mode = cardDataMode;
           pwaBanner.innerHTML = buildPwaCardMarkup(effectiveMode, { compact: false, closable: true });
           pwaBanner.classList.remove('hidden');
@@ -19443,23 +19523,31 @@
         }
       }
 
-      if (!isStandalone) {
-        if (isInAppBrowser) renderInstallGuidance('inapp');
-        else if (isIOS) renderInstallGuidance('ios');
-        else if (isAndroid) renderInstallGuidance('android');
+      // Check installed related apps on Android Chrome so already-installed users are never nagged
+      if (!isAlreadyInstalled() && typeof navigator.getInstalledRelatedApps === 'function') {
+        navigator.getInstalledRelatedApps().then(apps => {
+          if (Array.isArray(apps) && apps.length > 0) {
+            hideAllInstallGuidance({ markInstalled: true });
+          }
+        }).catch(() => {});
+      }
+
+      if (!isAlreadyInstalled()) {
+        const initialMode = detectPwaGuideMode();
+        if (initialMode) renderInstallGuidance(initialMode);
       }
 
       window.addEventListener('beforeinstallprompt', e => {
         e.preventDefault();
         deferredInstallPrompt = e;
-        renderInstallGuidance(isInAppBrowser ? 'inapp' : 'android');
+        if (!isAlreadyInstalled() && isAndroid) {
+          renderInstallGuidance(isInAppBrowser ? 'inapp' : 'android');
+        }
       });
 
       window.addEventListener('appinstalled', () => {
         deferredInstallPrompt = null;
-        if (pwaBanner) pwaBanner.classList.add('hidden');
-        if (authPwaHint) authPwaHint.classList.add('hidden');
-        if (pwaMenuBtn) pwaMenuBtn.classList.add('hidden');
+        hideAllInstallGuidance({ markInstalled: true });
         showToast('I LOVE STUDY 앱이 홈 화면에 설치되었습니다!', 'success');
       });
 
@@ -19469,11 +19557,10 @@
           const { outcome } = await deferredInstallPrompt.userChoice;
           if (outcome === 'accepted') {
             deferredInstallPrompt = null;
-            if (pwaBanner) pwaBanner.classList.add('hidden');
-            if (authPwaHint) authPwaHint.classList.add('hidden');
+            hideAllInstallGuidance({ markInstalled: true });
           }
         } else {
-          openDetailedPwaGuide(isInAppBrowser ? 'inapp' : (isIOS ? 'ios' : 'android'));
+          openDetailedPwaGuide(detectPwaGuideMode() || (isIOS ? 'ios' : 'android'));
         }
       }
 
