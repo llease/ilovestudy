@@ -77,11 +77,11 @@
       gap: clamp(16px, 1.75vw, 22px);
     }
     .member-card {
-      --member-card-padding: clamp(9px, 1.35vw, 15px);
+      --member-card-padding: clamp(8px, 1.15vw, 12px);
       --member-portrait-size: 38px;
       --member-portrait-inset: 5px;
-      --member-identity-height: 72px;
-      --member-portrait-drop: 12px;
+      --member-identity-height: 58px;
+      --member-portrait-drop: 8px;
       --member-name-inset: calc(var(--member-portrait-size) + 16px);
       position: relative;
       display: grid;
@@ -96,7 +96,7 @@
     .member-card-details {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 6px;
       position: relative;
       isolation: isolate;
       min-width: 0;
@@ -352,8 +352,8 @@
 
     .member-study {
       display: grid;
-      gap: 5px;
-      padding: 8px 10px 9px;
+      gap: 3px;
+      padding: 6px 9px 7px;
       border: 1px solid var(--line);
       border-radius: 11px;
       background: var(--soft);
@@ -400,13 +400,13 @@
       .member-card {
         --member-portrait-size: 32px;
         --member-portrait-inset: 4px;
-        --member-identity-height: 60px;
-        --member-portrait-drop: 8px;
+        --member-identity-height: 50px;
+        --member-portrait-drop: 5px;
         --member-name-inset: calc(var(--member-portrait-size) + 12px);
       }
       .member-card[data-has-menu] .member-identity { padding-right: 24px; }
       .member-portrait-flame { transform: translate(-50%, -57%) scale(.88); }
-      .member-rank-line { min-height: 2.9em; align-content: flex-start; }
+      .member-rank-line { min-height: 2.2em; align-content: flex-start; }
     }
     .member-study-time small { margin-left: 1px; color: var(--muted); font-size: .64em; letter-spacing: 0; }
     @media (prefers-reduced-motion: reduce) {
@@ -16864,8 +16864,10 @@
       });
 
       // =========================================================================
-      // RECOMMENDED SONG ENGINE (iTunes Search + 30s Preview + Music App Links)
+      // RECOMMENDED SONG ENGINE (Spotify Proxy + Odesli Direct Links + Fallback)
       // =========================================================================
+      // Cloudflare Worker 배포 후 아래 따옴표 안에 Worker 주소를 넣으면 스포티파이 공식 검색 + 유튜브 뮤직·애플뮤직 직링크가 활성화됩니다.
+      const MUSIC_PROXY_URL = 'https://bitter-darkness-2598.donghyun060324.workers.dev';
       let songPreviewAudio = null;
       let songPreviewActiveBtn = null;
       let songPreviewActiveUrl = '';
@@ -16883,8 +16885,8 @@
         const q = encodeURIComponent(`${song?.artist || ''} ${song?.title || ''}`.trim());
         return {
           melon: `https://www.melon.com/search/total/index.htm?q=${q}`,
-          spotify: `https://open.spotify.com/search/${q}`,
-          ytMusic: `https://music.youtube.com/search?q=${q}`,
+          spotify: safeSongUrl(song?.spotifyUrl) || `https://open.spotify.com/search/${q}`,
+          ytMusic: safeSongUrl(song?.ytMusicUrl) || `https://music.youtube.com/search?q=${q}`,
           apple: safeSongUrl(song?.appleUrl) || `https://music.apple.com/kr/search?term=${q}`
         };
       }
@@ -17209,6 +17211,52 @@
 
         const artistAlias = resolveArtistAlias(artistQ);
         try {
+          // 0. If Cloudflare Worker (Spotify official search) is configured, use it first!
+          const proxyBase = String(MUSIC_PROXY_URL || '').trim().replace(/\/+$/, '');
+          if (proxyBase) {
+            try {
+              const spUrl = `${proxyBase}/search?title=${encodeURIComponent(titleQ)}&artist=${encodeURIComponent(artistQ)}`;
+              const spResp = await fetch(spUrl, songSearchAbort ? { signal: songSearchAbort.signal } : undefined);
+              if (spResp.ok) {
+                const spData = await spResp.json();
+                if (seq !== songSearchSeq) return;
+                const spTracks = (spData.tracks || []).filter(t => t && t.title).map(t => ({
+                  title: String(t.title || '').trim(),
+                  artist: String(t.artist || '').trim(),
+                  artworkUrl: safeSongUrl(String(t.artworkUrl || '')),
+                  previewUrl: safeSongUrl(String(t.previewUrl || '')),
+                  spotifyUrl: safeSongUrl(String(t.spotifyUrl || '')),
+                  ytMusicUrl: safeSongUrl(String(t.ytMusicUrl || '')),
+                  appleUrl: safeSongUrl(String(t.appleUrl || '')),
+                  popularity: Number(t.popularity || 0)
+                }));
+                songSearchResultsCache = spTracks;
+                if (!spTracks.length) {
+                  resEl.innerHTML = '<p class="text-[11px] text-slate-400 px-1 py-2">검색 결과가 없어요. 제목·가수를 입력하고 [직접 저장]을 눌러도 등록돼요.</p>';
+                  return;
+                }
+                resEl.innerHTML = spTracks.map((tr, idx) => `<div class="flex items-center justify-between gap-2 p-2 rounded-xl bg-slate-50 border border-slate-200 hover:border-slate-300 transition">
+                  <div class="flex items-center gap-2.5 min-w-0 flex-1">
+                    <div class="w-10 h-10 rounded-lg bg-slate-200 overflow-hidden flex items-center justify-center text-sm shrink-0">
+                      ${tr.artworkUrl ? `<img src="${escapeHtml(tr.artworkUrl)}" alt="" class="w-full h-full object-cover" loading="lazy">` : '🎵'}
+                    </div>
+                    <div class="min-w-0 flex-1">
+                      <p class="text-xs font-black text-slate-900 truncate">${escapeHtml(tr.title)}</p>
+                      <p class="text-[11px] font-semibold text-slate-500 truncate">${escapeHtml(tr.artist)}</p>
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-1 shrink-0">
+                    ${tr.previewUrl ? `<button type="button" data-song-preview="${escapeHtml(tr.previewUrl)}" data-preview-compact="1" aria-label="미리듣기" aria-pressed="false" class="w-7 h-7 rounded-lg bg-white border border-slate-300 hover:bg-slate-100 text-[11px] font-bold text-slate-700 flex items-center justify-center">▶</button>` : ''}
+                    <button type="button" data-pick-song-idx="${idx}" class="px-2.5 py-1.5 rounded-lg ed-btn-accent text-[11px] font-black whitespace-nowrap">선택</button>
+                  </div>
+                </div>`).join('');
+                return;
+              }
+            } catch (spErr) {
+              if (spErr && spErr.name === 'AbortError') return;
+            }
+          }
+
           const queries = [];
           if (artistQ && !titleQ) {
             // Artist-only search: strictly use artistTerm + Korean/English alias
@@ -17339,13 +17387,16 @@
           const tm = getTargetProfileMember();
           if (!tr || !tm) return;
           stopSongPreview();
+          const savedAt = Date.now();
           tm.recommendedSong = {
             title: tr.title,
             artist: tr.artist,
-            artworkUrl: tr.artworkUrl,
-            previewUrl: tr.previewUrl,
-            appleUrl: tr.appleUrl,
-            updatedAt: Date.now()
+            artworkUrl: tr.artworkUrl || '',
+            previewUrl: tr.previewUrl || '',
+            spotifyUrl: tr.spotifyUrl || '',
+            ytMusicUrl: tr.ytMusicUrl || '',
+            appleUrl: tr.appleUrl || '',
+            updatedAt: savedAt
           };
           const titleInp = document.getElementById('profile-song-title-input');
           const artistInp = document.getElementById('profile-song-artist-input');
@@ -17357,6 +17408,22 @@
           saveSharedData();
           renderAll();
           showToast(`🎵 "${tr.title}"을(를) 추천 노래로 설정했어요!`, 'success');
+
+          // 유튜브 뮤직/스포티파이 직링크가 있고 Worker가 연결되어 있으면 타 플랫폼 직링크도 백그라운드로 보강
+          const proxyBase = String(MUSIC_PROXY_URL || '').trim().replace(/\/+$/, '');
+          const seedUrl = tr.ytMusicUrl || tr.spotifyUrl;
+          if (proxyBase && seedUrl) {
+            fetch(`${proxyBase}/links?url=${encodeURIComponent(seedUrl)}`)
+              .then(r => r.ok ? r.json() : null)
+              .then(links => {
+                if (!links || !tm.recommendedSong || tm.recommendedSong.updatedAt !== savedAt) return;
+                let updated = false;
+                if (safeSongUrl(links.spotifyUrl) && !tm.recommendedSong.spotifyUrl) { tm.recommendedSong.spotifyUrl = safeSongUrl(links.spotifyUrl); updated = true; }
+                if (safeSongUrl(links.ytMusicUrl) && !tm.recommendedSong.ytMusicUrl) { tm.recommendedSong.ytMusicUrl = safeSongUrl(links.ytMusicUrl); updated = true; }
+                if (safeSongUrl(links.appleUrl) && !tm.recommendedSong.appleUrl) { tm.recommendedSong.appleUrl = safeSongUrl(links.appleUrl); updated = true; }
+                if (updated) { saveSharedData(); renderAll(); }
+              }).catch(() => {});
+          }
         }
       });
 
