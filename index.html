@@ -3611,7 +3611,7 @@
               </div>
             </div>
           </div>
-          <button id="mute-all-alerts-btn" type="button" class="w-full flex items-center justify-between px-2.5 py-2 rounded-xl hover:bg-slate-100 text-xs font-bold text-slate-700 whitespace-nowrap"><span class="inline-flex items-center gap-1.5"><svg class="comm-svg-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 5 2 7 2 7H4s2-2 2-7"/><path d="M10 19a2 2 0 0 0 4 0"/></svg><span>전체 알림 켜짐 (타이머 제외)</span></span></button>
+          <button id="mute-all-alerts-btn" type="button" class="w-full flex items-center justify-between px-2.5 py-2 rounded-xl hover:bg-slate-100 text-xs font-bold text-slate-700 whitespace-nowrap"><span class="inline-flex items-center gap-1.5"><svg class="comm-svg-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 5 2 7 2 7H4s2-2 2-7"/><path d="M10 19a2 2 0 0 0 4 0"/></svg><span>알림 켬</span></span></button>
           <button id="encourage-menu-btn" type="button" class="w-full flex items-center justify-between px-2.5 py-2 rounded-xl hover:bg-slate-100 text-xs font-bold text-slate-700 whitespace-nowrap"><span class="inline-flex items-center gap-1.5"><svg class="comm-svg-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20.5s-7.5-4.6-9.4-9.1C1.3 8.1 3.3 5 6.6 5c2 0 3.6 1.1 5.4 3 1.8-1.9 3.4-3 5.4-3 3.3 0 5.3 3.1 4 6.4-1.9 4.5-9.4 9.1-9.4 9.1z"/></svg><span>격려해주세요</span></span></button>
           <button id="suggest-btn" type="button" class="w-full flex items-center justify-between px-2.5 py-2 rounded-xl hover:bg-slate-100 text-xs font-bold text-slate-700 whitespace-nowrap"><span class="inline-flex items-center gap-1.5"><svg class="comm-svg-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-12.5 7.5L3 20.5l1.6-4.8A8.5 8.5 0 1 1 21 11.5z"/></svg><span>관리자에게 건의하기</span></span></button>
           <button id="pwa-menu-install-btn" type="button" class="hidden w-full flex items-center justify-between px-2.5 py-2 rounded-xl hover:bg-slate-100 text-xs font-bold text-indigo-600 whitespace-nowrap"><span class="inline-flex items-center gap-1.5"><svg class="comm-svg-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0-4-4m4 4 4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg><span>홈 화면에 앱 설치</span></span></button>
@@ -4042,9 +4042,8 @@
           </div>
           <div id="comm-song-selected" class="hidden"></div>
           <div id="comm-song-picker-area" class="space-y-1.5">
-            <div class="grid grid-cols-2 gap-1.5">
-              <input id="comm-song-title-input" type="text" maxlength="60" placeholder="노래 제목" class="w-full min-w-0 rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-900" />
-              <input id="comm-song-artist-input" type="text" maxlength="40" placeholder="가수 이름" class="w-full min-w-0 rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-900" />
+            <div>
+              <input id="comm-song-title-input" type="text" maxlength="80" placeholder="노래 · 가수 정보 입력" class="w-full min-w-0 rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-900" />
             </div>
             <div id="comm-song-search-yt-wrap" class="hidden"></div>
             <div id="comm-song-results" class="hidden space-y-1.5 max-h-56 overflow-y-auto pt-0.5"></div>
@@ -4210,17 +4209,14 @@
       <section id="profile-song-box" class="ed-card profile-card profile-song-card space-y-3" aria-label="나의 추천 노래">
         <div class="flex items-center justify-between gap-2 flex-wrap">
           <span class="inline-flex items-center gap-1.5 text-xs font-black text-slate-900"><svg class="comm-svg-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V6l11-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="17.5" cy="16" r="2.5"/></svg><span>나의 추천 노래</span></span>
-          <span class="text-[10px] font-semibold text-slate-400">1곡 설정 · 라운지·상세 기록에 계속 표시</span>
         </div>
         <div id="profile-song-current"></div>
         <form id="profile-song-form" class="space-y-2" autocomplete="off">
-          <div class="grid grid-cols-2 gap-1.5">
-            <label for="profile-song-title-input" class="sr-only">노래 제목</label>
-            <input id="profile-song-title-input" type="text" maxlength="60" placeholder="노래 제목" class="w-full min-w-0 rounded-xl border border-slate-300 bg-white px-2.5 py-2 text-xs font-semibold text-slate-900 focus:outline-none focus:border-slate-900" />
-            <label for="profile-song-artist-input" class="sr-only">가수 이름</label>
-            <input id="profile-song-artist-input" type="text" maxlength="40" placeholder="가수 이름" class="w-full min-w-0 rounded-xl border border-slate-300 bg-white px-2.5 py-2 text-xs font-semibold text-slate-900 focus:outline-none focus:border-slate-900" />
+          <div>
+            <label for="profile-song-title-input" class="sr-only">노래 · 가수 정보 입력</label>
+            <input id="profile-song-title-input" type="text" maxlength="80" placeholder="노래 · 가수 정보 입력" class="w-full min-w-0 rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-900 focus:outline-none focus:border-slate-900" />
           </div>
-          <button id="profile-song-save-btn" type="submit" class="w-full py-2 rounded-xl bg-slate-950 hover:bg-slate-800 text-white text-xs font-bold whitespace-nowrap transition">직접 저장</button>
+          <button id="profile-song-save-btn" type="submit" class="w-full py-2 rounded-xl bg-slate-950 hover:bg-slate-800 text-white text-xs font-bold whitespace-nowrap transition">저장</button>
           <div id="profile-song-search-yt-wrap" class="hidden"></div>
           <div id="profile-song-results" class="hidden space-y-1.5 max-h-80 overflow-y-auto pt-1"></div>
         </form>
@@ -4724,15 +4720,15 @@
       <div id="admin-sub-attendance" class="space-y-3.5">
         <div class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-sm space-y-2.5">
           <div class="flex flex-wrap items-center justify-between gap-2">
-            <h4 class="text-xs sm:text-sm font-black text-slate-900">🚪 신규 가입 허용 모드</h4>
+            <h4 class="inline-flex items-center gap-1.5 text-xs sm:text-sm font-black text-slate-900"><svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 4h3a2 2 0 0 1 2 2v14"/><path d="M2 20h3"/><path d="M13 20h9"/><path d="M10 12v.01"/><path d="M13 4.562v16.157a1 1 0 0 1-1.242.97L5 20V5.562a2 2 0 0 1 1.515-1.94l4-1A2 2 0 0 1 13 4.561Z"/></svg><span>신규 가입 허용 모드</span></h4>
             <span id="admin-signup-mode-badge" class="px-2.5 py-0.5 rounded-full text-[11px] font-black bg-emerald-100 text-emerald-800">모두 가입 허용</span>
           </div>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            <button type="button" data-set-signup-mode="open" class="py-2 px-3 rounded-xl border text-xs font-bold text-left transition bg-white border-slate-200 text-slate-700">🟢 모두 가입 허용<span class="block text-[10px] font-normal opacity-75">설문 작성 후 즉시 시작</span></button>
-            <button type="button" data-set-signup-mode="approval" class="py-2 px-3 rounded-xl border text-xs font-bold text-left transition bg-white border-slate-200 text-slate-700">🟡 승인 후 가입<span class="block text-[10px] font-normal opacity-75">요청서 확인 후 수락/거절</span></button>
+            <button type="button" data-set-signup-mode="open" class="py-2 px-3 rounded-xl border text-xs font-bold text-left transition bg-white border-slate-200 text-slate-700"><span class="inline-flex items-center gap-1.5"><svg class="w-3.5 h-3.5 shrink-0 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.2 2.4 2.4 4.8-5"/></svg><span>모두 가입 허용</span></span><span class="block text-[10px] font-normal opacity-75">설문 작성 후 즉시 시작</span></button>
+            <button type="button" data-set-signup-mode="approval" class="py-2 px-3 rounded-xl border text-xs font-bold text-left transition bg-white border-slate-200 text-slate-700"><span class="inline-flex items-center gap-1.5"><svg class="w-3.5 h-3.5 shrink-0 text-amber-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span>승인 후 가입</span></span><span class="block text-[10px] font-normal opacity-75">요청서 확인 후 수락/거절</span></button>
           </div>
           <div id="admin-join-requests-wrap" class="pt-2 border-t border-slate-200 space-y-1.5 hidden">
-            <h5 class="text-xs font-black text-indigo-900">📩 가입 요청함</h5>
+            <h5 class="inline-flex items-center gap-1.5 text-xs font-black text-indigo-900"><svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg><span>가입 요청함</span></h5>
             <div id="admin-join-requests-list" class="space-y-1.5"></div>
           </div>
         </div>
@@ -4768,7 +4764,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
           <!-- Admin Enter Member View -->
           <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm space-y-2">
-            <h4 class="text-xs font-black text-slate-900">👀 멤버 화면 들어가기 (캘린더 · 플래너 · 시간표)</h4>
+            <h4 class="inline-flex items-center gap-1.5 text-xs font-black text-slate-900"><svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.8-6.5 10-6.5S22 12 22 12s-3.8 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="2.8"/></svg><span>멤버 화면 들어가기 (캘린더 · 플래너 · 시간표)</span></h4>
             <div class="flex flex-wrap sm:flex-nowrap gap-2 bg-slate-50 p-3 rounded-xl border border-slate-200">
               <select id="admin-impersonate-select" class="flex-1 min-w-0 rounded-xl border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-semibold"></select>
               <button id="admin-impersonate-btn" type="button" class="px-3.5 py-1.5 rounded-xl bg-indigo-600 text-white text-xs font-bold whitespace-nowrap shrink-0">이 멤버로 보기</button>
@@ -4777,7 +4773,7 @@
 
           <!-- Admin Add Member Directly -->
           <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm space-y-2">
-            <h4 class="text-xs font-black text-slate-900">➕ 스터디원 추가</h4>
+            <h4 class="inline-flex items-center gap-1.5 text-xs font-black text-slate-900"><svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="3.5"/><path d="M20 8v6M23 11h-6"/></svg><span>스터디원 추가</span></h4>
             <form id="admin-add-member-form" class="flex gap-2 bg-slate-50 p-3 rounded-xl border border-slate-200">
               <input id="admin-add-member-name" type="text" placeholder="새 스터디원 별명" class="flex-1 min-w-0 rounded-xl border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-semibold" required />
               <button type="submit" class="px-3.5 py-1.5 rounded-xl bg-slate-950 text-white text-xs font-bold whitespace-nowrap shrink-0">추가</button>
@@ -4788,7 +4784,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
           <!-- Admin Immediate Mode Switch -->
           <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm space-y-2">
-            <h4 class="text-xs font-black text-slate-900">⚡ 즉시 모드 전환 (오늘 바로 적용)</h4>
+            <h4 class="inline-flex items-center gap-1.5 text-xs font-black text-slate-900"><svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg><span>즉시 모드 전환 (오늘 바로 적용)</span></h4>
             <div class="flex flex-col gap-2 bg-slate-50 p-3 rounded-xl border border-slate-200">
               <select id="admin-mode-member" class="w-full min-w-0 rounded-xl border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-semibold"></select>
               <div class="grid grid-cols-2 gap-2">
@@ -4816,7 +4812,7 @@
         <!-- Admin Rank / Tier / LP Editor -->
         <div class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-sm space-y-2.5">
           <div class="flex flex-wrap items-center justify-between gap-2">
-            <h4 class="text-xs sm:text-sm font-black text-slate-900">🎖️ 랭크(티어 · LP) 직접 변경 &amp; 승급전 건너뛰기</h4>
+            <h4 class="inline-flex items-center gap-1.5 text-xs sm:text-sm font-black text-slate-900"><svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg><span>랭크(티어 · LP) 직접 변경 &amp; 승급전 건너뛰기</span></h4>
             <div id="admin-rank-current-info" class="flex items-center gap-1.5 flex-wrap text-xs"></div>
           </div>
           <form id="admin-rank-form" class="flex flex-wrap items-center gap-2 bg-slate-50 p-3 rounded-xl border border-slate-200">
@@ -4899,7 +4895,7 @@
         <div class="bg-rose-50 rounded-2xl border border-rose-200 p-4 sm:p-5 shadow-sm space-y-2.5">
           <div class="flex flex-wrap items-center justify-between gap-2">
             <div>
-              <h4 class="text-xs sm:text-sm font-black text-rose-900">🔄 새 시즌 일괄 초기화 (전체 회수)</h4>
+              <h4 class="inline-flex items-center gap-1.5 text-xs sm:text-sm font-black text-rose-900"><svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg><span>새 시즌 일괄 초기화 (전체 회수)</span></h4>
               <p class="text-[11px] text-rose-700 mt-0.5">전체 회원의 <strong>LP(0으로 초기화)·챌린지·보유/받은 선물·장착 칭호</strong>를 한 번에 회수해요. 회원 계정과 공부 기록·플래너는 유지됩니다.</p>
             </div>
             <button id="btn-admin-season-reset" type="button" class="px-3.5 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-black whitespace-nowrap shrink-0">전체 회수 적용</button>
@@ -4936,45 +4932,47 @@
         </div>
 
         <!-- Admin Direct Message to Members -->
-        <div class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-sm space-y-2">
-          <h4 class="text-xs sm:text-sm font-black text-slate-900">✉️ 부원에게 다이렉트 메시지 보내기</h4>
-          <form id="admin-dm-form" class="flex flex-wrap sm:flex-nowrap gap-2 bg-slate-50 p-3 rounded-xl border border-slate-200">
-            <select id="admin-dm-target" aria-label="메시지 받는 부원" required class="rounded-xl border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-semibold shrink-0"></select>
-            <input id="admin-dm-text" type="text" maxlength="1500" placeholder="부원에게 보낼 메시지 입력..." class="flex-1 min-w-[140px] rounded-xl border border-slate-300 bg-white px-2.5 py-1.5 text-xs" required />
-            <button type="submit" class="px-3.5 py-1.5 rounded-xl bg-indigo-600 text-white text-xs font-bold whitespace-nowrap shrink-0">보내기</button>
+        <div class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-sm space-y-2.5">
+          <h4 class="inline-flex items-center gap-1.5 text-xs sm:text-sm font-black text-slate-900"><svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4z"/></svg><span>부원에게 다이렉트 메시지 보내기</span></h4>
+          <form id="admin-dm-form" class="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-2" novalidate>
+            <select id="admin-dm-target" aria-label="메시지 받는 부원" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs font-bold text-slate-900"></select>
+            <div class="flex items-center gap-2">
+              <input id="admin-dm-text" type="text" maxlength="1500" placeholder="메시지 입력…" class="flex-1 min-w-0 rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs font-medium text-slate-900" />
+              <button type="submit" class="px-4 py-2 rounded-xl bg-slate-950 hover:bg-slate-800 text-white text-xs font-black whitespace-nowrap shrink-0 transition">보내기</button>
+            </div>
           </form>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
           <!-- Admin Reports Inbox -->
           <div id="admin-reports-section" class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm space-y-2">
-            <h4 class="text-xs font-black text-slate-900">🚨 스터디원 신고 내역</h4>
+            <h4 class="inline-flex items-center gap-1.5 text-xs font-black text-slate-900"><svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span>스터디원 신고 내역</span></h4>
             <div id="admin-reports-list" class="space-y-2 max-h-56 overflow-y-auto scrollbar-thin"></div>
           </div>
 
           <!-- Admin Direct Suggestions Inbox -->
           <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm space-y-2">
-            <h4 class="text-xs font-black text-slate-900">📬 스터디원 다이렉트 건의함</h4>
+            <h4 class="inline-flex items-center gap-1.5 text-xs font-black text-slate-900"><svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg><span>스터디원 다이렉트 건의함</span></h4>
             <div id="admin-suggestions-list" class="space-y-2 max-h-56 overflow-y-auto scrollbar-thin"></div>
           </div>
         </div>
 
         <!-- Admin Encouragement Requests Inbox -->
         <div id="admin-encouragements-section" class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-sm space-y-2">
-          <h4 class="text-xs sm:text-sm font-black text-slate-900">💪 격려 요청함 (답장 시 멤버 우편함으로 전송)</h4>
+          <h4 class="inline-flex items-center gap-1.5 text-xs sm:text-sm font-black text-slate-900"><svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20.5s-7.5-4.6-9.4-9.1C1.3 8.1 3.3 5 6.6 5c2 0 3.6 1.1 5.4 3 1.8-1.9 3.4-3 5.4-3 3.3 0 5.3 3.1 4 6.4-1.9 4.5-9.4 9.1-9.4 9.1z"/></svg><span>격려 요청함 (답장 시 멤버 우편함으로 전송)</span></h4>
           <div id="admin-encouragements-list" class="space-y-2 max-h-64 overflow-y-auto scrollbar-thin"></div>
         </div>
 
         <!-- Admin Onboarding Survey Viewer -->
         <div class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-sm space-y-2">
-          <h4 class="text-xs sm:text-sm font-black text-slate-900">📋 가입자 설문 응답함 (관리자 전용)</h4>
+          <h4 class="inline-flex items-center gap-1.5 text-xs sm:text-sm font-black text-slate-900"><svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3.5" width="16" height="17" rx="2"/><path d="M8 8.5h8M8 12.5h8M8 16.5h5"/></svg><span>가입자 설문 응답함 (관리자 전용)</span></h4>
           <div id="admin-onboarding-list" class="space-y-2 max-h-64 overflow-y-auto scrollbar-thin"></div>
         </div>
 
         <!-- Admin PIN & Cleanup -->
         <div class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-sm flex flex-wrap items-center justify-between gap-3">
           <div class="flex items-center gap-2">
-            <span class="text-xs font-bold text-slate-700">🔐 관리자 전용 계정: <code class="text-indigo-600">donghyun060324@gmail.com</code></span>
+            <span class="inline-flex items-center gap-1.5 text-xs font-bold text-slate-700"><svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg><span>관리자 전용 계정: <code class="text-indigo-600">donghyun060324@gmail.com</code></span>
           </div>
           <div class="flex gap-2">
             <button id="btn-cleanup-7d" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold">🧹 7일 이상 지난 사진 정리</button>
@@ -5155,7 +5153,7 @@
           </div>
         </div>
         <div class="flex items-center gap-1 shrink-0">
-          <button id="uc-mute-btn" type="button" class="px-2 py-1 rounded-lg border border-slate-200 bg-slate-50 hover:bg-slate-100 text-[11px] font-bold text-slate-700 whitespace-nowrap" title="타이머 측정 중 알림을 제외한 모든 알림 끄기/켜기">🔔 알림</button>
+          <button id="uc-mute-btn" type="button" class="px-2 py-1 rounded-lg border border-slate-200 bg-slate-50 hover:bg-slate-100 text-[11px] font-bold text-slate-700 whitespace-nowrap" title="타이머 측정 중 알림을 제외한 모든 알림 끄기/켜기"><svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 5 2 7 2 7H4s2-2 2-7"/><path d="M10 19a2 2 0 0 0 4 0"/></svg><span>알림 켬</span></button>
           <button type="button" data-close-modal="unified-chat-modal" class="w-7 h-7 rounded-lg hover:bg-slate-100 text-slate-500 font-bold flex items-center justify-center" aria-label="닫기">✕</button>
         </div>
       </div>
@@ -5795,7 +5793,7 @@
         const snap = {};
         if (!obj) return snap;
         const twoLevel = ['studyLogs', 'studySubminuteMs', 'maxFocusLogs', 'periodStudySecs', 'studyBlocks', 'studyRankTimes', 'motemote', 'records', 'manualExempt', 'respectSentByDate', 'respectLpRewardedByDay', 'periodLpRewarded', 'hourlyLpGiven', 'studySlotMins', 'directMessages', 'memberChats'];
-        const oneLevel = ['classes', 'praises', 'promoHistory', 'customBadges', 'memberChallenges', 'challengeLpGranted', 'respectLpRewarded', 'lpHistory', 'reports', 'suggestions', 'encouragements'];
+        const oneLevel = ['classes', 'praises', 'promoHistory', 'customBadges', 'memberChallenges', 'challengeLpGranted', 'respectLpRewarded', 'lpHistory', 'reports', 'suggestions', 'encouragements', 'appNotices'];
         Object.keys(obj).forEach(k => {
           if (k === 'studyGroups' || k === 'community' || k === 'gifts') return;
           if (twoLevel.includes(k) && obj[k] && typeof obj[k] === 'object') {
@@ -7515,14 +7513,16 @@
         }
         const mbMute = document.getElementById('mute-all-alerts-btn');
         if (mbMute) mbMute.innerHTML = prefs.muteAllAlerts
-          ? `<span class="inline-flex items-center gap-1.5"><svg class="comm-svg-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 10.7-3.7M18 8c0 4.2 1.5 6.3 2 7H8"/><path d="M10 19a2 2 0 0 0 4 0"/><path d="m3 3 18 18"/></svg><span>전체 알림 꺼짐 (타이머만 유지)</span></span>`
-          : `<span class="inline-flex items-center gap-1.5"><svg class="comm-svg-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 5 2 7 2 7H4s2-2 2-7"/><path d="M10 19a2 2 0 0 0 4 0"/></svg><span>전체 알림 켜짐 (타이머 제외)</span></span>`;
+          ? `<span class="inline-flex items-center gap-1.5"><svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 10.7-3.7M18 8c0 4.2 1.5 6.3 2 7H8"/><path d="M10 19a2 2 0 0 0 4 0"/><path d="m3 3 18 18"/></svg><span>알림 꺼짐</span></span>`
+          : `<span class="inline-flex items-center gap-1.5"><svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 5 2 7 2 7H4s2-2 2-7"/><path d="M10 19a2 2 0 0 0 4 0"/></svg><span>알림 켬</span></span>`;
         const ucMute = document.getElementById('uc-mute-btn');
         if (ucMute) {
-          ucMute.textContent = prefs.muteAllAlerts ? '🔕 알림 꺼짐' : '🔔 알림 켜짐';
+          ucMute.innerHTML = prefs.muteAllAlerts
+            ? `<svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 10.7-3.7M18 8c0 4.2 1.5 6.3 2 7H8"/><path d="M10 19a2 2 0 0 0 4 0"/><path d="m3 3 18 18"/></svg><span>알림 꺼짐</span>`
+            : `<svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 5 2 7 2 7H4s2-2 2-7"/><path d="M10 19a2 2 0 0 0 4 0"/></svg><span>알림 켬</span>`;
           ucMute.className = prefs.muteAllAlerts
-            ? 'px-2 py-1 rounded-lg border border-rose-200 bg-rose-50 text-[11px] font-bold text-rose-700 whitespace-nowrap'
-            : 'px-2 py-1 rounded-lg border border-slate-200 bg-slate-50 hover:bg-slate-100 text-[11px] font-bold text-slate-700 whitespace-nowrap';
+            ? 'inline-flex items-center gap-1 px-2 py-1 rounded-lg border border-rose-200 bg-rose-50 text-[11px] font-bold text-rose-700 whitespace-nowrap shrink-0'
+            : 'inline-flex items-center gap-1 px-2 py-1 rounded-lg border border-slate-200 bg-slate-50 hover:bg-slate-100 text-[11px] font-bold text-slate-700 whitespace-nowrap shrink-0';
         }
         const tierInfo = getMemberTier(meHdr || 0);
         const promoBar = document.getElementById('promo-action-bar');
@@ -9202,11 +9202,15 @@
 
         const dmTargetSel = document.getElementById('admin-dm-target');
         if (dmTargetSel) {
-          const prevDmT = dmTargetSel.value;
-          const recipients = shared.members.filter(m => m.inStudy !== false);
-          dmTargetSel.innerHTML = '<option value="">받는 부원 선택</option><option value="all">전체 부원</option>' +
-            recipients.map(m => `<option value="${escapeHtml(m.id)}">${escapeHtml(m.name)}</option>`).join('');
-          dmTargetSel.value = prevDmT === 'all' || recipients.some(m => m.id === prevDmT) ? prevDmT : '';
+          const recipients = (shared.members || []).filter(Boolean);
+          const sig = recipients.map(m => `${m.id}:${m.name || ''}`).join('|');
+          if (dmTargetSel.dataset.sig !== sig) {
+            const prevDmT = dmTargetSel.value;
+            dmTargetSel.dataset.sig = sig;
+            dmTargetSel.innerHTML = '<option value="">받는 부원 선택</option><option value="all">전체 부원</option>' +
+              recipients.map(m => `<option value="${escapeHtml(m.id)}">${escapeHtml(m.name)}</option>`).join('');
+            dmTargetSel.value = (prevDmT === 'all' || recipients.some(m => m.id === prevDmT)) ? prevDmT : '';
+          }
         }
         const repListEl = document.getElementById('admin-reports-list');
         if (repListEl) {
@@ -10216,17 +10220,21 @@
         });
       });
 
-      document.getElementById('admin-dm-form').addEventListener('submit', e => {
+      document.getElementById('admin-dm-form')?.addEventListener('submit', e => {
         e.preventDefault();
-        const target = document.getElementById('admin-dm-target').value;
-        const text = document.getElementById('admin-dm-text').value.trim();
-        if (!target || !text || !prefs.adminMode) return;
-        const targets = shared.members.filter(m => m.inStudy !== false && (target === 'all' || m.id === target));
+        if (!prefs.adminMode) { showToast('관리자 모드에서만 보낼 수 있어요.', 'warn'); return; }
+        const target = (document.getElementById('admin-dm-target')?.value || '').trim();
+        const textEl = document.getElementById('admin-dm-text');
+        const text = (textEl?.value || '').trim();
+        if (!target) { showToast('받는 부원을 선택해 주세요.', 'warn'); return; }
+        if (!text) { showToast('보낼 메시지를 입력해 주세요.', 'warn'); textEl?.focus(); return; }
+        const targets = (shared.members || []).filter(m => m && (target === 'all' || m.id === target));
         if (!targets.length) { showToast('받는 부원을 찾을 수 없어요.', 'warn'); return; }
         targets.forEach(m => addDirectMessage(m.id, text));
-        document.getElementById('admin-dm-text').value = '';
+        if (textEl) textEl.value = '';
         saveSharedData();
-        showMessageSaveStatus(target === 'all' ? '전체 부원에게 메시지를 보내고 있어요.' : '메시지를 보내고 있어요.');
+        renderAll();
+        showMessageSaveStatus(target === 'all' ? `전체 부원(${targets.length}명)에게 메시지를 보냈어요.` : `${targets[0].name}님에게 메시지를 보냈어요.`);
       });
 
       function switchAdminSubTab(targetSub) {
@@ -15849,8 +15857,7 @@
               endSec: (en > st && en < IG_WAVE_TOTAL_SEC) ? en : 0
             };
           } else {
-            const typedQ = (document.getElementById('comm-song-title-input')?.value || '').trim()
-              || (document.getElementById('comm-song-artist-input')?.value || '').trim();
+            const typedQ = (document.getElementById('comm-song-title-input')?.value || '').trim();
             if (typedQ) {
               showToast('검색 결과에서 노래를 선택해 주세요.', 'warn');
               return;
@@ -16859,7 +16866,7 @@
           roomView.classList.add('hidden');
           roomView.classList.remove('flex');
           backBtn.classList.add('hidden');
-          titleEl.textContent = '💬 채팅 · 알림';
+          titleEl.innerHTML = '<svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-12.5 7.5L3 20.5l1.6-4.8A8.5 8.5 0 1 1 21 11.5z"/></svg><span>채팅 · 알림</span>';
           subEl.textContent = '관리자 · 익명 · 아는사람';
 
           // Update category tabs with unread dots
@@ -16909,7 +16916,7 @@
             rows.push({
               ts: last ? last.ts : 1,
               html: `<button type="button" data-uc-open="admin" class="w-full px-3.5 py-3 hover:bg-slate-50 flex items-center gap-3 text-left transition">
-                <div class="w-10 h-10 rounded-2xl bg-indigo-100 text-indigo-700 flex items-center justify-center text-base font-black shrink-0">🛡️</div>
+                <div class="w-10 h-10 rounded-2xl bg-indigo-100 text-indigo-700 flex items-center justify-center shrink-0"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
                 <div class="min-w-0 flex-1">
                   <div class="flex items-center justify-between gap-2">
                     <div class="flex items-center gap-1.5 min-w-0">
@@ -18040,7 +18047,7 @@
             </div>
           </div>`;
         } else {
-          curEl.innerHTML = '<p class="text-xs text-slate-400">제목이나 가수를 입력해 검색하거나 직접 저장해 보세요.</p>';
+          curEl.innerHTML = '<p class="text-xs text-slate-400">제목이나 가수를 입력해 검색하거나 저장해 보세요.</p>';
         }
       }
 
@@ -18233,7 +18240,7 @@
         const resEl = document.getElementById('profile-song-results');
         if (!resEl) return;
         const titleQ = (document.getElementById('profile-song-title-input')?.value || '').trim();
-        const artistQ = (document.getElementById('profile-song-artist-input')?.value || '').trim();
+        const artistQ = '';
         if (!titleQ && !artistQ) {
           resEl.classList.add('hidden');
           resEl.innerHTML = '';
@@ -18245,7 +18252,7 @@
         songSearchAbort = typeof AbortController !== 'undefined' ? new AbortController() : null;
         resEl.classList.remove('hidden');
         if (isAppOffline()) {
-          resEl.innerHTML = '<p class="text-[11px] text-rose-500 px-1 py-2">인터넷(Wi-Fi/데이터)에 연결되어 있지 않아요. 연결 후 검색하거나 [직접 저장]을 이용해 주세요.</p>';
+          resEl.innerHTML = '<p class="text-[11px] text-rose-500 px-1 py-2">인터넷(Wi-Fi/데이터)에 연결되어 있지 않아요. 연결 후 검색하거나 [저장]을 이용해 주세요.</p>';
           return;
         }
         resEl.innerHTML = '<p class="text-[11px] font-semibold text-slate-400 px-1 py-2">노래를 검색하는 중이에요…</p>';
@@ -18273,7 +18280,7 @@
                 }));
                 songSearchResultsCache = spTracks;
                 if (!spTracks.length) {
-                  resEl.innerHTML = '<p class="text-[11px] text-slate-400 px-1 py-2">검색 결과가 없어요. 제목·가수를 입력하고 [직접 저장]을 눌러도 등록돼요.</p>';
+                  resEl.innerHTML = '<p class="text-[11px] text-slate-400 px-1 py-2">검색 결과가 없어요. 제목·가수를 입력하고 [저장]을 눌러도 등록돼요.</p>';
                   return;
                 }
                 resEl.innerHTML = renderSongSearchRowsHtml(spTracks, 'profile');
@@ -18324,14 +18331,14 @@
           const tracks = scoreAndFilterSongs(combined, titleQ, artistQ, artistAlias);
           songSearchResultsCache = tracks;
           if (!tracks.length) {
-            resEl.innerHTML = '<p class="text-[11px] text-slate-400 px-1 py-2">검색 결과가 없어요. 제목·가수를 입력하고 [직접 저장]을 눌러도 등록돼요.</p>';
+            resEl.innerHTML = '<p class="text-[11px] text-slate-400 px-1 py-2">검색 결과가 없어요. 제목·가수를 입력하고 [저장]을 눌러도 등록돼요.</p>';
             return;
           }
           resEl.innerHTML = renderSongSearchRowsHtml(tracks, 'profile');
         } catch (err) {
           if (err && err.name === 'AbortError') return;
           if (seq !== songSearchSeq) return;
-          resEl.innerHTML = '<p class="text-[11px] text-slate-500 px-1 py-2">자동 검색에 연결하지 못했어요. 제목과 가수를 입력한 뒤 [직접 저장]을 눌러 등록해 주세요.</p>';
+          resEl.innerHTML = '<p class="text-[11px] text-slate-500 px-1 py-2">자동 검색에 연결하지 못했어요. 제목과 가수를 입력한 뒤 [저장]을 눌러 등록해 주세요.</p>';
         }
       }
 
@@ -18517,7 +18524,7 @@
         const resEl = document.getElementById('comm-song-results');
         if (!resEl) return;
         const titleQ = (document.getElementById('comm-song-title-input')?.value || '').trim();
-        const artistQ = (document.getElementById('comm-song-artist-input')?.value || '').trim();
+        const artistQ = '';
         if (!titleQ && !artistQ) {
           resEl.classList.add('hidden');
           resEl.innerHTML = '';
@@ -18569,14 +18576,11 @@
         }
       }
 
-      ['comm-song-title-input', 'comm-song-artist-input'].forEach(id => {
-        document.getElementById(id)?.addEventListener('input', () => {
-          clearTimeout(commSongSearchTimer);
-          const hasAny = (document.getElementById('comm-song-title-input')?.value || '').trim()
-            || (document.getElementById('comm-song-artist-input')?.value || '').trim();
-          if (!hasAny) { searchCommSongs(); return; }
-          commSongSearchTimer = setTimeout(() => searchCommSongs(), 420);
-        });
+      document.getElementById('comm-song-title-input')?.addEventListener('input', () => {
+        clearTimeout(commSongSearchTimer);
+        const hasAny = (document.getElementById('comm-song-title-input')?.value || '').trim();
+        if (!hasAny) { searchCommSongs(); return; }
+        commSongSearchTimer = setTimeout(() => searchCommSongs(), 420);
       });
 
       let igWaveDragMode = '';
@@ -18712,39 +18716,35 @@
         }
       });
 
-      ['profile-song-title-input', 'profile-song-artist-input'].forEach(id => {
-        document.getElementById(id)?.addEventListener('input', () => {
-          clearTimeout(songSearchTimer);
-          const hasAny = (document.getElementById('profile-song-title-input')?.value || '').trim()
-            || (document.getElementById('profile-song-artist-input')?.value || '').trim();
-          if (!hasAny) { searchItunesSongs(); return; }
-          songSearchTimer = setTimeout(() => searchItunesSongs(), 420);
-        });
+      document.getElementById('profile-song-title-input')?.addEventListener('input', () => {
+        clearTimeout(songSearchTimer);
+        const hasAny = (document.getElementById('profile-song-title-input')?.value || '').trim();
+        if (!hasAny) { searchItunesSongs(); return; }
+        songSearchTimer = setTimeout(() => searchItunesSongs(), 420);
       });
       document.getElementById('profile-song-form')?.addEventListener('submit', e => {
         e.preventDefault();
-        const title = (document.getElementById('profile-song-title-input')?.value || '').trim();
-        const artist = (document.getElementById('profile-song-artist-input')?.value || '').trim();
-        if (!title) { showToast('노래 제목을 입력해 주세요.', 'warn'); return; }
+        const raw = (document.getElementById('profile-song-title-input')?.value || '').trim();
+        if (!raw) { showToast('노래나 가수 정보를 입력해 주세요.', 'warn'); return; }
         const tm = getTargetProfileMember();
         if (!tm) return;
         stopSongPreview();
         tm.recommendedSong = {
-          title,
-          artist,
+          title: raw,
+          artist: '',
           artworkUrl: '',
           previewUrl: '',
           appleUrl: '',
           updatedAt: Date.now()
         };
-        document.getElementById('profile-song-title-input').value = '';
-        document.getElementById('profile-song-artist-input').value = '';
+        const inp = document.getElementById('profile-song-title-input');
+        if (inp) inp.value = '';
         const resEl = document.getElementById('profile-song-results');
         if (resEl) { resEl.classList.add('hidden'); resEl.innerHTML = ''; }
         songSearchResultsCache = [];
         saveSharedData();
         renderAll();
-        showToast(`🎵 "${title}"을(를) 추천 노래로 저장했어요!`, 'success');
+        showToast(`"${raw}"을(를) 추천 노래로 저장했어요!`, 'success');
       });
       document.getElementById('profile-song-box')?.addEventListener('click', e => {
         const appLink = e.target.closest('[data-music-app]');
@@ -18794,15 +18794,13 @@
             updatedAt: savedAt
           };
           const titleInp = document.getElementById('profile-song-title-input');
-          const artistInp = document.getElementById('profile-song-artist-input');
           const resEl = document.getElementById('profile-song-results');
           if (titleInp) titleInp.value = '';
-          if (artistInp) artistInp.value = '';
           if (resEl) { resEl.classList.add('hidden'); resEl.innerHTML = ''; }
           songSearchResultsCache = [];
           saveSharedData();
           renderAll();
-          showToast(`🎵 "${tr.title}"을(를) 추천 노래로 설정했어요!`, 'success');
+          showToast(`"${tr.title}"을(를) 추천 노래로 설정했어요!`, 'success');
 
           // 유튜브 뮤직/스포티파이 직링크가 있고 Worker가 연결되어 있으면 타 플랫폼 직링크도 백그라운드로 보강
           const proxyBase = String(MUSIC_PROXY_URL || '').trim().replace(/\/+$/, '');
