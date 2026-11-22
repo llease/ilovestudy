@@ -207,15 +207,19 @@
     .member-title {
       display: block;
       width: 100%;
-      margin-top: -4px;
+      height: 1.25em;
+      min-height: 1.25em;
+      margin-top: -2px;
       color: var(--rank-ink);
       font-size: clamp(.6rem, 2.55vw, .7rem);
       font-weight: 700;
       line-height: 1.25;
       letter-spacing: -0.025em;
-      word-break: keep-all;
-      overflow-wrap: anywhere;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
+    .member-title.is-empty { visibility: hidden; }
     .member-card-actions { position: absolute; top: clamp(8px, 1.25vw, 13px); right: clamp(8px, 1.25vw, 13px); z-index: 2; }
     .member-card-menu {
       display: grid;
@@ -232,7 +236,7 @@
     }
     .member-card-menu:hover, .member-card-menu[aria-expanded="true"] { background: var(--soft); color: var(--ink); }
     .member-card [data-card-menu-box] { top: calc(100% + 4px); }
-    .member-rank-line { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; color: var(--muted); font-size: .65rem; font-weight: 700; line-height: 1.3; }
+    .member-rank-line { display: flex; flex-wrap: wrap; align-items: center; align-content: flex-start; min-height: 2.35em; gap: 4px 8px; color: var(--muted); font-size: .65rem; font-weight: 700; line-height: 1.3; }
     .member-rank {
       display: inline-flex;
       align-items: center;
@@ -538,7 +542,7 @@
       .member-song-marquee-track { animation: none; }
       .member-song-marquee-dup { display: none; }
     }
-    .member-badges { display: flex; align-items: center; gap: 4px; min-width: 0; margin-top: auto; flex-wrap: nowrap; overflow: hidden; }
+    .member-badges { display: flex; align-items: center; gap: 4px; min-width: 0; min-height: 22px; margin-top: auto; flex-wrap: nowrap; overflow: hidden; }
     .member-badges .badge-pill { flex: 0 0 auto; white-space: nowrap; font-size: .64rem; padding-inline: 6px; }
     .member-badges .badge-pill.is-only-badge { flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
     .member-badges .badge-pill[hidden], .member-badge-count[hidden] { display: none; }
@@ -4249,20 +4253,20 @@
       <section id="profile-gifts-box" class="ed-card profile-card profile-gifts-card space-y-3.5" aria-label="선물함">
         <div class="space-y-1.5">
           <div class="flex items-center justify-between gap-2 flex-wrap">
-            <span class="inline-flex items-center gap-1.5 text-xs font-black text-slate-900">🎒 보낼 수 있는 선물</span>
+            <span class="inline-flex items-center gap-1.5 text-xs font-black text-slate-900"><span class="w-1.5 h-1.5 rounded-full bg-slate-400 inline-block shrink-0"></span>보낼 수 있는 선물</span>
             <span class="text-[10px] font-semibold text-slate-400">라운지·스터디 멤버에게 선물 가능</span>
           </div>
           <div id="profile-gifts-inventory" class="flex flex-wrap gap-1.5"></div>
         </div>
         <div class="space-y-1.5 pt-2.5 border-t border-slate-100">
           <div class="flex items-center justify-between gap-2 flex-wrap">
-            <span class="inline-flex items-center gap-1.5 text-xs font-black text-slate-900">🎁 받은 선물 컬렉션</span>
+            <span class="inline-flex items-center gap-1.5 text-xs font-black text-slate-900"><span class="w-1.5 h-1.5 rounded-full bg-slate-400 inline-block shrink-0"></span>받은 선물 컬렉션</span>
             <span class="text-[10px] font-semibold text-slate-400">영구 보관 · 재선물 불가</span>
           </div>
           <div id="profile-gifts-received" class="flex flex-wrap gap-1.5"></div>
         </div>
         <details class="pt-2.5 border-t border-slate-100">
-          <summary class="cursor-pointer text-[11px] font-black text-slate-600 hover:text-slate-900 select-none">📖 전체 선물 목록 &amp; 등급 보기 (15종)</summary>
+          <summary class="cursor-pointer inline-flex items-center gap-1.5 text-[11px] font-black text-slate-600 hover:text-slate-900 select-none"><span class="w-1.5 h-1.5 rounded-full bg-slate-400 inline-block shrink-0"></span>전체 선물 목록 &amp; 등급 보기 (21종)</summary>
           <div id="profile-gifts-catalog" class="mt-2 grid grid-cols-2 sm:grid-cols-3 gap-1.5"></div>
         </details>
       </section>
@@ -4652,7 +4656,7 @@
             <div class="guide-items guide-items-2col">
               <div class="guide-item">
                 <h5 class="guide-item-title">채팅 · 알림함 &amp; 다크모드</h5>
-                <p>상단 편지 아이콘에서 <strong>1:1 채팅·익명 쪽지·도착한 선물 상자(열어보기 연출)·내 글 댓글 알림</strong>을 한곳에서 확인하고(미확인 시 빨간 점 표시), 달 아이콘으로 라이트·다크모드를 전환할 수 있어요. 챌린지를 깨면 선물을 얻어 멤버에게 보낼 수 있고, 받은 선물은 희귀도순으로 내 프로필에 영구 보관됩니다.</p>
+                <p>상단 편지 아이콘에서 <strong>1:1 채팅·익명 쪽지·도착한 선물 상자(열어보기 연출)·내 글 댓글 알림</strong>을 한곳에서 확인하고(미확인 시 빨간 점 표시), 달 아이콘으로 라이트·다크모드를 전환할 수 있어요. 공부해서 30 LP를 모을 때마다 선물 뽑기 상자를 얻어 멤버에게 보낼 수 있고, 받은 선물은 희귀도순으로 내 프로필에 영구 보관됩니다.</p>
               </div>
               <div class="guide-item">
                 <h5 class="guide-item-title">더보기(⋯) 설정 &amp; 테마</h5>
@@ -4712,7 +4716,7 @@
         <span id="admin-sub-slider" class="subtab-slider" aria-hidden="true"></span>
         <button type="button" data-admin-sub="attendance" aria-pressed="true" aria-controls="admin-sub-attendance" class="admin-sub-btn py-2 px-2 rounded-xl text-[11px] sm:text-xs font-black bg-slate-950 text-white whitespace-nowrap transition">출석 · 가입<span id="admin-sub-badge-join" class="hidden ml-1 px-1.5 py-0.2 rounded-full bg-amber-400 text-slate-950 text-[9px] font-black">0</span></button>
         <button type="button" data-admin-sub="members" aria-pressed="false" aria-controls="admin-sub-members" class="admin-sub-btn py-2 px-2 rounded-xl text-[11px] sm:text-xs font-bold text-slate-600 hover:text-slate-950 whitespace-nowrap transition">멤버 · 기록</button>
-        <button type="button" data-admin-sub="rewards" aria-pressed="false" aria-controls="admin-sub-rewards" class="admin-sub-btn py-2 px-2 rounded-xl text-[11px] sm:text-xs font-bold text-slate-600 hover:text-slate-950 whitespace-nowrap transition">챌린지 · 뱃지</button>
+        <button type="button" data-admin-sub="rewards" aria-pressed="false" aria-controls="admin-sub-rewards" class="admin-sub-btn py-2 px-2 rounded-xl text-[11px] sm:text-xs font-bold text-slate-600 hover:text-slate-950 whitespace-nowrap transition">챌린지 · 선물</button>
         <button type="button" data-admin-sub="inbox" aria-pressed="false" aria-controls="admin-sub-inbox" class="admin-sub-btn py-2 px-2 rounded-xl text-[11px] sm:text-xs font-bold text-slate-600 hover:text-slate-950 whitespace-nowrap transition">소통 · 관리<span id="admin-sub-badge-inbox" class="hidden ml-1 px-1.5 py-0.2 rounded-full bg-rose-600 text-white text-[9px] font-black">0</span></button>
       </div>
 
@@ -4796,7 +4800,7 @@
 
           <!-- Admin Cumulative Study Time Editor -->
           <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm space-y-2">
-            <h4 class="text-xs font-black text-slate-900">⏱️ 누적 공부시간 수정</h4>
+            <h4 class="inline-flex items-center gap-1.5 text-xs font-black text-slate-900"><svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 1.5M9 2h6"/></svg><span>누적 공부 시간 수정</span></h4>
             <form id="admin-study-time-form" class="flex flex-wrap items-center gap-2 bg-slate-50 p-3 rounded-xl border border-slate-200">
               <select id="admin-study-member" class="rounded-xl border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-semibold"></select>
               <input id="admin-study-date" type="date" class="rounded-xl border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-semibold" />
@@ -4824,12 +4828,12 @@
             </div>
             <button type="submit" class="px-3.5 py-1.5 rounded-xl bg-slate-950 text-white text-xs font-bold whitespace-nowrap">랭크 적용</button>
             <button id="btn-admin-resume-promo" type="button" class="hidden px-3.5 py-1.5 rounded-xl border border-indigo-300 text-indigo-700 text-xs font-black whitespace-nowrap">자정에 끊긴 승급전 이어하기</button>
-            <button id="btn-admin-skip-promo" type="button" class="hidden px-3.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-black whitespace-nowrap">⏭️ 승급전 건너뛰기</button>
+            <button id="btn-admin-skip-promo" type="button" class="hidden inline-flex items-center gap-1 px-3.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-black whitespace-nowrap"><svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg><span>승급전 건너뛰기</span></button>
           </form>
           <div class="flex flex-wrap items-center justify-between gap-2 bg-amber-50/70 border border-amber-200 rounded-xl px-3 py-2">
             <div>
               <p class="text-xs font-black text-slate-900">승급전 추가 도전</p>
-              <p id="admin-extra-promo-status" class="text-[11px] text-slate-600" role="status">선택한 부원에게 오늘 도전 기회를 한 번 더 줍니다.</p>
+              <p id="admin-extra-promo-status" class="text-[11px] text-slate-600" role="status">선택한 가입자에게 오늘 승급전 도전 기회를 한 번 더 줍니다.</p>
             </div>
             <button id="btn-admin-extra-promo" type="button" class="px-3.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-black disabled:opacity-60">승급전 1회 추가</button>
           </div>
@@ -4838,27 +4842,29 @@
 
       <!-- Admin Sub-Tab 3: Challenges & Badges -->
       <div id="admin-sub-rewards" class="hidden space-y-3.5">
-        <!-- Admin Challenge Completion -->
-        <div class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-sm space-y-2.5">
-          <h4 class="text-xs sm:text-sm font-black text-slate-900">⚔️ 관리자 챌린지 달성 처리 &amp; 칭호 텍스트 수정</h4>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200 overflow-hidden">
-            <div class="space-y-2 min-w-0">
-              <select id="admin-challenge-member" class="w-full rounded-xl border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-semibold"></select>
-              <div id="admin-challenge-toggles" class="flex flex-wrap gap-1.5 max-h-56 overflow-y-auto scrollbar-thin pr-1"></div>
-            </div>
-            <div class="space-y-2 min-w-0">
-              <form id="admin-edit-ch-title-form" class="flex flex-wrap sm:flex-nowrap gap-1.5 min-w-0">
-                <select id="admin-edit-ch-select" class="w-full sm:w-36 min-w-0 rounded-xl border border-slate-300 bg-white px-2 py-1.5 text-xs font-semibold truncate"></select>
-                <input id="admin-edit-ch-title-input" type="text" placeholder="챌린지 칭호 수정" class="flex-1 min-w-0 rounded-xl border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-semibold" />
-                <button type="submit" class="px-3 py-1.5 rounded-xl bg-slate-800 text-white text-xs font-bold whitespace-nowrap shrink-0">변경</button>
-              </form>
-            </div>
+        <!-- Admin Challenge Completion & Editor (Card View) -->
+        <div class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-sm space-y-3">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <h4 class="inline-flex items-center gap-1.5 text-xs sm:text-sm font-black text-slate-900"><svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4z"/><path d="M7 6H4a1 1 0 0 0-1 1v1a3 3 0 0 0 3 3h1M17 6h3a1 1 0 0 1 1 1v1a3 3 0 0 1-3 3h-1"/></svg><span>챌린지 달성 관리 · 수정</span></h4>
+            <span class="text-[11px] text-slate-500">카드에서 달성 토글 및 칭호·설명·LP 수정</span>
           </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <select id="admin-challenge-member" aria-label="챌린지 대상 가입자" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs font-bold text-slate-900"></select>
+            <input id="admin-challenge-search" type="search" placeholder="챌린지 이름·설명 검색…" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-800" />
+          </div>
+          <div id="admin-ch-cat-tabs" class="flex flex-wrap gap-1.5">
+            <button type="button" data-admin-ch-cat="all" class="admin-ch-cat-btn px-2.5 py-1 rounded-lg text-[11px] font-black bg-slate-950 text-white transition">전체</button>
+            <button type="button" data-admin-ch-cat="starter" class="admin-ch-cat-btn px-2.5 py-1 rounded-lg text-[11px] font-bold bg-slate-100 text-slate-600 hover:text-slate-950 transition">입문</button>
+            <button type="button" data-admin-ch-cat="special" class="admin-ch-cat-btn px-2.5 py-1 rounded-lg text-[11px] font-bold bg-slate-100 text-slate-600 hover:text-slate-950 transition">특수</button>
+            <button type="button" data-admin-ch-cat="focus_mid" class="admin-ch-cat-btn px-2.5 py-1 rounded-lg text-[11px] font-bold bg-slate-100 text-slate-600 hover:text-slate-950 transition">연속 집중 (1~12h)</button>
+            <button type="button" data-admin-ch-cat="focus_high" class="admin-ch-cat-btn px-2.5 py-1 rounded-lg text-[11px] font-bold bg-slate-100 text-slate-600 hover:text-slate-950 transition">초고수 (13~24h)</button>
+          </div>
+          <div id="admin-challenge-toggles" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-h-[460px] overflow-y-auto scrollbar-thin pr-1"></div>
         </div>
 
         <!-- Admin Badge Awarding -->
         <div class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-sm space-y-2.5">
-          <h4 class="text-xs sm:text-sm font-black text-slate-900">🏅 특별 뱃지 수여 &amp; 회수</h4>
+          <h4 class="inline-flex items-center gap-1.5 text-xs sm:text-sm font-black text-slate-900"><svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg><span>특별 뱃지 수여 · 회수</span></h4>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200 overflow-hidden">
             <div class="space-y-2 min-w-0">
               <select id="admin-badge-member" class="w-full rounded-xl border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-semibold"></select>
@@ -4879,11 +4885,11 @@
 
         <!-- Admin Gift Grant & Revoke (Synced with Mailbox) -->
         <div class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-sm space-y-2.5">
-          <h4 class="text-xs sm:text-sm font-black text-slate-900">🎁 선물 지급 &amp; 회수 (메시지함 자동 연동)</h4>
-          <p class="text-[11px] text-slate-500">선물을 지급하면 해당 부원 메시지함에 지급 안내가 뜨며, 회수하면 지급 메시지도 함께 삭제돼요.</p>
+          <h4 class="inline-flex items-center gap-1.5 text-xs sm:text-sm font-black text-slate-900"><svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5"/></svg><span>선물 지급 · 회수 (채팅·알림함 연동)</span></h4>
+          <p class="text-[11px] text-slate-500">선물을 지급하면 해당 가입자 채팅·알림함에 안내가 뜨며, 회수하면 지급 메시지도 함께 삭제돼요.</p>
           <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-2.5">
             <div class="flex flex-wrap sm:flex-nowrap gap-2">
-              <select id="admin-gift-member" aria-label="선물 대상 부원" class="w-full sm:w-40 rounded-xl border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-semibold"></select>
+              <select id="admin-gift-member" aria-label="선물 대상 가입자" class="w-full sm:w-40 rounded-xl border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-semibold"></select>
               <select id="admin-gift-select" aria-label="지급할 선물 선택" class="flex-1 min-w-[140px] rounded-xl border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-semibold"></select>
               <button id="btn-admin-gift-grant" type="button" class="px-3.5 py-1.5 rounded-xl bg-slate-950 hover:bg-slate-800 text-white text-xs font-bold whitespace-nowrap shrink-0">지급하기</button>
             </div>
@@ -4933,9 +4939,9 @@
 
         <!-- Admin Direct Message to Members -->
         <div class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-sm space-y-2.5">
-          <h4 class="inline-flex items-center gap-1.5 text-xs sm:text-sm font-black text-slate-900"><svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4z"/></svg><span>부원에게 다이렉트 메시지 보내기</span></h4>
+          <h4 class="inline-flex items-center gap-1.5 text-xs sm:text-sm font-black text-slate-900"><svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4z"/></svg><span>가입자에게 다이렉트 메시지 보내기</span></h4>
           <form id="admin-dm-form" class="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-2" novalidate>
-            <select id="admin-dm-target" aria-label="메시지 받는 부원" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs font-bold text-slate-900"></select>
+            <select id="admin-dm-target" aria-label="메시지 받는 가입자" class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs font-bold text-slate-900"></select>
             <div class="flex items-center gap-2">
               <input id="admin-dm-text" type="text" maxlength="1500" placeholder="메시지 입력…" class="flex-1 min-w-0 rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs font-medium text-slate-900" />
               <button type="submit" class="px-4 py-2 rounded-xl bg-slate-950 hover:bg-slate-800 text-white text-xs font-black whitespace-nowrap shrink-0 transition">보내기</button>
@@ -4972,10 +4978,10 @@
         <!-- Admin PIN & Cleanup -->
         <div class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-sm flex flex-wrap items-center justify-between gap-3">
           <div class="flex items-center gap-2">
-            <span class="inline-flex items-center gap-1.5 text-xs font-bold text-slate-700"><svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg><span>관리자 전용 계정: <code class="text-indigo-600">donghyun060324@gmail.com</code></span>
+            <span class="inline-flex items-center gap-1.5 text-xs font-bold text-slate-700"><svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg><span>관리자 전용 계정: <code class="text-indigo-600">donghyun060324@gmail.com</code></span></span>
           </div>
           <div class="flex gap-2">
-            <button id="btn-cleanup-7d" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold">🧹 7일 이상 지난 사진 정리</button>
+            <button id="btn-cleanup-7d" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold"><svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg><span>7일 이상 지난 사진 정리</span></button>
             <button id="btn-cleanup-old" class="px-3 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-bold border border-rose-200">어제 및 이전 사진 정리</button>
           </div>
         </div>
@@ -5519,10 +5525,10 @@
             { id: 'ch_6am', cat: 'special', title: '🐓 닭보다 먼저 우는 자', desc: '아침 6시(06:00~06:59)에 0교시 출석 완료', lp: 20 },
             { id: 'ch_all_resp', cat: 'special', title: '💞 스터디 아부꾼', desc: '모든 스터디원에게 리스펙 보내기', lp: 15 },
             { id: 'ch_promo_streak', cat: 'special', title: '🚀 연승의 화신', desc: '승급전 연속 성공하기', lp: 20 },
-            { id: 'ch_brag5', cat: 'special', title: '📸 인스타 갬성충', desc: 'STUDYGRAM 피드에 사진 5개 올리기', lp: 20 },
+            { id: 'ch_brag5', cat: 'special', title: '📸 인스타 갬성충', desc: '커뮤니티에 사진 첨부 글 5개 올리기', lp: 20 },
             { id: 'ch_cinderella', cat: 'special', title: '🧛 신데렐라', desc: '23:55 ~ 00:05 자정을 넘겨서 스톱워치 계속 켜두기', lp: 20 },
             { id: 'ch_newbie', cat: 'starter', title: '🐣 뉴비', desc: '집중 시작하기 스톱워치 처음 켜기', lp: 7 },
-            { id: 'ch_join_study', cat: 'starter', title: '🙋 신입 받아라', desc: '모임 · 톡에서 첫 스터디 또는 톡방 가입하기', lp: 7 },
+            { id: 'ch_join_study', cat: 'starter', title: '🙋 신입 받아라', desc: '모임 · 톡에서 첫 스터디 또는 익명 모임 가입하기', lp: 7 },
             { id: 'ch_avatar', cat: 'special', title: '📷 저요', desc: '내 프로필에서 프로필 사진 처음 등록하기', lp: 7 },
             { id: 'ch_timetable', cat: 'special', title: '🗓️ 파워 J', desc: '대학 수업 1개 이상 처음 등록하기', lp: 7 },
             { id: 'ch_equip', cat: 'starter', title: '🏷️ 비아방지', desc: '획득한 칭호 처음으로 1회 장착하기', lp: 7 },
@@ -5538,7 +5544,8 @@
             { id: 'ch_rename', cat: 'special', title: '🪪 신분세탁', desc: '내 프로필에서 별명 수정 후 저장하기', lp: 10 },
             { id: 'ch_banner_bg', cat: 'special', title: '🖼️ 감성한스푼', desc: '홈 배너 배경 사진 설정하기', lp: 7 },
             { id: 'ch_flipflop', cat: 'special', title: '🔄 변덕쟁이', desc: '플래너 할 일 상태를 3번 이상 바꿔보기', lp: 10 },
-            { id: 'ch_minimal', cat: 'special', title: '🧹 미니멀리스트', desc: '내 프로필에서 칭호 장착하기', lp: 10 },
+            { id: 'ch_minimal', cat: 'special', title: '🧹 미니멀리스트', desc: '내 프로필에서 칭호 해제하거나 기본 프로필로 바꾸기', lp: 10 },
+          { id: 'ch_rec_song', cat: 'special', title: '🎵 나만의 플레이리스트', desc: '프로필에서 나의 추천 노래 설정하기', lp: 10 },
             { id: 'ch_pause1', cat: 'starter', title: '⏳ 잠깐의 여유', desc: '스톱워치 실행 중 잠시 쉬기 버튼 처음 눌러보기', lp: 7 },
             { id: 'ch_timetravel', cat: 'special', title: '⏪ 시간 여행자', desc: '캘린더에서 ◀ 버튼을 눌러 지난 달 기록 구경하기', lp: 7 },
             { id: 'ch_justice', cat: 'special', title: '🚨 정의의 사도', desc: '신고하기 창 열어보기 (확인만)', lp: 10 },
@@ -5679,7 +5686,8 @@
               parsed.lpRebalanceV7 = true;
             }
             const movedToSpecialSet = new Set(['ch_avatar','ch_timetable','ch_cal_day','ch_spy','ch_rank_bottom','ch_banner_bg','ch_timetravel']);
-            mergedCh = mergedCh.map(c => movedToSpecialSet.has(c.id) ? { ...c, cat: 'special' } : c);
+            const descPatchMap = { ch_brag5: '커뮤니티에 사진 첨부 글 5개 올리기', ch_minimal: '내 프로필에서 칭호 해제하거나 기본 프로필로 바꾸기', ch_join_study: '모임 · 톡에서 첫 스터디 또는 익명 모임 가입하기' };
+            mergedCh = mergedCh.map(c => c.adminEdited ? c : ({ ...c, ...(movedToSpecialSet.has(c.id) ? { cat: 'special' } : {}), ...(descPatchMap[c.id] ? { desc: descPatchMap[c.id] } : {}) }));
             parsed.challenges = mergedCh;
             if (!parsed.periodStudySecs) parsed.periodStudySecs = {};
             parsed.reports = inboxRecords(parsed.reports);
@@ -6589,8 +6597,8 @@
                 if (!v.lpRebalanceV7) {
                   mergedCh = mergedCh.map(c => c.id === 'ch_theme' ? { ...c, cat: 'starter', title: '🦎 카멜레온', desc: '상단 더보기(⋯)에서 테마 색깔 바꾸기', lp: 7 } : c);
                 }
-                const recatMap = new Map(base.filter(b => ['ch_brag1','ch_ultra_reserve','ch_rename','ch_flipflop','ch_minimal','ch_justice','ch_join_study','ch_avatar','ch_timetable','ch_cal_day','ch_spy','ch_rank_bottom','ch_banner_bg','ch_timetravel'].includes(b.id)).map(b => [b.id, b]));
-                mergedCh = mergedCh.map(c => recatMap.has(c.id) ? { ...c, cat: recatMap.get(c.id).cat, desc: recatMap.get(c.id).desc, lp: recatMap.get(c.id).lp } : c);
+                const recatMap = new Map(base.filter(b => ['ch_brag1','ch_brag5','ch_ultra_reserve','ch_rename','ch_flipflop','ch_minimal','ch_justice','ch_join_study','ch_avatar','ch_timetable','ch_cal_day','ch_spy','ch_rank_bottom','ch_banner_bg','ch_timetravel'].includes(b.id)).map(b => [b.id, b]));
+                mergedCh = mergedCh.map(c => (!c.adminEdited && recatMap.has(c.id)) ? { ...c, cat: recatMap.get(c.id).cat, desc: recatMap.get(c.id).desc, lp: recatMap.get(c.id).lp } : c);
                 return mergedCh;
               })(),
               memberChallenges: normArrMap(v.memberChallenges),
@@ -7101,7 +7109,7 @@
         const done = Object.values(allCompleted[member.id] || {}).filter(Boolean);
         if (done.includes(chId)) return null;
         allCompleted[member.id] = [...done, chId];
-        const amount = ch.lp || 20;
+        const amount = Number.isFinite(Number(ch.lp)) ? Math.max(0, Number(ch.lp)) : 20;
         ((state.challengeLpGranted ||= {})[member.id] ||= {})[chId] = amount;
         applyMemberLp(state, member, amount, `챌린지: ${ch.title}`, earnedAt);
         const starters = challenges.filter(item => challengeCategory(item) === 'starter');
@@ -7131,8 +7139,8 @@
         const member = shared.members.find(item => item.id === memberId);
         const reward = grantChallengeReward(shared, member, chId, earnedAt);
         announceChallengeReward(memberId, reward, silent);
-        if (reward && typeof maybeGrantChallengeGift === 'function') {
-          maybeGrantChallengeGift(member, chId, silent);
+        if (reward && reward.amount > 0 && typeof maybeGrantLpGift === 'function') {
+          maybeGrantLpGift(member, reward.amount);
         }
       }
 
@@ -7206,6 +7214,7 @@
         if (!member || !delta) return;
         applyMemberLp(shared, member, delta, reason, earnedAt);
         announceLpGain(memberId, delta);
+        if (delta > 0 && typeof maybeGrantLpGift === 'function') maybeGrantLpGift(member, delta);
       }
 
       function announceLpGain(memberId, delta) {
@@ -8216,7 +8225,7 @@
                 <strong class="member-name" title="${name}">${name}</strong>
               </span>
             </span>
-            ${title ? `<span class="member-title" id="member-title-${domId}" title="${title}">${title}</span>` : ''}
+            <span class="member-title${title ? '' : ' is-empty'}" id="member-title-${domId}"${title ? ` title="${title}"` : ' aria-hidden="true"'}>${title || '&nbsp;'}</span>
             <span class="member-rank-line">
               <span id="member-rank-${domId}"><span class="member-rank">${tier.name}</span> ${tier.lp} LP</span>
               ${status ? `<span id="member-status-${domId}" class="member-status" data-status="${status}">${MEMBER_STATUS_LABELS[status]}</span>` : ''}
@@ -8228,10 +8237,10 @@
               <span class="member-study-label"><span class="shrink-0 whitespace-nowrap">누적 공부 시간</span>${m.recommendedSong && m.recommendedSong.title ? `<span class="member-song-ticker" id="member-song-${domId}" title="추천 노래: ${escapeHtml(m.recommendedSong.title)}${m.recommendedSong.artist ? ` - ${escapeHtml(m.recommendedSong.artist)}` : ''}" aria-label="추천 노래 ${escapeHtml(m.recommendedSong.title)}"><span class="member-eq-icon" aria-hidden="true"><i></i><i></i><i></i></span><span class="member-song-marquee"><span class="member-song-marquee-track"><span>${escapeHtml(m.recommendedSong.title)}</span><span class="member-song-marquee-dup" aria-hidden="true">${escapeHtml(m.recommendedSong.title)}</span></span></span></span>` : ''}</span>
               <strong class="member-study-time">${hours ? `${hours}<small>시간</small> ` : ''}${mins % 60}<small>분</small></strong>
             </span>
-            ${orderedBadges.length ? `<span class="member-badges" id="member-badges-${domId}">
+            <span class="member-badges${orderedBadges.length ? '' : ' is-empty'}" id="member-badges-${domId}"${orderedBadges.length ? '' : ' aria-hidden="true"'}>
               ${orderedBadges.map(renderBadgePill).join('')}
               <span class="member-badge-count" hidden></span>
-            </span>` : ''}
+            </span>
           </button>
           ${hasMenu ? `<div class="member-card-actions">
             <button type="button" id="member-menu-${domId}" class="member-card-menu" data-card-menu-btn="${domId}" aria-label="${name} 더보기" aria-expanded="false" aria-controls="member-menu-box-${domId}">⋯</button>
@@ -9156,20 +9165,47 @@
         const validMemberId = id => (id && shared.members.some(m => m.id === id)) ? id : ((shared.members[0] && shared.members[0].id) || '');
         const chMemSel = document.getElementById('admin-challenge-member');
         const curChMem = validMemberId(chMemSel.value);
-        chMemSel.innerHTML = shared.members.map(m => `<option value="${m.id}" ${m.id === curChMem ? 'selected' : ''}>${escapeHtml(m.name)}</option>`).join('');
+        const chMemSig = (shared.members || []).map(m => `${m.id}:${m.name || ''}`).join('|');
+        if (chMemSel.dataset.sig !== chMemSig) {
+          chMemSel.dataset.sig = chMemSig;
+          chMemSel.innerHTML = (shared.members || []).map(m => `<option value="${m.id}" ${m.id === curChMem ? 'selected' : ''}>${escapeHtml(m.name)}</option>`).join('');
+          chMemSel.value = curChMem;
+        }
         const memDone = (shared.memberChallenges && shared.memberChallenges[curChMem]) || [];
 
 
-        const editChSel = document.getElementById('admin-edit-ch-select');
-        const curEditCh = editChSel.value || ((shared.challenges && shared.challenges[0]) ? shared.challenges[0].id : '');
-        editChSel.innerHTML = (shared.challenges || []).map(ch => `<option value="${ch.id}" ${ch.id === curEditCh ? 'selected' : ''}>${escapeHtml(ch.title)}</option>`).join('');
-        const selChObj = (shared.challenges || []).find(ch => ch.id === curEditCh);
-        document.getElementById('admin-edit-ch-title-input').value = selChObj ? selChObj.title : '';
-
-        document.getElementById('admin-challenge-toggles').innerHTML = (shared.challenges || []).map(ch => {
-          const done = memDone.includes(ch.id);
-          return `<button type="button" data-toggle-ch="${ch.id}" class="px-2.5 py-1 rounded-lg text-[11px] font-bold border ${done ? 'bg-emerald-600 text-white border-emerald-700' : 'bg-white text-slate-700 border-slate-300'}">${escapeHtml(ch.title)} ${done ? '✓' : ''}</button>`;
-        }).join('');
+        const adminChQ = (document.getElementById('admin-challenge-search')?.value || '').trim().toLowerCase();
+        const adminChCat = window.__adminChCat || 'all';
+        document.querySelectorAll('.admin-ch-cat-btn').forEach(btn => {
+          const on = btn.dataset.adminChCat === adminChCat;
+          btn.className = on
+            ? 'admin-ch-cat-btn px-2.5 py-1 rounded-lg text-[11px] font-black bg-slate-950 text-white transition'
+            : 'admin-ch-cat-btn px-2.5 py-1 rounded-lg text-[11px] font-bold bg-slate-100 text-slate-600 hover:text-slate-950 transition';
+        });
+        const adminChList = (shared.challenges || []).filter(ch => {
+          if (!ch) return false;
+          if (adminChCat !== 'all' && challengeCategory(ch) !== adminChCat) return false;
+          if (adminChQ && !(ch.title || '').toLowerCase().includes(adminChQ) && !(ch.desc || '').toLowerCase().includes(adminChQ)) return false;
+          return true;
+        });
+        document.getElementById('admin-challenge-toggles').innerHTML = adminChList.length
+          ? adminChList.map(ch => {
+              const done = memDone.includes(ch.id);
+              return `<div class="rounded-xl border p-3 flex flex-col justify-between gap-2 transition ${done ? 'border-emerald-500 bg-emerald-50/40' : 'border-slate-200 bg-slate-50/70'}">
+                <div>
+                  <div class="flex items-start justify-between gap-2">
+                    <span class="font-black text-xs sm:text-sm text-slate-900 leading-snug break-words">${escapeHtml(ch.title)}</span>
+                    <span class="shrink-0 text-[11px] font-extrabold text-indigo-600 whitespace-nowrap">+${Number(ch.lp) || 0} LP</span>
+                  </div>
+                  <p class="text-[11px] text-slate-600 mt-1 leading-relaxed break-words">${escapeHtml(ch.desc || '')}</p>
+                </div>
+                <div class="flex items-center justify-between gap-1.5 pt-1 border-t border-slate-200/70">
+                  <button type="button" data-toggle-ch="${escapeHtml(ch.id)}" class="px-2.5 py-1 rounded-lg text-[11px] font-black transition ${done ? 'bg-emerald-600 hover:bg-emerald-700 text-white' : 'bg-white border border-slate-300 hover:bg-slate-100 text-slate-700'}">${done ? '달성 완료 ✓' : '미달성 · 달성 처리'}</button>
+                  <button type="button" data-admin-edit-ch="${escapeHtml(ch.id)}" class="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-200 hover:bg-indigo-100 whitespace-nowrap">수정</button>
+                </div>
+              </div>`;
+            }).join('')
+          : '<p class="col-span-full text-xs text-slate-400 py-4 text-center">조건에 맞는 챌린지가 없어요.</p>';
 
         const impSel = document.getElementById('admin-impersonate-select');
         const curImp = (impSel.value && shared.members.some(m => m.id === impSel.value)) ? impSel.value : validMemberId(prefs.currentUserId);
@@ -9198,7 +9234,7 @@
         document.getElementById('admin-preset-badges').innerHTML = PRESET_ADMIN_BADGES.map((pb, idx) => `<button type="button" data-grant-preset="${idx}" class="fancy-badge px-2.5 py-1 rounded-full text-[11px] font-extrabold border ${BADGE_THEMES[pb.theme]}">${pb.label}</button>`).join('');
         const cList = (shared.customBadges && shared.customBadges[cbm]) || [];
         document.getElementById('admin-member-badges-list').innerHTML = cList.length ? cList.map(cb => `<div class="inline-flex items-center gap-1 rounded-full border pl-2.5 pr-1.5 py-0.5 text-[11px] font-extrabold ${BADGE_THEMES[cb.theme || 'gold']}"><span>${escapeHtml(cb.label)}</span><button type="button" data-edit-badge="${cb.id}" class="px-1 hover:opacity-75" title="뱃지 이름 수정">✏️</button><button type="button" data-revoke-badge="${cb.id}" class="px-1 hover:text-rose-600" title="회수">✕</button></div>`).join('') : '<span class="text-xs text-slate-400">없음</span>';
-        if (typeof renderAdminGiftsPanel === 'function') renderAdminGiftsPanel();
+        if (typeof renderAdminGiftsPanel === 'function') { try { renderAdminGiftsPanel(); } catch (err) { console.error('renderAdminGiftsPanel error:', err); } }
 
         const dmTargetSel = document.getElementById('admin-dm-target');
         if (dmTargetSel) {
@@ -9207,7 +9243,7 @@
           if (dmTargetSel.dataset.sig !== sig) {
             const prevDmT = dmTargetSel.value;
             dmTargetSel.dataset.sig = sig;
-            dmTargetSel.innerHTML = '<option value="">받는 부원 선택</option><option value="all">전체 부원</option>' +
+            dmTargetSel.innerHTML = '<option value="">받는 가입자 선택</option><option value="all">전체 가입자</option>' +
               recipients.map(m => `<option value="${escapeHtml(m.id)}">${escapeHtml(m.name)}</option>`).join('');
             dmTargetSel.value = (prevDmT === 'all' || recipients.some(m => m.id === prevDmT)) ? prevDmT : '';
           }
@@ -10226,15 +10262,15 @@
         const target = (document.getElementById('admin-dm-target')?.value || '').trim();
         const textEl = document.getElementById('admin-dm-text');
         const text = (textEl?.value || '').trim();
-        if (!target) { showToast('받는 부원을 선택해 주세요.', 'warn'); return; }
+        if (!target) { showToast('받는 가입자를 선택해 주세요.', 'warn'); return; }
         if (!text) { showToast('보낼 메시지를 입력해 주세요.', 'warn'); textEl?.focus(); return; }
         const targets = (shared.members || []).filter(m => m && (target === 'all' || m.id === target));
-        if (!targets.length) { showToast('받는 부원을 찾을 수 없어요.', 'warn'); return; }
+        if (!targets.length) { showToast('받는 가입자를 찾을 수 없어요.', 'warn'); return; }
         targets.forEach(m => addDirectMessage(m.id, text));
         if (textEl) textEl.value = '';
         saveSharedData();
         renderAll();
-        showMessageSaveStatus(target === 'all' ? `전체 부원(${targets.length}명)에게 메시지를 보냈어요.` : `${targets[0].name}님에게 메시지를 보냈어요.`);
+        showMessageSaveStatus(target === 'all' ? `전체 가입자(${targets.length}명)에게 메시지를 보냈어요.` : `${targets[0].name}님에게 메시지를 보냈어요.`);
       });
 
       function switchAdminSubTab(targetSub) {
@@ -10249,6 +10285,7 @@
             ? 'admin-sub-btn py-2 px-2 rounded-xl text-[11px] sm:text-xs font-black bg-slate-950 text-white whitespace-nowrap transition'
             : 'admin-sub-btn py-2 px-2 rounded-xl text-[11px] sm:text-xs font-bold text-slate-600 hover:text-slate-950 whitespace-nowrap transition';
         });
+        if (prefs.adminMode && prefs.activeTab === 'admin') renderAdminTab();
         requestAnimationFrame(() => updateSubTabSlider('admin-sub-bar', 'admin-sub-slider', '[data-admin-sub]', 'adminSub', targetSub));
       }
       document.querySelectorAll('[data-admin-sub]').forEach(btn => {
@@ -10304,7 +10341,7 @@
         renderAdminNotices();
       });
       document.getElementById('mailbox-btn').addEventListener('click', () => {
-        if (!prefs.adminMode) unlockChallengeFor(prefs.currentUserId, 'ch_mailbox', false);
+        if (!prefs.adminMode && prefs.currentUserId) { unlockChallengeFor(prefs.currentUserId, 'ch_mailbox', false); saveSharedData(); }
         if (typeof openUnifiedChatModal === 'function') openUnifiedChatModal('all');
       });
 
@@ -10516,29 +10553,52 @@
         renderRankingsTab();
       });
 
+      function openAdminChallengeEditModal(ch) {
+        if (!ch || !prefs.adminMode) return;
+        openModal('챌린지 수정', `
+          <form id="modal-edit-ch-form" class="space-y-3">
+            <div>
+              <label for="modal-edit-ch-input" class="block text-[11px] font-bold text-slate-600 mb-1">챌린지 명 (칭호)</label>
+              <input id="modal-edit-ch-input" type="text" maxlength="60" value="${escapeHtml(ch.title)}" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm font-bold text-slate-900" required />
+            </div>
+            <div>
+              <label for="modal-edit-ch-desc" class="block text-[11px] font-bold text-slate-600 mb-1">챌린지 설명 (달성 조건)</label>
+              <textarea id="modal-edit-ch-desc" rows="2" maxlength="140" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-xs font-semibold text-slate-800" required>${escapeHtml(ch.desc || '')}</textarea>
+            </div>
+            <div>
+              <label for="modal-edit-ch-lp" class="block text-[11px] font-bold text-slate-600 mb-1">보상 LP</label>
+              <input id="modal-edit-ch-lp" type="number" min="0" max="500" value="${Number(ch.lp) || 0}" class="w-28 rounded-xl border border-slate-300 px-3 py-1.5 text-xs font-bold text-slate-900" required />
+            </div>
+            <button type="submit" class="w-full py-2.5 rounded-xl bg-slate-950 hover:bg-slate-800 text-white text-sm font-black transition">저장하기</button>
+          </form>
+        `);
+        document.getElementById('modal-edit-ch-form').addEventListener('submit', ev => {
+          ev.preventDefault();
+          const nt = document.getElementById('modal-edit-ch-input').value.trim();
+          const nd = document.getElementById('modal-edit-ch-desc').value.trim();
+          const nlp = Math.max(0, Math.min(500, Math.floor(Number(document.getElementById('modal-edit-ch-lp').value) || 0)));
+          if (!nt || !nd) return;
+          const oldRaw = ch.title;
+          const oldClean = oldRaw.replace(/^[^\w가-힣A-Za-z0-9]+\s*/, '').trim() || oldRaw.trim();
+          const newClean = nt.replace(/^[^\w가-힣A-Za-z0-9]+\s*/, '').trim() || nt.trim();
+          ch.title = nt;
+          ch.desc = nd;
+          ch.lp = nlp;
+          ch.adminEdited = true;
+          (shared.members || []).forEach(m => { if (m.equippedTitle === oldClean || m.equippedTitle === oldRaw) m.equippedTitle = newClean; });
+          saveSharedData();
+          closeModal();
+          showToast('챌린지가 수정되었습니다.', 'success');
+          if (prefs.activeTab === 'admin') renderAdminTab();
+          renderAll();
+        });
+      }
+
       document.getElementById('challenges-grid').addEventListener('click', e => {
         const editBtn = e.target.closest('[data-admin-edit-ch]');
         if (editBtn && prefs.adminMode) {
           const ch = (shared.challenges || []).find(c => c.id === editBtn.dataset.adminEditCh);
-          if (!ch) return;
-          openModal('칭호 도감 이름 수정', `
-            <form id="modal-edit-ch-form" class="space-y-3">
-              <p class="text-xs text-slate-500">조건: ${escapeHtml(ch.desc)}</p>
-              <input id="modal-edit-ch-input" type="text" value="${escapeHtml(ch.title)}" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm font-bold" required />
-              <button type="submit" class="w-full py-2.5 rounded-xl bg-indigo-600 text-white text-sm font-bold">저장하기</button>
-            </form>
-          `);
-          document.getElementById('modal-edit-ch-form').addEventListener('submit', ev => {
-            ev.preventDefault();
-            const nt = document.getElementById('modal-edit-ch-input').value.trim();
-            if (!nt) return;
-            const oldRaw = ch.title;
-            const oldClean = oldRaw.replace(/^[^\w가-힣A-Za-z0-9]+\s*/, '').trim() || oldRaw.trim();
-            const newClean = nt.replace(/^[^\w가-힣A-Za-z0-9]+\s*/, '').trim() || nt.trim();
-            ch.title = nt;
-            (shared.members || []).forEach(m => { if (m.equippedTitle === oldClean || m.equippedTitle === oldRaw) m.equippedTitle = newClean; });
-            saveSharedData(); closeModal(); showToast('칭호 이름이 수정되었습니다.', 'success'); renderAll();
-          });
+          if (ch) openAdminChallengeEditModal(ch);
           return;
         }
         const b = e.target.closest('[data-equip-title]');
@@ -10551,36 +10611,27 @@
         if (!me) return;
         const tName = b.dataset.equipTitle;
         me.equippedTitle = me.equippedTitle === tName ? '' : tName;
-        if (me.equippedTitle) { unlockChallengeFor(me.id, 'ch_equip', false); if (!prefs.adminMode) unlockChallengeFor(me.id, 'ch_minimal', false); }
+        if (me.equippedTitle) { unlockChallengeFor(me.id, 'ch_equip', false); } else if (!prefs.adminMode) { unlockChallengeFor(me.id, 'ch_minimal', false); }
         saveSharedData();
         showToast(me.equippedTitle ? `'${me.equippedTitle}' 칭호를 장착했습니다!` : '칭호 장착을 해제했습니다.', 'success');
         renderRankingsTab();
       });
 
-      document.getElementById('admin-challenge-member').addEventListener('change', renderAdminTab);
-      document.getElementById('admin-edit-ch-select').addEventListener('change', () => {
-        const ch = (shared.challenges || []).find(c => c.id === document.getElementById('admin-edit-ch-select').value);
-        document.getElementById('admin-edit-ch-title-input').value = ch ? ch.title : '';
-      });
-
-      document.getElementById('admin-edit-ch-title-form').addEventListener('submit', e => {
-        e.preventDefault();
-        const chId = document.getElementById('admin-edit-ch-select').value;
-        const newTitle = document.getElementById('admin-edit-ch-title-input').value.trim();
-        const ch = (shared.challenges || []).find(c => c.id === chId);
-        if (!ch || !newTitle) return;
-        const oldRaw = ch.title;
-        const oldClean = oldRaw.replace(/^[^\w가-힣A-Za-z0-9]+\s*/, '').trim() || oldRaw.trim();
-        const newClean = newTitle.replace(/^[^\w가-힣A-Za-z0-9]+\s*/, '').trim() || newTitle.trim();
-        ch.title = newTitle;
-        (shared.members || []).forEach(m => { if (m.equippedTitle === oldClean || m.equippedTitle === oldRaw) m.equippedTitle = newClean; });
-        saveSharedData();
-        showToast('챌린지 칭호 텍스트가 수정되었습니다.', 'success');
+      document.getElementById('admin-challenge-member')?.addEventListener('change', renderAdminTab);
+      document.getElementById('admin-challenge-search')?.addEventListener('input', renderAdminTab);
+      document.getElementById('admin-ch-cat-tabs')?.addEventListener('click', e => {
+        const btn = e.target.closest('[data-admin-ch-cat]');
+        if (!btn) return;
+        window.__adminChCat = btn.dataset.adminChCat;
         renderAdminTab();
-        renderAll();
-        renderMembersTab();
       });
-      document.getElementById('admin-challenge-toggles').addEventListener('click', e => {
+      document.getElementById('admin-challenge-toggles')?.addEventListener('click', e => {
+        const editBtn = e.target.closest('[data-admin-edit-ch]');
+        if (editBtn && prefs.adminMode) {
+          const ch = (shared.challenges || []).find(c => c.id === editBtn.dataset.adminEditCh);
+          if (ch) openAdminChallengeEditModal(ch);
+          return;
+        }
         const b = e.target.closest('[data-toggle-ch]');
         if (!b) return;
         const chId = b.dataset.toggleCh;
@@ -10595,10 +10646,13 @@
         if (!shared.challengeLpGranted) shared.challengeLpGranted = {};
         if (!shared.challengeLpGranted[mid]) shared.challengeLpGranted[mid] = {};
         if (idx >= 0) {
+          const grantedLp = Number.isFinite(Number(shared.challengeLpGranted[mid][chId]))
+            ? Number(shared.challengeLpGranted[mid][chId])
+            : lpAmt;
           shared.memberChallenges[mid].splice(idx, 1);
           delete shared.challengeLpGranted[mid][chId];
-          addMemberLp(mid, -lpAmt, `챌린지 취소: ${ch.title}`);
-          showToast(`${targetMem.name}님 챌린지 취소 (-${lpAmt} LP)`, 'info');
+          if (grantedLp > 0) addMemberLp(mid, -grantedLp, `챌린지 취소: ${ch.title}`);
+          showToast(`${targetMem.name}님 챌린지 취소 (-${grantedLp} LP)`, 'info');
         } else {
           shared.memberChallenges[mid].push(chId);
           shared.challengeLpGranted[mid][chId] = lpAmt;
@@ -11575,7 +11629,7 @@
           ? '오늘 추가 도전 기회를 사용했습니다.'
           : m?.promoExtraGrantedDay === day
             ? '오늘 추가 도전 기회 1회가 남아 있습니다.'
-            : '선택한 부원에게 오늘 도전 기회를 한 번 더 줍니다.';
+            : '선택한 가입자에게 오늘 승급전 도전 기회를 한 번 더 줍니다.';
         document.getElementById('btn-admin-resume-promo').classList.toggle('hidden', !prefs.adminMode || !canResumeMidnightPromotion(m));
         const lpIn = document.getElementById('admin-rank-lp-input');
         const tierSel = document.getElementById('admin-rank-tier-preset');
@@ -13393,6 +13447,9 @@
           }
           if (user !== currentAuthUser) return;
           if (pending() && !(await confirmModalAsync('서버에서 일부 기록의 저장을 아직 확인하지 못했어요. 지금 로그아웃할까요?', { title: '로그아웃 확인', confirmLabel: '로그아웃', danger: true }))) return;
+          if (typeof stopSongPreview === 'function') stopSongPreview();
+          try { sessionStorage.removeItem(APP_NOTICE_SEEN_SESSION_KEY); } catch {}
+          closeSimpleModal('app-notice-popup');
           await firebase.auth().signOut();
           showToast('로그아웃되었습니다.', 'info');
         } catch {
@@ -13675,7 +13732,7 @@
         if (!tm) return;
         const tName = b.dataset.profileEquip;
         tm.equippedTitle = tm.equippedTitle === tName ? '' : tName;
-        if (tm.equippedTitle) { unlockChallengeFor(tm.id, 'ch_equip', false); if (!prefs.adminMode) unlockChallengeFor(tm.id, 'ch_minimal', false); }
+        if (tm.equippedTitle) { unlockChallengeFor(tm.id, 'ch_equip', false); } else if (!prefs.adminMode) { unlockChallengeFor(tm.id, 'ch_minimal', false); }
         saveSharedData();
         showToast(tm.equippedTitle ? `'${tm.equippedTitle}' 칭호를 장착했습니다!` : '칭호 장착을 해제했습니다.', 'success');
         renderAll();
@@ -14721,6 +14778,7 @@
         else markNoticesSeenInSession(activeShownNoticeIds);
         activeShownNoticeIds = [];
         closeSimpleModal('app-notice-popup');
+        if (typeof tryShowPendingGachaPopup === 'function') setTimeout(tryShowPendingGachaPopup, 200);
       }
 
       function isUiAnimationOrModalBlockingNotice() {
@@ -15247,7 +15305,7 @@
         activeGroupId = gid;
         activeRoomSub = isAnonymous ? 'chat' : 'members';
         saveGroupNavState();
-        if (!prefs.adminMode && prefs.currentUserId) unlockChallengeFor(prefs.currentUserId, 'ch_join_study', false);
+        if (!prefs.adminMode && prefs.currentUserId) { unlockChallengeFor(prefs.currentUserId, 'ch_join_study', false); saveSharedData(); }
         showToast(`'${name}' 모임이 만들어졌어요!`, 'success');
         renderGroupsTab();
       }));
@@ -15272,7 +15330,7 @@
         activeGroupId = gid;
         activeRoomSub = 'members';
         saveGroupNavState();
-        if (!prefs.adminMode && prefs.currentUserId) unlockChallengeFor(prefs.currentUserId, 'ch_join_study', false);
+        if (!prefs.adminMode && prefs.currentUserId) { unlockChallengeFor(prefs.currentUserId, 'ch_join_study', false); saveSharedData(); }
         showToast(`'${g.name}' 모임에 가입했어요!`, 'success');
         renderGroupsTab();
       }
@@ -15900,7 +15958,13 @@
           editor.inert = false;
           editor.removeAttribute('aria-busy');
         }
-        if (pendingCommPhoto && !prefs.adminMode && prefs.currentUserId) unlockChallengeFor(prefs.currentUserId, 'ch_brag1', false);
+        if (pendingCommPhoto && !prefs.adminMode && prefs.currentUserId) {
+          const meMem = (shared.members || []).find(m => m.id === prefs.currentUserId);
+          if (meMem) meMem.commPhotoPostCount = (Number(meMem.commPhotoPostCount) || 0) + 1;
+          unlockChallengeFor(prefs.currentUserId, 'ch_brag1', false);
+          if (meMem && meMem.commPhotoPostCount >= 5) unlockChallengeFor(prefs.currentUserId, 'ch_brag5', false);
+          saveSharedData();
+        }
         const bodyInp = document.getElementById('comm-post-body');
         if (bodyInp) { bodyInp.value = ''; bodyInp.style.height = 'auto'; }
         photoRequest++;
@@ -16300,21 +16364,27 @@
       };
       const GIFT_RARITY_ORDER = { legendary: 0, epic: 1, rare: 2, common: 3 };
       const GIFT_CATALOG = [
-        { id: 'aplus',       emoji: '🅰️', name: 'A+',       rarity: 'legendary' },
-        { id: 'gradeL',      emoji: '🇱', name: 'L',         rarity: 'legendary', displayIcon: '𝐋' },
-        { id: 'poop',        emoji: '💩', name: '똥',         rarity: 'legendary' },
-        { id: 'clover',      emoji: '🍀', name: '네잎클로버', rarity: 'epic' },
-        { id: 'heart',       emoji: '❤️', name: '내 마음',    rarity: 'epic' },
-        { id: 'chicken',     emoji: '🍗', name: '치킨',       rarity: 'epic' },
-        { id: 'gradef',      emoji: '📉', name: 'F',          rarity: 'epic' },
-        { id: 'scholarship', emoji: '💎', name: '장학금',     rarity: 'rare' },
-        { id: 'endterm',     emoji: '🎉', name: '종강',       rarity: 'rare' },
-        { id: 'bomb',        emoji: '💣', name: '폭탄',       rarity: 'rare' },
-        { id: 'ghost',       emoji: '👻', name: '유령',       rarity: 'rare' },
-        { id: 'banana',      emoji: '🍌', name: '바나나',     rarity: 'common' },
-        { id: 'brick',       emoji: '🧱', name: '벽돌',       rarity: 'common' },
-        { id: 'homework',    emoji: '📝', name: '과제',       rarity: 'common' },
-        { id: 'tissue',      emoji: '🧻', name: '휴지',       rarity: 'common' }
+        { id: 'aplus',       emoji: '🅰️', name: 'A+',           rarity: 'legendary' },
+        { id: 'gradeL',      emoji: '🇱', name: 'L',            rarity: 'legendary', displayIcon: '𝐋' },
+        { id: 'poop',        emoji: '💩', name: '똥',            rarity: 'legendary' },
+        { id: 'chamisul',    emoji: '🍾', name: '참이슬',        rarity: 'legendary' },
+        { id: 'clover',      emoji: '🍀', name: '네잎클로버',    rarity: 'epic' },
+        { id: 'heart',       emoji: '❤️', name: '내 마음',       rarity: 'epic' },
+        { id: 'chicken',     emoji: '🍗', name: '치킨',          rarity: 'epic' },
+        { id: 'gradef',      emoji: '📉', name: 'F',             rarity: 'epic' },
+        { id: 'duzzonku',    emoji: '🍫', name: '두쫀쿠',        rarity: 'epic' },
+        { id: 'mycookie',    emoji: '🍪', name: '내가만든쿠키',  rarity: 'epic' },
+        { id: 'cat',         emoji: '🐱', name: '고양이',        rarity: 'epic' },
+        { id: 'scholarship', emoji: '💎', name: '장학금',        rarity: 'rare' },
+        { id: 'endterm',     emoji: '🎉', name: '종강',          rarity: 'rare' },
+        { id: 'bomb',        emoji: '💣', name: '폭탄',          rarity: 'rare' },
+        { id: 'ghost',       emoji: '👻', name: '유령',          rarity: 'rare' },
+        { id: 'snowball',    emoji: '❄️', name: '눈덩이',        rarity: 'rare' },
+        { id: 'banana',      emoji: '🍌', name: '바나나',        rarity: 'common' },
+        { id: 'brick',       emoji: '🧱', name: '벽돌',          rarity: 'common' },
+        { id: 'homework',    emoji: '📝', name: '과제',          rarity: 'common' },
+        { id: 'tissue',      emoji: '🧻', name: '휴지',          rarity: 'common' },
+        { id: 'tangerine',   emoji: '🍊', name: '귤',            rarity: 'common' }
       ];
       const GIFT_MAP = Object.fromEntries(GIFT_CATALOG.map(g => [g.id, g]));
       const GIFT_PREVIEW_KEY = storageScope + 'iluvstudy_gifts_v2';
@@ -16332,6 +16402,17 @@
         if (shown(document.getElementById('modal-overlay'))) return false;
         if (shown(document.getElementById('unified-chat-modal'))) return false;
         if (shown(document.getElementById('whisper-modal'))) return false;
+        if (shown(document.getElementById('app-notice-popup'))) return false;
+        if (shown(document.getElementById('app-confirm-modal'))) return false;
+        if (shown(document.getElementById('promotion-overlay'))) return false;
+        if (shown(document.getElementById('starter-clear-overlay'))) return false;
+        const wOv = document.getElementById('login-welcome-overlay');
+        const aOv = document.getElementById('approved-toast-overlay');
+        const jg = document.getElementById('join-guide');
+        if (wOv && wOv.classList.contains('is-active')) return false;
+        if (aOv && aOv.classList.contains('is-active')) return false;
+        if (document.body.classList.contains('is-entering')) return false;
+        if (jg && jg.open) return false;
         return true;
       }
 
@@ -16364,6 +16445,7 @@
         return pool[Math.floor(Math.random() * pool.length)].id;
       }
 
+      const LP_PER_GIFT_BOX = 30;
       function getMyGiftBag() {
         const uid = getMySocialUid();
         const bag = giftsData.bags?.[uid] || {};
@@ -16371,6 +16453,7 @@
           starterGranted: !!bag.starterGranted,
           starterAllGiftGranted: !!bag.starterAllGiftGranted,
           challengeCount: Number(bag.challengeCount || 0),
+          lpGiftProgress: Math.max(0, Number(bag.lpGiftProgress || 0)),
           gachaBoxes: Number(bag.gachaBoxes || 0),
           inventory: { ...(bag.inventory || {}) },
           received: { ...(bag.received || {}) }
@@ -16412,6 +16495,7 @@
           starterGranted: true,
           starterAllGiftGranted: !!bag?.starterAllGiftGranted,
           challengeCount: Number(bag?.challengeCount || 0),
+          lpGiftProgress: Number(bag?.lpGiftProgress || 0),
           gachaBoxes: Number(bag?.gachaBoxes || 0),
           inventory: inv,
           received: { ...(bag?.received || {}) }
@@ -16440,36 +16524,29 @@
         }
       }
 
-      function maybeGrantChallengeGift(member, chId, silent) {
-        if (!member || member.uid !== getMySocialUid()) return;
-        const ch = (shared.challenges || []).find(c => c.id === chId);
-        const cat = ch ? challengeCategory(ch) : 'starter';
+      function maybeGrantChallengeGift() {
+        // Gifts are now earned exclusively via LP accumulation (every 30 LP).
+      }
+
+      function maybeGrantLpGift(member, deltaLp) {
+        const gain = Math.floor(Number(deltaLp) || 0);
+        if (!member || gain <= 0 || prefs.adminMode) return;
+        if (member.id !== prefs.currentUserId) return;
         const uid = getMySocialUid();
+        if (!uid) return;
         const bag = getMyGiftBag();
-        const nextCnt = bag.challengeCount + 1;
-        bag.challengeCount = nextCnt;
-
-        // Check if ALL starter challenges are now completed -> guaranteed +1 gift box!
-        const starterIds = (shared.challenges || []).filter(c => challengeCategory(c) === 'starter').map(c => c.id);
-        const unlockedSet = new Set((shared.memberChallenges && shared.memberChallenges[member.id]) || []);
-        const starterAllDone = starterIds.length > 0 && starterIds.every(id => unlockedSet.has(id));
-        if (starterAllDone && !bag.starterAllGiftGranted) {
-          bag.starterAllGiftGranted = true;
-          bag.gachaBoxes = (bag.gachaBoxes || 0) + 1;
+        const totalProg = bag.lpGiftProgress + gain;
+        const earnedBoxes = Math.floor(totalProg / LP_PER_GIFT_BOX);
+        const remainder = totalProg % LP_PER_GIFT_BOX;
+        bag.lpGiftProgress = remainder;
+        if (earnedBoxes > 0) {
+          bag.gachaBoxes = (bag.gachaBoxes || 0) + earnedBoxes;
           giftWrite(`bags/${uid}`, bag);
-          queueOrShowGachaPopup('🎉 입문 챌린지 올클리어 선물 상자!');
-          return;
-        }
-
-        // Random drop chance (scarce after starter): 25% on starter, 55% on season/special
-        const dropChance = cat === 'starter' ? 0.25 : 0.55;
-        if (Math.random() < dropChance) {
-          bag.gachaBoxes = (bag.gachaBoxes || 0) + 1;
-          giftWrite(`bags/${uid}`, bag);
-          if (!silent) queueOrShowGachaPopup('🎰 챌린지 선물 뽑기 상자 드롭!');
-          else pendingGachaPopup = true;
+          queueOrShowGachaPopup(earnedBoxes > 1
+            ? `LP 달성! 선물 뽑기 상자 ${earnedBoxes}개 획득!`
+            : `${LP_PER_GIFT_BOX} LP 달성! 선물 뽑기 상자 획득!`);
         } else {
-          giftWrite(`bags/${uid}/challengeCount`, nextCnt);
+          giftWrite(`bags/${uid}/lpGiftProgress`, remainder);
         }
       }
 
@@ -16514,7 +16591,7 @@
               const r = GIFT_RARITIES[g.rarity] || GIFT_RARITIES.common;
               return `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-xs font-bold gift-pill-badge ${r.cls}">${giftIconOf(g)} ${escapeHtml(g.name)} <strong class="font-mono text-[11px]">×${cnt}</strong></span>`;
             }).join('')
-          : '<span class="text-[11px] text-slate-400">보낼 수 있는 선물이 없어요. 챌린지에서 뽑기 상자를 얻어보세요!</span>';
+          : `<span class="text-[11px] text-slate-400">보낼 수 있는 선물이 없어요. ${LP_PER_GIFT_BOX - (bag.lpGiftProgress % LP_PER_GIFT_BOX)} LP를 더 모으면 선물 상자를 받아요! (${LP_PER_GIFT_BOX} LP마다 1개)</span>`;
 
         if (catEl) {
           catEl.innerHTML = GIFT_CATALOG.map(g => {
@@ -16547,7 +16624,7 @@
         const submitBtn = document.getElementById('btn-gift-send-submit');
 
         if (!available.length) {
-          picker.innerHTML = '<p class="col-span-3 py-6 text-center text-xs font-semibold text-slate-500">보낼 수 있는 선물이 없어요. 챌린지를 깨서 뽑기 상자를 열어보세요!</p>';
+          picker.innerHTML = `<p class="col-span-3 py-6 text-center text-xs font-semibold text-slate-500">보낼 수 있는 선물이 없어요. 공부해서 ${LP_PER_GIFT_BOX} LP를 모으면 선물 상자를 받을 수 있어요!</p>`;
           if (submitBtn) submitBtn.disabled = true;
         } else {
           if (submitBtn) submitBtn.disabled = false;
@@ -17254,7 +17331,7 @@
         const listEl = document.getElementById('admin-member-gifts-list');
         if (!memSel || !giftSel || !listEl) return;
 
-        const curMid = validMemberId(memSel.value);
+        const curMid = (memSel.value && (shared.members || []).some(m => m && m.id === memSel.value)) ? memSel.value : ((shared.members?.[0]?.id) || '');
         memSel.innerHTML = shared.members.map(m => `<option value="${escapeHtml(m.id)}" ${m.id === curMid ? 'selected' : ''}>${escapeHtml(m.name)}</option>`).join('');
         if (!giftSel.options.length) {
           giftSel.innerHTML = GIFT_CATALOG.map(g => {
@@ -17396,7 +17473,16 @@
           closeModal();
           (shared.members || []).forEach(m => {
             m.lp = 0;
+            m.tierIdx = 0;
+            m.bankedLp = 0;
             m.equippedTitle = '';
+            m.starterAllCleared = false;
+            m.commPhotoPostCount = 0;
+            m.promoWinStreak = 0;
+            m.promoActiveDate = null;
+            m.promoActiveStudyDay = null;
+            m.promoLegacyCarryDate = null;
+            m.promoCooldownUntil = null;
             delete m.promo;
             delete m.promoPendingDate;
             delete m.promoLastFailedDate;
@@ -18742,6 +18828,7 @@
         const resEl = document.getElementById('profile-song-results');
         if (resEl) { resEl.classList.add('hidden'); resEl.innerHTML = ''; }
         songSearchResultsCache = [];
+        if (!prefs.adminMode) unlockChallengeFor(tm.id, 'ch_rec_song', false);
         saveSharedData();
         renderAll();
         showToast(`"${raw}"을(를) 추천 노래로 저장했어요!`, 'success');
@@ -18798,6 +18885,7 @@
           if (titleInp) titleInp.value = '';
           if (resEl) { resEl.classList.add('hidden'); resEl.innerHTML = ''; }
           songSearchResultsCache = [];
+          if (!prefs.adminMode) unlockChallengeFor(tm.id, 'ch_rec_song', false);
           saveSharedData();
           renderAll();
           showToast(`"${tr.title}"을(를) 추천 노래로 설정했어요!`, 'success');
