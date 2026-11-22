@@ -370,6 +370,15 @@
     .member-photo-preview img { display: block; object-fit: cover; }
     .member-photo-initial { display: grid; place-items: center; color: var(--ink); font-size: 2rem; font-weight: 900; }
     .member-photo-note { margin: 0; color: var(--muted); font-size: .82rem; }
+    .member-song-chip {
+      display: flex; align-items: center; gap: 5px; min-width: 0;
+      padding: 4px 7px; border-radius: 8px;
+      background: var(--soft); border: 1px solid var(--line);
+      font-size: .67rem; font-weight: 700; color: var(--ink);
+    }
+    .member-song-chip img { width: 16px; height: 16px; border-radius: 4px; object-fit: cover; flex-shrink: 0; }
+    .member-song-chip-text { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .member-song-chip-artist { color: var(--muted); font-weight: 600; }
     .member-badges { display: flex; align-items: center; gap: 4px; min-width: 0; margin-top: auto; }
     .member-badges .badge-pill { display: block; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: .64rem; padding-inline: 6px; }
     .member-badge-count { flex: none; color: var(--muted); font-size: .67rem; font-weight: 800; }
@@ -2815,17 +2824,17 @@
       animation: giftConfettiBurst 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
       pointer-events: none;
     }
-    body[data-dark="true"] :is(#gift-send-modal, #gift-open-overlay, #profile-gifts-box) :is(.text-slate-950, .text-slate-900, .text-slate-800) {
+    body[data-dark="true"] :is(#gift-send-modal, #gift-open-overlay, #profile-gifts-box, #profile-song-box) :is(.text-slate-950, .text-slate-900, .text-slate-800) {
       color: var(--ink) !important;
     }
-    body[data-dark="true"] :is(#gift-send-modal, #gift-open-overlay, #profile-gifts-box) :is(.text-slate-700, .text-slate-600, .text-slate-500) {
+    body[data-dark="true"] :is(#gift-send-modal, #gift-open-overlay, #profile-gifts-box, #profile-song-box) :is(.text-slate-700, .text-slate-600, .text-slate-500) {
       color: var(--muted) !important;
     }
-    body[data-dark="true"] :is(#gift-send-modal, #gift-open-overlay, #profile-gifts-box) :is(.bg-white, .bg-slate-50, .bg-slate-100) {
+    body[data-dark="true"] :is(#gift-send-modal, #gift-open-overlay, #profile-gifts-box, #profile-song-box) :is(.bg-white, .bg-slate-50, .bg-slate-100) {
       background-color: var(--soft) !important;
       border-color: var(--line) !important;
     }
-    body[data-dark="true"] :is(#gift-send-modal, #gift-open-overlay, #profile-gifts-box) input {
+    body[data-dark="true"] :is(#gift-send-modal, #gift-open-overlay, #profile-gifts-box, #profile-song-box) input {
       background-color: var(--soft) !important;
       border-color: var(--line) !important;
       color: var(--ink) !important;
@@ -3436,7 +3445,6 @@
               </div>
             </div>
           </div>
-          <button id="alert-toggle-btn" type="button" class="w-full flex items-center justify-between px-2.5 py-2 rounded-xl hover:bg-slate-100 text-xs font-bold text-slate-700 whitespace-nowrap">🔔 쉬는시간 알림 켜짐</button>
           <button id="mute-all-alerts-btn" type="button" class="w-full flex items-center justify-between px-2.5 py-2 rounded-xl hover:bg-slate-100 text-xs font-bold text-slate-700 whitespace-nowrap">🔔 전체 알림 켜짐 (타이머 제외)</button>
           <button id="encourage-menu-btn" type="button" class="w-full flex items-center justify-between px-2.5 py-2 rounded-xl hover:bg-slate-100 text-xs font-bold text-slate-700 whitespace-nowrap">💪 격려해주세요</button>
           <button id="suggest-btn" type="button" class="w-full flex items-center justify-between px-2.5 py-2 rounded-xl hover:bg-slate-100 text-xs font-bold text-slate-700 whitespace-nowrap">💬 관리자에게 건의하기</button>
@@ -3877,21 +3885,26 @@
           <input id="comm-quiz-explain" type="text" maxlength="120" placeholder="정답 해설 (선택 사항)" class="w-full rounded-lg border border-indigo-200 bg-white px-2.5 py-1.5 text-xs text-slate-800" />
         </div>
 
-        <div class="flex items-center justify-between gap-2 flex-wrap pt-0.5">
-          <div class="flex items-center gap-1.5 flex-wrap">
-            <label class="cursor-pointer inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-[11px] font-bold text-slate-700 transition">
+        <div class="flex items-center justify-between gap-1.5 flex-nowrap pt-0.5">
+          <div class="flex items-center gap-1 sm:gap-1.5 flex-nowrap min-w-0">
+            <label class="cursor-pointer inline-flex items-center gap-1 px-2 sm:px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-[11px] font-bold text-slate-700 whitespace-nowrap shrink-0 transition">
               <span>📷 사진</span>
               <input id="comm-photo-input" type="file" accept="image/*" class="hidden" />
             </label>
-            <label class="cursor-pointer inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-[11px] font-bold text-slate-700 transition">
+            <label class="cursor-pointer inline-flex items-center gap-1 px-2 sm:px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-[11px] font-bold text-slate-700 whitespace-nowrap shrink-0 transition">
               <span>📸 카메라</span>
               <input id="comm-camera-input" type="file" accept="image/*" capture="environment" class="hidden" />
             </label>
-            <button type="button" id="btn-toggle-poll" class="px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-[11px] font-bold text-slate-700 transition">📊 투표</button>
-            <button type="button" id="btn-toggle-quiz" class="px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-[11px] font-bold text-slate-700 transition">❓ 퀴즈</button>
-            <button type="button" id="btn-toggle-spoiler" class="px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-[11px] font-bold text-slate-700 transition">👀 제목만</button>
+            <div id="comm-extras-wrap" class="relative shrink-0">
+              <button type="button" id="btn-comm-extras" aria-expanded="false" aria-controls="comm-extras-menu" class="inline-flex items-center gap-1 px-2 sm:px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-[11px] font-bold text-slate-700 whitespace-nowrap transition">✨ 기능 ▾</button>
+              <div id="comm-extras-menu" class="hidden absolute left-0 bottom-full mb-1.5 z-40 w-36 rounded-xl bg-white border border-slate-200 shadow-xl p-1 space-y-0.5">
+                <button type="button" id="btn-toggle-poll" class="w-full flex items-center justify-between px-2.5 py-2 rounded-lg hover:bg-slate-100 text-[11px] font-bold text-slate-700 text-left transition"><span>📊 투표</span><span data-extra-check="poll" class="hidden text-indigo-600 font-black">✓</span></button>
+                <button type="button" id="btn-toggle-quiz" class="w-full flex items-center justify-between px-2.5 py-2 rounded-lg hover:bg-slate-100 text-[11px] font-bold text-slate-700 text-left transition"><span>❓ 퀴즈</span><span data-extra-check="quiz" class="hidden text-indigo-600 font-black">✓</span></button>
+                <button type="button" id="btn-toggle-spoiler" class="w-full flex items-center justify-between px-2.5 py-2 rounded-lg hover:bg-slate-100 text-[11px] font-bold text-slate-700 text-left transition"><span>👀 제목만</span><span data-extra-check="spoiler" class="hidden text-indigo-600 font-black">✓</span></button>
+              </div>
+            </div>
           </div>
-          <button id="btn-comm-post-submit" type="submit" class="px-4 py-2 rounded-xl ed-btn-accent text-xs font-black whitespace-nowrap">익명으로 올리기</button>
+          <button id="btn-comm-post-submit" type="submit" class="px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl ed-btn-accent text-[11px] sm:text-xs font-black whitespace-nowrap shrink-0">익명으로 올리기</button>
         </div>
       </form>
 
@@ -4008,6 +4021,26 @@
             <span class="inline-flex items-center gap-1.5 text-xs font-black text-slate-900"><span class="w-1.5 h-1.5 rounded-full bg-slate-400 inline-block"></span>현재 티어 &amp; LP</span>
             <div id="profile-tier-lp" class="flex items-center gap-1.5 flex-wrap"></div>
           </div>
+        </div>
+      </section>
+      <section id="profile-song-box" class="ed-card profile-card space-y-3" aria-label="오늘의 추천 노래">
+        <div class="flex items-center justify-between gap-2 flex-wrap">
+          <span class="inline-flex items-center gap-1.5 text-xs font-black text-slate-900">🎵 오늘의 추천 노래</span>
+          <span class="text-[10px] font-semibold text-slate-400">라운지 카드 · 내 상세 기록에 표시돼요</span>
+        </div>
+        <div id="profile-song-current"></div>
+        <div class="space-y-2">
+          <div class="flex gap-1.5">
+            <label for="profile-song-search-input" class="sr-only">노래 제목이나 가수 검색</label>
+            <input id="profile-song-search-input" type="search" maxlength="60" placeholder="노래 제목이나 가수 검색 (예: 아이유 밤편지)" class="flex-1 min-w-0 rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-900 focus:outline-none focus:border-slate-900" autocomplete="off" />
+            <button id="profile-song-search-btn" type="button" class="px-3.5 py-2 rounded-xl bg-slate-950 hover:bg-slate-800 text-white text-xs font-bold whitespace-nowrap shrink-0">검색</button>
+          </div>
+          <div class="flex gap-1.5">
+            <label for="profile-song-note-input" class="sr-only">추천 한 마디</label>
+            <input id="profile-song-note-input" type="text" maxlength="60" placeholder="추천 한 마디 (선택 · 예: 새벽 공부할 때 틀기 좋아요)" class="flex-1 min-w-0 rounded-xl border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-slate-900" autocomplete="off" />
+            <button id="profile-song-note-save" type="button" class="hidden px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-[11px] font-bold text-slate-700 whitespace-nowrap shrink-0">한 마디 저장</button>
+          </div>
+          <div id="profile-song-results" class="hidden space-y-1.5 max-h-64 overflow-y-auto pt-1"></div>
         </div>
       </section>
       <section id="profile-lp-panel" class="ed-card profile-card profile-lp-card" aria-labelledby="profile-lp-title">
@@ -5242,24 +5275,24 @@
             { id: 'ch_cinderella', cat: 'special', title: '🧛 신데렐라', desc: '23:55 ~ 00:05 자정을 넘겨서 스톱워치 계속 켜두기', lp: 20 },
             { id: 'ch_newbie', cat: 'starter', title: '🐣 뉴비', desc: '집중 시작하기 스톱워치 처음 켜기', lp: 7 },
             { id: 'ch_join_study', cat: 'starter', title: '🙋 신입 받아라', desc: '모임 · 톡에서 첫 스터디 또는 톡방 가입하기', lp: 7 },
-            { id: 'ch_avatar', cat: 'starter', title: '📷 저요', desc: '내 프로필에서 프로필 사진 처음 등록하기', lp: 7 },
-            { id: 'ch_timetable', cat: 'starter', title: '🗓️ 파워 J', desc: '대학 수업 1개 이상 처음 등록하기', lp: 7 },
+            { id: 'ch_avatar', cat: 'special', title: '📷 저요', desc: '내 프로필에서 프로필 사진 처음 등록하기', lp: 7 },
+            { id: 'ch_timetable', cat: 'special', title: '🗓️ 파워 J', desc: '대학 수업 1개 이상 처음 등록하기', lp: 7 },
             { id: 'ch_equip', cat: 'starter', title: '🏷️ 비아방지', desc: '획득한 칭호 처음으로 1회 장착하기', lp: 7 },
             { id: 'ch_respect1', cat: 'starter', title: '👏 관객', desc: '다른 스터디원에게 첫 리스펙 보내기', lp: 7 },
             { id: 'ch_brag1', cat: 'special', title: '✨ 관심 주세요', desc: '커뮤니티에 첫 사진 첨부 글 올리기', lp: 10 },
             { id: 'ch_mailbox', cat: 'starter', title: '💌 사랑의 편지', desc: '상단 우편함 버튼 처음 열어보기', lp: 7 },
             { id: 'ch_encourage', cat: 'starter', title: '💪 근육맨', desc: '격려해주세요 기능 처음 사용해 보기', lp: 7 },
             { id: 'ch_todo_v', cat: 'starter', title: '✅ 나르시스트', desc: '플래너에서 할 일 상태를 처음으로 V로 체크하기', lp: 7 },
-            { id: 'ch_cal_day', cat: 'starter', title: '📅 탐험가', desc: '캘린더에서 날짜를 눌러 상세 기록 확인하기', lp: 7 },
-            { id: 'ch_spy', cat: 'starter', title: '🔍 염탐꾼', desc: '스터디원 카드를 눌러 상세 기록 구경하기', lp: 7 },
-            { id: 'ch_rank_bottom', cat: 'starter', title: '👀 구경꾼', desc: '랭킹 · 챌린지 서브탭을 끝까지 스크롤하기', lp: 7 },
+            { id: 'ch_cal_day', cat: 'special', title: '📅 탐험가', desc: '캘린더에서 날짜를 눌러 상세 기록 확인하기', lp: 7 },
+            { id: 'ch_spy', cat: 'special', title: '🔍 염탐꾼', desc: '스터디원 카드를 눌러 상세 기록 구경하기', lp: 7 },
+            { id: 'ch_rank_bottom', cat: 'special', title: '👀 구경꾼', desc: '랭킹 · 챌린지 서브탭을 끝까지 스크롤하기', lp: 7 },
             { id: 'ch_ultra_reserve', cat: 'special', title: '⚡ 태토', desc: '울트라집중모드 전환 처음 예약하기', lp: 10 },
             { id: 'ch_rename', cat: 'special', title: '🪪 신분세탁', desc: '내 프로필에서 별명 수정 후 저장하기', lp: 10 },
-            { id: 'ch_banner_bg', cat: 'starter', title: '🖼️ 감성한스푼', desc: '홈 배너 배경 사진 설정하기', lp: 7 },
+            { id: 'ch_banner_bg', cat: 'special', title: '🖼️ 감성한스푼', desc: '홈 배너 배경 사진 설정하기', lp: 7 },
             { id: 'ch_flipflop', cat: 'special', title: '🔄 변덕쟁이', desc: '플래너 할 일 상태를 3번 이상 바꿔보기', lp: 10 },
             { id: 'ch_minimal', cat: 'special', title: '🧹 미니멀리스트', desc: '내 프로필에서 칭호 장착하기', lp: 10 },
             { id: 'ch_pause1', cat: 'starter', title: '⏳ 잠깐의 여유', desc: '스톱워치 실행 중 잠시 쉬기 버튼 처음 눌러보기', lp: 7 },
-            { id: 'ch_timetravel', cat: 'starter', title: '⏪ 시간 여행자', desc: '캘린더에서 ◀ 버튼을 눌러 지난 달 기록 구경하기', lp: 7 },
+            { id: 'ch_timetravel', cat: 'special', title: '⏪ 시간 여행자', desc: '캘린더에서 ◀ 버튼을 눌러 지난 달 기록 구경하기', lp: 7 },
             { id: 'ch_justice', cat: 'special', title: '🚨 정의의 사도', desc: '신고하기 창 열어보기 (확인만)', lp: 10 },
             { id: 'ch_f1h', cat: 'focus_mid', title: '🕯️ 몰입의 불씨', desc: '1시간 연속 스톱워치 집중 달성 (누적 집중과 별개)', lp: 10, focusSecs: 3600 },
             { id: 'ch_f2h', cat: 'focus_mid', title: '📚 워밍업 완료', desc: '2시간 연속 스톱워치 집중 달성 (누적 집중과 별개)', lp: 20, focusSecs: 7200 },
@@ -5396,6 +5429,8 @@
               mergedCh = mergedCh.map(c => c.id === 'ch_theme' ? { ...c, cat: 'starter', title: '🦎 카멜레온', desc: '상단 더보기(⋯)에서 테마 색깔 바꾸기', lp: 7 } : c);
               parsed.lpRebalanceV7 = true;
             }
+            const movedToSpecialSet = new Set(['ch_avatar','ch_timetable','ch_cal_day','ch_spy','ch_rank_bottom','ch_banner_bg','ch_timetravel']);
+            mergedCh = mergedCh.map(c => movedToSpecialSet.has(c.id) ? { ...c, cat: 'special' } : c);
             parsed.challenges = mergedCh;
             if (!parsed.periodStudySecs) parsed.periodStudySecs = {};
             parsed.reports = inboxRecords(parsed.reports);
@@ -6300,7 +6335,7 @@
                 if (!v.lpRebalanceV7) {
                   mergedCh = mergedCh.map(c => c.id === 'ch_theme' ? { ...c, cat: 'starter', title: '🦎 카멜레온', desc: '상단 더보기(⋯)에서 테마 색깔 바꾸기', lp: 7 } : c);
                 }
-                const recatMap = new Map(base.filter(b => ['ch_brag1','ch_ultra_reserve','ch_rename','ch_flipflop','ch_minimal','ch_justice','ch_join_study'].includes(b.id)).map(b => [b.id, b]));
+                const recatMap = new Map(base.filter(b => ['ch_brag1','ch_ultra_reserve','ch_rename','ch_flipflop','ch_minimal','ch_justice','ch_join_study','ch_avatar','ch_timetable','ch_cal_day','ch_spy','ch_rank_bottom','ch_banner_bg','ch_timetravel'].includes(b.id)).map(b => [b.id, b]));
                 mergedCh = mergedCh.map(c => recatMap.has(c.id) ? { ...c, cat: recatMap.get(c.id).cat, desc: recatMap.get(c.id).desc, lp: recatMap.get(c.id).lp } : c);
                 return mergedCh;
               })(),
@@ -7222,7 +7257,6 @@
           modeBtn.textContent = `자율모드${pendTxt}`;
           modeBtn.className = 'px-2 py-0.5 rounded-full text-[10px] font-black bg-emerald-500 text-white hover:opacity-90 whitespace-nowrap shrink-0';
         }
-        const ab = document.getElementById('alert-toggle-btn'); ab.textContent = (prefs.alertEnabled && !prefs.muteAllAlerts) ? '🔔 쉬는시간 알림 켜짐' : '🔕 쉬는시간 알림 꺼짐';
         const mbMute = document.getElementById('mute-all-alerts-btn');
         if (mbMute) mbMute.textContent = prefs.muteAllAlerts ? '🔕 전체 알림 꺼짐 (타이머만 유지)' : '🔔 전체 알림 켜짐 (타이머 제외)';
         const ucMute = document.getElementById('uc-mute-btn');
@@ -7419,10 +7453,9 @@
         }
         if (phase.type === 'break' && lastNotifiedPhaseId !== phase.id) {
           lastNotifiedPhaseId = phase.id;
-          if (prefs.alertEnabled && !prefs.muteAllAlerts) showToast(`☕ ${phase.start} 쉬는시간 시작! (${phase.mins}분)`, 'info');
           const myP = (shared.praises && shared.praises[prefs.currentUserId]) || [];
           const unread = myP.filter(p => !p.read);
-          if (unread.length) {
+          if (unread.length && !prefs.muteAllAlerts) {
             showToast(`💌 ${unread[unread.length - 1].msg}`, 'success');
             unread.forEach(p => { p.read = true; });
             saveSharedData();
@@ -7936,6 +7969,10 @@
               <span class="member-study-label">공부일 누적 공부</span>
               <strong class="member-study-time">${hours ? `${hours}<small>시간</small> ` : ''}${mins % 60}<small>분</small></strong>
             </span>
+            ${m.recommendedSong && m.recommendedSong.title ? `<span class="member-song-chip" id="member-song-${id}" title="${escapeHtml(m.recommendedSong.title)}${m.recommendedSong.artist ? ` - ${escapeHtml(m.recommendedSong.artist)}` : ''}">
+              ${safeSongUrl(m.recommendedSong.artworkUrl) ? `<img src="${escapeHtml(safeSongUrl(m.recommendedSong.artworkUrl))}" alt="" loading="lazy">` : '<span aria-hidden="true">🎵</span>'}
+              <span class="member-song-chip-text">${escapeHtml(m.recommendedSong.title)}${m.recommendedSong.artist ? ` <span class="member-song-chip-artist">· ${escapeHtml(m.recommendedSong.artist)}</span>` : ''}</span>
+            </span>` : ''}
             ${featured ? `<span class="member-badges" id="member-badges-${id}">
               ${renderBadgePill(featured)}
               ${badges.length > 1 ? `<span class="member-badge-count" aria-label="뱃지 ${badges.length - 1}개 더 보기">+${badges.length - 1}</span>` : ''}
@@ -7944,7 +7981,8 @@
           ${hasMenu ? `<div class="member-card-actions">
             <button type="button" id="member-menu-${id}" class="member-card-menu" data-card-menu-btn="${id}" aria-label="${name} 더보기" aria-expanded="false" aria-controls="member-menu-box-${id}">⋯</button>
             <div id="member-menu-box-${id}" data-card-menu-box="${id}" class="hidden absolute right-0 z-50 w-40 rounded-xl bg-white border border-slate-200 shadow-xl p-1 space-y-0.5 text-left">
-              ${!isMe ? `<button type="button" id="member-gift-${id}" data-gift-member="${id}" class="w-full px-2.5 py-2 rounded-lg hover:bg-slate-100 text-[11px] font-bold text-slate-800 text-left">🎁 선물 보내기</button>
+              ${!isMe ? `<button type="button" id="member-chat-${id}" data-chat-member="${id}" class="w-full px-2.5 py-2 rounded-lg hover:bg-slate-100 text-[11px] font-bold text-slate-800 text-left">💬 쪽지 보내기</button>
+              <button type="button" id="member-gift-${id}" data-gift-member="${id}" class="w-full px-2.5 py-2 rounded-lg hover:bg-slate-100 text-[11px] font-bold text-slate-800 text-left">🎁 선물 보내기</button>
               <button type="button" id="member-respect-${id}" data-respect-member="${id}" class="w-full px-2.5 py-2 rounded-lg hover:bg-slate-100 text-[11px] font-bold text-slate-800 text-left">👏 리스펙 보내기</button>
               <button type="button" id="member-report-${id}" data-report-member="${id}" class="w-full px-2.5 py-2 rounded-lg hover:bg-rose-50 text-[11px] font-bold text-rose-600 text-left">🚨 신고하기</button>` : ''}
               ${canForceStop ? `<button type="button" id="member-stop-${id}" data-force-stop-timer="${id}" class="w-full px-2.5 py-2 rounded-lg hover:bg-amber-50 text-[11px] font-bold text-amber-700 text-left">⏹️ 타이머 강제 종료</button>` : ''}
@@ -8390,6 +8428,7 @@
         document.getElementById('profile-admin-select-wrap').classList.toggle('hidden', !prefs.adminMode);
         ps.disabled = !prefs.adminMode;
         const tm = shared.members.find(m => m.id === selId);
+        if (typeof renderProfileSong === 'function') renderProfileSong(tm);
         if (tm) {
           document.getElementById('profile-nickname-input').value = tm.name;
           const avEl = document.getElementById('profile-avatar-preview');
@@ -8604,7 +8643,7 @@
         }
       }
 
-      const STARTER_CHALLENGE_IDS = new Set(['ch_newbie','ch_join_study','ch_avatar','ch_timetable','ch_equip','ch_respect1','ch_mailbox','ch_encourage','ch_todo_v','ch_cal_day','ch_spy','ch_rank_bottom','ch_banner_bg','ch_pause1','ch_timetravel','ch_theme']);
+      const STARTER_CHALLENGE_IDS = new Set(['ch_newbie','ch_join_study','ch_equip','ch_respect1','ch_mailbox','ch_encourage','ch_todo_v','ch_pause1','ch_theme']);
       function challengeCategory(ch) {
         if (STARTER_CHALLENGE_IDS.has(ch.id) || ch.cat === 'starter') return 'starter';
         if (ch.cat) return ch.cat;
@@ -9361,7 +9400,6 @@
         return true;
       }
 
-      document.getElementById('alert-toggle-btn').addEventListener('click', () => { prefs.alertEnabled = !prefs.alertEnabled; savePrefs(); renderHeaderControls(); });
       function toggleMuteAllAlerts() {
         prefs.muteAllAlerts = !prefs.muteAllAlerts;
         savePrefs();
@@ -10103,6 +10141,7 @@
                   return chs.length ? chs.map(c => `<span class="px-2 py-0.5 rounded-md bg-slate-100 border border-slate-200 text-[11px] font-bold text-slate-800">${escapeHtml(c.title)}</span>`).join('') : '<span class="text-slate-400">없음</span>';
                 })()}</div>
               </div>` : ''}
+              ${renderMemberDetailSongHtml(m.recommendedSong)}
               <div>
                 <div class="font-bold text-slate-700 mb-1.5">🏅 보유 뱃지 (${allB.length}개)</div>
                 <div class="flex flex-wrap gap-1">${allB.length ? allB.map(renderBadgePill).join('') : '<span class="text-slate-400">없음</span>'}</div>
@@ -10110,6 +10149,11 @@
               ${(prefs.adminMode && isAdminUser() && (m.isFocusing || m.isFocusPaused)) ? `<div class="pt-1"><button type="button" id="modal-force-stop-btn" data-force-stop-timer="${escapeHtml(m.id)}" class="w-full py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-black">⏹️ 실행 중인 타이머 강제 종료</button></div>` : ''}
             </div>
           `);
+          modalCleanupFn = stopSongPreview;
+          document.getElementById('modal-song-preview-btn')?.addEventListener('click', ev => {
+            const btn = ev.currentTarget;
+            toggleSongPreview(btn.dataset.previewUrl, btn);
+          });
           document.getElementById('modal-force-stop-btn')?.addEventListener('click', () => {
             closeModal();
             forceStopMemberTimer(m.id);
@@ -11610,7 +11654,7 @@
           if (!open && returnFocus) moreBtn.focus({preventScroll:true});
         };
         moreBtn.addEventListener('click', () => setMore(!shown(moreMenu)));
-        moreMenu.addEventListener('click', e => { if (e.target.closest('button')) setMore(false, !activeStudyDialog()); });
+        moreMenu.addEventListener('click', e => { const btn = e.target.closest('button'); if (btn && !btn.closest('#mute-all-alerts-btn')) setMore(false, !activeStudyDialog()); });
         document.addEventListener('click', e => { if (!moreMenu.contains(e.target) && !moreBtn.contains(e.target)) setMore(false); });
         moreMenu.parentElement.addEventListener('keydown', e => {
           if (e.key === 'Escape' && shown(moreMenu)) { e.preventDefault(); setMore(false, true); }
@@ -14953,26 +14997,68 @@
       const pollPanelEl = document.getElementById('comm-poll-panel');
       const quizPanelEl = document.getElementById('comm-quiz-panel');
       const spoilerPanelEl = document.getElementById('comm-spoiler-panel');
+      const commExtrasWrap = document.getElementById('comm-extras-wrap');
+      const commExtrasBtn = document.getElementById('btn-comm-extras');
+      const commExtrasMenu = document.getElementById('comm-extras-menu');
+      function setCommExtrasMenu(open) {
+        if (!commExtrasMenu || !commExtrasBtn) return;
+        commExtrasMenu.classList.toggle('hidden', !open);
+        commExtrasBtn.setAttribute('aria-expanded', String(open));
+      }
+      function updateCommExtrasBtn() {
+        const active = [];
+        const pollOn = pollPanelEl && !pollPanelEl.classList.contains('hidden');
+        const quizOn = quizPanelEl && !quizPanelEl.classList.contains('hidden');
+        const spoilerOn = spoilerPanelEl && !spoilerPanelEl.classList.contains('hidden');
+        if (pollOn) active.push('📊 투표');
+        if (quizOn) active.push('❓ 퀴즈');
+        if (spoilerOn) active.push('👀 제목만');
+        document.querySelector('[data-extra-check="poll"]')?.classList.toggle('hidden', !pollOn);
+        document.querySelector('[data-extra-check="quiz"]')?.classList.toggle('hidden', !quizOn);
+        document.querySelector('[data-extra-check="spoiler"]')?.classList.toggle('hidden', !spoilerOn);
+        if (!commExtrasBtn) return;
+        commExtrasBtn.textContent = active.length === 1 ? `${active[0]} ▾` : (active.length > 1 ? `✨ 기능 (${active.length}) ▾` : '✨ 기능 ▾');
+        commExtrasBtn.className = active.length
+          ? 'inline-flex items-center gap-1 px-2 sm:px-2.5 py-1.5 rounded-xl bg-slate-950 text-white text-[11px] font-bold whitespace-nowrap transition'
+          : 'inline-flex items-center gap-1 px-2 sm:px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-[11px] font-bold text-slate-700 whitespace-nowrap transition';
+      }
+      commExtrasBtn?.addEventListener('click', e => {
+        e.stopPropagation();
+        setCommExtrasMenu(commExtrasMenu?.classList.contains('hidden'));
+      });
+      document.addEventListener('click', e => {
+        if (commExtrasWrap && !commExtrasWrap.contains(e.target)) setCommExtrasMenu(false);
+      });
+      document.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && commExtrasMenu && !commExtrasMenu.classList.contains('hidden')) setCommExtrasMenu(false);
+      });
       document.getElementById('btn-toggle-poll')?.addEventListener('click', () => {
         const opening = pollPanelEl.classList.contains('hidden');
         pollPanelEl.classList.toggle('hidden', !opening);
         if (opening) quizPanelEl.classList.add('hidden');
+        setCommExtrasMenu(false);
+        updateCommExtrasBtn();
       });
-      document.getElementById('comm-poll-close')?.addEventListener('click', () => pollPanelEl.classList.add('hidden'));
+      document.getElementById('comm-poll-close')?.addEventListener('click', () => { pollPanelEl.classList.add('hidden'); updateCommExtrasBtn(); });
       document.getElementById('btn-toggle-quiz')?.addEventListener('click', () => {
         const opening = quizPanelEl.classList.contains('hidden');
         quizPanelEl.classList.toggle('hidden', !opening);
         if (opening) pollPanelEl.classList.add('hidden');
+        setCommExtrasMenu(false);
+        updateCommExtrasBtn();
       });
-      document.getElementById('comm-quiz-close')?.addEventListener('click', () => quizPanelEl.classList.add('hidden'));
+      document.getElementById('comm-quiz-close')?.addEventListener('click', () => { quizPanelEl.classList.add('hidden'); updateCommExtrasBtn(); });
       document.getElementById('btn-toggle-spoiler')?.addEventListener('click', () => {
         spoilerPanelEl.classList.toggle('hidden');
+        setCommExtrasMenu(false);
+        updateCommExtrasBtn();
         if (!spoilerPanelEl.classList.contains('hidden')) document.getElementById('comm-spoiler-title')?.focus();
       });
       document.getElementById('comm-spoiler-close')?.addEventListener('click', () => {
         spoilerPanelEl.classList.add('hidden');
         const sp = document.getElementById('comm-spoiler-title');
         if (sp) sp.value = '';
+        updateCommExtrasBtn();
       });
 
       document.getElementById('community-post-form')?.addEventListener('submit', socialAction(async e => {
@@ -15059,6 +15145,8 @@
         pollPanelEl?.classList.add('hidden');
         quizPanelEl?.classList.add('hidden');
         spoilerPanelEl?.classList.add('hidden');
+        setCommExtrasMenu(false);
+        updateCommExtrasBtn();
         showToast('익명 글이 올라갔어요!', 'success');
       }));
 
@@ -16679,8 +16767,18 @@
         if (prefs.activeTab === 'admin' && typeof renderAdminGiftsPanel === 'function') renderAdminGiftsPanel();
       });
 
-      // Delegated clicks for Lounge member card gift button & Study Group member gift button
+      // Delegated clicks for Lounge member card chat/gift button & Study Group member gift button
       document.getElementById('group-status-grid')?.addEventListener('click', e => {
+        const cBtn = e.target.closest('[data-chat-member]');
+        if (cBtn) {
+          e.stopPropagation();
+          const target = (shared.members || []).find(m => m.id === cBtn.dataset.chatMember);
+          if (!target || target.id === prefs.currentUserId) return;
+          setMemberCardMenu(document.querySelector('[data-card-menu-btn][aria-expanded="true"]'), false);
+          openUnifiedChatModal('known', { type: 'known', partnerId: target.id });
+          document.getElementById('uc-chat-input')?.focus({ preventScroll: true });
+          return;
+        }
         const gBtn = e.target.closest('[data-gift-member]');
         if (!gBtn) return;
         e.stopPropagation();
@@ -16698,6 +16796,279 @@
         document.getElementById(mid)?.addEventListener('click', e => {
           if (e.target.id === mid && !activeTapSession) closeSimpleModal(mid);
         });
+      });
+
+      // =========================================================================
+      // RECOMMENDED SONG ENGINE (iTunes Search + 30s Preview + Music App Links)
+      // =========================================================================
+      let songPreviewAudio = null;
+      let songPreviewActiveBtn = null;
+      let songPreviewActiveUrl = '';
+      let songSearchTimer = null;
+      let songSearchAbort = null;
+      let songSearchResultsCache = [];
+
+      function safeSongUrl(u) {
+        if (!u || typeof u !== 'string') return '';
+        const trimmed = u.trim();
+        return /^https:\/\//i.test(trimmed) ? trimmed : '';
+      }
+
+      function buildMusicServiceLinks(song) {
+        const q = encodeURIComponent(`${song?.artist || ''} ${song?.title || ''}`.trim());
+        return {
+          melon: `https://www.melon.com/search/total/index.htm?q=${q}`,
+          spotify: `https://open.spotify.com/search/${q}`,
+          ytMusic: `https://music.youtube.com/search?q=${q}`,
+          apple: safeSongUrl(song?.appleUrl) || `https://music.apple.com/kr/search?term=${q}`
+        };
+      }
+
+      function setPreviewBtnState(btn, playing) {
+        if (!btn) return;
+        const compact = btn.dataset.previewCompact === '1';
+        btn.textContent = playing ? (compact ? '⏸' : '⏸ 일시정지') : (compact ? '▶' : '▶ 30초 미리듣기');
+        btn.setAttribute('aria-pressed', String(playing));
+      }
+
+      function stopSongPreview() {
+        if (songPreviewAudio) {
+          try { songPreviewAudio.pause(); songPreviewAudio.currentTime = 0; } catch {}
+        }
+        if (songPreviewActiveBtn) setPreviewBtnState(songPreviewActiveBtn, false);
+        songPreviewActiveBtn = null;
+        songPreviewActiveUrl = '';
+      }
+
+      function toggleSongPreview(url, btn) {
+        const safeUrl = safeSongUrl(url);
+        if (!safeUrl) { showToast('이 곡은 미리듣기를 지원하지 않아요.', 'info'); return; }
+        if (songPreviewAudio && songPreviewActiveUrl === safeUrl && !songPreviewAudio.paused) {
+          stopSongPreview();
+          return;
+        }
+        stopSongPreview();
+        try {
+          if (!songPreviewAudio) songPreviewAudio = new Audio();
+          songPreviewAudio.src = safeUrl;
+          songPreviewAudio.volume = 0.7;
+          songPreviewActiveBtn = btn || null;
+          songPreviewActiveUrl = safeUrl;
+          setPreviewBtnState(btn, true);
+          songPreviewAudio.onended = () => stopSongPreview();
+          songPreviewAudio.onerror = () => {
+            stopSongPreview();
+            showToast('미리듣기를 재생할 수 없어요.', 'warn');
+          };
+          const p = songPreviewAudio.play();
+          if (p && typeof p.catch === 'function') {
+            p.catch(() => {
+              stopSongPreview();
+              showToast('브라우저에서 오디오 재생이 차단되었어요.', 'warn');
+            });
+          }
+        } catch {
+          stopSongPreview();
+        }
+      }
+
+      function renderMemberDetailSongHtml(song) {
+        if (!song || !song.title) return '';
+        const art = safeSongUrl(song.artworkUrl);
+        const prev = safeSongUrl(song.previewUrl);
+        const links = buildMusicServiceLinks(song);
+        return `<div class="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-2.5">
+          <div class="flex items-center justify-between gap-2">
+            <span class="font-bold text-slate-700">🎵 추천 노래</span>
+            ${prev ? `<button type="button" id="modal-song-preview-btn" data-preview-url="${escapeHtml(prev)}" aria-pressed="false" class="px-2.5 py-1 rounded-lg bg-slate-950 hover:bg-slate-800 text-white text-[11px] font-bold whitespace-nowrap transition">▶ 30초 미리듣기</button>` : ''}
+          </div>
+          <div class="flex items-center gap-3 min-w-0">
+            <div class="w-12 h-12 rounded-xl bg-slate-200 border border-slate-200 overflow-hidden flex items-center justify-center text-lg shrink-0">
+              ${art ? `<img src="${escapeHtml(art)}" alt="" class="w-full h-full object-cover" loading="lazy">` : '🎵'}
+            </div>
+            <div class="min-w-0 flex-1">
+              <p class="text-xs sm:text-sm font-black text-slate-950 truncate">${escapeHtml(song.title)}</p>
+              <p class="text-[11px] font-semibold text-slate-500 truncate">${escapeHtml(song.artist || '')}</p>
+              ${song.note ? `<p class="text-[11px] font-medium text-slate-700 mt-1 break-words">“${escapeHtml(song.note)}”</p>` : ''}
+            </div>
+          </div>
+          <div class="flex flex-wrap gap-1.5 pt-0.5">
+            <a href="${escapeHtml(links.melon)}" target="_blank" rel="noopener noreferrer" class="px-2.5 py-1 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-800 hover:bg-emerald-100 text-[11px] font-bold transition">멜론 ↗</a>
+            <a href="${escapeHtml(links.spotify)}" target="_blank" rel="noopener noreferrer" class="px-2.5 py-1 rounded-lg bg-green-50 border border-green-200 text-green-800 hover:bg-green-100 text-[11px] font-bold transition">스포티파이 ↗</a>
+            <a href="${escapeHtml(links.ytMusic)}" target="_blank" rel="noopener noreferrer" class="px-2.5 py-1 rounded-lg bg-rose-50 border border-rose-200 text-rose-700 hover:bg-rose-100 text-[11px] font-bold transition">유튜브 뮤직 ↗</a>
+            <a href="${escapeHtml(links.apple)}" target="_blank" rel="noopener noreferrer" class="px-2.5 py-1 rounded-lg bg-slate-100 border border-slate-200 text-slate-700 hover:bg-slate-200 text-[11px] font-bold transition">애플뮤직 ↗</a>
+          </div>
+        </div>`;
+      }
+
+      function getTargetProfileMember() {
+        const ps = document.getElementById('profile-member-select');
+        const selId = prefs.adminMode ? (ps?.value || prefs.currentUserId) : prefs.currentUserId;
+        return (shared.members || []).find(m => m.id === selId) || null;
+      }
+
+      function renderProfileSong(tm) {
+        const curEl = document.getElementById('profile-song-current');
+        const noteInput = document.getElementById('profile-song-note-input');
+        const noteSaveBtn = document.getElementById('profile-song-note-save');
+        if (!curEl) return;
+        const song = tm?.recommendedSong;
+        if (song && song.title) {
+          const art = safeSongUrl(song.artworkUrl);
+          const prev = safeSongUrl(song.previewUrl);
+          const links = buildMusicServiceLinks(song);
+          curEl.innerHTML = `<div class="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+            <div class="flex items-center gap-3 min-w-0">
+              <div class="w-12 h-12 rounded-xl bg-slate-200 border border-slate-200 overflow-hidden flex items-center justify-center text-lg shrink-0">
+                ${art ? `<img src="${escapeHtml(art)}" alt="" class="w-full h-full object-cover" loading="lazy">` : '🎵'}
+              </div>
+              <div class="min-w-0 flex-1">
+                <p class="text-xs sm:text-sm font-black text-slate-950 truncate">${escapeHtml(song.title)}</p>
+                <p class="text-[11px] font-semibold text-slate-500 truncate">${escapeHtml(song.artist || '')}</p>
+                ${song.note ? `<p class="text-[11px] text-slate-700 truncate mt-0.5">“${escapeHtml(song.note)}”</p>` : ''}
+              </div>
+              <div class="flex items-center gap-1 shrink-0">
+                ${prev ? `<button type="button" data-song-preview="${escapeHtml(prev)}" data-preview-compact="1" aria-label="30초 미리듣기" aria-pressed="false" class="w-8 h-8 rounded-lg bg-slate-950 hover:bg-slate-800 text-white text-xs font-black flex items-center justify-center">▶</button>` : ''}
+                <button type="button" id="btn-profile-song-clear" class="px-2 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 text-[11px] font-bold">삭제</button>
+              </div>
+            </div>
+            <div class="flex flex-wrap gap-1.5">
+              <a href="${escapeHtml(links.melon)}" target="_blank" rel="noopener noreferrer" class="px-2 py-0.5 rounded-md bg-white border border-slate-200 text-[10px] font-bold text-emerald-700 hover:bg-emerald-50">멜론 ↗</a>
+              <a href="${escapeHtml(links.spotify)}" target="_blank" rel="noopener noreferrer" class="px-2 py-0.5 rounded-md bg-white border border-slate-200 text-[10px] font-bold text-green-700 hover:bg-green-50">스포티파이 ↗</a>
+              <a href="${escapeHtml(links.ytMusic)}" target="_blank" rel="noopener noreferrer" class="px-2 py-0.5 rounded-md bg-white border border-slate-200 text-[10px] font-bold text-rose-600 hover:bg-rose-50">유튜브 뮤직 ↗</a>
+              <a href="${escapeHtml(links.apple)}" target="_blank" rel="noopener noreferrer" class="px-2 py-0.5 rounded-md bg-white border border-slate-200 text-[10px] font-bold text-slate-600 hover:bg-slate-100">애플뮤직 ↗</a>
+            </div>
+          </div>`;
+          if (noteInput && document.activeElement !== noteInput) noteInput.value = song.note || '';
+          noteSaveBtn?.classList.remove('hidden');
+        } else {
+          curEl.innerHTML = '<p class="text-xs text-slate-400">아직 설정한 추천 노래가 없어요. 아래에서 곡 제목이나 가수를 검색해 보세요.</p>';
+          if (noteInput && document.activeElement !== noteInput) noteInput.value = '';
+          noteSaveBtn?.classList.add('hidden');
+        }
+      }
+
+      async function searchItunesSongs(rawQuery) {
+        const resEl = document.getElementById('profile-song-results');
+        if (!resEl) return;
+        const q = (rawQuery || '').trim();
+        if (!q) {
+          resEl.classList.add('hidden');
+          resEl.innerHTML = '';
+          songSearchResultsCache = [];
+          return;
+        }
+        if (songSearchAbort) { try { songSearchAbort.abort(); } catch {} }
+        songSearchAbort = typeof AbortController !== 'undefined' ? new AbortController() : null;
+        resEl.classList.remove('hidden');
+        resEl.innerHTML = '<p class="text-[11px] font-semibold text-slate-400 px-1 py-2">노래를 검색하는 중이에요…</p>';
+        try {
+          const url = `https://itunes.apple.com/search?term=${encodeURIComponent(q)}&country=KR&entity=song&limit=6`;
+          const resp = await fetch(url, songSearchAbort ? { signal: songSearchAbort.signal } : undefined);
+          if (!resp.ok) throw new Error('search_failed');
+          const data = await resp.json();
+          const tracks = (data.results || []).filter(r => r && r.trackName).map(r => ({
+            title: String(r.trackName || '').trim(),
+            artist: String(r.artistName || '').trim(),
+            artworkUrl: safeSongUrl(String(r.artworkUrl100 || r.artworkUrl60 || '')),
+            previewUrl: safeSongUrl(String(r.previewUrl || '')),
+            appleUrl: safeSongUrl(String(r.trackViewUrl || ''))
+          }));
+          songSearchResultsCache = tracks;
+          if (!tracks.length) {
+            resEl.innerHTML = '<p class="text-[11px] text-slate-400 px-1 py-2">검색 결과가 없어요. 제목이나 가수 이름을 다르게 입력해 보세요.</p>';
+            return;
+          }
+          resEl.innerHTML = tracks.map((tr, idx) => `<div class="flex items-center justify-between gap-2 p-2 rounded-xl bg-slate-50 border border-slate-200 hover:border-slate-300 transition">
+            <div class="flex items-center gap-2.5 min-w-0 flex-1">
+              <div class="w-10 h-10 rounded-lg bg-slate-200 overflow-hidden flex items-center justify-center text-sm shrink-0">
+                ${tr.artworkUrl ? `<img src="${escapeHtml(tr.artworkUrl)}" alt="" class="w-full h-full object-cover" loading="lazy">` : '🎵'}
+              </div>
+              <div class="min-w-0 flex-1">
+                <p class="text-xs font-black text-slate-900 truncate">${escapeHtml(tr.title)}</p>
+                <p class="text-[11px] font-semibold text-slate-500 truncate">${escapeHtml(tr.artist)}</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-1 shrink-0">
+              ${tr.previewUrl ? `<button type="button" data-song-preview="${escapeHtml(tr.previewUrl)}" data-preview-compact="1" aria-label="미리듣기" aria-pressed="false" class="w-7 h-7 rounded-lg bg-white border border-slate-300 hover:bg-slate-100 text-[11px] font-bold text-slate-700 flex items-center justify-center">▶</button>` : ''}
+              <button type="button" data-pick-song-idx="${idx}" class="px-2.5 py-1.5 rounded-lg ed-btn-accent text-[11px] font-black whitespace-nowrap">선택</button>
+            </div>
+          </div>`).join('');
+        } catch (err) {
+          if (err && err.name === 'AbortError') return;
+          resEl.innerHTML = '<p class="text-[11px] text-rose-500 px-1 py-2">검색에 실패했어요. 인터넷 연결을 확인하고 다시 시도해 주세요.</p>';
+        }
+      }
+
+      document.getElementById('profile-song-search-input')?.addEventListener('input', e => {
+        clearTimeout(songSearchTimer);
+        const val = e.target.value;
+        if (!val.trim()) { searchItunesSongs(''); return; }
+        songSearchTimer = setTimeout(() => searchItunesSongs(val), 360);
+      });
+      document.getElementById('profile-song-search-input')?.addEventListener('keydown', e => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          clearTimeout(songSearchTimer);
+          searchItunesSongs(e.target.value);
+        }
+      });
+      document.getElementById('profile-song-search-btn')?.addEventListener('click', () => {
+        clearTimeout(songSearchTimer);
+        searchItunesSongs(document.getElementById('profile-song-search-input')?.value || '');
+      });
+      document.getElementById('profile-song-note-save')?.addEventListener('click', () => {
+        const tm = getTargetProfileMember();
+        if (!tm || !tm.recommendedSong) return;
+        tm.recommendedSong.note = (document.getElementById('profile-song-note-input')?.value || '').trim();
+        tm.recommendedSong.updatedAt = Date.now();
+        saveSharedData();
+        renderAll();
+        showToast('추천 한 마디를 저장했어요!', 'success');
+      });
+      document.getElementById('profile-song-box')?.addEventListener('click', e => {
+        const prevBtn = e.target.closest('[data-song-preview]');
+        if (prevBtn) {
+          toggleSongPreview(prevBtn.dataset.songPreview, prevBtn);
+          return;
+        }
+        const clearBtn = e.target.closest('#btn-profile-song-clear');
+        if (clearBtn) {
+          const tm = getTargetProfileMember();
+          if (!tm) return;
+          stopSongPreview();
+          delete tm.recommendedSong;
+          saveSharedData();
+          renderAll();
+          showToast('추천 노래를 삭제했어요.', 'info');
+          return;
+        }
+        const pickBtn = e.target.closest('[data-pick-song-idx]');
+        if (pickBtn) {
+          const idx = Number(pickBtn.dataset.pickSongIdx);
+          const tr = songSearchResultsCache[idx];
+          const tm = getTargetProfileMember();
+          if (!tr || !tm) return;
+          stopSongPreview();
+          const note = (document.getElementById('profile-song-note-input')?.value || '').trim();
+          tm.recommendedSong = {
+            title: tr.title,
+            artist: tr.artist,
+            artworkUrl: tr.artworkUrl,
+            previewUrl: tr.previewUrl,
+            appleUrl: tr.appleUrl,
+            note,
+            updatedAt: Date.now()
+          };
+          const searchInp = document.getElementById('profile-song-search-input');
+          const resEl = document.getElementById('profile-song-results');
+          if (searchInp) searchInp.value = '';
+          if (resEl) { resEl.classList.add('hidden'); resEl.innerHTML = ''; }
+          songSearchResultsCache = [];
+          saveSharedData();
+          renderAll();
+          showToast(`🎵 "${tr.title}"을(를) 추천 노래로 설정했어요!`, 'success');
+        }
       });
 
       // Hook into attachSocialRealtimeDb / detachSocialRealtimeDb & preview loader
