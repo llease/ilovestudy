@@ -3242,7 +3242,7 @@
       display: flex;
       flex-direction: column;
       gap: 0.5rem;
-      padding: calc(env(safe-area-inset-top, 0px) + 0.5rem) max(0.75rem, calc((100vw - 48rem) / 2)) calc(env(safe-area-inset-bottom, 0px) + 0.5rem);
+      padding: calc(env(safe-area-inset-top, 0px) + 0.5rem) max(0.75rem, calc((100vw - 48rem) / 2)) calc(env(safe-area-inset-bottom, 0px) + 1.75rem);
       overflow: hidden;
       overscroll-behavior: contain;
     }
@@ -14776,50 +14776,76 @@
         for (const uid of Object.keys(g.members || {})) {
           memberAccessPatch['roomAccess/' + uid + '/' + g.id] = null;
         }
+        const secretPatch = g.password ? { ['roomSecrets/' + g.id]: null } : {};
+        const finishLocal = () => {
+          delete roomListings[g.id];
+          delete studyGroupsData[g.id];
+          roomDetails.delete(g.id);
+        };
         // 1) Try full cleanup including rooms/${id} and all members' roomAccess
         try {
           await db.ref().update({
             ['roomCatalog/' + g.id]: null,
-            ['roomSecrets/' + g.id]: null,
+            ...secretPatch,
             ['rooms/' + g.id]: null,
             ...memberAccessPatch
           });
-          return;
+          finishLocal();
+          return { deleted: true };
         } catch (error) {
           if (!/permission/i.test(error.code || error.message)) throw error;
         }
-        // 2) Try deleting creator's own access + roomCatalog + roomSecrets + messages (same paths as leaveCloudRoom)
+        // 2) Try deleting creator's own access + roomCatalog + roomSecrets + messages
         try {
           await db.ref().update({
             ['roomCatalog/' + g.id]: null,
-            ['roomSecrets/' + g.id]: null,
+            ...secretPatch,
             ['rooms/' + g.id + '/messages']: null,
             ['rooms/' + g.id + '/members/' + actor]: null,
             ['rooms/' + g.id + '/lastReadAt/' + actor]: null,
             ['roomAccess/' + actor + '/' + g.id]: null
           });
-          return;
+          finishLocal();
+          return { deleted: true };
         } catch (error) {
           if (!/permission/i.test(error.code || error.message)) throw error;
         }
-        // 3) Fallback: remove each allowed path individually so roomCatalog removal isn't blocked by other sub-paths
-        let removedCatalog = false;
-        for (const path of [
-          'roomAccess/' + actor + '/' + g.id,
-          'rooms/' + g.id + '/members/' + actor,
-          'rooms/' + g.id + '/lastReadAt/' + actor,
-          'rooms/' + g.id + '/messages',
-          'roomSecrets/' + g.id,
-          'roomCatalog/' + g.id
-        ]) {
-          try {
-            await db.ref(path).remove();
-            if (path === 'roomCatalog/' + g.id) removedCatalog = true;
-          } catch (error) {
-            if (!/permission/i.test(error.code || error.message)) throw error;
-          }
+        // 3) Try deleting roomCatalog + own membership without messages/secrets
+        try {
+          await db.ref().update({
+            ['roomCatalog/' + g.id]: null,
+            ['rooms/' + g.id + '/members/' + actor]: null,
+            ['rooms/' + g.id + '/lastReadAt/' + actor]: null,
+            ['roomAccess/' + actor + '/' + g.id]: null
+          });
+          finishLocal();
+          return { deleted: true };
+        } catch (error) {
+          if (!/permission/i.test(error.code || error.message)) throw error;
         }
-        if (!removedCatalog) throw new Error('PERMISSION_DENIED');
+        // 4) Try removing roomCatalog alone first, then best-effort cleanup
+        try {
+          await db.ref('roomCatalog/' + g.id).remove();
+          for (const path of [
+            'roomAccess/' + actor + '/' + g.id,
+            'rooms/' + g.id + '/members/' + actor,
+            'rooms/' + g.id + '/lastReadAt/' + actor,
+            'rooms/' + g.id + '/messages',
+            ...(g.password ? ['roomSecrets/' + g.id] : [])
+          ]) {
+            try { await db.ref(path).remove(); } catch (_) {}
+          }
+          finishLocal();
+          return { deleted: true };
+        } catch (error) {
+          if (!/permission/i.test(error.code || error.message)) throw error;
+        }
+        // 5) If RTDB rules block catalog delete (e.g., anonymous room or other members present), leave cleanly if a member
+        if (g.members && g.members[actor]) {
+          await leaveCloudRoom(g, actor);
+          return { deleted: false, leftOnly: true };
+        }
+        throw new Error('PERMISSION_DENIED');
       }
 
       document.getElementById('setup-import').addEventListener('click', upgradeSocialRecords);
@@ -15721,14 +15747,15 @@
             danger: true
           });
           if (!ok) return;
+          let delRes = { deleted: true };
           if (filePreview) await socialWrite(`studyGroups/${g.id}`, null);
-          else await deleteCloudRoom(g);
+          else delRes = await deleteCloudRoom(g);
           if (activeGroupId === gid) {
             activeGroupId = null;
             syncGroupChatViewport(false);
             saveGroupNavState();
           }
-          showToast(`'${g.name}' 방을 강제 삭제했어요.`, 'info');
+          showToast(delRes?.leftOnly ? 'Firebase 규칙상 다른 멤버가 남아 있어 방에서 나왔어요.' : `'${g.name}' 방을 강제 삭제했어요.`, 'info');
           renderGroupsTab();
           return;
         }
@@ -15833,8 +15860,9 @@
           danger: true
         });
         if (!ok) return;
+        let delRes = { deleted: true };
         if (filePreview) await socialWrite(`studyGroups/${g.id}`, null);
-        else await deleteCloudRoom(g);
+        else delRes = await deleteCloudRoom(g);
         activeGroupId = null;
         syncGroupChatViewport(false);
         const chatBox = document.getElementById('group-chat-messages');
@@ -15844,7 +15872,9 @@
         const rv = document.getElementById('group-room-view');
         if (rv) rv.dataset.roomId = '';
         saveGroupNavState();
-        showToast(isAdminForce ? `'${g.name}' 방을 강제 삭제했어요.` : `'${g.name}' 방을 없앴어요.`, 'info');
+        showToast(delRes?.leftOnly
+          ? 'Firebase 규칙상 다른 멤버가 남아 있어 모임에서 나왔어요.'
+          : (isAdminForce ? `'${g.name}' 방을 강제 삭제했어요.` : `'${g.name}' 방을 없앴어요.`), 'info');
         renderGroupsTab();
       }));
 
