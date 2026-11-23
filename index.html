@@ -15238,6 +15238,19 @@
         return !!(prefs.adminMode && (filePreview || isAdminUser()));
       }
 
+      const GROUP_LEAVE_COOLDOWN_MS = 24 * 60 * 60 * 1000;
+      function getGroupLeaveRemainingMs(g, uid) {
+        const joinedAt = Number(g?.members?.[uid]?.joinedAt || 0);
+        if (!joinedAt) return 0;
+        return Math.max(0, GROUP_LEAVE_COOLDOWN_MS - (Date.now() - joinedAt));
+      }
+      function formatLeaveWaitText(ms) {
+        const totalMins = Math.max(1, Math.ceil(ms / 60000));
+        const hrs = Math.floor(totalMins / 60);
+        const mins = totalMins % 60;
+        return hrs > 0 ? (mins > 0 ? `${hrs}시간 ${mins}분` : `${hrs}시간`) : `${mins}분`;
+      }
+
       function getGroupAnonLabels(g) {
         const map = {};
         const entries = Object.entries(g.members || {}).sort((a, b) => (a[1]?.joinedAt || 0) - (b[1]?.joinedAt || 0));
@@ -15488,6 +15501,16 @@
         if (delBtn) {
           delBtn.classList.toggle('hidden', !(isCreator || isAdminForce));
           delBtn.textContent = isAdminForce ? '강제 삭제' : '방 없애기';
+        }
+        const leaveBtn = document.getElementById('btn-group-leave');
+        if (leaveBtn) {
+          const remLeaveMs = getGroupLeaveRemainingMs(g, myUid);
+          const lockedLeave = remLeaveMs > 0;
+          leaveBtn.setAttribute('aria-disabled', String(lockedLeave));
+          leaveBtn.title = lockedLeave ? `참여 후 24시간이 지나야 나갈 수 있어요 (${formatLeaveWaitText(remLeaveMs)} 남음)` : '';
+          leaveBtn.className = lockedLeave
+            ? 'px-2.5 py-1 rounded-lg bg-slate-100 border border-slate-200 text-slate-400 text-[11px] font-bold whitespace-nowrap shrink-0 cursor-not-allowed'
+            : 'px-2.5 py-1 rounded-lg bg-white border border-rose-200 hover:bg-rose-50 text-rose-600 text-[11px] font-bold whitespace-nowrap shrink-0';
         }
         syncGroupChatViewport(effectiveRoomSub === 'chat' && prefs.activeTab === 'groups');
         document.getElementById('group-room-meta').textContent = isAnonChatOnly
@@ -15810,6 +15833,12 @@
       document.getElementById('btn-group-leave')?.addEventListener('click', socialAction(async () => {
         if (!activeGroupId || !studyGroupsData[activeGroupId]) return;
         const g = studyGroupsData[activeGroupId];
+        const myUidCheck = groupActor(g);
+        const remLeaveMs = getGroupLeaveRemainingMs(g, myUidCheck);
+        if (remLeaveMs > 0) {
+          showToast(`참여 후 24시간이 지나야 나갈 수 있어요. (${formatLeaveWaitText(remLeaveMs)} 남음)`, 'warn');
+          return;
+        }
         const ok = await openActionConfirm({
           title: g.isAnonymous ? '익명 모임 나가기' : '스터디 모임 나가기',
           message: `'${g.name}'에서 나가시겠습니까?`,
