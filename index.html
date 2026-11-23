@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content" />
   <title>I LOVE STUDY</title>
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://llease.github.io/ilovestudy/" />
@@ -609,7 +609,7 @@
     body[data-dark="true"] .bg-indigo-50, body[data-dark="true"] .bg-indigo-50\/90, body[data-dark="true"] .bg-sky-50\/70 { background-color: rgba(30, 58, 138, 0.28) !important; }
     body[data-dark="true"] .text-rose-900, body[data-dark="true"] .text-rose-800, body[data-dark="true"] .text-rose-700 { color: #fda4af !important; }
     body[data-dark="true"] .text-emerald-900, body[data-dark="true"] .text-emerald-800, body[data-dark="true"] .text-emerald-700 { color: #6ee7b7 !important; }
-    body[data-dark="true"] .text-amber-950, body[data-dark="true"] .text-amber-800 { color: #fde68a !important; }
+    body[data-dark="true"] .text-amber-950, body[data-dark="true"] .text-amber-900, body[data-dark="true"] .text-amber-800 { color: #fde68a !important; }
     body[data-dark="true"] .text-indigo-950, body[data-dark="true"] .text-indigo-900 { color: #c7d2fe !important; }
     body[data-dark="true"] .border-rose-200 { border-color: rgba(244, 63, 94, 0.4) !important; }
     body[data-dark="true"] .border-emerald-200 { border-color: rgba(16, 185, 129, 0.4) !important; }
@@ -823,11 +823,37 @@
       0% { opacity: 0.72; transform: translateY(48px); }
       100% { opacity: 1; transform: translateY(0); }
     }
-    #modal-overlay:not(.hidden), #app-confirm-modal:not(.hidden), #app-notice-popup:not(.hidden), #unified-chat-modal:not(.hidden), #whisper-modal:not(.hidden) {
+    @keyframes chatBackdropSmooth {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes chatSheetSmooth {
+      from { opacity: 0; transform: translate3d(0, 14px, 0) scale(0.982); }
+      to { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+    }
+    @keyframes chatRoomSmoothIn {
+      from { opacity: 0; transform: translate3d(0, 12px, 0); }
+      to { opacity: 1; transform: translate3d(0, 0, 0); }
+    }
+    @keyframes chatViewFadeIn {
+      from { opacity: 0; transform: translate3d(0, 6px, 0); }
+      to { opacity: 1; transform: translate3d(0, 0, 0); }
+    }
+    #modal-overlay:not(.hidden), #app-confirm-modal:not(.hidden), #app-notice-popup:not(.hidden) {
       animation: iosBackdropIn 180ms ease-out both;
     }
-    #modal-overlay:not(.hidden) #modal-box, #app-confirm-modal:not(.hidden) > div, #app-notice-popup:not(.hidden) > div, #unified-chat-modal:not(.hidden) > div, #whisper-modal:not(.hidden) > div {
+    #unified-chat-modal:not(.hidden), #whisper-modal:not(.hidden) {
+      animation: chatBackdropSmooth 240ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+    #modal-overlay:not(.hidden) #modal-box, #app-confirm-modal:not(.hidden) > div, #app-notice-popup:not(.hidden) > div {
       animation: iosModalIn 240ms var(--ios-ease) both;
+    }
+    #unified-chat-modal:not(.hidden) > div, #whisper-modal:not(.hidden) > div {
+      animation: chatSheetSmooth 300ms cubic-bezier(0.22, 1, 0.36, 1) both;
+      will-change: transform, opacity;
+    }
+    #uc-room-view:not(.hidden), #whisper-thread-view:not(.hidden) {
+      animation: chatViewFadeIn 220ms cubic-bezier(0.22, 1, 0.36, 1) both;
     }
     #join-guide[open] { animation: iosModalIn 260ms var(--ios-ease) both; }
     #join-guide figure:not([hidden]) { animation: study-appear 230ms var(--ios-ease) both; }
@@ -1671,6 +1697,11 @@
     .study-home-grid.is-free .study-home-content {display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:.8rem 1.25rem;align-items:start}
     .study-home-grid.is-free #home-today-todos-card {grid-column:2;grid-row:1 / span 2;border-top:0;border-left:1px solid var(--line);padding:.1rem 0 .1rem 1.2rem}
     .study-today-stat {background:var(--soft);border:1px solid var(--line);border-radius:12px;min-height:46px;display:flex;justify-content:space-between;align-items:center;gap:.5rem;padding:.65rem .85rem;font-size:.83rem}
+    .study-today-stat-right {display:inline-flex;align-items:center;gap:.5rem;flex-shrink:0}
+    .study-subtract-trigger {display:inline-flex;align-items:center;gap:.2rem;padding:.26rem .56rem;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--muted);font-size:.72rem;font-weight:800;line-height:1.2;cursor:pointer;transition:background .15s,color .15s,border-color .15s;white-space:nowrap}
+    .study-subtract-trigger:hover:not(:disabled) {border-color:#fca5a5;background:#fff1f2;color:#be123c}
+    .study-subtract-trigger:disabled {opacity:.45;cursor:not-allowed}
+    body[data-dark="true"] .study-subtract-trigger:hover:not(:disabled) {border-color:rgba(244,63,94,.42);background:rgba(244,63,94,.16);color:#fda4af}
     #study-mode-btn {background:var(--tint);color:var(--link);border:1px solid var(--line);max-width:100%;white-space:normal;text-align:left}
     body[data-mode="strict"] { --page:#fcf5f5; }
     body[data-dark="true"][data-mode="strict"] { --page:#15121d; }
@@ -2097,15 +2128,22 @@
     .distribution-summary strong {margin-inline-start:.18rem;color:var(--link);font-size:.95rem;font-weight:850}
     #home-distribution-detail {min-width:0}
     .distribution-tables {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(.55rem,2.5vw,1.25rem)}
-    .distribution-table {border-collapse:separate;border-spacing:2px;width:100%;table-layout:fixed;font-variant-numeric:tabular-nums}
-    .distribution-table th {color:var(--muted);font-size:.68rem;font-weight:750;text-align:center;white-space:nowrap}
-    .distribution-table .distribution-hour {width:2.05rem;text-align:start}
-    .distribution-table td {padding:0;height:1.16rem;vertical-align:middle}
-    .distribution-slot {position:relative;display:block;width:100%;height:1.13rem;overflow:hidden;border:1px solid var(--line);border-radius:3px;background:var(--soft)}
-    .distribution-slot > i {position:absolute;inset:0 auto 0 0;width:var(--record-width);min-width:2px;background:var(--primary);pointer-events:none}
-    .distribution-slot.is-legacy > i {background:repeating-linear-gradient(135deg,transparent 0 3px,var(--primary) 3px 5px)}
-    button.distribution-slot {cursor:pointer}
-    button.distribution-slot[aria-pressed="true"],button.distribution-slot:hover {outline:2px solid var(--focus-ring);outline-offset:-2px}
+    .distribution-table {border-collapse:separate;border-spacing:0 4px;width:100%;table-layout:fixed;font-variant-numeric:tabular-nums}
+    .distribution-table th {color:var(--muted);font-size:.68rem;font-weight:750;text-align:center;white-space:nowrap;padding-bottom:2px}
+    .distribution-table .distribution-hour {width:2.05rem;text-align:start;padding-right:4px}
+    .distribution-table td {padding:0;height:1.18rem;vertical-align:middle}
+    .distribution-slot {position:relative;display:block;width:100%;height:1.14rem;overflow:hidden;border-top:1px solid color-mix(in srgb,var(--line) 80%,transparent);border-bottom:1px solid color-mix(in srgb,var(--line) 80%,transparent);border-right:1px solid color-mix(in srgb,var(--line) 48%,transparent);border-left:0;background:var(--soft);transition:filter .12s ease}
+    .distribution-table td:first-of-type .distribution-slot {border-left:1px solid color-mix(in srgb,var(--line) 80%,transparent);border-top-left-radius:6px;border-bottom-left-radius:6px}
+    .distribution-table td:last-of-type .distribution-slot {border-right:1px solid color-mix(in srgb,var(--line) 80%,transparent);border-top-right-radius:6px;border-bottom-right-radius:6px}
+    .distribution-slot > i {position:absolute;inset:0;width:100%;background:linear-gradient(180deg,color-mix(in srgb,var(--primary) 90%,#fff),var(--primary));box-shadow:inset 0 1px 0 rgba(255,255,255,.18);pointer-events:none}
+    button.distribution-slot {cursor:pointer;border-color:transparent;background:transparent}
+    button.distribution-slot > i {border-radius:6px}
+    button.distribution-slot.is-cont-left > i {border-top-left-radius:0;border-bottom-left-radius:0;left:-1px;width:calc(100% + 1px)}
+    button.distribution-slot.is-cont-right > i {border-top-right-radius:0;border-bottom-right-radius:0;right:-1px;width:calc(100% + 1px)}
+    button.distribution-slot.is-cont-left.is-cont-right > i {width:calc(100% + 2px)}
+    .distribution-slot.is-legacy > i {background:repeating-linear-gradient(135deg,color-mix(in srgb,var(--primary) 26%,var(--surface)) 0 4px,var(--primary) 4px 8px)}
+    button.distribution-slot:hover {filter:brightness(1.07);z-index:1}
+    button.distribution-slot[aria-pressed="true"] {outline:2px solid var(--focus-ring);outline-offset:-1px;border-radius:5px;z-index:2}
     @media(max-width:520px) {
       .distribution-table th {font-size:.6rem}
       .distribution-table .distribution-hour {width:1.55rem}
@@ -3222,12 +3260,34 @@
     #whisper-modal > .ed-card {max-height:calc(100dvh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px) - 2rem)}
     #whisper-modal #whisper-messages-list, #whisper-modal #whisper-inbox-view {min-height:min(220px, 25dvh)}
     body.chat-mode-open,
-    body:has(#group-room-view.is-chat-mode) { overflow: hidden; }
+    body:has(#group-room-view.is-chat-mode) {
+      overflow: hidden;
+      overscroll-behavior: none;
+    }
+    body.chat-mode-open {
+      position: fixed;
+      left: 0;
+      right: 0;
+      width: 100%;
+    }
+    #study-main:has(#group-room-view.is-chat-mode),
     #study-main #tab-groups.chat-mode-open,
-    #study-main #tab-groups:has(#group-room-view.is-chat-mode),
-    #group-room-view.is-chat-mode {
+    #study-main #tab-groups:has(#group-room-view.is-chat-mode) {
       animation: none !important;
       transform: none !important;
+      filter: none !important;
+    }
+    #group-room-view.is-chat-mode {
+      animation: chatRoomSmoothIn 280ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      #group-room-view.is-chat-mode,
+      #unified-chat-modal:not(.hidden) > div,
+      #whisper-modal:not(.hidden) > div,
+      #uc-room-view:not(.hidden),
+      #whisper-thread-view:not(.hidden) {
+        animation: none !important;
+      }
     }
     #group-room-view.is-chat-mode {
       position: fixed;
@@ -3235,16 +3295,61 @@
       left: 0;
       right: 0;
       height: var(--chat-vv-height, 100dvh);
-      max-height: 100dvh;
+      max-height: var(--chat-vv-height, 100dvh);
       box-sizing: border-box;
       z-index: 60;
       background: var(--bg, #f8fafc);
       display: flex;
       flex-direction: column;
       gap: 0.5rem;
-      padding: calc(env(safe-area-inset-top, 0px) + 0.5rem) max(0.75rem, calc((100vw - 48rem) / 2)) calc(env(safe-area-inset-bottom, 0px) + 1.75rem);
+      padding: calc(env(safe-area-inset-top, 0px) + 0.5rem) max(0.75rem, calc((100vw - 48rem) / 2)) calc(env(safe-area-inset-bottom, 0px) + 0.75rem);
       overflow: hidden;
       overscroll-behavior: contain;
+    }
+    #group-room-view.is-chat-mode.is-kb-open {
+      gap: 0.3rem;
+      padding-top: max(0.35rem, env(safe-area-inset-top, 0px));
+      padding-bottom: 0.35rem;
+    }
+    #group-room-view.is-chat-mode.is-kb-open > .ed-card:first-child {
+      padding-top: 0.5rem;
+      padding-bottom: 0.5rem;
+    }
+    :is(#whisper-modal, #unified-chat-modal, #gift-send-modal, #group-create-modal, #group-pw-modal).is-modal-vv {
+      top: var(--modal-vv-top, 0px) !important;
+      bottom: auto !important;
+      height: var(--modal-vv-height, 100dvh) !important;
+    }
+    :is(#whisper-modal, #unified-chat-modal, #gift-send-modal, #group-create-modal, #group-pw-modal).is-modal-vv.is-kb-open {
+      align-items: flex-end !important;
+      padding-top: max(0.35rem, env(safe-area-inset-top, 0px)) !important;
+      padding-bottom: 0.35rem !important;
+    }
+    :is(#whisper-modal, #unified-chat-modal, #gift-send-modal, #group-create-modal, #group-pw-modal).is-modal-vv > :is(.ed-card, form) {
+      max-height: calc(var(--modal-vv-height, 100dvh) - 0.85rem) !important;
+      overflow-y: auto;
+    }
+    :is(#whisper-modal, #unified-chat-modal).is-modal-vv > .ed-card {
+      overflow: hidden;
+    }
+    :is(#whisper-modal, #unified-chat-modal).is-modal-vv.is-kb-open #whisper-messages-list,
+    :is(#whisper-modal, #unified-chat-modal).is-modal-vv.is-kb-open #uc-messages-list {
+      min-height: 90px !important;
+      max-height: none !important;
+    }
+    :is(#group-chat-messages, #uc-messages-list, #whisper-messages-list) .break-words {
+      min-width: 0;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+    @media (max-width: 640px) {
+      #group-chat-input,
+      #uc-chat-input,
+      #whisper-reply-input,
+      #whisper-new-input,
+      #gift-send-note {
+        font-size: 16px !important;
+      }
     }
     body[data-dark="true"] #group-room-view.is-chat-mode {
       background: var(--bg, #0f172a);
@@ -3920,7 +4025,10 @@
             </div>
             <div class="study-today-stat">
               <span class="font-semibold text-slate-600">공부일 누적 공부</span>
-              <span id="my-today-study-mins" class="font-mono font-black">0H 0M</span>
+              <div class="study-today-stat-right">
+                <span id="my-today-study-mins" class="font-mono font-black">0H 0M</span>
+                <button id="btn-subtract-study-time" type="button" class="study-subtract-trigger" title="실수로 더 측정한 공부 시간 빼기" aria-haspopup="dialog">시간 빼기</button>
+              </div>
             </div>
             <div id="my-period-wrap" class="pt-1">
             <div class="flex items-center justify-between mb-2">
@@ -3964,7 +4072,7 @@
         <div class="distribution-heading">
           <div>
             <h3 id="home-distribution-title">공부 시간 분포</h3>
-            <p>스톱워치 기록 · 10분 단위 · 오전 5시 기준</p>
+            <p>스톱워치 기록 · 10분 단위 · 4분 이상 표시 (오전 5시 기준)</p>
           </div>
           <div class="distribution-date">
             <input id="home-distribution-date" class="planner-field" type="date" aria-label="공부 시간 분포 날짜" />
@@ -5070,7 +5178,14 @@
           <h4 class="inline-flex items-center gap-1.5 text-xs sm:text-sm font-black text-slate-900"><svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg><span>특별 뱃지 수여 · 회수</span></h4>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200 overflow-hidden">
             <div class="space-y-2 min-w-0">
-              <select id="admin-badge-member" class="w-full rounded-xl border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-semibold"></select>
+              <div class="flex flex-wrap sm:flex-nowrap items-center gap-1.5">
+                <select id="admin-badge-member" class="flex-1 min-w-[120px] rounded-xl border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-semibold"></select>
+                <div class="inline-flex items-center gap-1 shrink-0">
+                  <label for="admin-streak-input" class="text-[11px] font-bold text-slate-600 whitespace-nowrap">연속일</label>
+                  <input id="admin-streak-input" type="number" min="0" max="999" step="1" class="w-16 rounded-xl border border-slate-300 bg-white px-2 py-1.5 text-xs font-mono font-bold text-center" />
+                  <button id="btn-admin-streak-save" type="button" class="px-2.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-[11px] font-bold whitespace-nowrap">수정</button>
+                </div>
+              </div>
               <div id="admin-preset-badges" class="flex flex-wrap gap-1.5"></div>
             </div>
             <div class="space-y-2 min-w-0">
@@ -5091,9 +5206,13 @@
           <h4 class="inline-flex items-center gap-1.5 text-xs sm:text-sm font-black text-slate-900"><svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5"/></svg><span>선물 지급 · 회수 (채팅·알림함 연동)</span></h4>
           <p class="text-[11px] text-slate-500">선물을 지급하면 해당 가입자 채팅·알림함에 안내가 뜨며, 회수하면 지급 메시지도 함께 삭제돼요.</p>
           <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-2.5">
-            <div class="flex flex-wrap sm:flex-nowrap gap-2">
+            <div class="flex flex-wrap sm:flex-nowrap gap-2 items-center">
               <select id="admin-gift-member" aria-label="선물 대상 가입자" class="w-full sm:w-40 rounded-xl border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-semibold"></select>
               <select id="admin-gift-select" aria-label="지급할 선물 선택" class="flex-1 min-w-[140px] rounded-xl border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-semibold"></select>
+              <div class="inline-flex items-center gap-1 shrink-0">
+                <input id="admin-gift-qty" type="number" min="1" max="999" step="1" value="10" aria-label="지급할 선물 개수" class="w-16 rounded-xl border border-slate-300 bg-white px-2 py-1.5 text-xs font-mono font-bold text-center" />
+                <span class="text-[11px] font-bold text-slate-600">개</span>
+              </div>
               <button id="btn-admin-gift-grant" type="button" class="px-3.5 py-1.5 rounded-xl bg-slate-950 hover:bg-slate-800 text-white text-xs font-bold whitespace-nowrap shrink-0">지급하기</button>
             </div>
             <div id="admin-member-gifts-list" class="space-y-1.5 text-xs"></div>
@@ -5208,6 +5327,15 @@
         <button type="button" data-close-modal="gift-send-modal" class="w-7 h-7 rounded-lg hover:bg-slate-100 text-slate-500 font-bold shrink-0">✕</button>
       </div>
       <div id="gift-send-picker" class="grid grid-cols-3 gap-2"></div>
+      <div id="gift-send-qty-wrap" class="flex flex-wrap items-center justify-between gap-2 rounded-xl bg-slate-50 border border-slate-200 px-3 py-2">
+        <label for="gift-send-qty" class="text-[11px] font-bold text-slate-700">보낼 개수</label>
+        <div class="flex items-center gap-1.5">
+          <button type="button" data-gift-qty-preset="1" class="px-2 py-1 rounded-lg border border-slate-200 bg-white text-[11px] font-bold text-slate-700 hover:bg-slate-100">1개</button>
+          <button type="button" data-gift-qty-preset="10" class="px-2 py-1 rounded-lg border border-slate-200 bg-white text-[11px] font-bold text-slate-700 hover:bg-slate-100">10개</button>
+          <button type="button" data-gift-qty-preset="max" class="px-2 py-1 rounded-lg border border-slate-200 bg-white text-[11px] font-bold text-slate-700 hover:bg-slate-100">전부</button>
+          <input id="gift-send-qty" type="number" min="1" max="999" step="1" value="1" class="w-16 rounded-lg border border-slate-300 bg-white px-2 py-1 text-xs font-mono font-bold text-center text-slate-900" />
+        </div>
+      </div>
       <div>
         <label for="gift-send-note" class="block text-[11px] font-bold text-slate-700 mb-1">짧은 한마디 <span class="text-slate-400 font-normal">(선택)</span></label>
         <input id="gift-send-note" type="text" maxlength="60" placeholder="예: 시험 화이팅! 상자 열어봐" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-xs font-semibold text-slate-900" />
@@ -5323,7 +5451,7 @@
     <div class="ed-card max-w-xs w-full p-5 space-y-4 shadow-2xl">
       <div class="space-y-1.5">
         <h3 id="app-confirm-title" class="text-sm font-black text-slate-950">확인</h3>
-        <p id="app-confirm-msg" class="text-xs font-medium text-slate-600 leading-relaxed"></p>
+        <p id="app-confirm-msg" class="text-xs font-medium text-slate-600 leading-relaxed whitespace-pre-line"></p>
       </div>
       <div class="flex items-center justify-end gap-2">
         <button id="app-confirm-cancel" type="button" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700 transition">취소</button>
@@ -5562,9 +5690,17 @@
         if (nextTierName === '플래티넘') return { type: 'total', mins: 240, desc: '하루 누적 4시간 공부 달성' };
         if (nextTierName === '에메랄드') return { type: 'total', mins: 300, desc: '하루 누적 5시간 공부 달성' };
         if (nextTierName === '다이아몬드') return { type: 'total', mins: 360, desc: '하루 누적 6시간 공부 달성' };
-        return { type: 'ultra', mins: 0, desc: '울트라집중모드 1회 완주' };
+        return { type: 'ultra', mins: 0, desc: '울트라집중모드 완주 (의무 1~8교시 각 75% 이상 출석 · 지각 0회)' };
       }
 
+      function getEffectiveStreak(m, day = studyDayKey()) {
+        if (!m) return 0;
+        const raw = Math.max(0, Math.floor(Number(m.streak) || 0));
+        if (raw <= 0) return 0;
+        const yest = addDaysStr(day, -1);
+        if (m.lastActiveStudyDate && m.lastActiveStudyDate < yest) return 0;
+        return raw;
+      }
       function syncDailyStreak(m, day = studyDayKey()) {
         if (!m) return false;
         const yest = addDaysStr(day, -1);
@@ -6973,6 +7109,9 @@
       }
       document.addEventListener('keydown', e => {
         if (joinGuide.open) return;
+        const confirmModal = document.getElementById('app-confirm-modal');
+        const noticeModal = document.getElementById('app-notice-popup');
+        if ((confirmModal && shown(confirmModal)) || (noticeModal && shown(noticeModal))) return;
         const dialog = activeStudyDialog();
         if (e.key === 'Escape' && dialog?.id === 'promotion-overlay') { e.preventDefault(); closePromotion(); return; }
         if (e.key === 'Escape' && dialog?.id === 'modal-overlay') { e.preventDefault(); closeModal(); return; }
@@ -7461,17 +7600,18 @@
 
       function getBadgesForMember(member, dateStr) {
         const b = [];
-        if (member.firstTime && member.firstTimeDate === dateStr && toMins(member.firstTime) >= toMins('05:00') && toMins(member.firstTime) < toMins('08:00')) {
-          b.push({ label: '🌅 얼리버드', customCls: BADGE_THEMES.neon });
+        const hidden = member?.hiddenBadges || {};
+        if (!hidden.earlybird && member.firstTime && member.firstTimeDate === dateStr && toMins(member.firstTime) >= toMins('05:00') && toMins(member.firstTime) < toMins('08:00')) {
+          b.push({ key: 'earlybird', label: '🌅 얼리버드', customCls: BADGE_THEMES.neon });
         }
-        const st = Number(member.streak) || 0;
-        if (st >= 2) {
+        const st = getEffectiveStreak(member, dateStr);
+        if (!hidden.streak && st >= 2) {
           const evo = STREAK_EVOLUTION[Math.min(10, Math.floor(st))];
-          b.push({ label: `${evo.icon} 연속 ${st}일`, customCls: evo.cls });
+          b.push({ key: 'streak', label: `${evo.icon} 연속 ${st}일`, customCls: evo.cls });
         }
 
-        if (member.nightOwlDate === dateStr) {
-          b.push({ label: '🦉 심야 올빼미', customCls: BADGE_THEMES.royal });
+        if (!hidden.nightowl && member.nightOwlDate === dateStr) {
+          b.push({ key: 'nightowl', label: '🦉 심야 올빼미', customCls: BADGE_THEMES.royal });
         }
         const customList = (shared.customBadges && shared.customBadges[member.id]) || [];
         customList.forEach(cb => {
@@ -7746,15 +7886,24 @@
 
         if (meHdr && promotionIsActive(meHdr) && tierInfo.nextName) {
           const mission = getPromoMission(tierInfo.nextName);
-          if (false) {
-            document.body.setAttribute('data-promo', 'active');
-            promoBar.classList.remove('hidden');
-            promoBadge.textContent = '승급전 진행 중';
-            promoBadge.className = 'px-2 py-0.5 rounded-md text-[11px] font-black bg-slate-950 text-amber-300';
-            promoTitle.textContent = `${tierInfo.nextName} 승급전 도전 중!`;
-            promoDesc.textContent = `미션: ${mission.desc} · 달성 시 자동 승급${tierInfo.banked > 0 ? ` (보관 +${tierInfo.banked} LP 합산)` : ''}`;
-            promoActs.innerHTML = `<button type="button" id="btn-fail-promo" class="px-2.5 py-1.5 rounded-xl bg-white border border-rose-200 text-rose-600 text-xs font-bold">포기</button>`;
+          document.body.setAttribute('data-promo', 'active');
+          promoBar.classList.remove('hidden');
+          promoBadge.textContent = '승급전 진행 중';
+          promoBadge.className = 'px-2 py-0.5 rounded-md text-[11px] font-black bg-slate-950 text-amber-300';
+          promoTitle.textContent = `${tierInfo.nextName} 승급전 도전 중!`;
+          let descText = `미션: ${mission.desc} · 달성 시 자동 승급${tierInfo.banked > 0 ? ` (보관 +${tierInfo.banked} LP 합산)` : ''}`;
+          if (mission.type === 'ultra') {
+            const prog = getUltraPromoProgress(meHdr, promotionStudyDay(meHdr));
+            if (prog.hasLateOrAwol) {
+              descText = '지각 또는 이탈 기록이 있어 이번 완주 조건을 충족할 수 없어요. 포기하기를 누르면 자율모드로 전환돼요.';
+            } else if (prog.isSunday) {
+              descText = '일요일에는 의무자습이 없어 울트라집중모드 승급전 완주가 불가해요.';
+            } else {
+              descText = `미션: 의무 1~8교시 각 75% 이상 출석 · 지각 0회 완주 (${prog.doneCount}/${prog.requiredCount}교시 완료)${tierInfo.banked > 0 ? ` · 보관 +${tierInfo.banked} LP` : ''}`;
+            }
           }
+          promoDesc.textContent = descText;
+          promoActs.innerHTML = `<button type="button" id="btn-fail-promo" class="px-3 py-1.5 rounded-xl bg-white border border-rose-200 text-rose-600 text-xs font-bold">포기하기</button>`;
         } else if (meHdr && meHdr.promoPendingDate) {
           document.body.setAttribute('data-promo', 'ready');
           const mission = getPromoMission(tierInfo.nextName || '다음 티어');
@@ -8029,11 +8178,12 @@
         const pid = phase && phase.type === 'study' ? phase.id : 'p1';
         const curSt = getMemberDayStatus(me.id, t, pid), meta = getStatusMeta(curSt);
         const pill = document.getElementById('my-current-status-pill');
+        const effStreak = getEffectiveStreak(me, t);
         if (isFreeDashMode) {
-          pill.textContent = `자율모드 · 연속 ${me.streak}일`;
+          pill.textContent = `자율모드 · 연속 ${effStreak}일`;
           pill.className = 'px-3 py-1 rounded-full text-xs font-bold border bg-emerald-50 text-emerald-800 border-emerald-200';
         } else {
-          pill.textContent = phase && phase.type === 'study' ? `${phase.label}: ${meta.text}` : `연속 ${me.streak}일`;
+          pill.textContent = phase && phase.type === 'study' ? `${phase.label}: ${meta.text}` : `연속 ${effStreak}일`;
           pill.className = `px-3 py-1 rounded-full text-xs font-bold border ${meta.cls}`;
         }
 
@@ -8050,6 +8200,12 @@
         renderHomeDistribution(me.id, t);
         const todayLogMins = studyMinutes(me.id);
         animateCountUp(document.getElementById('my-today-study-mins'), todayLogMins, formatStudyMins);
+        const subtractStudyBtn = document.getElementById('btn-subtract-study-time');
+        if (subtractStudyBtn) {
+          subtractStudyBtn.classList.toggle('hidden', !!prefs.adminMode);
+          subtractStudyBtn.disabled = todayLogMins <= 0;
+          subtractStudyBtn.title = todayLogMins <= 0 ? '뺄 수 있는 누적 공부 시간이 없어요' : '실수로 더 측정한 공부 시간 빼기';
+        }
         const attendanceRate = calcAttendanceRate(me.id, t);
         document.getElementById('my-today-rate').textContent = attendanceRate == null ? '일요일 의무자습 없음' : `출석률 ${attendanceRate}%`;
         document.getElementById('my-period-chips').innerHTML = STUDY_PERIODS.map(p => {
@@ -8701,16 +8857,27 @@
             const minutes = shared.studySlotMins?.[date]?.[memberId] || {};
             const markers = shared.studyBlocks?.[date]?.[memberId] || {};
             const hourLabel = `${String(hour % 24).padStart(2, '0')}시`;
-            let cells = '';
-            for (let index = hour * 6; index < (hour + 1) * 6; index++) {
+            const MIN_DIST_SECS = 240; // 4분 미만(1~3분) 짧은 기록은 분포 바에서 제외
+            const hourSlots = [];
+            for (let slotOffset = 0; slotOffset < 6; slotOffset++) {
+              const index = hour * 6 + slotOffset;
               const key = plannerSlotKey(index);
               const seconds = Math.min(600, Math.max(0, (Number(minutes[key]) || 0) * 60));
               const legacy = !seconds && Boolean(markers[key]);
-              const label = `${plannerTimeLabel(index)} ~ ${plannerTimeLabel(index + 1)} · ${legacy ? '기록 있음 · 분량 미상' : plannerDuration(seconds)}`;
-              if (seconds || legacy) {
+              const active = seconds >= MIN_DIST_SECS || legacy;
+              hourSlots.push({ index, seconds, legacy, active });
+            }
+            let cells = '';
+            for (let s = 0; s < 6; s++) {
+              const slot = hourSlots[s];
+              if (slot.active) {
                 hasRecords = true;
-                if (index === homeDistributionSelection) selectedLabel = label;
-                cells += `<td><button type="button" id="home-study-slot-${index}" data-home-study-slot="${index}" class="distribution-slot ${legacy ? 'is-legacy' : ''}" aria-label="${escapeHtml(label)}" aria-pressed="${index === homeDistributionSelection}"><i style="--record-width:${legacy ? 100 : seconds / 6}%" aria-hidden="true"></i></button></td>`;
+                const label = `${plannerTimeLabel(slot.index)} ~ ${plannerTimeLabel(slot.index + 1)} · ${slot.legacy ? '기록 있음 · 분량 미상' : plannerDuration(slot.seconds)}`;
+                if (slot.index === homeDistributionSelection) selectedLabel = label;
+                const contLeft = s > 0 && hourSlots[s - 1].active;
+                const contRight = s < 5 && hourSlots[s + 1].active;
+                const cls = ['distribution-slot', slot.legacy ? 'is-legacy' : '', contLeft ? 'is-cont-left' : '', contRight ? 'is-cont-right' : ''].filter(Boolean).join(' ');
+                cells += `<td><button type="button" id="home-study-slot-${slot.index}" data-home-study-slot="${slot.index}" class="${cls}" aria-label="${escapeHtml(label)}" aria-pressed="${slot.index === homeDistributionSelection}"><i aria-hidden="true"></i></button></td>`;
               } else {
                 cells += '<td><span class="distribution-slot" aria-label="기록 없음"></span></td>';
               }
@@ -9446,9 +9613,35 @@
 
         const bms = document.getElementById('admin-badge-member'), cbm = validMemberId(bms.value);
         syncSelectOpts(bms, memSigBasic, memOptsHtml, cbm);
+        const badgeMember = (shared.members || []).find(m => m.id === cbm);
+        const streakInp = document.getElementById('admin-streak-input');
+        if (streakInp && document.activeElement !== streakInp) {
+          streakInp.value = String(badgeMember ? getEffectiveStreak(badgeMember) : 0);
+        }
         document.getElementById('admin-preset-badges').innerHTML = PRESET_ADMIN_BADGES.map((pb, idx) => `<button type="button" data-grant-preset="${idx}" class="fancy-badge px-2.5 py-1 rounded-full text-[11px] font-extrabold border ${BADGE_THEMES[pb.theme]}">${pb.label}</button>`).join('');
+        const hiddenAuto = badgeMember?.hiddenBadges || {};
+        const effSt = badgeMember ? getEffectiveStreak(badgeMember) : 0;
+        const autoDefs = [
+          { key: 'streak', label: `🔥 연속 ${effSt}일`, active: effSt >= 2 },
+          { key: 'earlybird', label: '🌅 얼리버드', active: Boolean(badgeMember?.firstTime && badgeMember?.firstTimeDate === studyDayKey() && toMins(badgeMember.firstTime) >= toMins('05:00') && toMins(badgeMember.firstTime) < toMins('08:00')) },
+          { key: 'nightowl', label: '🦉 심야 올빼미', active: Boolean(badgeMember?.nightOwlDate === studyDayKey()) }
+        ];
+        const autoHtml = autoDefs.map(a => {
+          const isHidden = !!hiddenAuto[a.key];
+          return `<div class="inline-flex items-center gap-1 rounded-full border pl-2.5 pr-1.5 py-0.5 text-[11px] font-extrabold ${isHidden ? 'bg-slate-100 text-slate-400 border-slate-200 line-through' : (a.active ? 'bg-emerald-50 text-emerald-800 border-emerald-300' : 'bg-white text-slate-500 border-slate-200')}"><span>${a.label}</span><button type="button" data-toggle-auto-badge="${a.key}" class="px-1 font-black ${isHidden ? 'text-indigo-600 hover:text-indigo-800 no-underline' : 'text-rose-600 hover:text-rose-800'}" title="${isHidden ? '다시 붙이기' : '제거'}">${isHidden ? '+ 붙이기' : '✕ 제거'}</button></div>`;
+        }).join('');
         const cList = (shared.customBadges && shared.customBadges[cbm]) || [];
-        document.getElementById('admin-member-badges-list').innerHTML = cList.length ? cList.map(cb => `<div class="inline-flex items-center gap-1 rounded-full border pl-2.5 pr-1.5 py-0.5 text-[11px] font-extrabold ${BADGE_THEMES[cb.theme || 'gold']}"><span>${escapeHtml(cb.label)}</span><button type="button" data-edit-badge="${cb.id}" class="px-1 hover:opacity-75" title="뱃지 이름 수정">✏️</button><button type="button" data-revoke-badge="${cb.id}" class="px-1 hover:text-rose-600" title="회수">✕</button></div>`).join('') : '<span class="text-xs text-slate-400">없음</span>';
+        const customHtml = cList.map(cb => `<div class="inline-flex items-center gap-1 rounded-full border pl-2.5 pr-1.5 py-0.5 text-[11px] font-extrabold ${BADGE_THEMES[cb.theme || 'gold']}"><span>${escapeHtml(cb.label)}</span><button type="button" data-edit-badge="${cb.id}" class="px-1 hover:opacity-75" title="뱃지 이름 수정">✏️</button><button type="button" data-revoke-badge="${cb.id}" class="px-1 hover:text-rose-600" title="제거">✕</button></div>`).join('');
+        const removedList = Array.isArray(badgeMember?.removedCustomBadges) ? badgeMember.removedCustomBadges : [];
+        const removedHtml = removedList.map(rb => `<div class="inline-flex items-center gap-1 rounded-full border border-dashed border-slate-300 bg-slate-100 pl-2.5 pr-1.5 py-0.5 text-[11px] font-bold text-slate-500"><span>${escapeHtml(rb.label)}</span><button type="button" data-restore-badge="${escapeHtml(rb.id)}" class="px-1 text-indigo-600 hover:text-indigo-800 font-black" title="다시 붙이기">+ 붙이기</button></div>`).join('');
+        document.getElementById('admin-member-badges-list').innerHTML = `
+          <div class="w-full space-y-1.5">
+            <div class="text-[10px] font-bold text-slate-500">자동 뱃지 (제거 · 다시 붙이기)</div>
+            <div class="flex flex-wrap gap-1.5">${autoHtml}</div>
+            <div class="text-[10px] font-bold text-slate-500 pt-1">특별 뱃지</div>
+            <div class="flex flex-wrap gap-1.5">${customHtml || '<span class="text-xs text-slate-400">없음</span>'}</div>
+            ${removedHtml ? `<div class="text-[10px] font-bold text-slate-400 pt-1">제거된 특별 뱃지 (다시 붙이기)</div><div class="flex flex-wrap gap-1.5">${removedHtml}</div>` : ''}
+          </div>`;
         if (typeof renderAdminGiftsPanel === 'function') { try { renderAdminGiftsPanel(); } catch (err) { console.error('renderAdminGiftsPanel error:', err); } }
 
         const dmTargetSel = document.getElementById('admin-dm-target');
@@ -9673,6 +9866,7 @@
       function switchTab(tab, skipNavScroll = false) {
         if (['rankings','brag'].includes(tab)) tab = 'members';
         if (!document.getElementById(`tab-${tab}`)) tab = 'dashboard';
+        if (tab !== 'groups' && typeof syncGroupChatViewport === 'function') syncGroupChatViewport(false);
         if (prefs.activeTab !== tab && typeof stopSongPreview === 'function') stopSongPreview();
         if (prefs.activeTab === 'planner' && tab !== 'planner') {
           cancelPlannerDrag();
@@ -9857,6 +10051,33 @@
           });
         }
       });
+      function getUltraPromoProgress(me, day) {
+        const isStrict = getMemberMode(me) === 'strict';
+        const isSunday = new Date(day + 'T12:00:00Z').getUTCDay() === 0;
+        const mandatoryPeriods = STUDY_PERIODS.filter(p => p.mandatory);
+        let doneCount = 0;
+        let exemptCount = 0;
+        let hasLateOrAwol = false;
+        for (const p of STUDY_PERIODS) {
+          const st = getMemberDayStatus(me.id, day, p.id);
+          if (st === 'late' || st === 'awol' || st === 'early') hasLateOrAwol = true;
+        }
+        for (const p of mandatoryPeriods) {
+          const st = getMemberDayStatus(me.id, day, p.id);
+          if (st === 'exempt') {
+            exemptCount++;
+            continue;
+          }
+          const studiedSecs = Number(shared.periodStudySecs?.[day]?.[me.id]?.[p.id]) || 0;
+          if (st === 'present' && studiedSecs >= requiredAttendanceSeconds(p)) {
+            doneCount++;
+          }
+        }
+        const requiredCount = mandatoryPeriods.length - exemptCount;
+        const completed = isStrict && !isSunday && !hasLateOrAwol && requiredCount > 0 && doneCount === requiredCount;
+        return { completed, doneCount, requiredCount, exemptCount, hasLateOrAwol, isStrict, isSunday };
+      }
+
       function checkPromotionMissionMet(me, tierInfo) {
         if (!me || !promotionIsActive(me) || !tierInfo?.nextName) return false;
         const mission = getPromoMission(tierInfo.nextName);
@@ -9867,10 +10088,7 @@
         if (mission.type === 'continuous') return todayMaxCont >= mission.mins;
         if (mission.type === 'total') return todayMins >= mission.mins;
         if (mission.type === 'ultra') {
-          return STUDY_PERIODS.slice(0, 8).every(p => {
-            const st = getMemberDayStatus(me.id, started, p.id);
-            return st === 'present' || st === 'exempt';
-          });
+          return getUltraPromoProgress(me, started).completed;
         }
         return false;
       }
@@ -9927,7 +10145,7 @@
         });
       }
 
-      document.getElementById('promo-action-bar').addEventListener('click', e => {
+      document.getElementById('promo-action-bar').addEventListener('click', async e => {
         const me = shared.members.find(m => m.id === prefs.currentUserId);
         if (!me) return;
         const tierInfo = getMemberTier(me);
@@ -9940,14 +10158,38 @@
           renderAll();
         } else if (e.target.id === 'btn-fail-promo') {
           if (!promotionIsActive(me)) return;
+          const mission = getPromoMission(tierInfo.nextName || me.promoTargetTier || '');
+          const isUltraPromo = mission.type === 'ultra';
+          const ok = await openActionConfirm({
+            title: '승급전 포기하기',
+            message: isUltraPromo
+              ? '울트라집중모드 승급전을 포기하시겠습니까?\n포기하면 즉시 자율모드로 전환되며, 이번 공부일 승급전 기회가 소진돼요.'
+              : '진행 중인 승급전을 포기하시겠습니까?',
+            confirmText: isUltraPromo ? '포기하고 자율모드 전환' : '포기하기',
+            danger: true
+          });
+          if (!ok || !promotionIsActive(me)) return;
           me.promoAttemptDay ||= promotionStudyDay(me);
           me.promoActiveDate = null;
           me.promoActiveStudyDay = null;
           me.promoLegacyCarryDate = null;
           me.promoTargetTier = null;
           me.promoWinStreak = 0;
+          if (isUltraPromo) {
+            changeStudyMode(me, 'free');
+            if (me.pendingMode === 'strict') {
+              me.pendingMode = null;
+              me.pendingDate = null;
+            }
+            me.promoReservedMode = false;
+          }
           saveSharedData();
-          showToast(promotionAttemptUsed(me) ? '승급전을 포기했어요. 오전 5시부터 다시 도전할 수 있어요.' : '승급전을 포기했어요. 다시 도전할 수 있어요.', 'warn');
+          showToast(
+            isUltraPromo
+              ? '승급전을 포기하고 자율모드로 전환했어요.'
+              : (promotionAttemptUsed(me) ? '승급전을 포기했어요. 오전 5시부터 다시 도전할 수 있어요.' : '승급전을 포기했어요. 다시 도전할 수 있어요.'),
+            'warn'
+          );
           renderAll();
         }
       });
@@ -12021,8 +12263,64 @@
           });
           return;
         }
+        const toggleAuto = e.target.closest('[data-toggle-auto-badge]');
+        if (toggleAuto) {
+          const targetMem = (shared.members || []).find(m => m.id === mid);
+          if (!targetMem) return;
+          const key = toggleAuto.dataset.toggleAutoBadge;
+          targetMem.hiddenBadges ||= {};
+          if (targetMem.hiddenBadges[key]) {
+            delete targetMem.hiddenBadges[key];
+            showToast('자동 뱃지를 다시 붙였어요.', 'success');
+          } else {
+            targetMem.hiddenBadges[key] = true;
+            showToast('자동 뱃지를 제거했어요.', 'info');
+          }
+          saveSharedData(); renderAdminTab(); renderAll();
+          return;
+        }
+        const restoreBtn = e.target.closest('[data-restore-badge]');
+        if (restoreBtn) {
+          const targetMem = (shared.members || []).find(m => m.id === mid);
+          if (!targetMem || !Array.isArray(targetMem.removedCustomBadges)) return;
+          const item = targetMem.removedCustomBadges.find(x => x.id === restoreBtn.dataset.restoreBadge);
+          if (!item) return;
+          targetMem.removedCustomBadges = targetMem.removedCustomBadges.filter(x => x.id !== item.id);
+          (shared.customBadges ||= {})[mid] ||= [];
+          shared.customBadges[mid].push({ id: 'cb_' + Date.now(), label: item.label, theme: item.theme || 'gold' });
+          saveSharedData(); showToast('뱃지를 다시 붙였어요.', 'success'); renderAdminTab(); renderAll();
+          return;
+        }
         const b = e.target.closest('[data-revoke-badge]'); if (!b) return;
-        if (shared.customBadges && shared.customBadges[mid]) { shared.customBadges[mid] = shared.customBadges[mid].filter(x => x.id !== b.dataset.revokeBadge); saveSharedData(); renderAdminTab(); renderAll(); }
+        if (shared.customBadges && shared.customBadges[mid]) {
+          const removed = shared.customBadges[mid].find(x => x.id === b.dataset.revokeBadge);
+          shared.customBadges[mid] = shared.customBadges[mid].filter(x => x.id !== b.dataset.revokeBadge);
+          const targetMem = (shared.members || []).find(m => m.id === mid);
+          if (removed && targetMem) {
+            targetMem.removedCustomBadges = [
+              { id: removed.id || ('rb_' + Date.now()), label: removed.label, theme: removed.theme || 'gold' },
+              ...(Array.isArray(targetMem.removedCustomBadges) ? targetMem.removedCustomBadges.filter(x => x.label !== removed.label) : [])
+            ].slice(0, 10);
+          }
+          saveSharedData(); showToast('뱃지를 제거했어요.', 'info'); renderAdminTab(); renderAll();
+        }
+      });
+      document.getElementById('btn-admin-streak-save')?.addEventListener('click', () => {
+        if (!prefs.adminMode || !isAdminUser()) return;
+        const mid = document.getElementById('admin-badge-member')?.value;
+        const targetMem = (shared.members || []).find(m => m.id === mid);
+        const inp = document.getElementById('admin-streak-input');
+        if (!targetMem || !inp) return;
+        const val = Math.floor(Number(inp.value));
+        if (!Number.isInteger(val) || val < 0 || val > 999) {
+          showToast('연속 일수는 0~999 사이 숫자로 입력해 주세요.', 'warn');
+          return;
+        }
+        targetMem.streak = val;
+        targetMem.lastActiveStudyDate = val > 0 ? studyDayKey() : null;
+        saveSharedData();
+        showToast(`${targetMem.name}님의 연속 출석을 ${val}일로 수정했어요.`, 'success');
+        renderAdminTab(); renderAll();
       });
 
       function confirmPhotoCleanup(days, label) {
@@ -12321,6 +12619,257 @@
         showToast(`${member.name}님 ${day} 누적 공부시간을 ${formatStudyMins(mins)}로 변경했어요.`, 'success');
         renderAll();
       });
+
+      function isFocusSessionActive() {
+        return Boolean(focusInterval || focusPaused || focusStartedAt !== null || focusAccumulatedSecs > 0);
+      }
+
+      function clearStudySlotsForDay(memberId, day) {
+        const nextDate = addDaysStr(day, 1);
+        for (let hour = 5; hour < 29; hour++) {
+          const date = hour < 24 ? day : nextDate;
+          const slotMap = shared.studySlotMins?.[date]?.[memberId];
+          const blockMap = shared.studyBlocks?.[date]?.[memberId];
+          if (!slotMap && !blockMap) continue;
+          for (let index = hour * 6; index < (hour + 1) * 6; index++) {
+            const key = plannerSlotKey(index);
+            if (slotMap && key in slotMap) delete slotMap[key];
+            if (blockMap && key in blockMap) delete blockMap[key];
+          }
+        }
+      }
+
+      function trimStudySlotsBackwards(memberId, day, minsToTrim) {
+        let remaining = Math.max(0, Math.floor(Number(minsToTrim) || 0));
+        if (remaining <= 0) return;
+        const nextDate = addDaysStr(day, 1);
+        for (let hour = 28; hour >= 5 && remaining > 1e-6; hour--) {
+          const date = hour < 24 ? day : nextDate;
+          const slotMap = shared.studySlotMins?.[date]?.[memberId];
+          const blockMap = shared.studyBlocks?.[date]?.[memberId];
+          if (!slotMap && !blockMap) continue;
+          for (let index = (hour + 1) * 6 - 1; index >= hour * 6 && remaining > 1e-6; index--) {
+            const key = plannerSlotKey(index);
+            const curVal = Number(slotMap?.[key]) || 0;
+            if (curVal > 0) {
+              const deduct = Math.min(curVal, remaining);
+              const nextVal = Math.round((curVal - deduct) * 100) / 100;
+              if (nextVal <= 1e-6) {
+                delete slotMap[key];
+                if (blockMap) delete blockMap[key];
+              } else {
+                slotMap[key] = nextVal;
+              }
+              remaining = Math.round((remaining - deduct) * 100) / 100;
+            }
+          }
+        }
+      }
+
+      function openSubtractStudyTimeModal() {
+        if (prefs.adminMode) return;
+        if (isFocusSessionActive()) {
+          showToast('스톱워치(일시정지 포함)를 완전히 종료한 뒤 시간을 뺄 수 있어요.', 'error');
+          return;
+        }
+        const me = shared.members.find(m => m.id === prefs.currentUserId) || shared.members[0];
+        if (!me) return;
+        const day = studyDayKey();
+        const currentMins = studyMinutes(me.id, day);
+        if (currentMins <= 0) {
+          showToast('오늘 뺄 수 있는 누적 공부 시간이 없어요.', 'info');
+          return;
+        }
+        const presets = [5, 10, 15, 30, 60];
+        const presetButtons = presets.map(m => {
+          const disabled = m > currentMins;
+          return `<button type="button" data-sub-preset="${m}" ${disabled ? 'disabled' : ''} class="px-2.5 py-1.5 rounded-lg border text-xs font-extrabold transition ${disabled ? 'border-slate-200 bg-slate-100 text-slate-400 cursor-not-allowed' : 'border-slate-200 bg-white hover:border-rose-300 hover:bg-rose-50 hover:text-rose-700 text-slate-700'}">-${m}분</button>`;
+        }).join('');
+
+        openModal('공부 시간 빼기', `
+          <form id="subtract-study-time-form" class="space-y-4" novalidate>
+            <div class="rounded-xl border border-amber-200 bg-amber-50/90 px-3 py-2.5 text-xs font-semibold text-amber-800 leading-relaxed">
+              실수로 더 측정된 시간만 뺄 수 있어요. 시간을 더하는 것은 불가능하며, 한 번 빼면 되돌릴 수 없어요.
+            </div>
+            <div class="rounded-xl border border-slate-200 bg-slate-50 p-3 flex items-center justify-between gap-2 text-center">
+              <div class="flex-1 min-w-0">
+                <div class="text-[11px] font-bold text-slate-500">현재 누적 (${escapeHtml(day)})</div>
+                <div class="mt-0.5 font-mono text-base font-black text-slate-900">${formatStudyMins(currentMins)}</div>
+                <div class="text-[11px] font-semibold text-slate-400">총 ${currentMins}분</div>
+              </div>
+              <div class="text-slate-400 font-black text-sm shrink-0">→</div>
+              <div class="flex-1 min-w-0">
+                <div class="text-[11px] font-bold text-slate-500">변경 후 예상</div>
+                <div id="subtract-preview-after" class="mt-0.5 font-mono text-base font-black text-rose-600">${formatStudyMins(currentMins)}</div>
+                <div id="subtract-preview-delta" class="text-[11px] font-bold text-slate-400">뺄 시간을 입력하세요</div>
+              </div>
+            </div>
+            <div class="space-y-2">
+              <label for="subtract-mins-input" class="block text-xs font-extrabold text-slate-700">뺄 시간 (분 단위 · 최대 ${currentMins}분)</label>
+              <div class="flex items-center gap-2">
+                <input id="subtract-mins-input" type="number" inputmode="numeric" min="1" max="${currentMins}" step="1" placeholder="예: 10" class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm font-mono font-bold text-slate-900" autocomplete="off" />
+                <span class="text-xs font-extrabold text-slate-600 shrink-0">분 빼기</span>
+              </div>
+              <div class="flex flex-wrap gap-1.5 pt-0.5">${presetButtons}</div>
+              <p id="subtract-mins-error" class="hidden text-xs font-bold text-rose-600"></p>
+            </div>
+            <div class="flex items-center justify-end gap-2 pt-1">
+              <button type="button" id="btn-subtract-cancel" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700 transition">취소</button>
+              <button type="submit" id="btn-subtract-submit" disabled class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 disabled:opacity-45 disabled:cursor-not-allowed text-white text-xs font-black transition">확인</button>
+            </div>
+          </form>
+        `);
+
+        const form = document.getElementById('subtract-study-time-form');
+        const input = document.getElementById('subtract-mins-input');
+        const previewAfter = document.getElementById('subtract-preview-after');
+        const previewDelta = document.getElementById('subtract-preview-delta');
+        const errEl = document.getElementById('subtract-mins-error');
+        const submitBtn = document.getElementById('btn-subtract-submit');
+        const cancelBtn = document.getElementById('btn-subtract-cancel');
+        let isSubmitting = false;
+
+        function validateAndPreview() {
+          const raw = String(input.value || '').trim();
+          if (!raw) {
+            previewAfter.textContent = formatStudyMins(currentMins);
+            previewDelta.textContent = '뺄 시간을 입력하세요';
+            previewDelta.className = 'text-[11px] font-bold text-slate-400';
+            errEl.textContent = '';
+            errEl.classList.add('hidden');
+            submitBtn.disabled = true;
+            return null;
+          }
+          const mins = Number(raw);
+          if (!/^[0-9]+$/.test(raw) || !Number.isInteger(mins) || mins < 1) {
+            previewAfter.textContent = formatStudyMins(currentMins);
+            previewDelta.textContent = '1분 이상의 자연수만 입력';
+            previewDelta.className = 'text-[11px] font-bold text-rose-600';
+            errEl.textContent = '1분 이상의 자연수만 입력할 수 있어요. (시간 더하기 불가)';
+            errEl.classList.remove('hidden');
+            submitBtn.disabled = true;
+            return null;
+          }
+          if (mins > currentMins) {
+            previewAfter.textContent = formatStudyMins(0);
+            previewDelta.textContent = `최대 ${currentMins}분까지 가능`;
+            previewDelta.className = 'text-[11px] font-bold text-rose-600';
+            errEl.textContent = `현재 누적 공부 시간(${currentMins}분)보다 많이 뺄 수 없어요.`;
+            errEl.classList.remove('hidden');
+            submitBtn.disabled = true;
+            return null;
+          }
+          const nextMins = currentMins - mins;
+          previewAfter.textContent = formatStudyMins(nextMins);
+          previewDelta.textContent = `-${mins}분 차감`;
+          previewDelta.className = 'text-[11px] font-extrabold text-rose-600';
+          errEl.textContent = '';
+          errEl.classList.add('hidden');
+          submitBtn.disabled = false;
+          return mins;
+        }
+
+        input.addEventListener('keydown', e => {
+          if (['-', '+', '.', 'e', 'E'].includes(e.key)) e.preventDefault();
+        });
+        input.addEventListener('wheel', e => {
+          if (document.activeElement === input) e.preventDefault();
+        }, { passive: false });
+        input.addEventListener('input', () => {
+          const digits = input.value.replace(/[^0-9]/g, '');
+          const normalized = digits.replace(/^0+(?=[0-9])/, '');
+          if (input.value !== normalized) input.value = normalized;
+          validateAndPreview();
+        });
+        form.querySelectorAll('[data-sub-preset]').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const val = Number(btn.dataset.subPreset);
+            if (!Number.isInteger(val) || val < 1 || val > currentMins) return;
+            input.value = String(val);
+            validateAndPreview();
+            input.focus();
+          });
+        });
+        cancelBtn.addEventListener('click', closeModal);
+
+        form.addEventListener('submit', async e => {
+          e.preventDefault();
+          if (isSubmitting) return;
+          const mins = validateAndPreview();
+          if (mins == null) return;
+          if (isFocusSessionActive()) {
+            showToast('스톱워치(일시정지 포함)를 완전히 종료한 뒤 시간을 뺄 수 있어요.', 'error');
+            return;
+          }
+          if (studyDayKey() !== day) {
+            showToast('공부일이 바뀌어 창을 닫았어요. 다시 열어 확인해 주세요.', 'info');
+            closeModal();
+            renderAll();
+            return;
+          }
+          const latestMins = studyMinutes(me.id, day);
+          if (mins > latestMins) {
+            showToast('누적 공부 시간이 변경되어 다시 확인해 주세요.', 'error');
+            closeModal();
+            renderAll();
+            return;
+          }
+          isSubmitting = true;
+          submitBtn.disabled = true;
+          try {
+            const nextMins = Math.max(0, latestMins - mins);
+            const ok = await openActionConfirm({
+              title: '공부 시간 빼기 최종 확인',
+              message: `정말 ${mins}분을 빼시겠습니까?\n(${formatStudyMins(latestMins)} → ${formatStudyMins(nextMins)})\n\n한 번 뺀 시간은 다시 더하거나 되돌릴 수 없어요.`,
+              confirmText: '확인하고 빼기',
+              danger: true
+            });
+            if (!ok) {
+              validateAndPreview();
+              return;
+            }
+            if (isFocusSessionActive()) {
+              showToast('스톱워치가 실행 중이라 변경을 취소했어요.', 'error');
+              return;
+            }
+            if (studyDayKey() !== day) {
+              showToast('공부일이 바뀌어 변경을 취소했어요.', 'info');
+              closeModal();
+              renderAll();
+              return;
+            }
+            const finalBase = studyMinutes(me.id, day);
+            if (mins > finalBase) {
+              showToast('누적 공부 시간이 변경되어 다시 확인해 주세요.', 'error');
+              closeModal();
+              renderAll();
+              return;
+            }
+            const finalMins = Math.max(0, finalBase - mins);
+            ((shared.studyLogs ||= {})[day] ||= {})[me.id] = finalMins;
+            if (finalMins === 0) {
+              if (shared.studySubminuteMs?.[day]) delete shared.studySubminuteMs[day][me.id];
+              clearStudySlotsForDay(me.id, day);
+              if (homeDistributionDay === day) homeDistributionSelection = null;
+            } else {
+              trimStudySlotsBackwards(me.id, day, mins);
+            }
+            if (shared.maxFocusLogs?.[day]?.[me.id] > finalMins) {
+              shared.maxFocusLogs[day][me.id] = finalMins;
+            }
+            saveSharedData();
+            closeModal();
+            renderAll();
+            showToast(`${mins}분을 빼서 ${formatStudyMins(finalMins)}로 변경했어요.`, 'success');
+          } finally {
+            isSubmitting = false;
+          }
+        });
+
+        setTimeout(() => input.focus(), 30);
+      }
+
+      document.getElementById('btn-subtract-study-time')?.addEventListener('click', openSubtractStudyTimeModal);
 
       function applyThemeLayout(key) {
         const swatch = Array.from(document.querySelectorAll('[data-set-theme]')).find(button => button.dataset.setTheme === key);
@@ -14903,17 +15452,93 @@
       }
 
       // --- Modal helpers ---
+      const MODAL_VV_IDS = new Set(['whisper-modal', 'unified-chat-modal', 'gift-send-modal', 'group-create-modal', 'group-pw-modal']);
+      const modalVvCleanups = new Map();
+      function syncModalViewport(id, active) {
+        if (!MODAL_VV_IDS.has(id)) return;
+        const el = document.getElementById(id);
+        if (!el) return;
+        if (!active) {
+          el.classList.remove('is-modal-vv', 'is-kb-open');
+          el.style.removeProperty('--modal-vv-height');
+          el.style.removeProperty('--modal-vv-top');
+          const cleanup = modalVvCleanups.get(id);
+          if (cleanup) { cleanup(); modalVvCleanups.delete(id); }
+          return;
+        }
+        el.classList.add('is-modal-vv');
+        if (modalVvCleanups.has(id)) return;
+        const vv = window.visualViewport;
+        let frame = 0;
+        let timers = [];
+        let baseH = Math.max(window.innerHeight, vv?.height || 0);
+        const apply = (scrollInput = false) => {
+          if (el.classList.contains('hidden')) return;
+          const h = Math.round(vv?.height || window.innerHeight);
+          const top = Math.max(0, Math.round(vv?.offsetTop || 0));
+          if (h > baseH) baseH = h;
+          const activeEl = document.activeElement;
+          const focusedInside = Boolean(activeEl && el.contains(activeEl) && /^(INPUT|TEXTAREA|SELECT)$/.test(activeEl.tagName));
+          const kbOpen = focusedInside && (baseH - h > 80 || window.innerHeight - h > 80);
+          el.classList.toggle('is-kb-open', kbOpen);
+          el.style.setProperty('--modal-vv-height', `${h}px`);
+          el.style.setProperty('--modal-vv-top', `${top}px`);
+          if (kbOpen || scrollInput) {
+            const msgBox = el.querySelector('#whisper-messages-list, #uc-messages-list');
+            if (msgBox) msgBox.scrollTop = msgBox.scrollHeight;
+            if (focusedInside && activeEl) {
+              try { activeEl.scrollIntoView({ block: 'nearest' }); } catch (_) {}
+            }
+          }
+        };
+        const queue = (scrollInput = false) => {
+          cancelAnimationFrame(frame);
+          frame = requestAnimationFrame(() => apply(scrollInput));
+        };
+        const schedulePasses = (scrollInput) => {
+          timers.forEach(t => clearTimeout(t));
+          timers = [60, 180, 360].map(ms => setTimeout(() => queue(scrollInput), ms));
+        };
+        const onFocusIn = e => {
+          if (/^(INPUT|TEXTAREA|SELECT)$/.test(e.target?.tagName || '')) {
+            queue(true);
+            schedulePasses(true);
+          }
+        };
+        const onFocusOut = () => {
+          queue(false);
+          schedulePasses(false);
+        };
+        apply();
+        vv?.addEventListener('resize', queue);
+        vv?.addEventListener('scroll', queue);
+        window.addEventListener('resize', queue);
+        el.addEventListener('focusin', onFocusIn);
+        el.addEventListener('focusout', onFocusOut);
+        modalVvCleanups.set(id, () => {
+          cancelAnimationFrame(frame);
+          timers.forEach(t => clearTimeout(t));
+          timers = [];
+          vv?.removeEventListener('resize', queue);
+          vv?.removeEventListener('scroll', queue);
+          window.removeEventListener('resize', queue);
+          el.removeEventListener('focusin', onFocusIn);
+          el.removeEventListener('focusout', onFocusOut);
+        });
+      }
       function openSimpleModal(id) {
         const el = document.getElementById(id);
         if (!el) return;
         el.classList.remove('hidden');
         el.classList.add('flex');
+        syncModalViewport(id, true);
       }
       function closeSimpleModal(id) {
         const el = document.getElementById(id);
         if (!el) return;
         el.classList.add('hidden');
         el.classList.remove('flex');
+        syncModalViewport(id, false);
       }
       document.querySelectorAll('[data-close-modal]').forEach(btn => {
         btn.addEventListener('click', () => closeSimpleModal(btn.dataset.closeModal));
@@ -14925,19 +15550,27 @@
       });
 
       let appConfirmResolver = null;
+      let appConfirmPrevFocus = null;
       function closeAppConfirm(result) {
         closeSimpleModal('app-confirm-modal');
+        const prev = appConfirmPrevFocus;
+        appConfirmPrevFocus = null;
         const resolve = appConfirmResolver;
         appConfirmResolver = null;
+        if (prev && prev.isConnected && !prev.closest('[inert]')) {
+          try { prev.focus({ preventScroll: true }); } catch (_) {}
+        }
         if (resolve) resolve(!!result);
       }
       function openActionConfirm({ title = '확인', message = '', confirmText = '확인', danger = false } = {}) {
         const modal = document.getElementById('app-confirm-modal');
         if (!modal) return Promise.resolve(true);
         if (appConfirmResolver) closeAppConfirm(false);
+        appConfirmPrevFocus = document.activeElement;
         const titleEl = document.getElementById('app-confirm-title');
         const msgEl = document.getElementById('app-confirm-msg');
         const okBtn = document.getElementById('app-confirm-ok');
+        const cancelBtn = document.getElementById('app-confirm-cancel');
         if (titleEl) titleEl.textContent = title;
         if (msgEl) msgEl.textContent = message;
         if (okBtn) {
@@ -14947,6 +15580,8 @@
             : 'px-4 py-2 rounded-xl ed-btn-accent text-xs font-black transition';
         }
         openSimpleModal('app-confirm-modal');
+        const focusTarget = danger ? (cancelBtn || okBtn) : (okBtn || cancelBtn);
+        if (focusTarget) setTimeout(() => { try { focusTarget.focus({ preventScroll: true }); } catch (_) {} }, 10);
         return new Promise(resolve => { appConfirmResolver = resolve; });
       }
       document.getElementById('app-confirm-cancel')?.addEventListener('click', () => closeAppConfirm(false));
@@ -14955,8 +15590,24 @@
         if (e.target.id === 'app-confirm-modal') closeAppConfirm(false);
       });
       document.addEventListener('keydown', e => {
+        const confirmModal = document.getElementById('app-confirm-modal');
+        if (confirmModal && shown(confirmModal)) {
+          if (e.key === 'Escape') { e.preventDefault(); closeAppConfirm(false); return; }
+          if (e.key === 'Tab') {
+            const focusable = Array.from(confirmModal.querySelectorAll('button:not(:disabled)')).filter(el => el.getClientRects().length);
+            if (focusable.length) {
+              const first = focusable[0], last = focusable[focusable.length - 1];
+              const cur = document.activeElement;
+              const outside = !focusable.includes(cur);
+              if (e.shiftKey ? (outside || cur === first) : (outside || cur === last)) {
+                e.preventDefault();
+                (e.shiftKey ? last : first).focus();
+              }
+            }
+          }
+          return;
+        }
         if (e.key !== 'Escape') return;
-        if (appConfirmResolver) { closeAppConfirm(false); return; }
         const noticeModal = document.getElementById('app-notice-popup');
         if (noticeModal && shown(noticeModal)) closeAppNoticePopup({ hideToday: false });
       });
@@ -15540,14 +16191,16 @@
         if (effectiveRoomSub === 'chat') {
           markGroupChatRead(g.id);
           const listEl = document.getElementById('group-chat-messages');
-          const msgs = Object.values(g.messages || {}).filter(Boolean).sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
+          const msgEntries = Object.entries(g.messages || {}).filter(([, m]) => Boolean(m)).sort(([, a], [, b]) => (a.createdAt || 0) - (b.createdAt || 0));
           const readMap = g.lastReadAt || {};
-          if (!msgs.length) {
+          if (!msgEntries.length) {
             listEl.innerHTML = '<div class="py-10 text-center text-xs font-semibold text-slate-400">아직 대화가 없어요. 첫 인사를 남겨보세요!</div>';
           } else {
             const atBottom = changedRoom || listEl.scrollHeight - listEl.scrollTop - listEl.clientHeight < 80;
-            listEl.innerHTML = msgs.map(msg => {
+            const nowMs = Date.now();
+            listEl.innerHTML = msgEntries.map(([msgKey, msg]) => {
               const mine = msg.uid === myUid;
+              const canDel = mine && canSelfDeleteChat(msg.createdAt, nowMs);
               const readCount = Object.keys(g.members || {}).filter(u => u !== msg.uid && Number(readMap[u] || 0) >= Number(msg.createdAt || 0)).length;
               const senderName = g.isAnonymous
                 ? (anonMap[msg.uid] || '익명')
@@ -15560,7 +16213,10 @@
                   <div class="px-3 py-2 rounded-2xl text-xs sm:text-sm leading-relaxed break-words ${mine ? 'bg-slate-950 text-white rounded-br-sm' : 'bg-white border border-slate-200 text-slate-900 rounded-bl-sm'}">${escapeHtml(msg.text)}</div>
                   <div class="flex flex-col ${mine ? 'items-end' : 'items-start'} text-[10px] text-slate-400 shrink-0 leading-tight">
                     ${readCount > 0 ? `<span class="font-bold text-indigo-600">${readCount}명 읽음</span>` : ''}
-                    <span>${formatClockShort(msg.createdAt)}</span>
+                    <div class="flex items-center gap-1">
+                      ${canDel ? `<button type="button" data-del-group-msg="${escapeHtml(msgKey)}" class="text-[10px] font-bold text-slate-400 hover:text-rose-600 transition">삭제</button>` : ''}
+                      <span>${formatClockShort(msg.createdAt)}</span>
+                    </div>
                   </div>
                 </div>
               </div>`;
@@ -15699,20 +16355,39 @@
         renderGroupsTab();
       }
 
+      const CHAT_SELF_DELETE_MS = 20 * 60 * 1000;
+      function canSelfDeleteChat(createdAt, now = Date.now()) {
+        const ts = Number(createdAt) || 0;
+        return ts > 0 && (now - ts) <= CHAT_SELF_DELETE_MS;
+      }
+
       let groupChatViewportCleanup = null;
+      let groupChatSavedScrollY = 0;
       function syncGroupChatViewport(active) {
         const roomView = document.getElementById('group-room-view');
         const msgList = document.getElementById('group-chat-messages');
+        const chatInput = document.getElementById('group-chat-input');
+        const chatForm = document.getElementById('group-chat-form');
         if (!roomView) return;
         const tabGroups = document.getElementById('tab-groups');
         if (!active) {
+          const wasOpen = document.body.classList.contains('chat-mode-open');
           document.body.classList.remove('chat-mode-open');
+          document.body.style.top = '';
           tabGroups?.classList.remove('chat-mode-open');
-          roomView.classList.remove('is-chat-mode');
+          roomView.classList.remove('is-chat-mode', 'is-kb-open');
           roomView.style.removeProperty('--chat-vv-height');
           roomView.style.removeProperty('--chat-vv-top');
           if (groupChatViewportCleanup) { groupChatViewportCleanup(); groupChatViewportCleanup = null; }
+          if (wasOpen && groupChatSavedScrollY) {
+            window.scrollTo(0, groupChatSavedScrollY);
+            groupChatSavedScrollY = 0;
+          }
           return;
+        }
+        if (!document.body.classList.contains('chat-mode-open')) {
+          groupChatSavedScrollY = window.scrollY || document.documentElement.scrollTop || 0;
+          document.body.style.top = `-${groupChatSavedScrollY}px`;
         }
         document.body.classList.add('chat-mode-open');
         tabGroups?.classList.add('chat-mode-open');
@@ -15720,14 +16395,19 @@
         if (groupChatViewportCleanup) return;
         const vv = window.visualViewport;
         let frame = 0;
+        let timers = [];
         let lastClientH = msgList ? msgList.clientHeight : 0;
-        const applyViewport = () => {
+        let baseHeight = Math.max(window.innerHeight, vv?.height || 0);
+        const applyViewport = (forceScrollBottom = false) => {
           if (!roomView.classList.contains('is-chat-mode')) return;
           const prevScrollTop = msgList ? msgList.scrollTop : 0;
           const prevScrollH = msgList ? msgList.scrollHeight : 0;
-          const wasAtBottom = msgList ? (prevScrollH - prevScrollTop - lastClientH < 60) : false;
-          const h = vv?.height || window.innerHeight;
-          const top = vv?.offsetTop || 0;
+          const wasAtBottom = forceScrollBottom || (msgList ? (prevScrollH - prevScrollTop - lastClientH < 80) : false);
+          const h = Math.round(vv?.height || window.innerHeight);
+          const top = Math.max(0, Math.round(vv?.offsetTop || 0));
+          if (h > baseHeight) baseHeight = h;
+          const kbOpen = Boolean(document.activeElement === chatInput) && (baseHeight - h > 80 || window.innerHeight - h > 80);
+          roomView.classList.toggle('is-kb-open', kbOpen);
           roomView.style.setProperty('--chat-vv-height', `${h}px`);
           roomView.style.setProperty('--chat-vv-top', `${top}px`);
           if (msgList) {
@@ -15739,20 +16419,41 @@
             }
             lastClientH = newClientH;
           }
+          if (kbOpen && chatForm) {
+            try { chatForm.scrollIntoView({ block: 'nearest' }); } catch (_) {}
+          }
         };
-        const queueApply = () => {
+        const queueApply = (forceBottom = false) => {
           cancelAnimationFrame(frame);
-          frame = requestAnimationFrame(applyViewport);
+          frame = requestAnimationFrame(() => applyViewport(forceBottom));
+        };
+        const scheduleKbPasses = (forceBottom) => {
+          timers.forEach(t => clearTimeout(t));
+          timers = [60, 180, 360].map(ms => setTimeout(() => queueApply(forceBottom), ms));
+        };
+        const onInputFocus = () => {
+          queueApply(true);
+          scheduleKbPasses(true);
+        };
+        const onInputBlur = () => {
+          queueApply(false);
+          scheduleKbPasses(false);
         };
         applyViewport();
         vv?.addEventListener('resize', queueApply);
         vv?.addEventListener('scroll', queueApply);
         window.addEventListener('resize', queueApply);
+        chatInput?.addEventListener('focus', onInputFocus);
+        chatInput?.addEventListener('blur', onInputBlur);
         groupChatViewportCleanup = () => {
           cancelAnimationFrame(frame);
+          timers.forEach(t => clearTimeout(t));
+          timers = [];
           vv?.removeEventListener('resize', queueApply);
           vv?.removeEventListener('scroll', queueApply);
           window.removeEventListener('resize', queueApply);
+          chatInput?.removeEventListener('focus', onInputFocus);
+          chatInput?.removeEventListener('blur', onInputBlur);
         };
       }
 
@@ -15932,6 +16633,40 @@
         if (input.value.trim() === text) input.value = '';
         const box = document.getElementById('group-chat-messages');
         if (box) box.scrollTop = box.scrollHeight;
+      }));
+
+      document.getElementById('group-chat-messages')?.addEventListener('click', socialAction(async e => {
+        const delBtn = e.target.closest('[data-del-group-msg]');
+        if (!delBtn) return;
+        if (!activeGroupId || !studyGroupsData[activeGroupId]) return;
+        const g = studyGroupsData[activeGroupId];
+        const myUid = groupActor(g);
+        const msgKey = delBtn.dataset.delGroupMsg;
+        const msg = g.messages?.[msgKey];
+        if (!msg || msg.uid !== myUid) return;
+        if (!canSelfDeleteChat(msg.createdAt)) {
+          showToast('작성 후 20분이 지나 삭제할 수 없어요.', 'warn');
+          renderActiveGroupRoom(g);
+          return;
+        }
+        const ok = await openActionConfirm({
+          title: '메시지 삭제',
+          message: '이 메시지를 삭제하시겠습니까?',
+          confirmText: '삭제',
+          danger: true
+        });
+        if (!ok) return;
+        const latestG = studyGroupsData[g.id];
+        const latestMsg = latestG?.messages?.[msgKey];
+        if (!latestMsg || latestMsg.uid !== myUid) return;
+        if (!canSelfDeleteChat(latestMsg.createdAt)) {
+          showToast('작성 후 20분이 지나 삭제할 수 없어요.', 'warn');
+          renderActiveGroupRoom(latestG);
+          return;
+        }
+        await socialWrite(`studyGroups/${g.id}/messages/${msgKey}`, null);
+        if (filePreview) renderGroupsTab();
+        showToast('메시지를 삭제했어요.', 'info');
       }));
 
       // =========================================================================
@@ -16712,11 +17447,17 @@
 
           const list = document.getElementById('whisper-messages-list');
           const nearEnd = changedThread || list.scrollHeight - list.scrollTop - list.clientHeight < 80;
-          list.innerHTML = msgs.map(m => {
+          const whEntries = Object.entries(w.messages || {}).filter(([, m]) => Boolean(m)).sort(([, a], [, b]) => (a.createdAt || 0) - (b.createdAt || 0));
+          const nowMs = Date.now();
+          list.innerHTML = whEntries.map(([msgKey, m]) => {
             const mine = m.senderUid === myUid;
+            const canDel = mine && canSelfDeleteChat(m.createdAt, nowMs);
             return `<div class="flex flex-col ${mine ? 'items-end' : 'items-start'} gap-0.5">
               <div class="px-3 py-2 rounded-2xl max-w-[82%] text-xs sm:text-sm leading-relaxed break-words ${mine ? 'bg-slate-950 text-white rounded-br-sm' : 'bg-white border border-slate-200 text-slate-900 rounded-bl-sm'}">${escapeHtml(m.text)}</div>
-              <span class="text-[10px] text-slate-400 px-1">${formatClockShort(m.createdAt)}</span>
+              <div class="flex items-center gap-1.5 px-1 text-[10px] text-slate-400">
+                ${canDel ? `<button type="button" data-del-whisper-msg="${escapeHtml(msgKey)}" class="font-bold text-slate-400 hover:text-rose-600 transition">삭제</button>` : ''}
+                <span>${formatClockShort(m.createdAt)}</span>
+              </div>
             </div>`;
           }).join('');
           if (nearEnd) list.scrollTop = list.scrollHeight;
@@ -16977,10 +17718,10 @@
         const bag = giftsData.bags?.[uid];
         if (bag && bag.starterGranted) return;
         const inv = { ...(bag?.inventory || {}) };
-        // Starter pack: 4 random gifts right away
+        // Starter pack: 4 random gift types ×10 each right away
         for (let i = 0; i < 4; i++) {
           const gid = pickWeightedGiftId();
-          inv[gid] = (Number(inv[gid]) || 0) + 1;
+          inv[gid] = (Number(inv[gid]) || 0) + 10;
         }
         const newBag = {
           starterGranted: true,
@@ -17131,7 +17872,23 @@
             </button>`;
           }).join('');
         }
+        syncGiftSendQtyBounds(true);
         openSimpleModal('gift-send-modal');
+      }
+
+      function syncGiftSendQtyBounds(preferTen = true) {
+        const qtyInput = document.getElementById('gift-send-qty');
+        const qtyWrap = document.getElementById('gift-send-qty-wrap');
+        if (!qtyInput || !qtyWrap) return;
+        const bag = getMyGiftBag();
+        const maxCnt = selectedGiftId ? Math.max(0, Math.floor(Number(bag.inventory[selectedGiftId] || 0))) : 0;
+        qtyWrap.classList.toggle('hidden', maxCnt <= 0);
+        if (maxCnt <= 0) return;
+        qtyInput.max = String(maxCnt);
+        const curVal = Math.floor(Number(qtyInput.value) || 0);
+        if (preferTen || curVal < 1 || curVal > maxCnt) {
+          qtyInput.value = String(maxCnt >= 10 ? 10 : maxCnt);
+        }
       }
 
       document.getElementById('gift-send-picker')?.addEventListener('click', e => {
@@ -17145,6 +17902,18 @@
           x.classList.toggle('scale-[1.02]', on);
           x.classList.toggle('opacity-85', !on);
         });
+        syncGiftSendQtyBounds(true);
+      });
+
+      document.getElementById('gift-send-qty-wrap')?.addEventListener('click', e => {
+        const pBtn = e.target.closest('[data-gift-qty-preset]');
+        if (!pBtn || !selectedGiftId) return;
+        const bag = getMyGiftBag();
+        const maxCnt = Math.max(1, Math.floor(Number(bag.inventory[selectedGiftId] || 0)));
+        const qtyInput = document.getElementById('gift-send-qty');
+        if (!qtyInput) return;
+        const preset = pBtn.dataset.giftQtyPreset;
+        qtyInput.value = String(preset === 'max' ? maxCnt : Math.min(maxCnt, Math.max(1, Number(preset) || 1)));
       });
 
       let giftSendInFlight = false;
@@ -17154,8 +17923,14 @@
         const myUid = getMySocialUid();
         const myMem = getMySocialMember();
         const bag = getMyGiftBag();
-        const curCnt = Number(bag.inventory[selectedGiftId] || 0);
+        const curCnt = Math.floor(Number(bag.inventory[selectedGiftId] || 0));
         if (curCnt <= 0) { showToast('선택한 선물이 부족해요.', 'warn'); return; }
+        const qtyInput = document.getElementById('gift-send-qty');
+        const qty = Math.floor(Number(qtyInput?.value) || 1);
+        if (!Number.isInteger(qty) || qty < 1 || qty > curCnt) {
+          showToast(`보낼 개수는 1~${curCnt}개 사이로 입력해 주세요.`, 'warn');
+          return;
+        }
         const submitBtn = document.getElementById('btn-gift-send-submit');
         giftSendInFlight = true;
         if (submitBtn) submitBtn.disabled = true;
@@ -17165,19 +17940,21 @@
           const note = (document.getElementById('gift-send-note')?.value || '').trim();
           const now = Date.now();
           const pid = 'gf_' + now + '_' + Math.random().toString(36).slice(2, 6);
-          await giftWrite(`bags/${myUid}/inventory/${giftIdSnap}`, curCnt - 1 > 0 ? curCnt - 1 : null);
+          const nextCnt = curCnt - qty;
+          await giftWrite(`bags/${myUid}/inventory/${giftIdSnap}`, nextCnt > 0 ? nextCnt : null);
           await giftWrite(`parcels/${targetSnap.uid}/${pid}`, {
             id: pid,
             fromUid: myUid,
             fromName: myMem.name || '멤버',
             giftId: giftIdSnap,
+            qty,
             note,
             createdAt: now,
             opened: false
           });
           closeSimpleModal('gift-send-modal');
           const g = GIFT_MAP[giftIdSnap];
-          showToast(`${targetSnap.name}님에게 [${giftIconOf(g)} ${g.name}] 선물을 보냈어요!`, 'success');
+          showToast(`${targetSnap.name}님에게 [${giftIconOf(g)} ${g.name}${qty > 1 ? ` ×${qty}` : ''}] 선물을 보냈어요!`, 'success');
         } finally {
           giftSendInFlight = false;
           if (submitBtn) submitBtn.disabled = false;
@@ -17667,20 +18444,27 @@
           dmEntries.forEach(([, d]) => { if (d && !d.read) { d.read = true; changed = true; } });
           if (changed) { saveSharedData(); renderHeaderControls(); }
 
-          const mySuggs = sortedInbox(shared.suggestions).map(([, s]) => s).filter(s => s && (s.fromId || s.memberId) === myId);
+          const mySuggs = sortedInbox(shared.suggestions).filter(([, s]) => s && (s.fromId || s.memberId) === myId);
           const timeline = [
-            ...dmEntries.map(([, d]) => ({ mine: false, text: d.text, ts: Number(d.createdAt || 0), label: `${d.date || ''} ${d.time || ''}`.trim() })),
-            ...mySuggs.map(s => ({ mine: true, text: s.text, ts: Number(s.createdAt || 0), label: `${s.date || ''} ${s.time || ''}`.trim() }))
+            ...dmEntries.map(([, d]) => ({ mine: false, id: '', text: d.text, ts: Number(d.createdAt || 0), label: `${d.date || ''} ${d.time || ''}`.trim() })),
+            ...mySuggs.map(([k, s]) => ({ mine: true, id: k, text: s.text, ts: Number(s.createdAt || 0), label: `${s.date || ''} ${s.time || ''}`.trim() }))
           ].sort((a, b) => a.ts - b.ts);
+          const nowAdminMs = Date.now();
 
           msgEl.innerHTML = timeline.length
-            ? timeline.map(m => `<div class="flex flex-col ${m.mine ? 'items-end' : 'items-start'} gap-0.5">
+            ? timeline.map(m => {
+                const canDel = m.mine && m.id && canSelfDeleteChat(m.ts, nowAdminMs);
+                return `<div class="flex flex-col ${m.mine ? 'items-end' : 'items-start'} gap-0.5">
                 ${m.mine ? '' : '<span class="text-[10px] font-bold text-indigo-600 px-1">관리자</span>'}
                 <div class="flex items-end gap-1.5 max-w-[84%] ${m.mine ? 'flex-row-reverse' : ''}">
                   <div class="px-3 py-2 rounded-2xl text-xs leading-relaxed break-words ${m.mine ? 'bg-slate-950 text-white rounded-br-sm' : 'bg-white border border-indigo-200 text-slate-900 rounded-bl-sm'}">${escapeHtml(m.text)}</div>
-                  <span class="text-[10px] text-slate-400 shrink-0">${escapeHtml(m.ts ? formatClockShort(m.ts) : m.label)}</span>
+                  <div class="flex items-center gap-1 text-[10px] text-slate-400 shrink-0">
+                    ${canDel ? `<button type="button" data-del-uc-admin="${escapeHtml(m.id)}" class="font-bold text-slate-400 hover:text-rose-600 transition">삭제</button>` : ''}
+                    <span>${escapeHtml(m.ts ? formatClockShort(m.ts) : m.label)}</span>
+                  </div>
                 </div>
-              </div>`).join('')
+              </div>`;
+              }).join('')
             : '<div class="py-12 text-center text-xs text-slate-400">관리자와 주고받은 메시지가 아직 없어요.</div>';
           if (shouldScrollBottom) msgEl.scrollTop = msgEl.scrollHeight;
         } else if (ucActiveRoom.type === 'known') {
@@ -17695,14 +18479,19 @@
           const latestTs = msgs.length ? Number(msgs[msgs.length - 1].createdAt || 0) : 0;
           if (latestTs && markKnownChatSeen(pairKey, latestTs)) renderHeaderControls();
 
+          const nowKnownMs = Date.now();
           msgEl.innerHTML = msgs.length
             ? msgs.map(m => {
                 const mine = m.fromId === myId;
+                const canDel = mine && m.id && canSelfDeleteChat(m.createdAt, nowKnownMs);
                 return `<div class="flex flex-col ${mine ? 'items-end' : 'items-start'} gap-0.5">
                   ${mine ? '' : `<span class="text-[10px] font-bold text-slate-500 px-1">${escapeHtml(partner?.name || m.fromName || '멤버')}</span>`}
                   <div class="flex items-end gap-1.5 max-w-[84%] ${mine ? 'flex-row-reverse' : ''}">
                     <div class="px-3 py-2 rounded-2xl text-xs leading-relaxed break-words ${mine ? 'bg-slate-950 text-white rounded-br-sm' : 'bg-white border border-slate-200 text-slate-900 rounded-bl-sm'}">${escapeHtml(m.text)}</div>
-                    <span class="text-[10px] text-slate-400 shrink-0">${formatClockShort(m.createdAt)}</span>
+                    <div class="flex items-center gap-1 text-[10px] text-slate-400 shrink-0">
+                      ${canDel ? `<button type="button" data-del-uc-known="${escapeHtml(m.id)}" class="font-bold text-slate-400 hover:text-rose-600 transition">삭제</button>` : ''}
+                      <span>${formatClockShort(m.createdAt)}</span>
+                    </div>
                   </div>
                 </div>`;
               }).join('')
@@ -17828,6 +18617,89 @@
         }
       });
 
+      document.getElementById('uc-messages-list')?.addEventListener('click', async e => {
+        const knownBtn = e.target.closest('[data-del-uc-known]');
+        if (knownBtn && ucActiveRoom?.type === 'known') {
+          const myId = prefs.currentUserId;
+          const pairKey = getKnownChatPairKey(myId, ucActiveRoom.partnerId);
+          const mid = knownBtn.dataset.delUcKnown;
+          const msg = shared.memberChats?.[pairKey]?.[mid];
+          if (!msg || msg.fromId !== myId) return;
+          if (!canSelfDeleteChat(msg.createdAt)) {
+            showToast('작성 후 20분이 지나 삭제할 수 없어요.', 'warn');
+            renderUnifiedChatModal();
+            return;
+          }
+          const ok = await openActionConfirm({ title: '메시지 삭제', message: '이 메시지를 삭제하시겠습니까?', confirmText: '삭제', danger: true });
+          if (!ok) return;
+          const latestMsg = shared.memberChats?.[pairKey]?.[mid];
+          if (!latestMsg || latestMsg.fromId !== myId) return;
+          if (!canSelfDeleteChat(latestMsg.createdAt)) {
+            showToast('작성 후 20분이 지나 삭제할 수 없어요.', 'warn');
+            renderUnifiedChatModal();
+            return;
+          }
+          delete shared.memberChats[pairKey][mid];
+          saveSharedData();
+          renderUnifiedChatModal();
+          showToast('메시지를 삭제했어요.', 'info');
+          return;
+        }
+        const adminBtn = e.target.closest('[data-del-uc-admin]');
+        if (adminBtn && ucActiveRoom?.type === 'admin') {
+          const myId = prefs.currentUserId;
+          const key = adminBtn.dataset.delUcAdmin;
+          const sug = shared.suggestions?.[key];
+          if (!sug || (sug.fromId || sug.memberId) !== myId) return;
+          if (!canSelfDeleteChat(sug.createdAt)) {
+            showToast('작성 후 20분이 지나 삭제할 수 없어요.', 'warn');
+            renderUnifiedChatModal();
+            return;
+          }
+          const ok = await openActionConfirm({ title: '메시지 삭제', message: '이 메시지를 삭제하시겠습니까?', confirmText: '삭제', danger: true });
+          if (!ok) return;
+          const latestSug = shared.suggestions?.[key];
+          if (!latestSug || (latestSug.fromId || latestSug.memberId) !== myId) return;
+          if (!canSelfDeleteChat(latestSug.createdAt)) {
+            showToast('작성 후 20분이 지나 삭제할 수 없어요.', 'warn');
+            renderUnifiedChatModal();
+            return;
+          }
+          delete shared.suggestions[key];
+          saveSharedData();
+          renderUnifiedChatModal();
+          showToast('메시지를 삭제했어요.', 'info');
+        }
+      });
+
+      document.getElementById('whisper-messages-list')?.addEventListener('click', socialAction(async e => {
+        const delBtn = e.target.closest('[data-del-whisper-msg]');
+        if (!delBtn || !activeWhisperThreadId) return;
+        const w = communityData.whispers?.[activeWhisperThreadId];
+        const myUid = anonId();
+        const msgKey = delBtn.dataset.delWhisperMsg;
+        const msg = w?.messages?.[msgKey];
+        if (!msg || msg.senderUid !== myUid) return;
+        if (!canSelfDeleteChat(msg.createdAt)) {
+          showToast('작성 후 20분이 지나 삭제할 수 없어요.', 'warn');
+          renderWhisperModal();
+          return;
+        }
+        const ok = await openActionConfirm({ title: '쪽지 삭제', message: '이 메시지를 삭제하시겠습니까?', confirmText: '삭제', danger: true });
+        if (!ok) return;
+        const latestW = communityData.whispers?.[w.id];
+        const latestMsg = latestW?.messages?.[msgKey];
+        if (!latestMsg || latestMsg.senderUid !== myUid) return;
+        if (!canSelfDeleteChat(latestMsg.createdAt)) {
+          showToast('작성 후 20분이 지나 삭제할 수 없어요.', 'warn');
+          renderWhisperModal();
+          return;
+        }
+        await socialWrite(`community/whispers/${w.id}/messages/${msgKey}`, null);
+        if (filePreview) renderWhisperModal();
+        showToast('메시지를 삭제했어요.', 'info');
+      }));
+
       function getMemberGiftUid(m) {
         return (m && (m.uid || m.id)) || '';
       }
@@ -17903,17 +18775,23 @@
         if (!prefs.adminMode || !isAdminUser()) return;
         const mid = document.getElementById('admin-gift-member')?.value;
         const giftId = document.getElementById('admin-gift-select')?.value;
+        const qtyInput = document.getElementById('admin-gift-qty');
+        const qty = Math.floor(Number(qtyInput?.value) || 0);
         const m = shared.members.find(x => x.id === mid);
         const g = GIFT_MAP[giftId];
         if (!m || !g) return;
+        if (!Number.isInteger(qty) || qty < 1 || qty > 999) {
+          showToast('지급 개수는 1~999 사이의 자연수로 입력해 주세요.', 'warn');
+          return;
+        }
         const uid = getMemberGiftUid(m);
         const curCnt = Number(giftsData.bags?.[uid]?.inventory?.[giftId] || 0);
-        await giftWrite(`bags/${uid}/inventory/${giftId}`, curCnt + 1);
+        await giftWrite(`bags/${uid}/inventory/${giftId}`, curCnt + qty);
         const msgKey = `gift_grant_${Date.now()}_${Math.random().toString(36).slice(2, 5)}_${giftId}`;
-        addDirectMessage(m.id, `🎁 관리자가 [${giftIconOf(g)} ${g.name}] 선물을 지급했어요! 프로필 → 내 선물함에서 확인할 수 있어요.`, msgKey);
+        addDirectMessage(m.id, `🎁 관리자가 [${giftIconOf(g)} ${g.name} ×${qty}] 선물을 지급했어요! 프로필 → 내 선물함에서 확인할 수 있어요.`, msgKey);
         saveSharedData();
         renderAdminGiftsPanel();
-        showToast(`🎁 ${m.name}님에게 [${giftIconOf(g)} ${g.name}] 선물을 지급하고 메시지함에 안내를 보냈어요.`, 'success');
+        showToast(`🎁 ${m.name}님에게 [${giftIconOf(g)} ${g.name} ×${qty}] 선물을 지급하고 메시지함에 안내를 보냈어요.`, 'success');
       });
 
       document.getElementById('admin-member-gifts-list')?.addEventListener('click', async e => {
@@ -18110,18 +18988,21 @@
         const g = GIFT_MAP[sess.giftId] || GIFT_CATALOG[0];
         const r = GIFT_RARITIES[g.rarity] || GIFT_RARITIES.common;
 
+        let revealQty = 1;
         if (sess.mode === 'parcel' && sess.parcelId) {
           const parcel = giftsData.parcels?.[uid]?.[sess.parcelId];
           if (parcel && !parcel.opened) {
+            revealQty = Math.max(1, Math.floor(Number(parcel.qty) || 1));
             const bag = getMyGiftBag();
-            const nextRec = (Number(bag.received[g.id]) || 0) + 1;
+            const nextRec = (Number(bag.received[g.id]) || 0) + revealQty;
             await giftWrite(`parcels/${uid}/${sess.parcelId}/opened`, true);
             await giftWrite(`bags/${uid}/received/${g.id}`, nextRec);
           }
         } else if (sess.mode === 'gacha') {
+          revealQty = 10;
           const bag = getMyGiftBag();
           if (bag.gachaBoxes > 0) {
-            const nextInv = (Number(bag.inventory[g.id]) || 0) + 1;
+            const nextInv = (Number(bag.inventory[g.id]) || 0) + revealQty;
             await giftWrite(`bags/${uid}/gachaBoxes`, bag.gachaBoxes - 1);
             await giftWrite(`bags/${uid}/inventory/${g.id}`, nextInv);
           }
@@ -18139,7 +19020,7 @@
         }
         document.getElementById('gift-reveal-emoji').textContent = giftIconOf(g);
         document.getElementById('gift-reveal-from').textContent = sess.mode === 'gacha' ? '🎰 선물 뽑기 결과' : `${sess.fromName}님이 보낸 선물`;
-        document.getElementById('gift-reveal-name').textContent = g.name;
+        document.getElementById('gift-reveal-name').textContent = revealQty > 1 ? `${g.name} ×${revealQty}` : g.name;
         const noteEl = document.getElementById('gift-reveal-note');
         if (sess.note) {
           noteEl.textContent = `“${sess.note}”`;
