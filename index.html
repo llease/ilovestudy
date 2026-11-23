@@ -3314,10 +3314,30 @@
       padding-top: 0.5rem;
       padding-bottom: 0.5rem;
     }
-    :is(#whisper-modal, #unified-chat-modal, #gift-send-modal, #group-create-modal, #group-pw-modal).is-modal-vv {
+    :is(#modal-overlay, #whisper-modal, #unified-chat-modal, #gift-send-modal, #group-create-modal, #group-pw-modal).is-modal-vv {
       top: var(--modal-vv-top, 0px) !important;
       bottom: auto !important;
       height: var(--modal-vv-height, 100dvh) !important;
+    }
+    #modal-overlay.is-modal-vv #modal-box {
+      max-height: calc(var(--modal-vv-height, 100dvh) - max(0.75rem, env(safe-area-inset-top, 0px)) - 0.5rem) !important;
+      overflow-y: auto !important;
+      -webkit-overflow-scrolling: touch;
+    }
+    @media (max-width: 640px) {
+      #modal-overlay.is-modal-vv.is-kb-open {
+        align-items: flex-start !important;
+        padding: max(0.45rem, env(safe-area-inset-top, 0px)) 0.5rem 0.45rem !important;
+      }
+      #modal-overlay.is-modal-vv.is-kb-open #modal-box {
+        border-radius: 18px !important;
+        padding-bottom: 0.9rem !important;
+      }
+      #modal-overlay input,
+      #modal-overlay textarea,
+      #modal-overlay select {
+        font-size: 16px !important;
+      }
     }
     :is(#whisper-modal, #unified-chat-modal, #gift-send-modal, #group-create-modal, #group-pw-modal).is-modal-vv.is-kb-open {
       align-items: flex-end !important;
@@ -7188,12 +7208,14 @@
         const o = document.getElementById('modal-overlay');
         o.dataset.variant = variant;
         o.classList.remove('hidden'); o.classList.add('flex');
+        if (typeof syncModalViewport === 'function') syncModalViewport('modal-overlay', true);
         refreshStudyDialogs();
         document.getElementById('modal-title').focus({preventScroll:true});
       }
       function closeModal() {
         if (typeof modalCleanupFn === 'function') { try { modalCleanupFn(); } catch (e) {} modalCleanupFn = null; }
         const o = document.getElementById('modal-overlay');
+        if (typeof syncModalViewport === 'function') syncModalViewport('modal-overlay', false);
         o.classList.add('hidden'); o.classList.remove('flex');
         delete o.dataset.variant;
         refreshStudyDialogs();
@@ -12945,7 +12967,7 @@
           }
         });
 
-        setTimeout(() => input.focus(), 30);
+        if (window.matchMedia('(pointer: fine)').matches) setTimeout(() => input.focus(), 30);
       }
 
       document.getElementById('btn-subtract-study-time')?.addEventListener('click', openSubtractStudyTimeModal);
@@ -15533,7 +15555,7 @@
       }
 
       // --- Modal helpers ---
-      const MODAL_VV_IDS = new Set(['whisper-modal', 'unified-chat-modal', 'gift-send-modal', 'group-create-modal', 'group-pw-modal']);
+      const MODAL_VV_IDS = new Set(['modal-overlay', 'whisper-modal', 'unified-chat-modal', 'gift-send-modal', 'group-create-modal', 'group-pw-modal']);
       const modalVvCleanups = new Map();
       function syncModalViewport(id, active) {
         if (!MODAL_VV_IDS.has(id)) return;
@@ -15568,7 +15590,9 @@
             const msgBox = el.querySelector('#whisper-messages-list, #uc-messages-list');
             if (msgBox) msgBox.scrollTop = msgBox.scrollHeight;
             if (focusedInside && activeEl) {
-              try { activeEl.scrollIntoView({ block: 'nearest' }); } catch (_) {}
+              try { activeEl.scrollIntoView({ block: 'center', behavior: 'instant' }); } catch (_) {
+                try { activeEl.scrollIntoView({ block: 'nearest' }); } catch (__) {}
+              }
             }
           }
         };
