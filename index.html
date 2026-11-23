@@ -4116,7 +4116,10 @@
                 <p id="group-room-meta" class="text-[11px] font-semibold text-slate-500 truncate"></p>
               </div>
             </div>
-            <button id="btn-group-leave" type="button" class="px-2.5 py-1 rounded-lg bg-white border border-rose-200 hover:bg-rose-50 text-rose-600 text-[11px] font-bold whitespace-nowrap shrink-0">나가기</button>
+            <div class="flex items-center gap-1.5 shrink-0">
+              <button id="btn-group-delete" type="button" class="hidden px-2.5 py-1 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-[11px] font-bold whitespace-nowrap shrink-0">방 없애기</button>
+              <button id="btn-group-leave" type="button" class="px-2.5 py-1 rounded-lg bg-white border border-rose-200 hover:bg-rose-50 text-rose-600 text-[11px] font-bold whitespace-nowrap shrink-0">나가기</button>
+            </div>
           </div>
           <p id="group-room-desc" class="hidden text-[11px] text-slate-500 truncate pl-8"></p>
         </div>
@@ -14717,6 +14720,26 @@
         }
         await db.ref().update(patch);
       }
+      async function deleteCloudRoom(g) {
+        const db = protectedDb();
+        const actor = groupActor(g);
+        const basePatch = {
+          ['roomCatalog/' + g.id]: null,
+          ['roomSecrets/' + g.id]: null,
+          ['rooms/' + g.id]: null,
+          ['roomAccess/' + actor + '/' + g.id]: null
+        };
+        const memberAccessPatch = {};
+        for (const uid of Object.keys(g.members || {})) {
+          memberAccessPatch['roomAccess/' + uid + '/' + g.id] = null;
+        }
+        try {
+          await db.ref().update({ ...basePatch, ...memberAccessPatch });
+        } catch (error) {
+          if (!/permission/i.test(error.code || error.message)) throw error;
+          await db.ref().update(basePatch);
+        }
+      }
 
       document.getElementById('setup-import').addEventListener('click', upgradeSocialRecords);
       document.getElementById('setup-retry').addEventListener('click', () => {if (currentAuthUser) startProtectedSession(currentAuthUser);});
@@ -15308,6 +15331,7 @@
           }
         }
         document.getElementById('group-room-lock-badge').classList.toggle('hidden', !g.password);
+        document.getElementById('btn-group-delete')?.classList.toggle('hidden', !(g.creatorUid && g.creatorUid === myUid));
         document.getElementById('group-room-meta').textContent = isAnonChatOnly
           ? `익명 모임 · ${infos.length}명 참여 중`
           : `멤버 ${infos.length}명 · ${studyingCnt}명 공부 중${g.goalHours > 0 ? ` · 목표 ${g.goalHours}h` : ''}`;
@@ -15578,6 +15602,35 @@
         if (rv) rv.dataset.roomId = '';
         saveGroupNavState();
         showToast('모임에서 나왔어요.', 'info');
+        renderGroupsTab();
+      }));
+
+      document.getElementById('btn-group-delete')?.addEventListener('click', socialAction(async () => {
+        if (!activeGroupId || !studyGroupsData[activeGroupId]) return;
+        const g = studyGroupsData[activeGroupId];
+        const myUid = groupActor(g);
+        if (!g.creatorUid || g.creatorUid !== myUid) {
+          showToast('방을 만든 사람만 없앨 수 있어요.', 'warn');
+          return;
+        }
+        const ok = await openActionConfirm({
+          title: g.isAnonymous ? '익명 모임 없애기' : '스터디 모임 없애기',
+          message: `'${g.name}' 방을 없애시겠습니까? 모든 멤버와 대화 내용이 삭제되며 되돌릴 수 없어요.`,
+          confirmText: '방 없애기',
+          danger: true
+        });
+        if (!ok) return;
+        if (filePreview) await socialWrite(`studyGroups/${g.id}`, null);
+        else await deleteCloudRoom(g);
+        activeGroupId = null;
+        const chatBox = document.getElementById('group-chat-messages');
+        const memBox = document.getElementById('group-room-members-list');
+        if (chatBox) chatBox.innerHTML = '';
+        if (memBox) memBox.innerHTML = '';
+        const rv = document.getElementById('group-room-view');
+        if (rv) rv.dataset.roomId = '';
+        saveGroupNavState();
+        showToast(`'${g.name}' 방을 없앴어요.`, 'info');
         renderGroupsTab();
       }));
 
