@@ -829,15 +829,15 @@
     }
     @keyframes chatSheetSmooth {
       from { opacity: 0; transform: translate3d(0, 14px, 0) scale(0.982); }
-      to { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+      to { opacity: 1; transform: none; }
     }
     @keyframes chatRoomSmoothIn {
       from { opacity: 0; transform: translate3d(0, 12px, 0); }
-      to { opacity: 1; transform: translate3d(0, 0, 0); }
+      to { opacity: 1; transform: none; }
     }
     @keyframes chatViewFadeIn {
       from { opacity: 0; transform: translate3d(0, 6px, 0); }
-      to { opacity: 1; transform: translate3d(0, 0, 0); }
+      to { opacity: 1; transform: none; }
     }
     #modal-overlay:not(.hidden), #app-confirm-modal:not(.hidden), #app-notice-popup:not(.hidden) {
       animation: iosBackdropIn 180ms ease-out both;
@@ -850,7 +850,6 @@
     }
     #unified-chat-modal:not(.hidden) > div, #whisper-modal:not(.hidden) > div {
       animation: chatSheetSmooth 300ms cubic-bezier(0.22, 1, 0.36, 1) both;
-      will-change: transform, opacity;
     }
     #uc-room-view:not(.hidden), #whisper-thread-view:not(.hidden) {
       animation: chatViewFadeIn 220ms cubic-bezier(0.22, 1, 0.36, 1) both;
@@ -2136,7 +2135,7 @@
     .distribution-table td:first-of-type .distribution-slot {border-left:1px solid color-mix(in srgb,var(--line) 80%,transparent);border-top-left-radius:6px;border-bottom-left-radius:6px}
     .distribution-table td:last-of-type .distribution-slot {border-right:1px solid color-mix(in srgb,var(--line) 80%,transparent);border-top-right-radius:6px;border-bottom-right-radius:6px}
     .distribution-slot > i {position:absolute;inset:0;width:100%;background:linear-gradient(180deg,color-mix(in srgb,var(--primary) 90%,#fff),var(--primary));box-shadow:inset 0 1px 0 rgba(255,255,255,.18);pointer-events:none}
-    button.distribution-slot {cursor:pointer;border-color:transparent;background:transparent}
+    button.distribution-slot {cursor:pointer;border-color:transparent;background:transparent;overflow:visible}
     button.distribution-slot > i {border-radius:6px}
     button.distribution-slot.is-cont-left > i {border-top-left-radius:0;border-bottom-left-radius:0;left:-1px;width:calc(100% + 1px)}
     button.distribution-slot.is-cont-right > i {border-top-right-radius:0;border-bottom-right-radius:0;right:-1px;width:calc(100% + 1px)}
@@ -5676,9 +5675,9 @@
         return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
       }
       function addDaysStr(baseDateStr, days) {
-        const d = new Date(baseDateStr + 'T12:00:00');
-        d.setDate(d.getDate() + days);
-        return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        const d = new Date(baseDateStr + 'T12:00:00Z');
+        d.setUTCDate(d.getUTCDate() + days);
+        return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}-${String(d.getUTCDate()).padStart(2, '0')}`;
       }
       function tomorrowStr() {
         return addDaysStr(todayStr(), 1);
@@ -5693,19 +5692,74 @@
         return { type: 'ultra', mins: 0, desc: '울트라집중모드 완주 (의무 1~8교시 각 75% 이상 출석 · 지각 0회)' };
       }
 
+      function hasMemberActivityOnDay(memberId, day) {
+        if (!memberId || !day) return false;
+        const mins = Math.floor(Number(shared.studyLogs?.[day]?.[memberId]) || 0);
+        if (mins > 0) return true;
+        const rec = shared.records?.[day]?.[memberId];
+        if (rec && typeof rec === 'object') {
+          for (const st of Object.values(rec)) {
+            if (st === 'present' || st === 'late') return true;
+          }
+        }
+        return false;
+      }
+
+      function computeRealStreakFromLogs(memberId, day = studyDayKey()) {
+        if (!memberId || !day) return 0;
+        const yest = addDaysStr(day, -1);
+        let cursor = hasMemberActivityOnDay(memberId, day)
+          ? day
+          : (hasMemberActivityOnDay(memberId, yest) ? yest : null);
+        if (!cursor) return 0;
+        let count = 0;
+        while (count < 3650 && hasMemberActivityOnDay(memberId, cursor)) {
+          count++;
+          cursor = addDaysStr(cursor, -1);
+        }
+        return count;
+      }
+
       function getEffectiveStreak(m, day = studyDayKey()) {
         if (!m) return 0;
-        const raw = Math.max(0, Math.floor(Number(m.streak) || 0));
-        if (raw <= 0) return 0;
         const yest = addDaysStr(day, -1);
-        if (m.lastActiveStudyDate && m.lastActiveStudyDate < yest) return 0;
-        return raw;
+        // Admin manual override (continues counting forward if active on subsequent days, resets if a day is missed)
+        const ov = m.manualStreakOverride;
+        if (ov && ov.baseDate && Number.isFinite(Number(ov.value))) {
+          const baseVal = Math.max(0, Math.floor(Number(ov.value)));
+          if (day <= ov.baseDate) return baseVal;
+          if (baseVal === 0) return computeRealStreakFromLogs(m.id, day);
+          // Count consecutive active days after baseDate
+          let unbroken = true;
+          let extra = 0;
+          let cur = addDaysStr(ov.baseDate, 1);
+          while (cur <= day) {
+            if (hasMemberActivityOnDay(m.id, cur)) {
+              extra++;
+            } else if (cur < day) {
+              unbroken = false;
+              break;
+            }
+            cur = addDaysStr(cur, 1);
+          }
+          return unbroken ? baseVal + extra : computeRealStreakFromLogs(m.id, day);
+        }
+        const real = computeRealStreakFromLogs(m.id, day);
+        if (real > 0) return real;
+        // In local preview mode with seeded demo members that lack multi-day logs, preserve demo streak
+        if (filePreview && !m.lastActiveStudyDate && Object.keys(shared.studyLogs || {}).length <= 1) {
+          return Math.max(0, Math.floor(Number(m.streak) || 0));
+        }
+        return 0;
       }
+
       function syncDailyStreak(m, day = studyDayKey()) {
         if (!m) return false;
-        const yest = addDaysStr(day, -1);
-        if (m.lastActiveStudyDate && m.lastActiveStudyDate < yest && (m.streak || 0) > 0) {
-          m.streak = 0;
+        const eff = getEffectiveStreak(m, day);
+        const cur = Math.max(0, Math.floor(Number(m.streak) || 0));
+        if (cur !== eff) {
+          m.streak = eff;
+          if (eff === 0) m.lastActiveStudyDate = null;
           return true;
         }
         return false;
@@ -5713,17 +5767,18 @@
 
       function recordMemberActivityForStreak(m, dateKey) {
         if (!m || !dateKey) return;
-        if (m.lastActiveStudyDate && m.lastActiveStudyDate >= dateKey) return;
-        const prevDay = addDaysStr(dateKey, -1);
-        if (m.lastActiveStudyDate === prevDay) {
-          m.streak = (Number(m.streak) || 0) + 1;
-          if (m.streak >= 2) addMemberLp(m.id, 3, '연속 출석 보너스');
-          if (m.streak % 5 === 0) addMemberLp(m.id, 15, `${m.streak}일 연속 출석 마일스톤`);
-          if (m.streak >= 7) unlockChallengeFor(m.id, 'ch5', false);
-        } else if (!m.lastActiveStudyDate || m.lastActiveStudyDate < prevDay) {
-          m.streak = 1;
+        const nextStreak = Math.max(1, getEffectiveStreak(m, dateKey));
+        const alreadyRewarded = m.streakRewardedDate === dateKey || (m.lastActiveStudyDate && m.lastActiveStudyDate >= dateKey);
+        m.streak = nextStreak;
+        if (!m.lastActiveStudyDate || m.lastActiveStudyDate < dateKey) {
+          m.lastActiveStudyDate = dateKey;
         }
-        m.lastActiveStudyDate = dateKey;
+        if (!alreadyRewarded) {
+          m.streakRewardedDate = dateKey;
+          if (nextStreak >= 2) addMemberLp(m.id, 3, '연속 출석 보너스');
+          if (nextStreak % 5 === 0) addMemberLp(m.id, 15, `${nextStreak}일 연속 출석 마일스톤`);
+          if (nextStreak >= 7) unlockChallengeFor(m.id, 'ch5', false);
+        }
       }
 
       function modeTransitions(member) {
@@ -7258,7 +7313,7 @@
         }
         if (mObj && (status === 'present' || status === 'late')) {
           checkStarterChallenge(memberId);
-          if ((mObj.streak || 0) >= 6) {
+          if (getEffectiveStreak(mObj, dateStr) >= 6) {
             const wk = getCurrentWeekDates(new Date(dateStr + 'T12:00:00'));
             const mandPids = ['p1','p2','p3','p4','p5','p6','p7','p8'];
             let activeDays = 0, badCnt = 0;
@@ -7393,7 +7448,7 @@
         const hasAttendance = Object.values(shared.records || {}).some(dayObj => {
           const rec = dayObj && dayObj[memberId];
           return rec && Object.values(rec).some(st => st === 'present' || st === 'late');
-        });
+        }) || Object.values(shared.studyLogs || {}).some(dayObj => Number(dayObj?.[memberId] || 0) > 0);
         const hasSharedTask = Object.values(shared.motemote || {}).some(dayObj => {
           const mm = dayObj && dayObj[memberId];
           return mm && Array.isArray(mm.tasks) && mm.tasks.length > 0;
@@ -7924,7 +7979,8 @@
         } else if (meHdr && tierInfo.inPromo && tierInfo.nextName) {
           document.body.setAttribute('data-promo', 'ready');
           const mission = getPromoMission(tierInfo.nextName);
-          const needsTomorrow = mission.type === 'ultra' && getMemberMode(meHdr) !== 'strict';
+          const isSundayToday = new Date(studyDayKey() + 'T12:00:00Z').getUTCDay() === 0;
+          const needsTomorrow = mission.type === 'ultra' && (getMemberMode(meHdr) !== 'strict' || isSundayToday);
           promoBar.classList.remove('hidden');
           promoBadge.textContent = !needsTomorrow && hasExtraPromotionAttempt(meHdr) ? '승급전 추가 기회 1회' : '승급전';
           promoBadge.className = 'px-2 py-0.5 rounded-md text-[11px] font-black bg-amber-400 text-slate-950';
@@ -10058,7 +10114,7 @@
         let doneCount = 0;
         let exemptCount = 0;
         let hasLateOrAwol = false;
-        for (const p of STUDY_PERIODS) {
+        for (const p of mandatoryPeriods) {
           const st = getMemberDayStatus(me.id, day, p.id);
           if (st === 'late' || st === 'awol' || st === 'early') hasLateOrAwol = true;
         }
@@ -10103,7 +10159,8 @@
           return;
         }
         const mission = getPromoMission(tierInfo.nextName);
-        const needsTomorrow = mission.type === 'ultra' && getMemberMode(me) !== 'strict';
+        const isSundayToday = new Date(requestDay + 'T12:00:00Z').getUTCDay() === 0;
+        const needsTomorrow = mission.type === 'ultra' && (getMemberMode(me) !== 'strict' || isSundayToday);
         const targetDay = needsTomorrow ? tmr : requestDay;
         const missionDay = targetDay;
         const targetTier = LOL_TIERS[tierInfo.idx + 1];
@@ -10132,6 +10189,7 @@
               member.promoReservedMode = !(member.pendingMode === 'strict' && member.pendingDate === tmr);
               member.pendingMode = 'strict';
               member.pendingDate = tmr;
+              unlockChallengeFor(member.id, 'ch_ultra_reserve', false);
             } else {
               markPromotionAttempt(member, requestDay);
               member.promoActiveDate = koreaDateKey();
@@ -10145,6 +10203,7 @@
         });
       }
 
+      let promoFailInFlight = false;
       document.getElementById('promo-action-bar').addEventListener('click', async e => {
         const me = shared.members.find(m => m.id === prefs.currentUserId);
         if (!me) return;
@@ -10157,7 +10216,9 @@
           showToast('승급전 예약이 취소되었습니다.', 'info');
           renderAll();
         } else if (e.target.id === 'btn-fail-promo') {
-          if (!promotionIsActive(me)) return;
+          if (promoFailInFlight || !promotionIsActive(me)) return;
+          promoFailInFlight = true;
+          try {
           const mission = getPromoMission(tierInfo.nextName || me.promoTargetTier || '');
           const isUltraPromo = mission.type === 'ultra';
           const ok = await openActionConfirm({
@@ -10191,6 +10252,9 @@
             'warn'
           );
           renderAll();
+          } finally {
+            promoFailInFlight = false;
+          }
         }
       });
 
@@ -10844,7 +10908,7 @@
         if (others.length && others.every(member => sent[member.id])) {
           completed.push(grantChallengeReward(state, from, 'ch_all_resp', sentAt));
         }
-        if (received.length + 1 >= 5) grantChallengeReward(state, to, 'ch7', sentAt);
+        if (Math.max(received.length + 1, Number(to.respectCount) || 0) >= 5) grantChallengeReward(state, to, 'ch7', sentAt);
         return { toName: to.name, credited: !alreadyCredited, completed: completed.filter(Boolean) };
       }
 
@@ -10961,14 +11025,25 @@
           const maxF = shared.maxFocusLogs?.[t]?.[m.id] || 0;
           const todayRespect = ((shared.praises && shared.praises[m.id]) || []).filter(p => p.date === t).length;
           const allB = getBadgesForMember(m, studyDayKey());
+          const detailAvatar = m.avatarUrl
+            ? `<img src="${escapeHtml(m.avatarUrl)}" alt="${escapeHtml(m.name)}" class="w-full h-full object-cover" />`
+            : escapeHtml(String(m.name || '?').slice(0, 1));
           openModal(`${m.name} 상세 기록`, `
             <div class="space-y-3 text-xs">
-              ${m.equippedTitle ? `<p class="text-sm font-bold text-slate-900"><span class="mr-1 text-xs text-slate-500">장착 칭호</span> ${escapeHtml(m.equippedTitle)}</p>` : ''}
-              <div class="flex flex-wrap items-center gap-1.5">${renderTierPill(m)} ${getMemberMode(m) === 'strict' ? '<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-black text-amber-300 border border-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.45)]" style="background:linear-gradient(90deg,#0f172a,#7f1d1d,#0f172a)"><span class="inline-flex animate-pulse"><svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span><span>울트라집중모드</span></span>' : '<span class="px-2 py-0.5 rounded bg-slate-100 font-bold">자율모드</span>'}</div>
+              <div class="flex items-center gap-3">
+                <div class="w-14 h-14 rounded-2xl border border-slate-200 bg-slate-100 text-slate-700 font-black text-lg flex items-center justify-center overflow-hidden shrink-0 shadow-xs">${detailAvatar}</div>
+                <div class="min-w-0 flex-1 space-y-1.5">
+                  <div class="flex flex-wrap items-baseline gap-x-1.5 gap-y-0.5">
+                    <span class="text-sm font-black text-slate-900 truncate">${escapeHtml(m.name)}</span>
+                    ${m.equippedTitle ? `<span class="text-[11px] font-bold text-slate-500 truncate">${escapeHtml(m.equippedTitle)}</span>` : ''}
+                  </div>
+                  <div class="flex flex-wrap items-center gap-1.5">${renderTierPill(m)} ${getMemberMode(m) === 'strict' ? '<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-black text-amber-300 border border-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.45)]" style="background:linear-gradient(90deg,#0f172a,#7f1d1d,#0f172a)"><span class="inline-flex animate-pulse"><svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span><span>울트라집중모드</span></span>' : '<span class="px-2 py-0.5 rounded bg-slate-100 font-bold">자율모드</span>'}</div>
+                </div>
+              </div>
               <div class="grid grid-cols-2 gap-2">
                 <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200"><div class="text-slate-400">누적 공부 시간</div><div class="text-sm font-black text-slate-900 mt-0.5">${formatStudyMins(todayTotalMins)}</div></div>
                 <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200"><div class="text-slate-400">오늘 최장 연속</div><div class="text-sm font-black text-slate-900 mt-0.5">${maxF}분</div></div>
-                <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200"><div class="text-slate-400">연속 출석</div><div class="text-sm font-black text-slate-900 mt-0.5">${Number(m.streak) || 0}일</div></div>
+                <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200"><div class="text-slate-400">연속 출석</div><div class="text-sm font-black text-slate-900 mt-0.5">${getEffectiveStreak(m)}일</div></div>
                 <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200"><div class="text-slate-400">오늘 받은 리스펙</div><div class="inline-flex items-center gap-1 text-sm font-black text-slate-900 mt-0.5"><svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 10v12"/><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z"/></svg><span>${todayRespect}회</span></div></div>
               </div>
               ${renderMemberDetailSongHtml(m.recommendedSong)}
@@ -12316,8 +12391,11 @@
           showToast('연속 일수는 0~999 사이 숫자로 입력해 주세요.', 'warn');
           return;
         }
+        const todayKey = studyDayKey();
+        const realVal = computeRealStreakFromLogs(targetMem.id, todayKey);
         targetMem.streak = val;
-        targetMem.lastActiveStudyDate = val > 0 ? studyDayKey() : null;
+        targetMem.lastActiveStudyDate = val > 0 ? todayKey : null;
+        targetMem.manualStreakOverride = val === realVal ? null : { value: val, baseDate: todayKey };
         saveSharedData();
         showToast(`${targetMem.name}님의 연속 출석을 ${val}일로 수정했어요.`, 'success');
         renderAdminTab(); renderAll();
@@ -12857,6 +12935,7 @@
             if (shared.maxFocusLogs?.[day]?.[me.id] > finalMins) {
               shared.maxFocusLogs[day][me.id] = finalMins;
             }
+            syncDailyStreak(me, day);
             saveSharedData();
             closeModal();
             renderAll();
@@ -13345,7 +13424,8 @@
 
         if (canStart) {
           const mission = getPromoMission(tierInfo.nextName);
-          const needsTomorrow = mission.type === 'ultra' && getMemberMode(me) !== 'strict';
+          const isSundayToday = new Date(studyDayKey() + 'T12:00:00Z').getUTCDay() === 0;
+          const needsTomorrow = mission.type === 'ultra' && (getMemberMode(me) !== 'strict' || isSundayToday);
           const key = `start:${tierInfo.nextName}:${needsTomorrow ? 'tmr' : 'now'}`;
           if (lastFocusPromoSlotKey !== key) {
             lastFocusPromoSlotKey = key;
@@ -13420,6 +13500,7 @@
           addMemberLp(id, (earnedHours - priorHours) * 3, '누적 공부시간 보상', date);
         }
         recordMemberActivityForStreak(member, day);
+        checkStarterChallenge(id);
         if (hours === 4) unlockChallengeFor(id, 'ch_4am', false, date);
         if (hours === 0 && mins <= 5 && continuousMins >= 6) unlockChallengeFor(id, 'ch_cinderella', false, date);
         if (koreaDateKey(date) !== day) member.nightOwlDate = day;
@@ -14511,7 +14592,7 @@
         if (prefs.adminMode || prefs.activeTab !== 'members') return;
         const rankPane = document.getElementById('members-sub-rank');
         if (!rankPane || rankPane.classList.contains('hidden')) return;
-        if (window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 80) {
+        if (window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 120) {
           const already = (shared.memberChallenges?.[prefs.currentUserId] || []).includes('ch_rank_bottom');
           if (!already) {
             unlockChallengeFor(prefs.currentUserId, 'ch_rank_bottom', false);
@@ -16111,6 +16192,7 @@
         const myUid = groupActor(g);
         if (!g || !g.members || !g.members[myUid]) {
           activeGroupId = null;
+          syncGroupChatViewport(false);
           saveGroupNavState();
           const chatBox = document.getElementById('group-chat-messages');
           const memBox = document.getElementById('group-room-members-list');
@@ -16560,6 +16642,7 @@
         if (filePreview) await socialWrite(`studyGroups/${g.id}`, removeMember(g));
         else await leaveCloudRoom(g,myUid);
         activeGroupId = null;
+        syncGroupChatViewport(false);
         const chatBox = document.getElementById('group-chat-messages');
         const memBox = document.getElementById('group-room-members-list');
         if (chatBox) chatBox.innerHTML = '';
@@ -18594,6 +18677,7 @@
             memberName: me.name,
             text
           }, key);
+          if (!prefs.adminMode) unlockChallengeFor(myId, 'ch_suggest', false);
           input.value = '';
           ucForceScrollBottom = true;
           saveSharedData();
@@ -18617,7 +18701,9 @@
         }
       });
 
+      let ucDeleteInFlight = false;
       document.getElementById('uc-messages-list')?.addEventListener('click', async e => {
+        if (ucDeleteInFlight) return;
         const knownBtn = e.target.closest('[data-del-uc-known]');
         if (knownBtn && ucActiveRoom?.type === 'known') {
           const myId = prefs.currentUserId;
@@ -18630,7 +18716,10 @@
             renderUnifiedChatModal();
             return;
           }
-          const ok = await openActionConfirm({ title: '메시지 삭제', message: '이 메시지를 삭제하시겠습니까?', confirmText: '삭제', danger: true });
+          ucDeleteInFlight = true;
+          let ok = false;
+          try { ok = await openActionConfirm({ title: '메시지 삭제', message: '이 메시지를 삭제하시겠습니까?', confirmText: '삭제', danger: true }); }
+          finally { ucDeleteInFlight = false; }
           if (!ok) return;
           const latestMsg = shared.memberChats?.[pairKey]?.[mid];
           if (!latestMsg || latestMsg.fromId !== myId) return;
@@ -18656,7 +18745,10 @@
             renderUnifiedChatModal();
             return;
           }
-          const ok = await openActionConfirm({ title: '메시지 삭제', message: '이 메시지를 삭제하시겠습니까?', confirmText: '삭제', danger: true });
+          ucDeleteInFlight = true;
+          let ok = false;
+          try { ok = await openActionConfirm({ title: '메시지 삭제', message: '이 메시지를 삭제하시겠습니까?', confirmText: '삭제', danger: true }); }
+          finally { ucDeleteInFlight = false; }
           if (!ok) return;
           const latestSug = shared.suggestions?.[key];
           if (!latestSug || (latestSug.fromId || latestSug.memberId) !== myId) return;
@@ -18747,7 +18839,7 @@
         });
         const parcelChips = parcelEntries.map(([pid, p]) => {
           const g = GIFT_MAP[p.giftId] || { name: p.giftId, emoji: '🎁' };
-          return `<span class="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-rose-50 border border-rose-200 text-[11px] font-bold text-rose-800">📦 미개봉 ${giftIconOf(g)} ${escapeHtml(g.name)}<button type="button" data-admin-revoke-parcel="${escapeHtml(pid)}" data-admin-revoke-gid="${escapeHtml(p.giftId || '')}" class="ml-0.5 text-rose-600 hover:underline font-black" title="우편 회수">회수</button></span>`;
+          return `<span class="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-rose-50 border border-rose-200 text-[11px] font-bold text-rose-800">📦 미개봉 ${giftIconOf(g)} ${escapeHtml(g.name)}${Number(p.qty) > 1 ? ` ×${Number(p.qty)}` : ''}<button type="button" data-admin-revoke-parcel="${escapeHtml(pid)}" data-admin-revoke-gid="${escapeHtml(p.giftId || '')}" class="ml-0.5 text-rose-600 hover:underline font-black" title="우편 회수">회수</button></span>`;
         });
         const allRecv = [...recvChips, ...parcelChips];
         htmlOut += allRecv.length ? allRecv.join('') : '<span class="text-[11px] text-slate-400">없음</span>';
@@ -18760,7 +18852,7 @@
         if (!mailbox || typeof mailbox !== 'object') return false;
         const suffix = '_' + giftId;
         const g = GIFT_MAP[giftId];
-        const token = g ? `[${giftIconOf(g)} ${g.name}]` : '';
+        const token = g ? `[${giftIconOf(g)} ${g.name}` : '';
         const matches = Object.entries(mailbox)
           .filter(([key, msg]) => key.startsWith('gift_grant_') && (key.endsWith(suffix) || (token && String(msg?.text || '').includes(token))))
           .sort((a, b) => Number(b[1]?.createdAt || 0) - Number(a[1]?.createdAt || 0));
@@ -18770,6 +18862,16 @@
       }
 
       document.getElementById('admin-gift-member')?.addEventListener('change', renderAdminGiftsPanel);
+      ['gift-send-qty', 'admin-gift-qty', 'admin-streak-input'].forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.addEventListener('keydown', e => {
+          if (['-', '+', '.', 'e', 'E'].includes(e.key)) e.preventDefault();
+        });
+        el.addEventListener('wheel', e => {
+          if (document.activeElement === el) e.preventDefault();
+        }, { passive: false });
+      });
 
       document.getElementById('btn-admin-gift-grant')?.addEventListener('click', async () => {
         if (!prefs.adminMode || !isAdminUser()) return;
@@ -18907,7 +19009,7 @@
         unopened.forEach(p => {
           out += `<div class="gift-parcel-sealed p-3 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-between gap-2">
             <div class="min-w-0">
-              <p class="text-xs font-black text-slate-900">🎁 ${escapeHtml(p.fromName)}님이 선물을 보냈어요!</p>
+              <p class="text-xs font-black text-slate-900">🎁 ${escapeHtml(p.fromName)}님이 선물${Number(p.qty) > 1 ? ` ${Number(p.qty)}개` : ''}을 보냈어요!</p>
               <p class="text-[10px] text-slate-500">눌러서 상자를 두드려 열어보세요 · ${formatRelTime(p.createdAt)}</p>
             </div>
             <button type="button" data-open-gift-parcel="${escapeHtml(p.id)}" class="shrink-0 px-3 py-1.5 rounded-xl ed-btn-accent text-[11px] font-black whitespace-nowrap">상자 열기 🎀</button>
@@ -18917,7 +19019,7 @@
           const g = GIFT_MAP[p.giftId] || { emoji: '🎁', name: '선물', rarity: 'common' };
           out += `<div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs flex items-center justify-between gap-2">
             <div class="min-w-0">
-              <p class="font-bold text-slate-800">${giftIconOf(g)} ${escapeHtml(g.name)} <span class="font-normal text-slate-500">← ${escapeHtml(p.fromName)}</span></p>
+              <p class="font-bold text-slate-800">${giftIconOf(g)} ${escapeHtml(g.name)}${Number(p.qty) > 1 ? ` ×${Number(p.qty)}` : ''} <span class="font-normal text-slate-500">← ${escapeHtml(p.fromName)}</span></p>
               ${p.note ? `<p class="text-[11px] text-slate-600 truncate mt-0.5">“${escapeHtml(p.note)}”</p>` : ''}
             </div>
             <span class="text-[10px] text-slate-400 shrink-0">${formatRelTime(p.createdAt)}</span>
