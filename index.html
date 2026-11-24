@@ -2136,12 +2136,13 @@
     .distribution-slot {position:relative;display:block;width:100%;height:1.14rem;overflow:hidden;border-top:1px solid color-mix(in srgb,var(--line) 80%,transparent);border-bottom:1px solid color-mix(in srgb,var(--line) 80%,transparent);border-right:1px solid color-mix(in srgb,var(--line) 48%,transparent);border-left:0;background:var(--soft);transition:filter .12s ease}
     .distribution-table td:first-of-type .distribution-slot {border-left:1px solid color-mix(in srgb,var(--line) 80%,transparent);border-top-left-radius:6px;border-bottom-left-radius:6px}
     .distribution-table td:last-of-type .distribution-slot {border-right:1px solid color-mix(in srgb,var(--line) 80%,transparent);border-top-right-radius:6px;border-bottom-right-radius:6px}
-    .distribution-slot > i {position:absolute;inset:0;width:100%;background:linear-gradient(180deg,color-mix(in srgb,var(--primary) 90%,#fff),var(--primary));box-shadow:inset 0 1px 0 rgba(255,255,255,.18);pointer-events:none}
-    button.distribution-slot {cursor:pointer;border-color:transparent;background:transparent;overflow:visible}
-    button.distribution-slot > i {border-radius:6px}
-    button.distribution-slot.is-cont-left > i {border-top-left-radius:0;border-bottom-left-radius:0;left:-1px;width:calc(100% + 1px)}
-    button.distribution-slot.is-cont-right > i {border-top-right-radius:0;border-bottom-right-radius:0;right:-1px;width:calc(100% + 1px)}
-    button.distribution-slot.is-cont-left.is-cont-right > i {width:calc(100% + 2px)}
+    .distribution-slot > i {position:absolute;top:0;bottom:0;left:0;width:var(--slot-fill,100%);background:linear-gradient(180deg,color-mix(in srgb,var(--primary) 90%,#fff),var(--primary));box-shadow:inset 0 1px 0 rgba(255,255,255,.18);pointer-events:none}
+    button.distribution-slot {cursor:pointer;overflow:hidden}
+    button.distribution-slot > i {border-radius:5px}
+    button.distribution-slot.is-partial > i {border-top-right-radius:3px;border-bottom-right-radius:3px;opacity:calc(.52 + .48 * var(--slot-ratio,1))}
+    button.distribution-slot.is-cont-left > i {border-top-left-radius:0;border-bottom-left-radius:0;left:-1px;width:calc(var(--slot-fill,100%) + 1px)}
+    button.distribution-slot.is-cont-right > i {border-top-right-radius:0;border-bottom-right-radius:0;right:-1px;width:calc(var(--slot-fill,100%) + 1px)}
+    button.distribution-slot.is-cont-left.is-cont-right > i {width:calc(var(--slot-fill,100%) + 2px)}
     .distribution-slot.is-legacy > i {background:repeating-linear-gradient(135deg,color-mix(in srgb,var(--primary) 26%,var(--surface)) 0 4px,var(--primary) 4px 8px)}
     button.distribution-slot:hover {filter:brightness(1.07);z-index:1}
     button.distribution-slot[aria-pressed="true"] {outline:2px solid var(--focus-ring);outline-offset:-1px;border-radius:5px;z-index:2}
@@ -3432,6 +3433,390 @@
       .room-initial {flex-basis:2.15rem;height:2.15rem}
     }
   </style>
+  <style id="galaxy-flip-fix">
+    /* =========================================================================
+       Galaxy Z Flip / Narrow Foldable Isolation Fix
+       - Width scope: <= 368px (Galaxy Z Flip 3/4/5/6/7: 360px default, 344px/320px zoomed)
+       - Strictly excludes standard iPhones (>= 375px) & Androids (>= 384px/412px)
+       - Short-height scope: <= 420px wide AND <= 460px tall (Flip Cover / Flex Mode)
+       ========================================================================= */
+    @media (max-width: 368px) {
+      /* 1. Root horizontal overflow & safe content inset */
+      html, body {
+        overflow-x: clip !important;
+        max-width: 100% !important;
+      }
+      .study-header-bar,
+      #study-nav,
+      #study-main {
+        --content-inset: 0.72rem;
+      }
+
+      /* 2. Header: extend compact sizing from 350px to 368px so 360px Flip never cramps */
+      .study-header-bar {
+        gap: 0.32rem 0.38rem;
+        min-height: 60px;
+        padding-top: 0.5rem;
+        padding-bottom: 0.4rem;
+      }
+      .study-brand {
+        gap: 0.4rem;
+        min-width: 0;
+      }
+      .study-logo {
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+      }
+      .study-logo svg {
+        width: 19px;
+        height: 19px;
+      }
+      #study-header h1 {
+        font-size: 0.92rem;
+        white-space: nowrap;
+      }
+      .study-brand-caption {
+        font-size: 0.6rem;
+        letter-spacing: 0.08em;
+      }
+      #header-tools {
+        gap: 0.24rem;
+      }
+      #header-tools > button {
+        min-width: 38px;
+        min-height: 38px;
+        border-radius: 10px;
+      }
+      #header-tools > button svg {
+        width: 16px;
+        height: 16px;
+      }
+      #sync-info-btn,
+      #study-mode-btn {
+        min-height: 30px;
+        padding: 0.2rem 0.5rem;
+        font-size: 0.69rem;
+      }
+      #study-nav .nav-tab {
+        min-height: 40px;
+        padding: 0.42rem 0.58rem;
+        font-size: 0.78rem;
+        gap: 0.32rem;
+      }
+
+      /* 3. Hero live banner: drop focus button to full width on 351px-368px Flip too */
+      #main-live-banner > .space-y-1 {
+        padding: 1rem 0.9rem;
+      }
+      #main-live-banner .study-hero-stat {
+        padding: 0.68rem 0.9rem;
+        gap: 0.2rem 0.5rem;
+      }
+      #main-live-banner #live-clock-text {
+        font-size: 1.42rem;
+      }
+      #main-live-banner #btn-open-focus {
+        grid-row: auto !important;
+        grid-column: 1 / -1 !important;
+        width: 100% !important;
+        margin-top: 0.38rem !important;
+        justify-content: center;
+      }
+      #live-period-title {
+        font-size: 0.98rem;
+        word-break: keep-all;
+      }
+
+      /* 4. Home Dashboard: today stat, period chips, LP summary, study distribution */
+      .study-today-stat {
+        flex-wrap: wrap;
+        padding: 0.55rem 0.72rem;
+        gap: 0.35rem 0.5rem;
+        font-size: 0.78rem;
+      }
+      .study-today-stat-right {
+        margin-left: auto;
+        gap: 0.38rem;
+      }
+      .study-subtract-trigger {
+        padding: 0.22rem 0.46rem;
+        font-size: 0.68rem;
+      }
+      #my-period-chips {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 0.28rem;
+      }
+      #my-period-chips > * {
+        padding-inline: 0.2rem;
+        font-size: 0.68rem;
+      }
+      /* CRITICAL: Stack 2 side-by-side 7-col distribution tables into 1 clean column */
+      .study-distribution {
+        padding: 0.78rem;
+      }
+      .distribution-tables {
+        grid-template-columns: minmax(0, 1fr) !important;
+        gap: 0.85rem;
+      }
+      .distribution-table th {
+        font-size: 0.64rem;
+      }
+      .distribution-table .distribution-hour {
+        width: 2rem;
+      }
+      .distribution-date {
+        width: 100%;
+        justify-content: flex-start;
+      }
+      .distribution-date .planner-field {
+        flex: 1 1 auto;
+        min-width: 0;
+      }
+
+      /* 5. Planner: stack 2-column sheet body into 1 column so tasks & 6-slot timeline never crush */
+      #tab-planner {
+        --planner-inset: 0.62rem;
+        --planner-row: 1.12rem;
+      }
+      .planner-heading {
+        gap: 0.35rem;
+      }
+      .planner-date-nav {
+        width: 100%;
+        justify-content: space-between;
+      }
+      .planner-date-nav .planner-field {
+        flex: 1 1 auto;
+        min-width: 0;
+        font-size: 0.72rem;
+      }
+      .planner-stats {
+        padding: 0.34rem 0.48rem;
+        gap: 0.24rem 0.45rem;
+      }
+      .planner-sheet-body {
+        grid-template-columns: minmax(0, 1fr) !important;
+        gap: 0.85rem;
+      }
+      .planner-timeline {
+        border-inline-start: 0 !important;
+        padding-inline-start: 0 !important;
+        border-top: 1px solid var(--line);
+        padding-top: 0.7rem;
+      }
+      .planner-card-list {
+        max-height: 18rem;
+      }
+      .planner-clock-head,
+      .planner-hour {
+        grid-template-columns: 2.1rem minmax(0, 1fr);
+      }
+      .planner-hour time {
+        font-size: 0.68rem;
+      }
+      .planner-clock-head {
+        font-size: 0.62rem;
+      }
+
+      /* 6. Community composer toolbar: prevent flex-nowrap horizontal overflow */
+      #community-post-form {
+        padding: 0.8rem;
+      }
+      #community-post-form > div:last-child {
+        flex-wrap: wrap;
+        gap: 0.35rem;
+      }
+      #community-post-form > div:last-child > div:first-child {
+        flex-wrap: wrap;
+        gap: 0.28rem;
+      }
+      #community-post-form label,
+      #btn-comm-extras {
+        padding-inline: 0.5rem;
+        padding-block: 0.34rem;
+        font-size: 10.5px;
+        gap: 0.25rem;
+      }
+      #btn-comm-post-submit {
+        margin-left: auto;
+        padding-inline: 0.72rem;
+      }
+
+      /* 7. Calendar: prevent 7-col cell & weekly bar text overflow/clipping */
+      .calendar-card {
+        padding: 0.62rem;
+      }
+      .calendar-table {
+        border-spacing: 1.5px;
+      }
+      .calendar-day,
+      .calendar-day-blank {
+        height: 2.95rem;
+        padding: 0 1px;
+        border-radius: 0.44rem;
+      }
+      .calendar-date-number {
+        font-size: 0.69rem;
+      }
+      .calendar-cell-time,
+      .calendar-week-value {
+        font-size: 0.56rem;
+        letter-spacing: -0.04em;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .calendar-week-days {
+        gap: 2px;
+      }
+      .calendar-week-day {
+        padding: 0.24rem 0.1rem;
+        font-size: 0.62rem;
+      }
+
+      /* 8. Members / Lounge & Group Room */
+      #group-status-grid,
+      #group-room-members-list {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 12px;
+      }
+      .member-roster-header {
+        padding: 10px 12px;
+        gap: 8px 10px;
+      }
+      #tab-members [data-members-sub],
+      #group-room-subbar .room-sub-btn {
+        font-size: 0.68rem;
+        padding-inline: 0.3rem;
+        gap: 0.25rem;
+      }
+      #btn-group-delete,
+      #btn-group-leave {
+        padding-inline: 0.48rem;
+        font-size: 10.5px;
+      }
+
+      /* 9. Timetable form slots & cards */
+      #tab-timetable .tt-card {
+        padding: 0.8rem;
+      }
+      #class-slots-wrap > * {
+        flex-wrap: wrap;
+        gap: 0.3rem;
+      }
+      #class-slots-wrap select,
+      #class-slots-wrap input {
+        min-width: 0;
+      }
+      #weekly-exemption-grid,
+      #ultra-exempt-table-wrap,
+      #weekly-report-table {
+        -webkit-overflow-scrolling: touch;
+      }
+
+      /* 10. Profile & LP panels */
+      .profile-card,
+      .lp-home-card {
+        padding: 0.78rem;
+      }
+      .lp-summary {
+        gap: 0.28rem;
+      }
+      .lp-summary > div {
+        padding: 0.35rem 0.42rem;
+      }
+      .lp-summary dt {
+        font-size: 0.65rem;
+      }
+      .lp-summary dd {
+        font-size: 0.82rem;
+      }
+      .lp-filter {
+        gap: 0.18rem;
+        padding: 0.2rem;
+      }
+      .lp-filter button {
+        font-size: 0.67rem;
+        padding: 0.18rem 0.1rem;
+        white-space: nowrap;
+      }
+
+      /* 11. Modals, Chat, Gift & Auth Overlays */
+      :is(#auth-overlay, #unified-chat-modal, #whisper-modal, #gift-send-modal, #gift-open-overlay, #group-create-modal, #group-pw-modal, #app-notice-popup, #app-confirm-modal, #starter-clear-overlay, #promotion-overlay) {
+        padding-left: max(0.5rem, env(safe-area-inset-left, 0px)) !important;
+        padding-right: max(0.5rem, env(safe-area-inset-right, 0px)) !important;
+      }
+      #uc-cat-tabs {
+        gap: 2px;
+        padding: 3px;
+      }
+      #uc-cat-tabs .uc-cat-btn {
+        font-size: 10.5px;
+        padding-inline: 2px;
+        white-space: nowrap;
+      }
+      #gift-send-form,
+      #group-create-form,
+      #group-pw-form {
+        padding: 0.9rem;
+      }
+      #gift-send-picker {
+        gap: 0.35rem;
+      }
+      #gift-send-qty-wrap {
+        padding: 0.5rem 0.6rem;
+      }
+      #gift-send-qty-wrap > div {
+        flex-wrap: wrap;
+      }
+      #group-create-form .gc-type-btn {
+        padding: 0.6rem;
+      }
+      #focus-overlay .focus-actions button {
+        min-width: 6.2rem;
+        padding: 0.55rem 0.7rem;
+        font-size: 0.78rem;
+      }
+      #join-guide {
+        width: calc(100% - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px) - 16px);
+      }
+    }
+
+    /* Galaxy Z Flip Cover Screen / Flex Mode (half-folded short height) */
+    @media (max-width: 420px) and (max-height: 460px) {
+      #focus-overlay .focus-time-stage {
+        min-height: 0;
+        padding-block: 0.35rem;
+        gap: 0.35rem;
+      }
+      #focus-timer-display {
+        font-size: clamp(2rem, 12vw, 3.1rem);
+      }
+      #focus-overlay .focus-actions button {
+        min-height: 36px;
+        padding: 0.4rem 0.7rem;
+      }
+      .focus-view-switch {
+        padding-top: 0.2rem;
+      }
+      .focus-view-switch button {
+        min-height: 34px;
+        padding: 0.25rem 0.5rem;
+      }
+      #uc-rooms-list,
+      #uc-messages-list,
+      #whisper-inbox-view {
+        min-height: 110px !important;
+      }
+      #unified-chat-modal > .ed-card,
+      #whisper-modal > .ed-card {
+        max-height: calc(100dvh - 1rem) !important;
+      }
+      #group-chat-messages {
+        min-height: 34dvh !important;
+      }
+    }
+  </style>
 </head>
 <body data-theme="white" class="bg-white text-slate-950 min-h-screen antialiased">
   <a class="skip-link" href="#study-main">본문으로 건너뛰기</a>
@@ -4092,7 +4477,7 @@
         <div class="distribution-heading">
           <div>
             <h3 id="home-distribution-title">공부 시간 분포</h3>
-            <p>스톱워치 기록 · 10분 단위 · 4분 이상 표시 (오전 5시 기준)</p>
+            <p>스톱워치 기록 · 10분 단위 · 공부 시간 비율 표시 (오전 5시 기준)</p>
           </div>
           <div class="distribution-date">
             <input id="home-distribution-date" class="planner-field" type="date" aria-label="공부 시간 분포 날짜" />
@@ -8950,7 +9335,8 @@
             const minutes = shared.studySlotMins?.[date]?.[memberId] || {};
             const markers = shared.studyBlocks?.[date]?.[memberId] || {};
             const hourLabel = `${String(hour % 24).padStart(2, '0')}시`;
-            const MIN_DIST_SECS = 240; // 4분 미만(1~3분) 짧은 기록은 분포 바에서 제외
+            const MIN_DIST_SECS = 60; // 1분 이상 기록을 실제 비율대로 표시
+            const FULL_SLOT_SECS = 570; // 9분 30초 이상은 칸 전체 채움
             const hourSlots = [];
             for (let slotOffset = 0; slotOffset < 6; slotOffset++) {
               const index = hour * 6 + slotOffset;
@@ -8958,7 +9344,10 @@
               const seconds = Math.min(600, Math.max(0, (Number(minutes[key]) || 0) * 60));
               const legacy = !seconds && Boolean(markers[key]);
               const active = seconds >= MIN_DIST_SECS || legacy;
-              hourSlots.push({ index, seconds, legacy, active });
+              const full = legacy || seconds >= FULL_SLOT_SECS;
+              const ratio = legacy ? 1 : Math.min(1, Math.max(0.1, seconds / 600));
+              const fillPct = full ? 100 : Math.round(ratio * 1000) / 10;
+              hourSlots.push({ index, seconds, legacy, active, full, ratio, fillPct });
             }
             let cells = '';
             for (let s = 0; s < 6; s++) {
@@ -8967,10 +9356,11 @@
                 hasRecords = true;
                 const label = `${plannerTimeLabel(slot.index)} ~ ${plannerTimeLabel(slot.index + 1)} · ${slot.legacy ? '기록 있음 · 분량 미상' : plannerDuration(slot.seconds)}`;
                 if (slot.index === homeDistributionSelection) selectedLabel = label;
-                const contLeft = s > 0 && hourSlots[s - 1].active;
-                const contRight = s < 5 && hourSlots[s + 1].active;
-                const cls = ['distribution-slot', slot.legacy ? 'is-legacy' : '', contLeft ? 'is-cont-left' : '', contRight ? 'is-cont-right' : ''].filter(Boolean).join(' ');
-                cells += `<td><button type="button" id="home-study-slot-${slot.index}" data-home-study-slot="${slot.index}" class="${cls}" aria-label="${escapeHtml(label)}" aria-pressed="${slot.index === homeDistributionSelection}"><i aria-hidden="true"></i></button></td>`;
+                const contLeft = s > 0 && hourSlots[s - 1].full;
+                const contRight = s < 5 && slot.full && hourSlots[s + 1].active;
+                const cls = ['distribution-slot', slot.legacy ? 'is-legacy' : '', !slot.full ? 'is-partial' : '', contLeft ? 'is-cont-left' : '', contRight ? 'is-cont-right' : ''].filter(Boolean).join(' ');
+                const fillStyle = slot.full ? '' : ` style="--slot-fill:${slot.fillPct}%;--slot-ratio:${slot.ratio.toFixed(2)}"`;
+                cells += `<td><button type="button" id="home-study-slot-${slot.index}" data-home-study-slot="${slot.index}" class="${cls}"${fillStyle} title="${escapeHtml(label)}" aria-label="${escapeHtml(label)}" aria-pressed="${slot.index === homeDistributionSelection}"><i aria-hidden="true"></i></button></td>`;
               } else {
                 cells += '<td><span class="distribution-slot" aria-label="기록 없음"></span></td>';
               }
