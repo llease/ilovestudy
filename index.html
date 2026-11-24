@@ -6473,6 +6473,7 @@
           lpRebalanceV5: true,
               lpRebalanceV6: true,
               lpRebalanceV7: true,
+              lpRebalanceV8: true,
           promoHistory: {},
           customBadges: { m1: [{ id: 'cb1', label: '🏆 방장 특별상', theme: 'gold' }] },
           motemote: {
@@ -6546,7 +6547,8 @@
               parsed.lpRebalanceV7 = true;
             }
             if (!parsed.lpRebalanceV8) {
-              mergedCh = mergedCh.map(c => (!c.adminEdited && baseMap.has(c.id)) ? { ...c, lp: baseMap.get(c.id).lp } : c);
+              const baseMapV8 = new Map(base.map(b => [b.id, b]));
+              mergedCh = mergedCh.map(c => (!c.adminEdited && baseMapV8.has(c.id)) ? { ...c, lp: baseMapV8.get(c.id).lp } : c);
               parsed.lpRebalanceV8 = true;
             }
             const movedToSpecialSet = new Set(['ch_avatar','ch_timetable','ch_cal_day','ch_spy','ch_rank_bottom','ch_banner_bg','ch_timetravel']);
@@ -7461,7 +7463,8 @@
                   mergedCh = mergedCh.map(c => c.id === 'ch_theme' ? { ...c, cat: 'starter', title: '🦎 카멜레온', desc: '상단 더보기(⋯)에서 테마 색깔 바꾸기', lp: 7 } : c);
                 }
                 if (!v.lpRebalanceV8) {
-                  mergedCh = mergedCh.map(c => (!c.adminEdited && baseMap.has(c.id)) ? { ...c, lp: baseMap.get(c.id).lp } : c);
+                  const baseMapV8 = new Map(base.map(b => [b.id, b]));
+                  mergedCh = mergedCh.map(c => (!c.adminEdited && baseMapV8.has(c.id)) ? { ...c, lp: baseMapV8.get(c.id).lp } : c);
                 }
                 const recatMap = new Map(base.filter(b => ['ch_brag1','ch_brag5','ch_ultra_reserve','ch_rename','ch_flipflop','ch_minimal','ch_justice','ch_join_study','ch_avatar','ch_timetable','ch_cal_day','ch_spy','ch_rank_bottom','ch_banner_bg','ch_timetravel'].includes(b.id)).map(b => [b.id, b]));
                 mergedCh = mergedCh.map(c => (!c.adminEdited && recatMap.has(c.id)) ? { ...c, cat: recatMap.get(c.id).cat, desc: recatMap.get(c.id).desc, lp: recatMap.get(c.id).lp } : c);
