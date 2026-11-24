@@ -1187,7 +1187,7 @@
         radial-gradient(circle at 46% 13%, var(--promo-accent) 0 1px, transparent 2px),
         radial-gradient(circle at 62% 78%, var(--promo-light) 0 1px, transparent 2px);
       will-change: transform, opacity;
-      animation: promoSparks 2100ms cubic-bezier(0.16, 1, 0.3, 1) 240ms both;
+      animation: promoSparks 2000ms cubic-bezier(0.16, 1, 0.3, 1) 240ms both;
     }
 
     @keyframes promoFade { from { opacity: 0; } to { opacity: 1; } }
@@ -7936,11 +7936,22 @@
         const m = (shared.members || []).find(x => x.id === memberId);
         if (!m) return;
         const done = (shared.memberChallenges && shared.memberChallenges[memberId]) || [];
-        if (!done.length) return;
+        let changed = false;
+        if (!done.includes('ch_all_resp')) {
+          const sentAll = {};
+          Object.values(shared.respectSentByDate || {}).forEach(dayMap => {
+            Object.assign(sentAll, dayMap?.[memberId] || {});
+          });
+          const others = (shared.members || []).filter(member => member && member.id && member.id !== memberId && member.inStudy !== false);
+          if (others.length && others.every(member => sentAll[member.id])) {
+            unlockChallengeFor(memberId, 'ch_all_resp', false);
+            changed = true;
+          }
+        }
+        if (!done.length) { if (changed) saveSharedData(); return; }
         if (!shared.challengeLpGranted) shared.challengeLpGranted = {};
         if (!shared.challengeLpGranted[memberId]) shared.challengeLpGranted[memberId] = {};
         const oldStarter5 = new Set(['ch_newbie','ch_join_study','ch_avatar','ch_timetable','ch_equip','ch_respect1','ch_mailbox','ch_encourage','ch_todo_v','ch_cal_day','ch_spy','ch_rank_bottom','ch_banner_bg']);
-        let changed = false;
         done.forEach(chId => {
           const ch = (shared.challenges || []).find(c => c.id === chId);
           if (!ch) return;
@@ -11411,9 +11422,14 @@
         (state.praises ||= {})[toId] = [...received, cleanPraise];
         const sent = (((state.respectSentByDate ||= {})[praise.date] ||= {})[fromId] ||= {});
         sent[toId] = true;
-        const others = members.filter(member => member !== from && member.inStudy !== false);
+        const sentAll = {};
+        Object.values(state.respectSentByDate || {}).forEach(dayMap => {
+          Object.assign(sentAll, dayMap?.[fromId] || {});
+        });
+        sentAll[toId] = true;
+        const others = members.filter(member => member.id && member.id !== fromId && member.inStudy !== false);
         const completed = [grantChallengeReward(state, from, 'ch_respect1', sentAt)];
-        if (others.length && others.every(member => sent[member.id])) {
+        if (others.length && others.every(member => sentAll[member.id])) {
           completed.push(grantChallengeReward(state, from, 'ch_all_resp', sentAt));
         }
         if (Math.max(received.length + 1, Number(to.respectCount) || 0) >= 5) grantChallengeReward(state, to, 'ch7', sentAt);
@@ -14500,7 +14516,7 @@
         const colors = ['#68a6ff', '#2453cc', '#efb644', '#55d0a0', '#ffa58f'];
         const isNarrow = vw <= 368;
         const spreadVx = isNarrow ? 115 : 190;
-        const duration = 2.5;
+        const duration = 2.0;
         const pieces = Array.from({length: 44}, (_, i) => ({
           x: vw * (0.18 + Math.random() * 0.64),
           y: -12 - Math.random() * 110,
