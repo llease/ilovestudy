@@ -5600,12 +5600,17 @@
           </div>
           <form id="admin-rank-form" class="flex flex-wrap items-center gap-2 bg-slate-50 p-3 rounded-xl border border-slate-200">
             <select id="admin-rank-member" class="rounded-xl border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-semibold"></select>
-            <select id="admin-rank-tier-preset" class="rounded-xl border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-semibold"></select>
+            <div class="flex items-center gap-1.5">
+              <select id="admin-rank-tier-preset" class="rounded-xl border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-semibold"></select>
+              <button id="btn-admin-apply-tier" type="button" class="px-3 py-1.5 rounded-xl bg-slate-950 text-white text-xs font-bold whitespace-nowrap">랭크 적용</button>
+            </div>
             <div class="flex items-center gap-1.5">
               <input id="admin-rank-lp-input" type="number" min="0" max="9999" class="w-20 rounded-xl border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-bold" required />
               <span class="text-xs font-bold text-slate-500">LP</span>
+              <input id="admin-rank-banked-input" type="number" min="0" max="9999" class="w-20 rounded-xl border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-bold" aria-label="보관 LP" />
+              <span class="text-xs font-bold text-slate-500">보관 LP</span>
+              <button id="btn-admin-apply-lp" type="submit" class="px-3 py-1.5 rounded-xl bg-indigo-600 text-white text-xs font-bold whitespace-nowrap">LP 적용</button>
             </div>
-            <button type="submit" class="px-3.5 py-1.5 rounded-xl bg-slate-950 text-white text-xs font-bold whitespace-nowrap">랭크 적용</button>
             <button id="btn-admin-resume-promo" type="button" class="hidden px-3.5 py-1.5 rounded-xl border border-indigo-300 text-indigo-700 text-xs font-black whitespace-nowrap">자정에 끊긴 승급전 이어하기</button>
             <button id="btn-admin-skip-promo" type="button" class="hidden inline-flex items-center gap-1 px-3.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-black whitespace-nowrap"><svg class="comm-svg-ic-sm shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg><span>승급전 건너뛰기</span></button>
           </form>
@@ -12678,13 +12683,21 @@
             : '선택한 가입자에게 오늘 승급전 도전 기회를 한 번 더 줍니다.';
         document.getElementById('btn-admin-resume-promo').classList.toggle('hidden', !prefs.adminMode || !canResumeMidnightPromotion(m));
         const lpIn = document.getElementById('admin-rank-lp-input');
+        const bankedIn = document.getElementById('admin-rank-banked-input');
         const tierSel = document.getElementById('admin-rank-tier-preset');
         if (!m) return;
         const tInfo = getMemberTier(m);
+        if (tierSel.dataset.draftFor !== mid) {
+          delete tierSel.dataset.draftFor;
+          tierSel.value = String(LOL_TIERS[tInfo.idx].min);
+        }
         if (lpIn.dataset.draftFor !== mid) {
           delete lpIn.dataset.draftFor;
           lpIn.value = m.lp || 0;
-          tierSel.value = String(LOL_TIERS[tInfo.idx].min);
+        }
+        if (bankedIn && bankedIn.dataset.draftFor !== mid) {
+          delete bankedIn.dataset.draftFor;
+          bankedIn.value = m.bankedLp || 0;
         }
         if (infoEl) infoEl.innerHTML = renderTierPill(m);
         const canSkip = !!(tInfo.nextName && (tInfo.inPromo || m.promoActiveDate || m.promoPendingDate));
@@ -12697,16 +12710,39 @@
         syncAdminRankControls(e.target.value);
       });
       document.getElementById('admin-rank-tier-preset').addEventListener('change', e => {
-        const input = document.getElementById('admin-rank-lp-input');
-        input.dataset.draftFor = document.getElementById('admin-rank-member').value;
-        input.value = e.target.value;
+        e.target.dataset.draftFor = document.getElementById('admin-rank-member').value;
       });
       document.getElementById('admin-rank-lp-input').addEventListener('input', e => {
         e.target.dataset.draftFor = document.getElementById('admin-rank-member').value;
-        const val = Math.max(0, Number(e.target.value) || 0);
-        let matchIdx = 0;
-        for (let i = 0; i < LOL_TIERS.length; i++) if (val >= LOL_TIERS[i].min) matchIdx = i;
-        document.getElementById('admin-rank-tier-preset').value = String(LOL_TIERS[matchIdx].min);
+      });
+      document.getElementById('admin-rank-banked-input').addEventListener('input', e => {
+        e.target.dataset.draftFor = document.getElementById('admin-rank-member').value;
+      });
+      document.getElementById('btn-admin-apply-tier').addEventListener('click', () => {
+        if (!prefs.adminMode || !isAdminUser()) return;
+        const mid = document.getElementById('admin-rank-member').value;
+        const m = shared.members.find(x => x.id === mid);
+        if (!m) return;
+        const tierSel = document.getElementById('admin-rank-tier-preset');
+        const presetMin = Number(tierSel.value) || 0;
+        let newTIdx = LOL_TIERS.findIndex(t => t.min === presetMin);
+        if (newTIdx < 0) {
+          newTIdx = typeof m.tierIdx === 'number' ? m.tierIdx : 0;
+        }
+        const prevTIdx = typeof m.tierIdx === 'number' ? m.tierIdx : getMemberTier(m).idx;
+        m.tierIdx = newTIdx;
+        if (newTIdx !== prevTIdx) {
+          m.promoActiveDate = null;
+          m.promoActiveStudyDay = null;
+          m.promoLegacyCarryDate = null;
+          cancelPromotionReservation(m);
+          m.promoCooldownUntil = null;
+        }
+        delete tierSel.dataset.draftFor;
+        saveSharedData();
+        const tInfo = getMemberTier(m);
+        showToast(`${m.name}님의 랭크가 ${tInfo.icon} ${tInfo.name}으로 변경되었습니다! (LP ${m.lp || 0} · 보관 ${m.bankedLp || 0} 유지)`, 'success');
+        renderAll();
       });
       document.getElementById('admin-rank-form').addEventListener('submit', e => {
         e.preventDefault();
@@ -12715,28 +12751,20 @@
         const m = shared.members.find(x => x.id === mid);
         if (!m) return;
         const lpInput = document.getElementById('admin-rank-lp-input');
+        const bankedInput = document.getElementById('admin-rank-banked-input');
         const newLp = Number(lpInput.value);
-        if (!lpInput.value || !Number.isInteger(newLp) || newLp < 0 || newLp > 9999) return;
-        const presetMin = Number(document.getElementById('admin-rank-tier-preset').value) || 0;
-        let newTIdx = LOL_TIERS.findIndex(t => t.min === presetMin);
-        if (newTIdx < 0) {
-          newTIdx = typeof m.tierIdx === 'number' ? m.tierIdx : 0;
-        }
-        const prevTIdx = typeof m.tierIdx === 'number' ? m.tierIdx : getMemberTier(m).idx;
+        if (lpInput.value === '' || !Number.isInteger(newLp) || newLp < 0 || newLp > 9999) return;
+        const rawBanked = bankedInput ? bankedInput.value : '';
+        const newBanked = rawBanked === '' ? 0 : Number(rawBanked);
+        if (!Number.isInteger(newBanked) || newBanked < 0 || newBanked > 9999) return;
         m.lp = newLp;
-        m.tierIdx = newTIdx;
-        if (newTIdx !== prevTIdx) {
-          m.bankedLp = 0;
-          m.promoActiveDate = null;
-          m.promoActiveStudyDay = null;
-          m.promoLegacyCarryDate = null;
-          cancelPromotionReservation(m);
-          m.promoCooldownUntil = null;
-        }
+        m.bankedLp = newBanked;
         delete lpInput.dataset.draftFor;
+        if (bankedInput) delete bankedInput.dataset.draftFor;
         saveSharedData();
         const tInfo = getMemberTier(m);
-        showToast(`${m.name}님의 랭크가 ${tInfo.icon} ${tInfo.name} (${m.lp} LP)로 변경되었습니다!`, 'success');
+        const bankMsg = m.bankedLp > 0 ? ` (+${m.bankedLp} 보관)` : '';
+        showToast(`${m.name}님의 LP가 ${m.lp} LP${bankMsg}로 변경되었습니다! (${tInfo.icon} ${tInfo.name} 유지)`, 'success');
         renderAll();
       });
       document.getElementById('btn-admin-extra-promo').addEventListener('click', () => {
