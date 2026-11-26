@@ -13836,10 +13836,10 @@
         const now = getNowParts();
         const peers = shared.members.filter(m => m.inStudy !== false && m.id !== prefs.currentUserId);
         const cards = peers.map(member => ({ member, mins: liveStudyMinutes(member.id, day), status: memberStatus(member, now) }))
-          .filter(card => card.status).sort((a, b) => b.mins - a.mins);
+          .filter(card => card.status === 'studying').sort((a, b) => b.mins - a.mins);
         const markup = cards.length
           ? cards.map(({ member, mins, status }) => renderFocusPeer(member, mins, status)).join('')
-          : '<p class="member-roster-empty">지금 활동 중인 다른 스터디원이 없어요.</p>';
+          : '<p class="member-roster-empty">지금 공부 중인 다른 스터디원이 없어요.</p>';
         if (markup === focusStudyMarkup) return;
         const focusedId = grid.contains(document.activeElement) ? document.activeElement.id : '';
         const modalFocusId = previousModalFocus && grid.contains(previousModalFocus) ? previousModalFocus.id : '';
