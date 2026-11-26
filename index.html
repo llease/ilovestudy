@@ -8197,6 +8197,43 @@
         const remainderMs = Number(shared.studySubminuteMs?.[day]?.[memberId]) || 0;
         return studyMinutes(memberId, day) * 60 + Math.floor(remainderMs / 1000);
       }
+      function liveUnsyncedStudyMs(member, day = studyDayKey(), nowMs = Date.now()) {
+        if (!member || !member.isFocusing || member.isFocusPaused || member.focusStartedAt == null) return 0;
+        const startedAt = Number(member.focusStartedAt);
+        if (!Number.isFinite(startedAt) || startedAt <= 0) return 0;
+        const accSecs = Math.max(0, Number(member.focusAccumulatedSecs) || 0);
+        const syncedSecs = Math.max(0, Number(member.focusSyncedSecs) || 0);
+        const currentSecs = accSecs + Math.max(0, Math.floor((nowMs - startedAt) / 1000));
+        if (currentSecs <= syncedSecs) return 0;
+        const startMs = startedAt + (syncedSecs - accSecs) * 1000;
+        const endMs = startedAt + (currentSecs - accSecs) * 1000;
+        const dayStartMs = Date.parse(day + 'T00:00:00Z') - 4 * 3600000;
+        if (!Number.isFinite(dayStartMs)) return 0;
+        const dayEndMs = dayStartMs + 86400000;
+        return Math.max(0, Math.min(endMs, dayEndMs) - Math.max(startMs, dayStartMs));
+      }
+      function liveStudySeconds(memberId, day = studyDayKey(), nowMs = Date.now()) {
+        const baseSecs = studySeconds(memberId, day);
+        const member = shared.members.find(m => m.id === memberId);
+        if (!member) return baseSecs;
+        const extraMs = liveUnsyncedStudyMs(member, day, nowMs);
+        if (extraMs <= 0) return baseSecs;
+        const remainderMs = Number(shared.studySubminuteMs?.[day]?.[memberId]) || 0;
+        return studyMinutes(memberId, day) * 60 + Math.floor((remainderMs + extraMs) / 1000);
+      }
+      function liveStudyMinutes(memberId, day = studyDayKey(), nowMs = Date.now()) {
+        return Math.floor(liveStudySeconds(memberId, day, nowMs) / 60);
+      }
+      function liveMaxFocusMinutes(member, day = studyDayKey(), nowMs = Date.now()) {
+        const saved = Number(shared.maxFocusLogs?.[day]?.[member?.id]) || 0;
+        if (!member || !member.isFocusing || member.isFocusPaused || member.focusStartedAt == null) return saved;
+        if (studyDayKey(new Date(nowMs)) !== day) return saved;
+        const startedAt = Number(member.focusStartedAt);
+        if (!Number.isFinite(startedAt) || startedAt <= 0) return saved;
+        const accSecs = Math.max(0, Number(member.focusAccumulatedSecs) || 0);
+        const continuousMins = Math.floor((accSecs + Math.max(0, Math.floor((nowMs - startedAt) / 1000))) / 60);
+        return Math.max(saved, continuousMins);
+      }
       function formatStudyMins(totalMins) {
         const h = Math.floor(totalMins / 60), m = totalMins % 60;
         return `${h}H ${m}M`;
@@ -8525,7 +8562,7 @@
         const shortDate = date => date.slice(5).replace('-', '.');
         document.getElementById('live-study-day-range').textContent = `${shortDate(day)} 05:00 ~ ${shortDate(nextStudyDay(day))} 05:00`;
         const meClock = shared.members.find(m => m.id === prefs.currentUserId) || shared.members[0];
-        const todayStudyM = meClock ? studyMinutes(meClock.id, day) : 0;
+        const todayStudyM = meClock ? liveStudyMinutes(meClock.id, day) : 0;
         animateCountUp(document.getElementById('live-clock-text'), todayStudyM, formatStudyMins);
         document.getElementById('sim-active-badge').classList.toggle('hidden', !prefs.simTime);
 
@@ -8741,17 +8778,18 @@
         document.getElementById('schedule-list-card').classList.toggle('hidden', isFreeDash);
         renderLpSummary('home', lpRecords(me.id), t);
         renderHomeDistribution(me.id, t);
-        const todayLogMins = studyMinutes(me.id);
+        const savedTodayMins = studyMinutes(me.id);
+        const todayLogMins = liveStudyMinutes(me.id);
         animateCountUp(document.getElementById('my-today-study-mins'), todayLogMins, formatStudyMins);
         const subtractStudyBtn = document.getElementById('btn-subtract-study-time');
         if (subtractStudyBtn) {
           subtractStudyBtn.classList.toggle('hidden', !!prefs.adminMode);
-          subtractStudyBtn.disabled = todayLogMins <= 0;
-          subtractStudyBtn.title = todayLogMins <= 0 ? '뺄 수 있는 누적 공부 시간이 없어요' : '실수로 더 측정한 공부 시간 빼기';
+          subtractStudyBtn.disabled = savedTodayMins <= 0;
+          subtractStudyBtn.title = savedTodayMins <= 0 ? '뺄 수 있는 누적 공부 시간이 없어요' : '실수로 더 측정한 공부 시간 빼기';
         }
         const heroClockEl = document.getElementById('live-clock-text');
         if (heroClockEl) {
-          const canTapHero = !prefs.adminMode && todayLogMins > 0;
+          const canTapHero = !prefs.adminMode && savedTodayMins > 0;
           heroClockEl.classList.toggle('is-editable-time', canTapHero);
           if (canTapHero) {
             heroClockEl.setAttribute('role', 'button');
@@ -8884,7 +8922,7 @@
         // Open Lounge: weekly report & tier board are always visible
         const activeMembers = shared.members.filter(m => m.inStudy !== false);
         const weeklyRanked = activeMembers.map(m => {
-          const weekMins = weekDates.reduce((sum, dStr) => sum + ((shared.studyLogs && shared.studyLogs[dStr] && shared.studyLogs[dStr][m.id]) || 0), 0);
+          const weekMins = weekDates.reduce((sum, dStr) => sum + liveStudyMinutes(m.id, dStr), 0);
           return { ...m, weekMins, rate: calcAttendanceRate(m.id, t) };
         }).sort((a, b) => b.weekMins - a.weekMins);
 
@@ -9216,7 +9254,7 @@
         const now = getNowParts();
         const date = studyDayKey();
         const members = shared.members.filter(m => m.inStudy !== false)
-          .map(m => ({ member: m, mins: studyMinutes(m.id) }))
+          .map(m => ({ member: m, mins: liveStudyMinutes(m.id) }))
           .sort((a, b) => b.mins - a.mins);
         const studying = members.filter(({ member }) => memberStatus(member, now) === 'studying').length;
         summary.innerHTML = `<span>참가 ${members.length}명</span><span class="member-roster-live" data-active="${studying > 0}">공부 중 ${studying}명</span>`;
@@ -9399,7 +9437,7 @@
         if (dateInput.value !== homeDistributionDay) dateInput.value = homeDistributionDay;
         dateInput.max = today;
         document.getElementById('home-distribution-today').disabled = homeDistributionDay === today;
-        document.getElementById('home-distribution-total').textContent = plannerDuration(studySeconds(memberId, homeDistributionDay));
+        document.getElementById('home-distribution-total').textContent = plannerDuration(liveStudySeconds(memberId, homeDistributionDay));
 
         const nextDate = addDaysStr(homeDistributionDay, 1);
         const ranges = [[5, 17, '05시부터 17시까지'], [17, 29, '17시부터 다음 날 05시까지']];
@@ -9483,7 +9521,7 @@
         const goalButton = document.getElementById('planner-goal-edit');
         goalButton.classList.toggle('hidden', !editable);
         goalButton.textContent = goal ? '변경' : '설정';
-        document.getElementById('planner-study-mins-pill').textContent = plannerDuration(studySeconds(memberId, day));
+        document.getElementById('planner-study-mins-pill').textContent = plannerDuration(liveStudySeconds(memberId, day));
         document.getElementById('planner-task-total').textContent = `${tasks.filter(task => task.status === 'V').length} / ${tasks.length}`;
         document.getElementById('planner-today').disabled = today;
         document.getElementById('planner-add-task').classList.toggle('hidden', !editable);
@@ -9967,7 +10005,7 @@
                 </div>
                 <div class="space-y-1">
                   ${inTier.map((m, idx) => {
-                    const mins = studyMinutes(m.id);
+                    const mins = liveStudyMinutes(m.id);
                     return `<div class="flex items-center justify-between gap-2 bg-white rounded-lg px-2.5 py-1.5 text-xs border border-slate-100">
                       <span class="font-bold text-slate-900 truncate"><strong>${idx + 1}위</strong> ${escapeHtml(m.name)}</span>
                       <div class="flex items-center gap-2 shrink-0">
@@ -11549,8 +11587,8 @@
           if (!m) return;
           if (!prefs.adminMode) { unlockChallengeFor(prefs.currentUserId, 'ch_spy', false); saveSharedData(); }
           const t = studyDayKey();
-          const todayTotalMins = studyMinutes(m.id);
-          const maxF = shared.maxFocusLogs?.[t]?.[m.id] || 0;
+          const todayTotalMins = liveStudyMinutes(m.id);
+          const maxF = liveMaxFocusMinutes(m, t);
           const todayRespect = ((shared.praises && shared.praises[m.id]) || []).filter(p => p.date === t).length;
           const allB = getBadgesForMember(m, studyDayKey());
           const detailAvatar = m.avatarUrl
@@ -13000,7 +13038,7 @@
         const [y, m, d] = day.split('-').map(Number);
         const weekday = CALENDAR_WEEKDAYS[new Date(y, m - 1, d).getDay()];
         document.getElementById('cal-detail-date').textContent = `${m}월 ${d}일 ${weekday}요일`;
-        const seconds = studySeconds(member.id, day);
+        const seconds = liveStudySeconds(member.id, day);
         const mm = getMemberMotemote(day, member.id, false);
         const goal = Number(mm?.goalMinutes) || signupGoalMinutes(member.id);
         const percent = goal ? Math.floor(seconds * 100 / (goal * 60)) : 0;
@@ -13042,7 +13080,7 @@
 
       function renderCalendarWeek(memberId, today) {
         const dates = getCurrentWeekDates(new Date(today + 'T12:00:00'));
-        const seconds = dates.map(day => studySeconds(memberId, day));
+        const seconds = dates.map(day => liveStudySeconds(memberId, day));
         const total = seconds.reduce((sum, value) => sum + value, 0);
         const max = Math.max(...seconds, 1);
         const shortDate = day => day.split('-').slice(1).map(Number).join('.');
@@ -13081,7 +13119,7 @@
             rows += '<td><span class="calendar-day-blank"></span></td>';
           } else {
             const day = `${selectedCalDay.slice(0, 7)}-${String(n).padStart(2, '0')}`;
-            const seconds = studySeconds(me.id, day);
+            const seconds = liveStudySeconds(me.id, day);
             monthlySeconds += seconds;
             if (seconds > 0) studiedDays++;
             const intensity = seconds >= 14400 ? 4 : seconds >= 7200 ? 3 : seconds >= 3600 ? 2 : seconds ? 1 : 0;
@@ -13796,8 +13834,8 @@
         const grid = document.getElementById('focus-study-grid');
         const day = studyDayKey();
         const now = getNowParts();
-        const peers = prefs.joinedMemberId ? shared.members.filter(m => m.inStudy !== false && m.id !== prefs.currentUserId) : [];
-        const cards = peers.map(member => ({ member, mins: studyMinutes(member.id, day), status: memberStatus(member, now) }))
+        const peers = shared.members.filter(m => m.inStudy !== false && m.id !== prefs.currentUserId);
+        const cards = peers.map(member => ({ member, mins: liveStudyMinutes(member.id, day), status: memberStatus(member, now) }))
           .filter(card => card.status).sort((a, b) => b.mins - a.mins);
         const markup = cards.length
           ? cards.map(({ member, mins, status }) => renderFocusPeer(member, mins, status)).join('')
@@ -13952,7 +13990,7 @@
         }
         document.getElementById('focus-min-btn').classList.toggle('hidden', !focusPaused);
         document.getElementById('focus-pause-btn').textContent = focusPaused ? '공부 다시 시작하기' : '잠시 쉬기';
-        document.getElementById('focus-today-total').textContent = `공부 시간 누적 ${formatStopwatch(studySeconds(prefs.currentUserId))}`;
+        document.getElementById('focus-today-total').textContent = `공부 시간 누적 ${formatStopwatch(liveStudySeconds(prefs.currentUserId))}`;
         updateFocusPromoSlot();
       }
 
@@ -15233,10 +15271,18 @@
       });
 
       document.addEventListener('visibilitychange', () => {
-        if (!document.hidden) {
+        if (document.hidden) {
+          if (focusInterval && !focusPaused) syncFocusClock(true);
+          else if (focusInterval) saveFocusState();
+        } else {
           tickFocusTimer(true);
+          refreshScheduleMinute();
           if (focusInterval && !focusPaused && shown(document.getElementById('focus-overlay'))) requestFocusWakeLock();
         }
+      });
+      window.addEventListener('pageshow', () => {
+        tickFocusTimer(true);
+        refreshScheduleMinute();
       });
       window.addEventListener('storage', e => {
         if (e.key !== FOCUS_STATE_KEY || !focusInterval) return;
@@ -16608,7 +16654,7 @@
       function getGroupMemberLiveInfo(g, uid, meta, anonMap) {
         const m = (shared.members || []).find(x => x.uid === uid || x.id === meta?.memberId);
         const now = getNowParts();
-        const mins = m ? studyMinutes(m.id) : 0;
+        const mins = m ? liveStudyMinutes(m.id) : 0;
         const status = m ? memberStatus(m, now) : 'offline';
         const myUid = groupActor(g);
         const name = g.isAnonymous
@@ -21120,11 +21166,45 @@
       if (filePreview) restoreFocusStateIfNeeded(prefs.currentUserId);
       let bannerMinute = '';
       let bannerStudyDay = studyDayKey();
+      let lastLiveStudySignature = '';
+      function currentLiveStudySignature() {
+        const focusing = (shared.members || []).filter(m => m.inStudy !== false && m.isFocusing && !m.isFocusPaused && m.focusStartedAt != null);
+        if (!focusing.length) return '';
+        const day = studyDayKey();
+        const nowMs = Date.now();
+        return focusing.map(m => `${m.id}:${liveStudyMinutes(m.id, day, nowMs)}`).join(',');
+      }
       function refreshScheduleMinute() {
         if (document.hidden) return;
         const key = Math.floor(Date.now() / 60000);
-        if (key === bannerMinute) return;
+        const liveSig = currentLiveStudySignature();
+        const liveChanged = liveSig !== lastLiveStudySignature;
+        const inGroupChat = prefs.activeTab === 'groups' && !!activeGroupId && activeRoomSub === 'chat';
+        if (key === bannerMinute) {
+          if (liveChanged) {
+            lastLiveStudySignature = liveSig;
+            renderFocusStudy();
+            renderLiveBanner();
+            if (prefs.activeTab === 'dashboard') renderDashboard();
+            if (prefs.activeTab === 'members') {
+              renderMembersTab();
+              if (shown(document.getElementById('members-sub-rank'))) renderRankingsTab();
+              if (shown(document.getElementById('members-sub-live'))) renderWeeklyReportCards();
+            }
+            if (prefs.activeTab === 'groups' && !inGroupChat) renderGroupsTab();
+            if (prefs.activeTab === 'planner') {
+              const pillEl = document.getElementById('planner-study-mins-pill');
+              const planDay = document.getElementById('planner-date-input')?.value || studyDayKey();
+              const meId = prefs.currentUserId;
+              if (pillEl && meId && planDay === studyDayKey()) {
+                pillEl.textContent = plannerDuration(liveStudySeconds(meId, planDay));
+              }
+            }
+          }
+          return;
+        }
         bannerMinute = key;
+        lastLiveStudySignature = liveSig;
         const studyDay = studyDayKey();
         const dayChanged = studyDay !== bannerStudyDay;
         bannerStudyDay = studyDay;
@@ -21134,10 +21214,13 @@
         if (prefs.activeTab === 'dashboard') renderDashboard();
         if (prefs.activeTab === 'members') {
           renderMembersTab();
-          if (shown(document.getElementById('members-sub-rank'))) renderStudyTimeRankings();
-          if (dayChanged) renderWeeklyReportCards();
+          if (shown(document.getElementById('members-sub-rank'))) {
+            if (liveChanged) renderRankingsTab();
+            else renderStudyTimeRankings();
+          }
+          if (dayChanged || (liveChanged && shown(document.getElementById('members-sub-live')))) renderWeeklyReportCards();
         }
-        if (prefs.activeTab === 'groups') renderGroupsTab();
+        if (prefs.activeTab === 'groups' && !inGroupChat) renderGroupsTab();
         if (dayChanged && prefs.activeTab === 'calendar') renderCalendarTab();
         if (dayChanged && prefs.activeTab === 'admin') renderAdminTab();
       }
